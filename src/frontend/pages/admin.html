@@ -771,13 +771,11 @@
         });
         console.log('Delete response status:', res.status);
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.message || `Gagal menghapus (HTTP ${res.status})`);
-        }
-
+        console.log('Delete successful, refreshing list...');
         alert('Berhasil dihapus!');
+        console.log('Calling loadMateri...');
         loadMateri();
+        console.log('loadMateri called');
       } catch (err) {
         console.error('Delete error:', err);
         alert('Gagal: ' + err.message);
