@@ -162,6 +162,24 @@
         </button>
       </form>
 
+      <!-- Register Success -->
+      <div id="regSuccess" class="hidden">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-check text-green-600 text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-800 mb-2">Pendaftaran Berhasil!</h3>
+          <p id="regSuccessText" class="text-slate-500 text-sm mb-6">
+            Kami telah mengirim link verifikasi ke email Anda.<br>
+            Buka email dan klik link tersebut untuk mengaktifkan akun.
+          </p>
+          <button onclick="switchTab('login')"
+            class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Kembali ke Login
+          </button>
+        </div>
+      </div>
+
       <!-- Magic Link Form -->
       <form id="formMagicLink" onsubmit="handleMagicLink(event)" class="hidden">
         <div class="space-y-4">
@@ -209,6 +227,7 @@
       const formLogin = document.getElementById('formLogin');
       const formMagicLink = document.getElementById('formMagicLink');
       const formRegister = document.getElementById('formRegister');
+      const regSuccess = document.getElementById('regSuccess');
       const tabLogin = document.getElementById('tabLogin');
       const tabMagicLink = document.getElementById('tabMagicLink');
       const tabRegister = document.getElementById('tabRegister');
@@ -222,6 +241,7 @@
       formLogin.classList.add('hidden');
       formMagicLink.classList.add('hidden');
       formRegister.classList.add('hidden');
+      regSuccess.classList.add('hidden');
 
       // Remove active state from all tabs
       [tabLogin, tabMagicLink, tabRegister].forEach(t => {
@@ -302,9 +322,10 @@
 
       try {
         await register(email, password, fullName);
-        // Langsung login setelah registrasi
-        const data = await login(email, password);
-        window.location.href = 'fasal.html';
+        // Tampilkan pesan sukses - user harus verifikasi email dulu
+        document.getElementById('formRegister').classList.add('hidden');
+        document.getElementById('regSuccess').classList.remove('hidden');
+        btn.classList.add('hidden');
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
