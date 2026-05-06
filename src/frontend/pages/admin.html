@@ -696,20 +696,22 @@
     }
 
     async function deleteMateri(type, id) {
+      console.log('Delete requested:', type, id);
       if (!confirm(`Yakin ingin hapus ${type} ini?\n\nPERHATIAN: Semua data turunan juga akan dihapus.`)) return;
 
       const token = getToken();
+      if (!token) { alert('Session expired. Silakan login ulang.'); return; }
+
       const tables = { bagian: 'bagian', bab: 'bab', fasal: 'fasal' };
 
       try {
         // First delete related data based on type
         if (type === 'fasal') {
-          // Delete quizzes first
+          console.log('Deleting quizzes for fasal:', id);
           await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${id}`, {
             method: 'DELETE',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
           });
-          // Delete progress
           await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${id}`, {
             method: 'DELETE',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
@@ -717,12 +719,12 @@
         }
 
         if (type === 'bab') {
-          // Get all fasals in this bab
+          console.log('Deleting bab:', id);
           const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
           });
           const fasals = await fasalsRes.json();
-          // Delete quizzes and progress for each fasal
+          console.log('Found fasals:', fasals.length);
           for (const f of fasals) {
             await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, {
               method: 'DELETE',
@@ -733,7 +735,6 @@
               headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
             });
           }
-          // Delete fasals
           await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, {
             method: 'DELETE',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
@@ -741,12 +742,12 @@
         }
 
         if (type === 'bagian') {
-          // Get all babs in this bagian
+          console.log('Deleting bagian:', id);
           const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
           });
           const babs = await babsRes.json();
-          // For each bab, delete all fasals, quizzes, progress
+          console.log('Found babs:', babs.length);
           for (const b of babs) {
             const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${b.id}`, {
               headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
@@ -767,7 +768,6 @@
               headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
             });
           }
-          // Delete babs
           await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, {
             method: 'DELETE',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
@@ -775,19 +775,22 @@
         }
 
         // Now delete the main record
+        console.log('Deleting main record:', tables[type], id);
         const res = await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
           method: 'DELETE',
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
         });
+        console.log('Delete response status:', res.status);
 
         if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.message || 'Gagal menghapus');
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || `Gagal menghapus (HTTP ${res.status})`);
         }
 
         alert('Berhasil dihapus!');
         loadMateri();
       } catch (err) {
+        console.error('Delete error:', err);
         alert('Gagal: ' + err.message);
       }
     }
