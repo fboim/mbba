@@ -44,51 +44,159 @@
   </header>
 
   <!-- Main -->
-  <main class="max-w-4xl mx-auto px-6 py-8">
-    <h1 class="text-2xl font-bold text-slate-800 mb-6">Admin Panel</h1>
+  <main class="max-w-6xl mx-auto px-6 py-8">
 
-    <!-- Demo Tools -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-slate-800 mb-4">
-        <i class="fa-solid fa-flask text-amber-500 mr-2"></i>Demo Tools
-      </h2>
-      <p class="text-slate-500 text-sm mb-4">Tools ini hanya untuk testing/demo. Sembunyikan di production.</p>
+    <!-- Navigation Tabs -->
+    <div class="flex gap-2 mb-6">
+      <button onclick="showTab('stats')" id="tabStats"
+        class="px-4 py-2 bg-primary-600 text-white font-semibold rounded-lg">
+        <i class="fa-solid fa-chart-bar mr-2"></i>Stats
+      </button>
+      <button onclick="showTab('quiz')" id="tabQuiz"
+        class="px-4 py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200">
+        <i class="fa-solid fa-question mr-2"></i>Kelola Soal
+      </button>
+    </div>
 
-      <div class="space-y-4">
-        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
-          <h3 class="font-medium text-slate-700 mb-2">Jawab Semua Benar</h3>
-          <p class="text-sm text-slate-500 mb-3">Otomatis jawab semua soal kuis dengan benar. Hanya untuk demo.</p>
-          <button onclick="enableCheatMode()"
-            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition text-sm">
-            <i class="fa-solid fa-check-double mr-2"></i>Aktifkan Cheat Mode
-          </button>
-          <p id="cheatStatus" class="text-sm text-slate-500 mt-2 hidden">
-            <i class="fa-solid fa-check-circle text-green-500 mr-1"></i> Cheat mode aktif!
-          </p>
-        </div>
+    <!-- Stats Section -->
+    <div id="sectionStats" class="space-y-6">
 
-        <div class="p-4 bg-red-50 rounded-lg border border-red-200">
-          <h3 class="font-medium text-red-700 mb-2">Reset Progress</h3>
-          <p class="text-sm text-red-500 mb-3">Hapus semua progress kuis user (hanya untuk testing).</p>
-          <button onclick="resetAllProgress()"
-            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-sm">
-            <i class="fa-solid fa-trash mr-2"></i>Reset Semua Progress
-          </button>
+      <!-- Quick Stats -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">
+          <i class="fa-solid fa-chart-bar text-blue-500 mr-2"></i>Quick Stats
+        </h2>
+        <div id="stats" class="text-slate-500">Loading...</div>
+      </div>
+
+      <!-- Demo Tools -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">
+          <i class="fa-solid fa-flask text-amber-500 mr-2"></i>Demo Tools
+        </h2>
+        <p class="text-slate-500 text-sm mb-4">Tools ini hanya untuk testing/demo. Sembunyikan di production.</p>
+
+        <div class="space-y-4">
+          <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <h3 class="font-medium text-slate-700 mb-2">Jawab Semua Benar</h3>
+            <p class="text-sm text-slate-500 mb-3">Otomatis jawab semua soal kuis dengan benar. Hanya untuk demo.</p>
+            <button onclick="enableCheatMode()"
+              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition text-sm">
+              <i class="fa-solid fa-check-double mr-2"></i>Aktifkan Cheat Mode
+            </button>
+            <p id="cheatStatus" class="text-sm text-slate-500 mt-2 hidden">
+              <i class="fa-solid fa-check-circle text-green-500 mr-1"></i> Cheat mode aktif!
+            </p>
+          </div>
+
+          <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+            <h3 class="font-medium text-red-700 mb-2">Reset Progress</h3>
+            <p class="text-sm text-red-500 mb-3">Hapus semua progress kuis user (hanya untuk testing).</p>
+            <button onclick="resetAllProgress()"
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-sm">
+              <i class="fa-solid fa-trash mr-2"></i>Reset Semua Progress
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="mt-6 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-slate-800 mb-4">
-        <i class="fa-solid fa-chart-bar text-blue-500 mr-2"></i>Quick Stats
-      </h2>
-      <div id="stats" class="text-slate-500">Loading...</div>
+    <!-- Quiz Management Section -->
+    <div id="sectionQuiz" class="hidden space-y-6">
+
+      <!-- Add New Question -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">
+          <i class="fa-solid fa-plus text-green-500 mr-2"></i>Tambah Soal Baru
+        </h2>
+
+        <!-- Select Fasal -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Fasal</label>
+          <select id="newQuizFasal" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="">Pilih Fasal...</option>
+          </select>
+        </div>
+
+        <!-- Question Type -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Tipe Soal</label>
+          <select id="newQuizType" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="mc">Pilihan Ganda (MC)</option>
+            <option value="fill-arab">Isi Arab (Fill-Arab)</option>
+            <option value="fill-latin">Isi Latin (Fill-Latin)</option>
+          </select>
+        </div>
+
+        <!-- Question Text -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Pertanyaan</label>
+          <textarea id="newQuizQuestion" rows="2"
+            class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            placeholder="Ketik pertanyaan..."></textarea>
+        </div>
+
+        <!-- MC Options (shown only for MC type) -->
+        <div id="mcOptions" class="mb-4 space-y-2">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Opsi Jawaban (MC)</label>
+          <div class="flex gap-2">
+            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">A</span>
+            <input type="text" id="mcA" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
+              placeholder="Opsi A">
+          </div>
+          <div class="flex gap-2">
+            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">B</span>
+            <input type="text" id="mcB" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
+              placeholder="Opsi B">
+          </div>
+          <div class="flex gap-2">
+            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">C</span>
+            <input type="text" id="mcC" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
+              placeholder="Opsi C">
+          </div>
+          <div class="flex gap-2">
+            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">D</span>
+            <input type="text" id="mcD" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
+              placeholder="Opsi D">
+          </div>
+        </div>
+
+        <!-- Correct Answer -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Jawaban Benar</label>
+          <input type="text" id="newQuizAnswer" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
+            placeholder="Untuk MC: A/B/C/D, untuk fill: ketik jawaban">
+        </div>
+
+        <!-- Submit Button -->
+        <div id="addQuizError" class="hidden mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+        <button onclick="addNewQuiz()"
+          class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition">
+          <i class="fa-solid fa-plus mr-2"></i>Tambah Soal
+        </button>
+      </div>
+
+      <!-- Quiz List -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold text-slate-800">
+            <i class="fa-solid fa-list text-blue-500 mr-2"></i>Daftar Soal
+          </h2>
+          <select id="filterFasal" onchange="loadQuizList()"
+            class="px-4 py-2 border border-slate-200 rounded-lg text-sm">
+            <option value="">Semua Fasal</option>
+          </select>
+        </div>
+        <div id="quizList" class="text-slate-500">Loading...</div>
+      </div>
     </div>
   </main>
 
   <script src="../js/api.js"></script>
   <script>
+    let allFasals = [];
+    let allQuizzes = [];
+
     // Check if logged in
     (async function() {
       const user = await getCurrentUser();
@@ -97,13 +205,239 @@
         return;
       }
       loadStats();
+      loadFasalsForSelect();
+      loadQuizList();
     })();
 
+    // ═══════════════════════════════════════
+    // TAB SWITCHING
+    // ═══════════════════════════════════════
+    function showTab(tab) {
+      const sectionStats = document.getElementById('sectionStats');
+      const sectionQuiz = document.getElementById('sectionQuiz');
+      const tabStats = document.getElementById('tabStats');
+      const tabQuiz = document.getElementById('tabQuiz');
+
+      if (tab === 'stats') {
+        sectionStats.classList.remove('hidden');
+        sectionQuiz.classList.add('hidden');
+        tabStats.classList.add('bg-primary-600', 'text-white');
+        tabStats.classList.remove('bg-slate-100', 'text-slate-600');
+        tabQuiz.classList.remove('bg-primary-600', 'text-white');
+        tabQuiz.classList.add('bg-slate-100', 'text-slate-600');
+      } else {
+        sectionStats.classList.add('hidden');
+        sectionQuiz.classList.remove('hidden');
+        tabQuiz.classList.add('bg-primary-600', 'text-white');
+        tabQuiz.classList.remove('bg-slate-100', 'text-slate-600');
+        tabStats.classList.remove('bg-primary-600', 'text-white');
+        tabStats.classList.add('bg-slate-100', 'text-slate-600');
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // LOAD FASALS FOR DROPDOWN
+    // ═══════════════════════════════════════
+    async function loadFasalsForSelect() {
+      try {
+        const data = await fetchKurikulum();
+        allFasals = [];
+        data.forEach(bagian => {
+          (bagian.bab || []).forEach(bab => {
+            (bab.fasal || []).forEach(fasal => {
+              allFasals.push({
+                id: fasal.id,
+                nama: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.nama}`
+              });
+            });
+          });
+        });
+
+        const selectNew = document.getElementById('newQuizFasal');
+        const selectFilter = document.getElementById('filterFasal');
+
+        selectNew.innerHTML = '<option value="">Pilih Fasal...</option>' +
+          allFasals.map(f => `<option value="${f.id}">${f.nama}</option>`).join('');
+
+        selectFilter.innerHTML = '<option value="">Semua Fasal</option>' +
+          allFasals.map(f => `<option value="${f.id}">${f.nama}</option>`).join('');
+      } catch (err) {
+        console.error('Gagal load fasals:', err);
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // LOAD QUIZ LIST
+    // ═══════════════════════════════════════
+    async function loadQuizList() {
+      const container = document.getElementById('quizList');
+      const fasalId = document.getElementById('filterFasal').value;
+
+      try {
+        // Load all quizzes or filter by fasal
+        let url = `${SUPABASE_URL}rest/v1/quiz?order=order_index`;
+        if (fasalId) url += `&fasal_id=eq.${fasalId}`;
+
+        const res = await fetch(url, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+        allQuizzes = await res.json();
+
+        if (allQuizzes.length === 0) {
+          container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada soal</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50">
+                <tr>
+                  <th class="px-4 py-2 text-left">#</th>
+                  <th class="px-4 py-2 text-left">Tipe</th>
+                  <th class="px-4 py-2 text-left">Pertanyaan</th>
+                  <th class="px-4 py-2 text-left">Jawaban</th>
+                  <th class="px-4 py-2 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allQuizzes.map((q, i) => `
+                  <tr class="border-t border-slate-100 hover:bg-slate-50">
+                    <td class="px-4 py-2">${i + 1}</td>
+                    <td class="px-4 py-2">
+                      <span class="px-2 py-1 rounded text-xs font-semibold ${
+                        q.type === 'mc' ? 'bg-blue-100 text-blue-700' :
+                        q.type === 'fill-arab' ? 'bg-green-100 text-green-700' :
+                        'bg-purple-100 text-purple-700'
+                      }">${q.type.toUpperCase()}</span>
+                    </td>
+                    <td class="px-4 py-2 max-w-xs truncate">${q.question}</td>
+                    <td class="px-4 py-2">${q.correct_answer}</td>
+                    <td class="px-4 py-2 text-center">
+                      <button onclick="deleteQuiz('${q.id}')" class="text-red-500 hover:text-red-700">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">Total: ${allQuizzes.length} soal</p>
+        `;
+      } catch (err) {
+        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // ADD NEW QUIZ
+    // ═══════════════════════════════════════
+    async function addNewQuiz() {
+      const fasalId = document.getElementById('newQuizFasal').value;
+      const type = document.getElementById('newQuizType').value;
+      const question = document.getElementById('newQuizQuestion').value.trim();
+      const answer = document.getElementById('newQuizAnswer').value.trim();
+      const errorEl = document.getElementById('addQuizError');
+
+      errorEl.classList.add('hidden');
+
+      if (!fasalId || !question || !answer) {
+        errorEl.textContent = 'Lengkapi semua field yang diperlukan.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      // Build options for MC
+      let options = null;
+      if (type === 'mc') {
+        const a = document.getElementById('mcA').value.trim();
+        const b = document.getElementById('mcB').value.trim();
+        const c = document.getElementById('mcC').value.trim();
+        const d = document.getElementById('mcD').value.trim();
+        if (!a || !b || !c || !d) {
+          errorEl.textContent = 'Lengkapi semua opsi jawaban MC.';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+        options = JSON.stringify({ A: a, B: b, C: c, D: d });
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/quiz`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`,
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({
+            fasal_id: fasalId,
+            type,
+            question,
+            correct_answer: answer,
+            options,
+            order_index: allQuizzes.filter(q => q.fasal_id === fasalId).length + 1
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || 'Gagal menambah soal');
+        }
+
+        // Clear form
+        document.getElementById('newQuizFasal').value = '';
+        document.getElementById('newQuizQuestion').value = '';
+        document.getElementById('newQuizAnswer').value = '';
+        document.getElementById('mcA').value = '';
+        document.getElementById('mcB').value = '';
+        document.getElementById('mcC').value = '';
+        document.getElementById('mcD').value = '';
+
+        alert('Soal berhasil ditambahkan!');
+        loadQuizList();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // DELETE QUIZ
+    // ═══════════════════════════════════════
+    async function deleteQuiz(id) {
+      if (!confirm('Yakin ingin hapus soal ini?')) return;
+
+      try {
+        await fetch(`${SUPABASE_URL}rest/v1/quiz?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+        loadQuizList();
+      } catch (err) {
+        alert('Gagal hapus: ' + err.message);
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // CHEAT MODE
+    // ═══════════════════════════════════════
     function enableCheatMode() {
       localStorage.setItem('mbba_cheat_mode', 'true');
       document.getElementById('cheatStatus').classList.remove('hidden');
     }
 
+    // ═══════════════════════════════════════
+    // RESET ALL PROGRESS
+    // ═══════════════════════════════════════
     async function resetAllProgress() {
       if (!confirm('Yakin ingin reset semua progress? Ini tidak bisa di-undo.')) return;
 
@@ -111,7 +445,6 @@
       if (!token) return;
 
       try {
-        // Delete all user progress
         await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
           method: 'DELETE',
           headers: {
@@ -126,6 +459,9 @@
       }
     }
 
+    // ═══════════════════════════════════════
+    // LOAD STATS
+    // ═══════════════════════════════════════
     async function loadStats() {
       const statsEl = document.getElementById('stats');
       const token = getToken();
@@ -160,10 +496,11 @@
       }
     }
 
+    // ═══════════════════════════════════════
+    // LOGOUT
+    // ═══════════════════════════════════════
     function handleLogout() {
       logout();
       window.location.href = 'auth.html';
     }
   </script>
-</body>
-</html>
