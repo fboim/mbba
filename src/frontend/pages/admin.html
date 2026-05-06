@@ -1026,6 +1026,7 @@
                   <th class="px-4 py-2 text-left">Skor</th>
                   <th class="px-4 py-2 text-left">Percobaan</th>
                   <th class="px-4 py-2 text-left">Tanggal</th>
+                  <th class="px-4 py-2 text-left">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -1045,6 +1046,31 @@
                 <td class="px-4 py-2">${p.quiz_score || 0}%</td>
                 <td class="px-4 py-2">${p.quiz_attempts || 1}x</td>
                 <td class="px-4 py-2 text-xs text-slate-400">${p.completed_at ? new Date(p.completed_at).toLocaleDateString('id-ID') : '-'}</td>
+                <td class="px-4 py-2">
+                  <button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="text-blue-600 hover:text-blue-800">
+                    <i class="fa-solid fa-edit"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+          // Show unlocked/in_progress
+          [...data.unlocked, ...data.inProgress].forEach(p => {
+            html += `
+              <tr class="border-t border-slate-100 hover:bg-slate-50">
+                <td class="px-4 py-2">${no++}</td>
+                <td class="px-4 py-2">
+                  <span class="px-2 py-1 rounded text-xs font-semibold bg-amber-100 text-amber-700">${p.status || 'in_progress'}</span>
+                </td>
+                <td class="px-4 py-2">${fasalMap[p.fasal_id] || p.fasal_id}</td>
+                <td class="px-4 py-2">${p.quiz_score || '-'}</td>
+                <td class="px-4 py-2">${p.quiz_attempts || '-'}</td>
+                <td class="px-4 py-2 text-xs text-slate-400">-</td>
+                <td class="px-4 py-2">
+                  <button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="text-blue-600 hover:text-blue-800">
+                    <i class="fa-solid fa-edit"></i>
+                  </button>
+                </td>
               </tr>
             `;
           });
@@ -1061,6 +1087,49 @@
       } catch (err) {
         console.error('Error loading student progress:', err);
         container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // EDIT PROGRESS (Override Score)
+    // ═══════════════════════════════════════
+    async function editProgress(id, currentScore, currentStatus) {
+      const newScore = prompt('Edit Skor Quiz (%):', currentScore);
+      if (newScore === null || newScore === String(currentScore)) return;
+
+      const score = parseInt(newScore);
+      if (isNaN(score) || score < 0 || score > 100) {
+        alert('Skor harus angka 0-100');
+        return;
+      }
+
+      const newStatus = score === 100 ? 'completed' : 'in_progress';
+      const completedAt = newStatus === 'completed' ? new Date().toISOString() : null;
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/user_progress?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({
+            quiz_score: score,
+            status: newStatus,
+            completed_at: completedAt
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message);
+        }
+
+        alert('Skor berhasil diupdate!');
+        loadStudentProgress();
+      } catch (err) {
+        alert('Gagal update: ' + err.message);
       }
     }
 
