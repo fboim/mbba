@@ -1510,21 +1510,29 @@
       currentEditContent = { type: null, id: null };
     }
 
+    function switchContentTab(tab) {
+      document.getElementById('panelArab').classList.add('hidden');
+      document.getElementById('panelTrans').classList.add('hidden');
+      document.getElementById('panelPreview').classList.add('hidden');
+      document.getElementById('tabArab').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
+      document.getElementById('tabTrans').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
+      document.getElementById('tabPreview').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
+
+      document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
+      document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-primary-600 text-primary-600';
+    }
+
     function updatePreview() {
       const arabInput = document.getElementById('contentArabInput');
       const idInput = document.getElementById('contentIdInput');
-      const notesInput = document.getElementById('contentNotesInput');
       const previewDiv = document.getElementById('contentPreview');
 
       let html = '';
       if (arabInput.value) {
-        html += `<div class="mb-4"><h4 class="text-sm font-semibold text-slate-500 mb-1">Arab:</h4><div class="p-4 bg-slate-50 rounded-lg arabic-text" dir="rtl" lang="ar">${arabInput.value}</div></div>`;
+        html += `<div class="p-3 bg-slate-100 rounded text-right font-arabic text-lg" dir="rtl" lang="ar">${arabInput.value}</div>`;
       }
       if (idInput.value) {
-        html += `<div class="mb-4"><h4 class="text-sm font-semibold text-slate-500 mb-1">Indonesia:</h4><div class="p-4 bg-slate-50 rounded-lg">${idInput.value}</div></div>`;
-      }
-      if (notesInput.value) {
-        html += `<div class="mb-4"><h4 class="text-sm font-semibold text-slate-500 mb-1">Catatan:</h4><div class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm">${notesInput.value}</div></div>`;
+        html += `<div class="p-3 bg-slate-100 rounded mt-2">${idInput.value}</div>`;
       }
       previewDiv.innerHTML = html || '<p class="text-slate-400 text-center py-8">Preview akan muncul di sini...</p>';
     }
@@ -1536,8 +1544,7 @@
       const tables = { bab: 'bab', fasal: 'fasal' };
       const updates = {
         content_arab: document.getElementById('contentArabInput').value,
-        content_id: document.getElementById('contentIdInput').value,
-        notes: document.getElementById('contentNotesInput').value
+        content_id: document.getElementById('contentIdInput').value
       };
 
       fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
@@ -1562,44 +1569,43 @@
 
   <!-- Content Editor Modal -->
   <div id="contentModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
       <!-- Header -->
-      <div class="flex justify-between items-center p-4 border-b">
-        <h3 id="contentModalTitle" class="text-lg font-bold text-slate-800">Edit Konten</h3>
-        <button onclick="closeContentModal()" class="p-2 hover:bg-slate-100 rounded-lg">
+      <div class="flex justify-between items-center px-4 py-3 border-b bg-slate-50">
+        <h3 id="contentModalTitle" class="font-bold text-slate-800">Edit Konten</h3>
+        <button onclick="closeContentModal()" class="p-1.5 hover:bg-slate-200 rounded">
           <i class="fa-solid fa-times text-slate-500"></i>
         </button>
       </div>
 
       <!-- Body -->
       <div class="flex-1 overflow-y-auto p-4">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <!-- Editor -->
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1">Materi Arab</label>
-              <textarea id="contentArabInput" rows="8"
-                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 font-arabic"
-                dir="rtl" lang="ar" oninput="updatePreview()"
-                placeholder="<table><tr><td>...</td></tr></table>&#10;<strong>teks tebal</strong>&#10;<em>teks miring</em>"></textarea>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1">Terjemahan Indonesia</label>
-              <textarea id="contentIdInput" rows="6"
-                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                oninput="updatePreview()" placeholder="Terjemahan Indonesia..."></textarea>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1">Catatan / Penjelasan</label>
-              <textarea id="contentNotesInput" rows="3"
-                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                oninput="updatePreview()" placeholder="Catatan tambahan, contoh penggunaan, dll..."></textarea>
-            </div>
-          </div>
+        <!-- Tabs -->
+        <div class="flex gap-1 mb-4 border-b">
+          <button onclick="switchContentTab('arab')" id="tabArab" class="px-3 py-1.5 text-sm font-semibold border-b-2 border-primary-600 text-primary-600">Arab</button>
+          <button onclick="switchContentTab('trans')" id="tabTrans" class="px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500">Terjemahan</button>
+          <button onclick="switchContentTab('preview')" id="tabPreview" class="px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500">Preview</button>
+        </div>
 
-          <!-- Preview -->
-          <div class="bg-slate-50 rounded-xl p-4 overflow-y-auto">
-            <h4 class="text-sm font-semibold text-slate-500 mb-3">Preview:</h4>
+        <!-- Arab Tab -->
+        <div id="panelArab" class="space-y-2">
+          <label class="text-xs font-medium text-slate-500">Materi Arab</label>
+          <textarea id="contentArabInput" rows="6"
+            class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 font-arabic text-lg"
+            dir="rtl" lang="ar" placeholder="Ketik materi Arab..."></textarea>
+        </div>
+
+        <!-- Translation Tab -->
+        <div id="panelTrans" class="hidden space-y-2">
+          <label class="text-xs font-medium text-slate-500">Terjemahan Indonesia</label>
+          <textarea id="contentIdInput" rows="6"
+            class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+            placeholder="Ketik terjemahan..."></textarea>
+        </div>
+
+        <!-- Preview Tab -->
+        <div id="panelPreview" class="hidden">
+          <div class="bg-slate-50 rounded-lg p-4 min-h-[150px]">
             <div id="contentPreview" class="text-sm">
               <p class="text-slate-400 text-center py-8">Preview akan muncul di sini...</p>
             </div>
@@ -1608,12 +1614,12 @@
       </div>
 
       <!-- Footer -->
-      <div class="flex justify-end gap-2 p-4 border-t bg-slate-50">
-        <button onclick="closeContentModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition">
+      <div class="flex justify-end gap-2 px-4 py-3 border-t bg-slate-50">
+        <button onclick="closeContentModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-lg">
           Batal
         </button>
-        <button onclick="saveContent()" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition">
-          <i class="fa-solid fa-save mr-2"></i>Simpan
+        <button onclick="saveContent()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg">
+          <i class="fa-solid fa-save mr-1"></i>Simpan
         </button>
       </div>
     </div>
