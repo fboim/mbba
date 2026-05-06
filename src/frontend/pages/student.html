@@ -10,12 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .arabic-text {
-      font-family: 'Amiri', serif;
-      direction: rtl;
-      text-align: right;
-      line-height: 2.2;
-    }
+    .arabic-text { font-family: 'Amiri', serif; direction: rtl; text-align: right; line-height: 2.2; }
   </style>
 </head>
 <body class="bg-slate-50 font-sans min-h-screen">
@@ -23,7 +18,7 @@
   <!-- Header -->
   <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
     <div class="max-w-4xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
         <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
           <span class="text-white font-bold text-sm">م</span>
         </div>
@@ -47,8 +42,8 @@
   <!-- Main Content -->
   <main class="max-w-4xl mx-auto px-4 md:px-6 py-6">
 
-    <!-- Welcome Section -->
-    <div id="welcomeSection" class="mb-6">
+    <!-- Welcome -->
+    <div class="mb-6">
       <h1 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
         <i class="fa-solid fa-graduation-cap text-primary-500 mr-2"></i>
         Assalamu'alaikum
@@ -56,11 +51,11 @@
       <p class="text-slate-500">Selamat datang di Madrasah Belajar Bahasa Arab</p>
     </div>
 
-    <!-- Progress Summary Cards -->
+    <!-- Progress Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
       <div class="bg-blue-600 rounded-xl p-4 text-white text-center">
         <div class="text-3xl font-bold" id="totalFasal">0</div>
-        <div class="text-sm opacity-80">Total Fasal</div>
+        <div class="text-sm opacity-80">Total Materi</div>
       </div>
       <div class="bg-green-600 rounded-xl p-4 text-white text-center">
         <div class="text-3xl font-bold" id="completedFasal">0</div>
@@ -71,448 +66,278 @@
         <div class="text-sm opacity-80">Rata-rata</div>
       </div>
       <div class="bg-purple-600 rounded-xl p-4 text-white text-center">
-        <div class="text-3xl font-bold" id="totalAttempts">0</div>
-        <div class="text-sm opacity-80">Attempts</div>
+        <div class="text-3xl font-bold" id="streakDays">0</div>
+        <div class="text-sm opacity-80">Streak</div>
       </div>
     </div>
 
-    <!-- Continue Learning Section -->
+    <!-- Fasal List -->
     <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
       <h2 class="text-lg font-semibold text-slate-800 mb-4">
         <i class="fa-solid fa-book-open text-primary-500 mr-2"></i>
         Mulai Belajar
       </h2>
-      <div id="fasalList" class="space-y-3">
-        <div class="text-center py-8 text-slate-400">
-          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
-          <p>Memuat...</p>
-        </div>
-      </div>
+      <div id="fasalList" class="text-slate-500">Memuat...</div>
     </div>
 
     <!-- Recent Activity -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+    <div class="bg-white rounded-xl border border-slate-200 p-6">
       <h2 class="text-lg font-semibold text-slate-800 mb-4">
         <i class="fa-solid fa-clock text-amber-500 mr-2"></i>
         Aktivitas Terakhir
       </h2>
-      <div id="recentActivity" class="space-y-3">
-        <p class="text-slate-400 text-center py-4">Belum ada aktivitas</p>
-      </div>
-    </div>
-
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-2 gap-4">
-      <div class="bg-white rounded-xl border border-slate-200 p-4">
-        <h3 class="font-semibold text-slate-700 mb-2">
-          <i class="fa-solid fa-fire text-orange-500 mr-2"></i>
-          Streak Belajar
-        </h3>
-        <div class="flex items-center gap-3">
-          <div class="text-4xl font-bold text-primary-600" id="streakDays">0</div>
-          <div class="text-sm text-slate-500">hari<br>berturut-turut</div>
-        </div>
-      </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-4">
-        <h3 class="font-semibold text-slate-700 mb-2">
-          <i class="fa-solid fa-trophy text-yellow-500 mr-2"></i>
-          Pencapaian
-        </h3>
-        <div id="achievements" class="space-y-2">
-          <div class="flex items-center gap-2 text-sm text-slate-400">
-            <i class="fa-regular fa-circle text-xs"></i>
-            <span>1 Fasal Pertama</span>
-          </div>
-        </div>
-      </div>
+      <div id="recentActivity" class="text-slate-400 text-center py-4">Belum ada aktivitas</div>
     </div>
 
   </main>
 
   <script src="../js/api.js"></script>
   <script>
-    let allFasals = [];
-    let allBabs = [];
-    let userProgress = [];
-    let fasalMap = {};
+    var allFasals = [];
+    var allBabs = [];
+    var userProgress = [];
+    var fasalMap = {};
 
-    // Check login and load data
     (async function() {
-      const user = await getCurrentUser();
+      var user = await getCurrentUser();
       if (!user) {
         window.location.href = 'auth.html';
         return;
       }
-
-      // Set user role
       setUserRole(user);
-
-      // Show admin link if admin/teacher
-      const role = user.user_metadata?.role || 'student';
+      var role = user.user_metadata && user.user_metadata.role || 'student';
       if (role === 'admin' || role === 'teacher') {
         document.getElementById('adminLink').classList.remove('hidden');
       }
-
-      // Set user name
-      const name = user.user_metadata?.full_name || user.email || 'Pelajar';
+      var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
       document.getElementById('userName').textContent = 'Hai, ' + name;
-
       await loadDashboard();
     })();
 
     async function loadDashboard() {
       try {
-        // Load kurikulum with bab content
-        const kurikulum = await fetchKurikulum();
+        var kurikulum = await fetchKurikulum();
         allFasals = [];
         allBabs = [];
 
-        // Debug
         console.log('Kurikulum loaded:', kurikulum);
 
         if (!kurikulum || kurikulum.length === 0) {
-          document.getElementById('fasalList').innerHTML = `
-            <div class="text-center py-8">
-              <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-4"></i>
-              <p class="text-slate-500 mb-2">Tidak ada data materi</p>
-              <p class="text-xs text-slate-400">Hubungi admin untuk menambahkan materi</p>
-            </div>
-          `;
+          document.getElementById('fasalList').innerHTML = '<div class="text-center py-8 text-slate-400"><i class="fa-solid fa-folder-open text-4xl mb-4"></i><p>Tidak ada data materi</p></div>';
           updateStats();
-          renderRecentActivity();
           return;
         }
 
-        kurikulum.forEach(bagian => {
-          (bagian.bab || []).forEach(bab => {
-            // Add bab to the list (including Muqoddimah)
+        kurikulum.forEach(function(bagian) {
+          (bagian.bab || []).forEach(function(bab) {
             allBabs.push({
               id: bab.id,
-              label: `Bagian ${bagian.order_index} > Bab ${bab.order_index}`,
-              fullLabel: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
+              title: bab.title || bab.nama || 'Bab ' + bab.order_index,
               order_index: bab.order_index,
               bagian_id: bagian.id,
               bagian_order: bagian.order_index,
-              title: bab.title || bab.nama,
               is_muqoddimah: bab.is_muqoddimah || false,
               content_arab: bab.content_arab || '',
               content_id: bab.content_id || ''
             });
-
-            // Add bab as first "item" if it's Muqoddimah
-            if (bab.is_muqoddimah) {
-              fasalMap['bab_' + bab.id] = `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${bab.title || bab.nama}`;
-            }
-
-            // Add fasals
-            (bab.fasal || []).forEach(fasal => {
+            (bab.fasal || []).forEach(function(fasal) {
               allFasals.push({
                 id: fasal.id,
-                label: `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${fasal.title || fasal.nama || 'Fasal ' + fasal.order_index}`,
-                shortLabel: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`,
+                title: fasal.title || 'Fasal ' + fasal.order_index,
+                order: bagian.order_index + '.' + bab.order_index + '.' + fasal.order_index,
                 bab_id: bab.id,
-                bab_label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
+                bab_title: bab.title || bab.nama || 'Bab ' + bab.order_index,
                 bagian_id: bagian.id,
-                bagian_label: `Bagian ${bagian.order_index}`,
-                order_index: `${bagian.order_index}.${bab.order_index}.${fasal.order_index}`
+                bagian_order: bagian.order_index,
+                content_arab: fasal.content_arab || ''
               });
-              fasalMap[fasal.id] = `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${fasal.title || 'Fasal ' + fasal.order_index}`;
             });
           });
         });
 
-        // Load user progress
-        const progressData = await fetchUserProgress();
-        userProgress = progressData;
+        console.log('Babs:', allBabs);
+        console.log('Fasals:', allFasals);
+
+        var progressData = await fetchUserProgress();
+        userProgress = progressData || [];
 
         updateStats();
         renderFasalList();
         renderRecentActivity();
       } catch (err) {
-        console.error('Error loading dashboard:', err);
-        document.getElementById('fasalList').innerHTML = `
-          <div class="text-center py-8">
-            <i class="fa-solid fa-exclamation-triangle text-4xl text-red-300 mb-4"></i>
-            <p class="text-red-500 mb-2">Gagal memuat data</p>
-            <p class="text-xs text-slate-400">${err.message || 'Unknown error'}</p>
-          </div>
-        `;
+        console.error('Error:', err);
+        document.getElementById('fasalList').innerHTML = '<div class="text-center py-8 text-red-400"><p>Gagal memuat data</p><p class="text-sm">' + err.message + '</p></div>';
       }
     }
 
     function updateStats() {
-      const total = allFasals.length;
-      const completed = userProgress.filter(p => p.status === 'completed').length;
-      const avgScore = userProgress.length > 0
-        ? Math.round(userProgress.reduce((sum, p) => sum + (p.quiz_score || 0), 0) / userProgress.length)
-        : 0;
-      const attempts = userProgress.reduce((sum, p) => sum + (p.quiz_attempts || 0), 0);
+      var total = allBabs.filter(function(b) { return b.is_muqoddimah; }).length + allFasals.length;
+      var completed = userProgress.filter(function(p) { return p.status === 'completed'; }).length;
+      var avgScore = userProgress.length > 0 ? Math.round(userProgress.reduce(function(s, p) { return s + (p.quiz_score || 0); }, 0) / userProgress.length) : 0;
 
       document.getElementById('totalFasal').textContent = total;
       document.getElementById('completedFasal').textContent = completed;
       document.getElementById('avgScore').textContent = avgScore + '%';
-      document.getElementById('totalAttempts').textContent = attempts;
-
-      // Calculate streak (simple - count consecutive days)
-      const streak = calculateStreak();
-      document.getElementById('streakDays').textContent = streak;
-
-      // Update achievements
-      updateAchievements(completed);
+      document.getElementById('streakDays').textContent = calculateStreak();
     }
 
     function calculateStreak() {
       if (userProgress.length === 0) return 0;
-
-      // Sort by date descending
-      const dates = userProgress
-        .map(p => new Date(p.completed_at || p.created_at).toDateString())
-        .filter(d => d !== 'Invalid Date');
-      const uniqueDates = [...new Set(dates)].sort((a, b) => new Date(b) - new Date(a));
-
-      if (uniqueDates.length === 0) return 0;
-
-      let streak = 1;
-      const today = new Date().toDateString();
-      const yesterday = new Date(Date.now() - 86400000).toDateString();
-
-      if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) return 0;
-
-      for (let i = 1; i < uniqueDates.length; i++) {
-        const diff = (new Date(uniqueDates[i-1]) - new Date(uniqueDates[i])) / 86400000;
-        if (diff === 1) {
-          streak++;
-        } else {
-          break;
-        }
+      var dates = userProgress.map(function(p) { return new Date(p.completed_at || p.created_at).toDateString(); }).filter(function(d) { return d !== 'Invalid Date'; });
+      var unique = [...new Set(dates)].sort(function(a, b) { return new Date(b) - new Date(a); });
+      if (unique.length === 0) return 0;
+      var today = new Date().toDateString();
+      var yesterday = new Date(Date.now() - 86400000).toDateString();
+      if (unique[0] !== today && unique[0] !== yesterday) return 0;
+      var streak = 1;
+      for (var i = 1; i < unique.length; i++) {
+        var diff = (new Date(unique[i-1]) - new Date(unique[i])) / 86400000;
+        if (diff === 1) streak++; else break;
       }
       return streak;
     }
 
-    function updateAchievements(completed) {
-      const container = document.getElementById('achievements');
-      let html = '';
-
-      // First Fasal
-      if (completed >= 1) {
-        html += '<div class="flex items-center gap-2 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i><span>1 Fasal Pertama</span></div>';
-      } else {
-        html += '<div class="flex items-center gap-2 text-sm text-slate-400"><i class="fa-regular fa-circle"></i><span>1 Fasal Pertama</span></div>';
-      }
-
-      // 5 Fasal
-      if (completed >= 5) {
-        html += '<div class="flex items-center gap-2 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i><span>5 Fasal</span></div>';
-      } else {
-        html += '<div class="flex items-center gap-2 text-sm text-slate-400"><i class="fa-regular fa-circle"></i><span>5 Fasal</span></div>';
-      }
-
-      // Perfect Score
-      const hasPerfect = userProgress.some(p => p.quiz_score === 100);
-      if (hasPerfect) {
-        html += '<div class="flex items-center gap-2 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i><span>Skor Sempurna</span></div>';
-      } else {
-        html += '<div class="flex items-center gap-2 text-sm text-slate-400"><i class="fa-regular fa-circle"></i><span>Skor Sempurna</span></div>';
-      }
-
-      container.innerHTML = html;
-    }
-
     function renderFasalList() {
-      const container = document.getElementById('fasalList');
+      var container = document.getElementById('fasalList');
+      var items = [];
 
-      // Build combined list: Babs (with Muqoddimah first) + Fasals
-      const items = [];
-
-      // Add Muqoddimah first (bab with is_muqoddimah = true)
-      allBabs.forEach(bab => {
+      // Add Muqoddimah (bab with is_muqoddimah)
+      allBabs.forEach(function(bab) {
         if (bab.is_muqoddimah) {
           items.push({
             type: 'bab',
             id: bab.id,
-            label: `Bagian ${bab.bagian_order} > Bab ${bab.order_index} > ${bab.title}`,
-            shortLabel: `${bab.bagian_order}.${bab.order_index} ${bab.title}`,
-            bab_label: `Bagian ${bab.bagian_order}`,
-            content_arab: bab.content_arab,
-            content_id: bab.content_id,
-            order: bab.bagian_order * 100 + bab.order_index * 10
+            title: bab.title,
+            label: 'Kitab Mukhtarat > Bagian ' + bab.bagian_order + ' > Bab ' + bab.order_index + ' > ' + bab.title,
+            order: bab.bagian_order * 100 + bab.order_index * 10,
+            hasContent: bab.content_arab && bab.content_arab.trim().length > 0
           });
         }
       });
 
-      // Sort fasals by order
-      const sortedFasals = [...allFasals].sort((a, b) => {
-        const aParts = a.label.split('>')[0].trim().replace('Bagian ', '').split('.');
-        const bParts = b.label.split('>')[0].trim().replace('Bagian ', '').split('.');
-        const aNum = parseInt(aParts[0]) * 1000 + parseInt(aParts[1] || 0) * 100 + parseInt(aParts[2] || 0);
-        const bNum = parseInt(bParts[0]) * 1000 + parseInt(bParts[1] || 0) * 100 + parseInt(bParts[2] || 0);
-        return aNum - bNum;
-      });
-
       // Add fasals
-      sortedFasals.forEach(fasal => {
-        const parts = fasal.label.split('>')[0].trim().replace('Bagian ', '').split('.');
+      allFasals.forEach(function(fasal) {
         items.push({
           type: 'fasal',
           id: fasal.id,
-          label: fasal.label,
-          shortLabel: fasal.shortLabel || fasal.label,
-          bab_label: fasal.bab_label,
-          content_arab: '',
-          content_id: '',
-          order: parseInt(parts[0]) * 1000 + parseInt(parts[1] || 0) * 100 + parseInt(parts[2] || 0)
+          title: fasal.title,
+          label: 'Kitab Mukhtarat > Bagian ' + fasal.bagian_order + ' > Bab ' + fasal.bab_id.split('-')[0].length + ' > ' + fasal.title,
+          order: fasal.order.split('.').map(function(n) { return parseInt(n) || 0; }).reduce(function(a, b) { return a * 1000 + b; }, 0),
+          hasContent: fasal.content_arab && fasal.content_arab.trim().length > 0
         });
       });
 
       if (items.length === 0) {
-        container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada materi. Hubungi admin.</p>';
+        container.innerHTML = '<div class="text-center py-8 text-slate-400"><i class="fa-solid fa-folder-open text-4xl mb-4"></i><p>Belum ada materi</p></div>';
         return;
       }
 
-      // Find which item is the next unlocked one
-      const completedIds = userProgress.filter(p => p.status === 'completed').map(p => p.fasal_id);
-      let nextUnlockIndex = 0;
-      for (let i = 0; i < items.length; i++) {
-        const itemId = items[i].type === 'bab' ? 'bab_' + items[i].id : items[i].id;
-        if (!completedIds.includes(itemId)) {
-          nextUnlockIndex = i;
-          break;
-        }
-        if (i === items.length - 1) {
-          nextUnlockIndex = items.length;
-        }
-      }
+      // Sort by order
+      items.sort(function(a, b) { return a.order - b.order; });
 
       // Progress summary
-      const total = items.length;
-      const completed = completedIds.length;
-      const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+      var total = items.length;
+      var completedIds = userProgress.filter(function(p) { return p.status === 'completed'; }).map(function(p) { return p.fasal_id; });
+      var completed = completedIds.length;
+      var percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-      let html = `
-        <div class="mb-4 p-3 bg-slate-50 rounded-lg">
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-sm font-medium text-slate-700">Progress Belajar</span>
-            <span class="text-sm font-bold text-primary-600">${completed}/${total} Materi (${percent}%)</span>
-          </div>
-          <div class="w-full bg-slate-200 rounded-full h-2">
-            <div class="bg-primary-500 h-2 rounded-full transition-all" style="width: ${percent}%"></div>
-          </div>
-        </div>
-      `;
+      var html = '<div class="mb-4 p-3 bg-slate-50 rounded-lg">';
+      html += '<div class="flex justify-between items-center mb-2">';
+      html += '<span class="text-sm font-medium text-slate-700">Progress Belajar</span>';
+      html += '<span class="text-sm font-bold text-primary-600">' + completed + '/' + total + ' (' + percent + '%)</span>';
+      html += '</div>';
+      html += '<div class="w-full bg-slate-200 rounded-full h-2">';
+      html += '<div class="bg-primary-500 h-2 rounded-full" style="width:' + percent + '%"></div>';
+      html += '</div></div>';
 
-      // List header
-      html += `<div class="font-semibold text-slate-600 text-sm mb-2">Daftar Materi (wajib berurutan):</div>`;
+      html += '<div class="font-semibold text-slate-600 text-sm mb-2">Daftar Materi (wajib berurutan):</div>';
 
-      items.forEach((item, index) => {
-        const progress = userProgress.find(p => {
-          const progId = item.type === 'bab' ? 'bab_' + item.id : item.id;
-          return p.fasal_id === progId;
-        });
+      // Find first unlocked
+      var nextUnlock = 0;
+      for (var i = 0; i < items.length; i++) {
+        var itemId = items[i].type === 'bab' ? 'bab_' + items[i].id : items[i].id;
+        if (!completedIds.includes(itemId)) {
+          nextUnlock = i;
+          break;
+        }
+        if (i === items.length - 1) nextUnlock = items.length;
+      }
 
-        // Sequential unlock
-        let isUnlocked = index <= nextUnlockIndex;
-        let statusClass = 'bg-slate-100 text-slate-500';
-        let statusText = 'Tersedia';
-        let btnClass = 'bg-green-600 hover:bg-green-700';
-        let btnIcon = 'fa-play';
-        let btnText = 'Mulai';
+      // Render items
+      items.forEach(function(item, index) {
+        var itemId = item.type === 'bab' ? 'bab_' + item.id : item.id;
+        var progress = userProgress.find(function(p) { return p.fasal_id === itemId; });
+        var isUnlocked = index <= nextUnlock;
+        var isCompleted = progress && progress.status === 'completed';
 
-        if (progress?.status === 'completed') {
+        var badgeClass = item.type === 'bab' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700';
+        var badgeText = item.type === 'bab' ? 'Muqoddimah' : 'Fasal';
+
+        var statusClass, btnClass, btnIcon, btnText;
+        if (isCompleted) {
           statusClass = 'bg-green-100 text-green-700';
-          statusText = `Selesai`;
           btnClass = 'bg-primary-600 hover:bg-primary-700';
           btnIcon = 'fa-book-open';
           btnText = 'Baca Lagi';
           isUnlocked = true;
-        } else if (!isUnlocked) {
+        } else if (isUnlocked) {
+          statusClass = 'bg-blue-100 text-blue-700';
+          btnClass = 'bg-green-600 hover:bg-green-700';
+          btnIcon = 'fa-play';
+          btnText = index === 0 ? 'Mulai' : 'Kerjakan';
+        } else {
           statusClass = 'bg-slate-100 text-slate-400';
-          statusText = 'Terkunci';
-          btnClass = 'bg-slate-300 cursor-not-allowed opacity-60';
+          btnClass = 'bg-slate-300 cursor-not-allowed';
           btnIcon = 'fa-lock';
           btnText = 'Kunci';
         }
 
-        // Determine link
-        const link = item.type === 'bab' ? `materi.html?bab=${item.id}` : `materi.html?id=${item.id}`;
+        var link = item.type === 'bab' ? 'materi.html?bab=' + item.id : 'materi.html?id=' + item.id;
 
-        // Content preview
-        const hasContent = item.content_arab && item.content_arab.trim().length > 0;
-
-        html += `
-          <div class="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200 ${isUnlocked && !progress?.status ? 'border-blue-200' : ''} hover:shadow-sm transition">
-            <div class="flex items-center gap-3 flex-1">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center ${statusClass}">
-                ${item.type === 'bab' ? '<i class="fa-solid fa-book text-sm"></i>' : '<i class="fa-solid fa-file-lines text-xs"></i>'}
-              </div>
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-xs px-2 py-0.5 rounded ${item.type === 'bab' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'} font-semibold">${item.type === 'bab' ? 'Muqoddimah' : 'Fasal'}</span>
-                  <span class="font-medium text-slate-800">${item.shortLabel || item.label}</span>
-                </div>
-                <div class="text-sm text-slate-500">${item.bab_label}</div>
-                ${hasContent ? '<div class="text-xs text-green-600 mt-1"><i class="fa-solid fa-check-circle mr-1"></i>Materi tersedia</div>' : '<div class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-exclamation-circle mr-1"></i>Belum ada materi</div>'}
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              ${isUnlocked ? `
-                <a href="${link}" class="px-4 py-2 ${btnClass} text-white text-sm font-semibold rounded-lg transition shadow-sm">
-                  <i class="fa-solid ${btnIcon} mr-1"></i>${btnText}
-                </a>
-              ` : `
-                <span class="px-4 py-2 bg-slate-200 text-slate-400 text-sm font-semibold rounded-lg cursor-not-allowed">
-                  <i class="fa-solid fa-lock mr-1"></i>Kunci
-                </span>
-              `}
-            </div>
-          </div>
-        `;
+        html += '<div class="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200 mb-2' + (isUnlocked && !isCompleted ? ' border-blue-200' : '') + '">';
+        html += '<div class="flex items-center gap-3 flex-1">';
+        html += '<div class="w-10 h-10 rounded-full flex items-center justify-center ' + statusClass + '">';
+        html += '<i class="fa-solid ' + (item.type === 'bab' ? 'fa-book' : 'fa-file-lines') + ' text-sm"></i>';
+        html += '</div>';
+        html += '<div class="flex-1">';
+        html += '<div class="flex items-center gap-2 mb-1">';
+        html += '<span class="text-xs px-2 py-0.5 rounded font-semibold ' + badgeClass + '">' + badgeText + '</span>';
+        html += '<span class="font-medium text-slate-800">' + item.title + '</span>';
+        html += '</div>';
+        html += '<div class="text-xs text-slate-400 truncate">' + item.label + '</div>';
+        html += '</div></div>';
+        html += '<div class="flex items-center gap-2">';
+        if (isUnlocked) {
+          html += '<a href="' + link + '" class="px-4 py-2 ' + btnClass + ' text-white text-sm font-semibold rounded-lg shadow-sm">' + '<i class="fa-solid ' + btnIcon + ' mr-1"></i>' + btnText + '</a>';
+        } else {
+          html += '<span class="px-4 py-2 bg-slate-200 text-slate-400 text-sm font-semibold rounded-lg cursor-not-allowed"><i class="fa-solid fa-lock mr-1"></i>Kunci</span>';
+        }
+        html += '</div></div>';
       });
 
       container.innerHTML = html;
     }
 
     function renderRecentActivity() {
-      const container = document.getElementById('recentActivity');
-
+      var container = document.getElementById('recentActivity');
       if (userProgress.length === 0) {
         container.innerHTML = '<p class="text-slate-400 text-center py-4">Belum ada aktivitas</p>';
         return;
       }
-
-      // Sort by date descending and take last 5
-      const recent = [...userProgress]
-        .sort((a, b) => new Date(b.completed_at || b.created_at) - new Date(a.completed_at || a.created_at))
-        .slice(0, 5);
-
-      let html = '';
-      recent.forEach(p => {
-        const fasalLabel = fasalMap[p.fasal_id] || p.fasal_id;
-        const date = new Date(p.completed_at || p.created_at).toLocaleDateString('id-ID', {
-          day: 'numeric',
-          month: 'short',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-
-        html += `
-          <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center ${p.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}">
-                <i class="fa-solid ${p.status === 'completed' ? 'fa-check' : 'fa-play'} text-sm"></i>
-              </div>
-              <div>
-                <div class="text-sm font-medium text-slate-700">${fasalLabel}</div>
-                <div class="text-xs text-slate-400">${date}</div>
-              </div>
-            </div>
-            <div class="text-right">
-              <div class="text-sm font-bold ${p.status === 'completed' ? 'text-green-600' : 'text-amber-600'}">${p.quiz_score || 0}%</div>
-              <div class="text-xs text-slate-400">${p.quiz_attempts || 1}x attempt</div>
-            </div>
-          </div>
-        `;
+      var recent = userProgress.slice().sort(function(a, b) { return new Date(b.completed_at || b.created_at) - new Date(a.completed_at || a.created_at); }).slice(0, 5);
+      var html = '';
+      recent.forEach(function(p) {
+        var label = fasalMap[p.fasal_id] || p.fasal_id;
+        var date = new Date(p.completed_at || p.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        html += '<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg mb-2">';
+        html += '<div class="flex items-center gap-3">';
+        html += '<div class="w-8 h-8 rounded-full flex items-center justify-center ' + (p.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600') + '">';
+        html += '<i class="fa-solid ' + (p.status === 'completed' ? 'fa-check' : 'fa-play') + ' text-sm"></i>';
+        html += '</div>';
+        html += '<div><div class="text-sm font-medium text-slate-700">' + label + '</div><div class="text-xs text-slate-400">' + date + '</div></div></div>';
+        html += '<div class="text-right"><div class="text-sm font-bold ' + (p.status === 'completed' ? 'text-green-600' : 'text-amber-600') + '">' + (p.quiz_score || 0) + '%</div></div>';
+        html += '</div>';
       });
-
       container.innerHTML = html;
     }
 
