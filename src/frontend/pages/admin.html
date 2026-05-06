@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — MBBA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="flex items-center justify-between px-6 h-14">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-sm">م</span>
+        </div>
+        <span class="font-bold text-slate-800">MBBA Admin</span>
+        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded">DEMO</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="fasal.html" class="text-sm text-slate-500 hover:text-slate-700">
+          <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+        </a>
+        <button onclick="handleLogout()" class="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500">
+          <i class="fa-solid fa-right-from-bracket text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-4xl mx-auto px-6 py-8">
+    <h1 class="text-2xl font-bold text-slate-800 mb-6">Admin Panel</h1>
+
+    <!-- Demo Tools -->
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">
+        <i class="fa-solid fa-flask text-amber-500 mr-2"></i>Demo Tools
+      </h2>
+      <p class="text-slate-500 text-sm mb-4">Tools ini hanya untuk testing/demo. Sembunyikan di production.</p>
+
+      <div class="space-y-4">
+        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+          <h3 class="font-medium text-slate-700 mb-2">Jawab Semua Benar</h3>
+          <p class="text-sm text-slate-500 mb-3">Otomatis jawab semua soal kuis dengan benar. Hanya untuk demo.</p>
+          <button onclick="enableCheatMode()"
+            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition text-sm">
+            <i class="fa-solid fa-check-double mr-2"></i>Aktifkan Cheat Mode
+          </button>
+          <p id="cheatStatus" class="text-sm text-slate-500 mt-2 hidden">
+            <i class="fa-solid fa-check-circle text-green-500 mr-1"></i> Cheat mode aktif!
+          </p>
+        </div>
+
+        <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+          <h3 class="font-medium text-red-700 mb-2">Reset Progress</h3>
+          <p class="text-sm text-red-500 mb-3">Hapus semua progress kuis user (hanya untuk testing).</p>
+          <button onclick="resetAllProgress()"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-sm">
+            <i class="fa-solid fa-trash mr-2"></i>Reset Semua Progress
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="mt-6 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">
+        <i class="fa-solid fa-chart-bar text-blue-500 mr-2"></i>Quick Stats
+      </h2>
+      <div id="stats" class="text-slate-500">Loading...</div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script>
+    // Check if logged in
+    (async function() {
+      const user = await getCurrentUser();
+      if (!user) {
+        window.location.href = 'auth.html';
+        return;
+      }
+      loadStats();
+    })();
+
+    function enableCheatMode() {
+      localStorage.setItem('mbba_cheat_mode', 'true');
+      document.getElementById('cheatStatus').classList.remove('hidden');
+    }
+
+    async function resetAllProgress() {
+      if (!confirm('Yakin ingin reset semua progress? Ini tidak bisa di-undo.')) return;
+
+      const token = getToken();
+      if (!token) return;
+
+      try {
+        // Delete all user progress
+        await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`,
+          }
+        });
+        alert('Semua progress berhasil di-reset!');
+        loadStats();
+      } catch (err) {
+        alert('Gagal reset: ' + err.message);
+      }
+    }
+
+    async function loadStats() {
+      const statsEl = document.getElementById('stats');
+      const token = getToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`,
+          }
+        });
+        const data = await res.json();
+        statsEl.innerHTML = `
+          <div class="grid grid-cols-3 gap-4">
+            <div class="text-center p-4 bg-slate-50 rounded-lg">
+              <div class="text-2xl font-bold text-slate-800">${data.length}</div>
+              <div class="text-sm text-slate-500">Total Records</div>
+            </div>
+            <div class="text-center p-4 bg-slate-50 rounded-lg">
+              <div class="text-2xl font-bold text-green-600">${data.filter(p => p.status === 'completed').length}</div>
+              <div class="text-sm text-slate-500">Completed</div>
+            </div>
+            <div class="text-center p-4 bg-slate-50 rounded-lg">
+              <div class="text-2xl font-bold text-amber-600">${data.filter(p => p.status === 'unlocked').length}</div>
+              <div class="text-sm text-slate-500">Unlocked</div>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        statsEl.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+      }
+    }
+
+    function handleLogout() {
+      logout();
+      window.location.href = 'auth.html';
+    }
+  </script>
+</body>
+</html>

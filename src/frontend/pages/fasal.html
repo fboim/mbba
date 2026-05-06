@@ -215,7 +215,7 @@
           <!-- Submit Button -->
           <div id="quizActions" class="mt-5 flex justify-end gap-3">
             <button id="cheatBtn" onclick="cheatAnswerAll()"
-              class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-lg transition text-sm"
+              class="hidden px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-lg transition text-sm"
               title="Demo: jawab semua benar">
               <i class="fa-solid fa-check-double text-sm"></i> Jawab Benar
             </button>
@@ -777,8 +777,14 @@
   function handleLogout() {
     if (!confirm('Yakin ingin keluar?')) return;
     logout();
-    window.location.href = '../pages/auth.html';
+    window.location.href = 'auth.html';
   }
+
+    // Show cheat button only in demo mode (set via admin panel)
+      if (localStorage.getItem('mbba_cheat_mode') === 'true') {
+        const cheatBtn = document.getElementById('cheatBtn');
+        if (cheatBtn) cheatBtn.classList.remove('hidden');
+      }
 
     // INIT — async bootstrap
     // ═══════════════════════════════════════
