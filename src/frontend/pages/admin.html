@@ -478,16 +478,17 @@
     async function loadMateri() {
       console.log('loadMateri: starting...');
       const container = document.getElementById('materiList');
+      const cacheBuster = Date.now();
 
       try {
         const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bagian?order=order_index`, {
+          fetch(`${SUPABASE_URL}rest/v1/bagian?order=order_index&t=${cacheBuster}`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
           }),
-          fetch(`${SUPABASE_URL}rest/v1/bab?order=order_index`, {
+          fetch(`${SUPABASE_URL}rest/v1/bab?order=order_index&t=${cacheBuster}`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
           }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, {
+          fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index&t=${cacheBuster}`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
           })
         ]);
