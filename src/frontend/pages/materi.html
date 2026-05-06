@@ -69,12 +69,17 @@
   <!-- Breadcrumb -->
   <div class="bg-white border-b border-slate-100">
     <div class="max-w-3xl mx-auto px-4 md:px-6 py-3">
-      <div class="flex items-center gap-2 text-sm text-slate-500">
-        <a href="student.html" class="hover:text-primary-600">Dashboard</a>
-        <i class="fa-solid fa-chevron-right text-xs"></i>
-        <a href="fasal.html" class="hover:text-primary-600">Daftar Fasal</a>
-        <i class="fa-solid fa-chevron-right text-xs"></i>
-        <span id="breadcrumbFasal" class="text-slate-800 font-medium">Memuat...</span>
+      <div class="flex items-center gap-2 text-sm text-slate-500 flex-wrap">
+        <span class="flex items-center gap-1">
+          <i class="fa-solid fa-book text-primary-500"></i>
+          Kitab Mukhtarat
+        </span>
+        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+        <span id="breadcrumbBagian">Memuat...</span>
+        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+        <span id="breadcrumbBab">Memuat...</span>
+        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
+        <span id="breadcrumbFasal" class="text-primary-600 font-semibold">Memuat...</span>
       </div>
     </div>
   </div>
@@ -86,8 +91,11 @@
     <div id="fasalHeader" class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
       <div class="flex items-start justify-between mb-4">
         <div>
-          <span id="fasalNumber" class="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded font-semibold">1.1.1</span>
-          <h1 id="fasalTitle" class="text-xl md:text-2xl font-bold text-slate-800 mt-2">Memuat...</h1>
+          <div class="flex items-center gap-2 mb-2">
+            <span id="fasalNumber" class="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded font-semibold">1.1.1</span>
+            <span id="fasalType" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-semibold">Fasal</span>
+          </div>
+          <h1 id="fasalTitle" class="text-xl md:text-2xl font-bold text-slate-800">Memuat...</h1>
           <p id="fasalBab" class="text-sm text-slate-500 mt-1">Bab - Bagian</p>
         </div>
         <div id="fasalStatus" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">
@@ -204,19 +212,44 @@
 
         currentFasal = fasal;
 
-        // Update header
-        document.getElementById('breadcrumbFasal').textContent = fasal.title || 'Fasal';
-        document.getElementById('fasalTitle').textContent = fasal.title || 'Fasal';
-        document.getElementById('fasalNumber').textContent = `${fasal.order_index}`;
+        // Update breadcrumb with full hierarchy
+        // Kitab Mukhtarat > Bagian 1 > Bab 1 > Fasal 1
+        // or for Muqoddimah: Kitab Mukhtarat > Bagian 1 > Bab 1 > Muqoddimah
 
-        // Get bab and bagian info
+        let bagianLabel = 'Bagian';
+        let babLabel = 'Bab';
+        let fasalLabel = fasal.title || 'Fasal';
+
         if (fasal.bab) {
           const bab = fasal.bab;
-          let bagianLabel = 'Bagian';
           if (bab.bagian) {
-            bagianLabel = `${bab.bagian.order_index}. ${bab.bagian.title || bab.bagian.nama || 'Bagian'}`;
+            bagianLabel = `Bagian ${bab.bagian.order_index}`;
           }
-          document.getElementById('fasalBab').textContent = `${bab.order_index} ${bab.title || bab.nama} - ${bagianLabel}`;
+          babLabel = `Bab ${bab.order_index}`;
+        }
+
+        document.getElementById('breadcrumbBagian').textContent = bagianLabel;
+        document.getElementById('breadcrumbBab').textContent = babLabel;
+        document.getElementById('breadcrumbFasal').textContent = fasalLabel;
+
+        // Update header
+        document.getElementById('fasalTitle').textContent = fasalLabel;
+        document.getElementById('fasalNumber').textContent = `${fasal.order_index}`;
+
+        // Show Fasal or Muqoddimah type
+        const fasalType = document.getElementById('fasalType');
+        if (fasal.title && fasal.title.toLowerCase().includes('muqoddimah')) {
+          fasalType.textContent = 'Muqoddimah';
+          fasalType.className = 'text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded font-semibold';
+        } else {
+          fasalType.textContent = 'Fasal';
+          fasalType.className = 'text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-semibold';
+        }
+
+        // Update sub header
+        if (fasal.bab) {
+          const bab = fasal.bab;
+          document.getElementById('fasalBab').textContent = `${bab.order_index} ${bab.title || bab.nama}`;
         }
 
         // Load content

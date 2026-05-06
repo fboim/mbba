@@ -156,16 +156,21 @@
           (bagian.bab || []).forEach(bab => {
             allBabs.push({
               id: bab.id,
-              label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`
+              label: `Bagian ${bagian.order_index} > Bab ${bab.order_index}`,
+              fullLabel: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`
             });
             (bab.fasal || []).forEach(fasal => {
               allFasals.push({
                 id: fasal.id,
-                label: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`,
+                // Full hierarchy: Bagian 1 > Bab 1 > Fasal 1
+                label: `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${fasal.title || fasal.nama || 'Fasal ' + fasal.order_index}`,
+                shortLabel: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`,
                 bab_id: bab.id,
-                bab_label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`
+                bab_label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
+                bagian_id: bagian.id,
+                bagian_label: `Bagian ${bagian.order_index}`
               });
-              fasalMap[fasal.id] = `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`;
+              fasalMap[fasal.id] = `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${fasal.title || 'Fasal ' + fasal.order_index}`;
             });
           });
         });
@@ -288,7 +293,7 @@
         html += `
           <div class="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200 hover:border-primary-300 hover:shadow-sm transition">
             <div class="flex-1">
-              <div class="font-medium text-slate-800">${fasal.label}</div>
+              <div class="font-medium text-slate-800">${fasal.shortLabel || fasal.label}</div>
               <div class="text-sm text-slate-500">${fasal.bab_label}</div>
             </div>
             <div class="flex items-center gap-2">
