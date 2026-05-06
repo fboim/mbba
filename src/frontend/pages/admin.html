@@ -729,46 +729,63 @@
     // ═══════════════════════════════════════
     // EDIT CONTENT (MATERI)
     // ═══════════════════════════════════════
-    function editContent(type, id) {
-      // Get current data from the displayed list
+    async function editContent(type, id) {
       const tables = { bab: 'bab', fasal: 'fasal' };
       if (type === 'bagian') {
         alert('Bagian tidak memiliki konten materi.');
         return;
       }
 
-      const contentArab = prompt('Materi Arab (opsional):\n\nKosongkan jika tidak diubah.');
-      if (contentArab === null) return;
+      // Fetch current data first
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+        const data = await res.json();
+        const current = data[0];
 
-      const contentId = prompt('Terjemahan Indonesia (opsional):\n\nKosongkan jika tidak diubah.');
-      if (contentId === null) return;
+        const currentArab = current.content_arab || '';
+        const currentId = current.content_id || '';
 
-      // Build update object (only non-empty values)
-      const updates = {};
-      if (contentArab !== '') updates.content_arab = contentArab;
-      if (contentId !== '') updates.content_id = contentId;
+        const contentArab = prompt('Materi Arab:\n(Kosongkan jika tidak diubah)', currentArab);
+        if (contentArab === null) return;
 
-      if (Object.keys(updates).length === 0) {
-        alert('Tidak ada perubahan.');
-        return;
-      }
+        const contentId = prompt('Terjemahan Indonesia:\n(Kosongkan jika tidak diubah)', currentId);
+        if (contentId === null) return;
 
-      fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${getToken()}`
-        },
-        body: JSON.stringify(updates)
-      }).then(res => {
-        if (res.ok) {
+        // Build update object (only changed values)
+        const updates = {};
+        if (contentArab !== currentArab) updates.content_arab = contentArab;
+        if (contentId !== currentId) updates.content_id = contentId;
+
+        if (Object.keys(updates).length === 0) {
+          alert('Tidak ada perubahan.');
+          return;
+        }
+
+        const updateRes = await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify(updates)
+        });
+
+        if (updateRes.ok) {
           alert('Konten berhasil diupdate!');
           location.reload();
         } else {
-          res.json().then(err => alert('Gagal: ' + (err.message || 'Unknown error')));
+          const err = await updateRes.json();
+          alert('Gagal: ' + (err.message || 'Unknown error'));
         }
-      });
+      } catch (err) {
+        alert('Gagal mengambil data: ' + err.message);
+      }
     }
 
     async function deleteMateri(type, id) {
