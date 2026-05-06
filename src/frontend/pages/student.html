@@ -167,11 +167,19 @@
         allFasals = [];
         allBabs = [];
 
-        // Debug: log kurikulum
+        // Debug
         console.log('Kurikulum loaded:', kurikulum);
 
         if (!kurikulum || kurikulum.length === 0) {
-          document.getElementById('fasalList').innerHTML = '<p class="text-slate-400 text-center py-8">Tidak ada data materi. Hubungi admin.</p>';
+          document.getElementById('fasalList').innerHTML = `
+            <div class="text-center py-8">
+              <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-4"></i>
+              <p class="text-slate-500 mb-2">Tidak ada data materi</p>
+              <p class="text-xs text-slate-400">Hubungi admin untuk menambahkan materi</p>
+            </div>
+          `;
+          updateStats();
+          renderRecentActivity();
           return;
         }
 
@@ -222,6 +230,13 @@
         renderRecentActivity();
       } catch (err) {
         console.error('Error loading dashboard:', err);
+        document.getElementById('fasalList').innerHTML = `
+          <div class="text-center py-8">
+            <i class="fa-solid fa-exclamation-triangle text-4xl text-red-300 mb-4"></i>
+            <p class="text-red-500 mb-2">Gagal memuat data</p>
+            <p class="text-xs text-slate-400">${err.message || 'Unknown error'}</p>
+          </div>
+        `;
       }
     }
 
