@@ -1482,8 +1482,6 @@
       const title = document.getElementById('contentModalTitle');
       const arabInput = document.getElementById('contentArabInput');
       const idInput = document.getElementById('contentIdInput');
-      const notesInput = document.getElementById('contentNotesInput');
-      const previewDiv = document.getElementById('contentPreview');
 
       title.textContent = 'Edit Konten ' + (type === 'bab' ? 'Bab' : 'Fasal');
 
@@ -1497,9 +1495,13 @@
       }).then(res => res.json()).then(data => {
         const current = data[0];
         arabInput.value = current.content_arab || '';
-        idInput.value = current.content_id || '';
-        notesInput.value = current.notes || '';
-        updatePreview();
+        // For fasal, use content_translation; for bab, use content_id
+        if (type === 'fasal') {
+          idInput.value = current.content_translation || '';
+        } else {
+          idInput.value = current.content_id || '';
+        }
+        switchContentTab('arab');
       });
 
       modal.classList.remove('hidden');
@@ -1542,10 +1544,19 @@
       if (!type || !id) return;
 
       const tables = { bab: 'bab', fasal: 'fasal' };
-      const updates = {
-        content_arab: document.getElementById('contentArabInput').value,
-        content_id: document.getElementById('contentIdInput').value
-      };
+      const updates = {};
+
+      // Get values based on type
+      const arabVal = document.getElementById('contentArabInput').value;
+      const idVal = document.getElementById('contentIdInput').value;
+
+      if (type === 'fasal') {
+        updates.content_arab = arabVal;
+        updates.content_translation = idVal;
+      } else {
+        updates.content_arab = arabVal;
+        updates.content_id = idVal; // untuk bab (kalau ada)
+      }
 
       fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
         method: 'PATCH',
