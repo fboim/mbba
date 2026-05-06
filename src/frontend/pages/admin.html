@@ -47,10 +47,14 @@
   <main class="max-w-6xl mx-auto px-6 py-8">
 
     <!-- Navigation Tabs -->
-    <div class="flex gap-2 mb-6">
+    <div class="flex gap-2 mb-6 flex-wrap">
       <button onclick="showTab('stats')" id="tabStats"
-        class="px-4 py-2 bg-primary-600 text-white font-semibold rounded-lg">
+        class="px-4 py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200">
         <i class="fa-solid fa-chart-bar mr-2"></i>Stats
+      </button>
+      <button onclick="showTab('materi')" id="tabMateri"
+        class="px-4 py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200">
+        <i class="fa-solid fa-book mr-2"></i>Kelola Materi
       </button>
       <button onclick="showTab('quiz')" id="tabQuiz"
         class="px-4 py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200">
@@ -98,6 +102,73 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Materi Management Section -->
+    <div id="sectionMateri" class="hidden space-y-6">
+
+      <!-- Add New Materi -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">
+          <i class="fa-solid fa-plus text-green-500 mr-2"></i>Tambah Materi Baru
+        </h2>
+
+        <!-- Select type -->
+        <div class="grid grid-cols-3 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Tipe</label>
+            <select id="newMateriType" onchange="updateMateriForm()"
+              class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+              <option value="bagian">Bagian</option>
+              <option value="bab">Bab</option>
+              <option value="fasal">Fasal</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Form fields -->
+        <div class="space-y-3">
+          <div id="bagianFields">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Bagian</label>
+            <input type="text" id="newBagianNama" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
+              placeholder="Contoh: Al-Qawa'id al-Muta'alliqah bi al-Jumlah">
+          </div>
+
+          <div id="babFields" class="hidden">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Bab</label>
+            <input type="text" id="newBabNama" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
+              placeholder="Contoh: Muqoddimah">
+            <label class="block text-sm font-medium text-slate-700 mb-1 mt-2">Bagian Induk</label>
+            <select id="newBabBagian" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+              <option value="">Pilih Bagian...</option>
+            </select>
+          </div>
+
+          <div id="fasalFields" class="hidden">
+            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Fasal</label>
+            <input type="text" id="newFasalNama" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
+              placeholder="Contoh: Isim (Benda)">
+            <label class="block text-sm font-medium text-slate-700 mb-1 mt-2">Bab Induk</label>
+            <select id="newFasalBab" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+              <option value="">Pilih Bab...</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="addMateriError" class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+        <button onclick="addNewMateri()"
+          class="mt-4 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition">
+          <i class="fa-solid fa-plus mr-2"></i>Tambah
+        </button>
+      </div>
+
+      <!-- Materi List -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">
+          <i class="fa-solid fa-list text-blue-500 mr-2"></i>Daftar Materi
+        </h2>
+        <div id="materiList" class="text-slate-500">Loading...</div>
       </div>
     </div>
 
@@ -225,26 +296,32 @@
     // TAB SWITCHING
     // ═══════════════════════════════════════
     function showTab(tab) {
-      const sectionStats = document.getElementById('sectionStats');
-      const sectionQuiz = document.getElementById('sectionQuiz');
-      const tabStats = document.getElementById('tabStats');
-      const tabQuiz = document.getElementById('tabQuiz');
+      // Hide all sections
+      document.getElementById('sectionStats').classList.add('hidden');
+      document.getElementById('sectionMateri').classList.add('hidden');
+      document.getElementById('sectionQuiz').classList.add('hidden');
 
-      if (tab === 'stats') {
-        sectionStats.classList.remove('hidden');
-        sectionQuiz.classList.add('hidden');
-        tabStats.classList.add('bg-primary-600', 'text-white');
-        tabStats.classList.remove('bg-slate-100', 'text-slate-600');
-        tabQuiz.classList.remove('bg-primary-600', 'text-white');
-        tabQuiz.classList.add('bg-slate-100', 'text-slate-600');
-      } else {
-        sectionStats.classList.add('hidden');
-        sectionQuiz.classList.remove('hidden');
-        tabQuiz.classList.add('bg-primary-600', 'text-white');
-        tabQuiz.classList.remove('bg-slate-100', 'text-slate-600');
-        tabStats.classList.remove('bg-primary-600', 'text-white');
-        tabStats.classList.add('bg-slate-100', 'text-slate-600');
-      }
+      // Reset all tabs
+      ['tabStats', 'tabMateri', 'tabQuiz'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('bg-primary-600', 'text-white');
+        el.classList.add('bg-slate-100', 'text-slate-600');
+      });
+
+      // Show selected section and highlight tab
+      const sections = {
+        stats: 'sectionStats',
+        materi: 'sectionMateri',
+        quiz: 'sectionQuiz'
+      };
+
+      document.getElementById(sections[tab]).classList.remove('hidden');
+      const activeTab = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      activeTab.classList.add('bg-primary-600', 'text-white');
+      activeTab.classList.remove('bg-slate-100', 'text-slate-600');
+
+      // Load data for the section
+      if (tab === 'materi') loadMateri();
     }
 
     // ═══════════════════════════════════════
@@ -342,6 +419,284 @@
         `;
       } catch (err) {
         container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // MATERI MANAGEMENT
+    // ═══════════════════════════════════════
+    let allBagians = [];
+    let allBabs = [];
+
+    function updateMateriForm() {
+      const type = document.getElementById('newMateriType').value;
+      document.getElementById('bagianFields').classList.add('hidden');
+      document.getElementById('babFields').classList.add('hidden');
+      document.getElementById('fasalFields').classList.add('hidden');
+
+      if (type === 'bagian') {
+        document.getElementById('bagianFields').classList.remove('hidden');
+      } else if (type === 'bab') {
+        document.getElementById('babFields').classList.remove('hidden');
+        loadBagiansForDropdown();
+      } else if (type === 'fasal') {
+        document.getElementById('fasalFields').classList.remove('hidden');
+        loadBabsForDropdown();
+      }
+    }
+
+    async function loadBagiansForDropdown() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/bagian?order=order_index`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+        });
+        allBagians = await res.json();
+
+        const select = document.getElementById('newBabBagian');
+        select.innerHTML = '<option value="">Pilih Bagian...</option>' +
+          allBagians.map(b => `<option value="${b.id}">${b.order_index}. ${b.nama}</option>`).join('');
+      } catch (err) {
+        console.error('Gagal load bagians:', err);
+      }
+    }
+
+    async function loadBabsForDropdown() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/bab?order=order_index`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+        });
+        allBabs = await res.json();
+
+        const select = document.getElementById('newFasalBab');
+        select.innerHTML = '<option value="">Pilih Bab...</option>' +
+          allBabs.map(b => `<option value="${b.id}">${b.order_index}. ${b.nama}</option>`).join('');
+      } catch (err) {
+        console.error('Gagal load babs:', err);
+      }
+    }
+
+    async function loadMateri() {
+      const container = document.getElementById('materiList');
+
+      try {
+        const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/bagian?order=order_index`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+          }),
+          fetch(`${SUPABASE_URL}rest/v1/bab?order=order_index`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+          }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+          })
+        ]);
+
+        const bagians = await bagiansRes.json();
+        const babs = await babsRes.json();
+        const fasals = await fasalsRes.json();
+
+        let html = '';
+        bagians.forEach(bagian => {
+          const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
+          html += `
+            <div class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div class="flex justify-between items-center">
+                <div>
+                  <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded mr-2">BAGIAN</span>
+                  <span class="font-semibold">${bagian.order_index}. ${bagian.nama}</span>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="editMateri('bagian', '${bagian.id}', '${bagian.nama}')" class="text-blue-600 hover:text-blue-800">
+                    <i class="fa-solid fa-edit"></i>
+                  </button>
+                  <button onclick="deleteMateri('bagian', '${bagian.id}')" class="text-red-600 hover:text-red-800">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="ml-6 mt-2 space-y-2">
+          `;
+
+          bagianBabs.forEach(bab => {
+            const babFasals = fasals.filter(f => f.bab_id === bab.id);
+            html += `
+              <div class="p-3 bg-white rounded border border-slate-200">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded mr-2">BAB</span>
+                    <span class="font-medium">${bab.order_index}. ${bab.nama}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <button onclick="editMateri('bab', '${bab.id}', '${bab.nama}')" class="text-blue-600 hover:text-blue-800">
+                      <i class="fa-solid fa-edit"></i>
+                    </button>
+                    <button onclick="deleteMateri('bab', '${bab.id}')" class="text-red-600 hover:text-red-800">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="ml-6 mt-2 space-y-1">
+            `;
+
+            babFasals.forEach(fasal => {
+              html += `
+                <div class="flex justify-between items-center p-2 bg-slate-50 rounded">
+                  <div>
+                    <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded mr-2">FASAL</span>
+                    <span>${fasal.order_index}. ${fasal.nama}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <button onclick="editMateri('fasal', '${fasal.id}', '${fasal.nama}')" class="text-blue-600 hover:text-blue-800">
+                      <i class="fa-solid fa-edit"></i>
+                    </button>
+                    <button onclick="deleteMateri('fasal', '${fasal.id}')" class="text-red-600 hover:text-red-800">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              `;
+            });
+
+            html += `
+                </div>
+              </div>
+            `;
+          });
+
+          html += `
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html || '<p class="text-slate-400 text-center py-8">Belum ada materi</p>';
+      } catch (err) {
+        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+      }
+    }
+
+    async function addNewMateri() {
+      const type = document.getElementById('newMateriType').value;
+      const errorEl = document.getElementById('addMateriError');
+      errorEl.classList.add('hidden');
+
+      try {
+        let body = {};
+
+        if (type === 'bagian') {
+          const nama = document.getElementById('newBagianNama').value.trim();
+          if (!nama) { errorEl.textContent = 'Nama bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
+
+          const res = await fetch(`${SUPABASE_URL}rest/v1/bagian`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${getToken()}`,
+              'Prefer': 'return=representation'
+            },
+            body: JSON.stringify({ nama, order_index: allBagians.length + 1 })
+          });
+
+          if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
+
+          document.getElementById('newBagianNama').value = '';
+          document.getElementById('newMateriType').value = 'bagian';
+          updateMateriForm();
+
+        } else if (type === 'bab') {
+          const nama = document.getElementById('newBabNama').value.trim();
+          const bagianId = document.getElementById('newBabBagian').value;
+          if (!nama || !bagianId) { errorEl.textContent = 'Nama bab dan bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
+
+          const existingBabs = allBabs.filter(b => b.bagian_id === bagianId);
+          const res = await fetch(`${SUPABASE_URL}rest/v1/bab`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${getToken()}`,
+              'Prefer': 'return=representation'
+            },
+            body: JSON.stringify({ nama, bagian_id: bagianId, order_index: existingBabs.length + 1 })
+          });
+
+          if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
+
+          document.getElementById('newBabNama').value = '';
+          document.getElementById('newBabBagian').value = '';
+
+        } else if (type === 'fasal') {
+          const nama = document.getElementById('newFasalNama').value.trim();
+          const babId = document.getElementById('newFasalBab').value;
+          if (!nama || !babId) { errorEl.textContent = 'Nama fasal dan bab diperlukan'; errorEl.classList.remove('hidden'); return; }
+
+          const res = await fetch(`${SUPABASE_URL}rest/v1/fasal`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${getToken()}`,
+              'Prefer': 'return=representation'
+            },
+            body: JSON.stringify({ nama, bab_id: babId, order_index: 1 })
+          });
+
+          if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
+
+          document.getElementById('newFasalNama').value = '';
+          document.getElementById('newFasalBab').value = '';
+        }
+
+        alert('Materi berhasil ditambahkan!');
+        loadMateri();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function editMateri(type, id, nama) {
+      const newNama = prompt(`Edit nama ${type}:`, nama);
+      if (!newNama || newNama === nama) return;
+
+      const tables = { bagian: 'bagian', bab: 'bab', fasal: 'fasal' };
+
+      fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({ nama: newNama })
+      }).then(res => {
+        if (res.ok) {
+          alert('Berhasil diupdate!');
+          loadMateri();
+        } else {
+          res.json().then(err => alert('Gagal: ' + err.message));
+        }
+      });
+    }
+
+    async function deleteMateri(type, id) {
+      if (!confirm(`Yakin ingin hapus ${type} ini?`)) return;
+
+      const tables = { bagian: 'bagian', bab: 'bab', fasal: 'fasal' };
+
+      try {
+        await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+        alert('Berhasil dihapus!');
+        loadMateri();
+      } catch (err) {
+        alert('Gagal: ' + err.message);
       }
     }
 
