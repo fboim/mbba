@@ -642,9 +642,9 @@
         }
         progressMap[currentFasalId].status = 'completed';
         progressMap[currentFasalId].quiz_score = score;
-        // Simpan ke Supabase (silent fail kalau belum login)
-        saveProgress(currentFasalId, score, (progressMap[currentFasalId].quiz_attempts || 1), 'completed')
-          .catch(err => console.warn('Gagal simpan progress:', err.message));
+        // Simpan ke Supabase
+        const saveResult = await saveProgress(currentFasalId, score, (progressMap[currentFasalId].quiz_attempts || 1), 'completed');
+        console.log('saveProgress result:', saveResult);
         unlockNextFasal();
       } else {
         resultDiv.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
