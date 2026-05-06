@@ -288,36 +288,80 @@
         return;
       }
 
+      // Sort fasals by order (bagian, bab, fasal)
+      const sortedFasals = [...allFasals].sort((a, b) => {
+        const aParts = a.label.split('>')[0].trim().replace('Bagian ', '').split('.');
+        const bParts = b.label.split('>')[0].trim().replace('Bagian ', '').split('.');
+        const aNum = parseInt(aParts[0]) * 100 + parseInt(aParts[1] || 0);
+        const bNum = parseInt(bParts[0]) * 100 + parseInt(bParts[1] || 0);
+        return aNum - bNum;
+      });
+
+      // Find which fasal is the next unlocked one
+      const completedIds = userProgress.filter(p => p.status === 'completed').map(p => p.fasal_id);
+      let nextUnlockIndex = 0;
+
+      for (let i = 0; i < sortedFasals.length; i++) {
+        if (!completedIds.includes(sortedFasals[i].id)) {
+          nextUnlockIndex = i;
+          break;
+        }
+        if (i === sortedFasals.length - 1) {
+          // All completed
+          nextUnlockIndex = sortedFasals.length;
+        }
+      }
+
       let html = '';
-      allFasals.forEach(fasal => {
+      sortedFasals.forEach((fasal, index) => {
         const progress = userProgress.find(p => p.fasal_id === fasal.id);
-        const status = progress?.status || 'locked';
         const score = progress?.quiz_score || null;
 
+        // Sequential unlock: only index 0 or next in sequence is unlocked
+        let isUnlocked = index <= nextUnlockIndex;
         let statusClass = 'bg-slate-100 text-slate-500';
-        let statusText = 'Belum Dimulai';
+        let statusText = 'Terkunci';
+        let btnClass = 'bg-slate-300 cursor-not-allowed opacity-60';
+        let btnIcon = 'fa-lock';
+        let btnText = 'Kunci';
 
-        if (status === 'completed') {
+        if (progress?.status === 'completed') {
           statusClass = 'bg-green-100 text-green-700';
           statusText = `Lulus (${score}%)`;
-        } else if (status === 'unlocked') {
-          statusClass = 'bg-amber-100 text-amber-700';
-          statusText = 'Dikerjakan';
+          btnClass = 'bg-primary-600 hover:bg-primary-700';
+          btnIcon = 'fa-book-open';
+          btnText = 'Baca Lagi';
+        } else if (isUnlocked) {
+          statusClass = 'bg-blue-100 text-blue-700';
+          statusText = index === 0 ? 'Mulai' : 'Tersedia';
+          btnClass = 'bg-green-600 hover:bg-green-700';
+          btnIcon = 'fa-play';
+          btnText = index === 0 ? 'Mulai' : 'Kerjakan';
         }
 
         html += `
-          <div class="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200 hover:border-primary-300 hover:shadow-sm transition">
-            <div class="flex-1">
-              <div class="font-medium text-slate-800">${fasal.shortLabel || fasal.label}</div>
-              <div class="text-sm text-slate-500">${fasal.bab_label}</div>
+          <div class="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200 ${isUnlocked && progress?.status !== 'completed' ? 'border-blue-200' : ''} hover:shadow-sm transition">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center ${statusClass}">
+                ${progress?.status === 'completed' ? '<i class="fa-solid fa-check text-sm"></i>' : isUnlocked ? '<i class="fa-solid fa-play text-xs"></i>' : '<i class="fa-solid fa-lock text-xs"></i>'}
+              </div>
+              <div class="flex-1">
+                <div class="font-medium text-slate-800">${fasal.shortLabel || fasal.label}</div>
+                <div class="text-sm text-slate-500">${fasal.bab_label}</div>
+              </div>
             </div>
             <div class="flex items-center gap-2">
-              <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">${statusText}</span>
-              <a href="materi.html?id=${fasal.id}"
-                class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg transition shadow-sm">
-                <i class="fa-solid fa-book-open mr-1"></i>
-                ${status === 'completed' ? 'Baca Lagi' : status === 'unlocked' ? 'Lanjut' : 'Mulai'}
-              </a>
+              <span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass}">${statusText}</span>
+              ${isUnlocked ? `
+                <a href="materi.html?id=${fasal.id}"
+                  class="px-3 py-1.5 ${btnClass} text-white text-xs font-semibold rounded-lg transition shadow-sm">
+                  <i class="fa-solid ${btnIcon} mr-1"></i>${btnText}
+                </a>
+              ` : `
+                <span class="px-3 py-1.5 bg-slate-200 text-slate-400 text-xs font-semibold rounded-lg cursor-not-allowed">
+                  <i class="fa-solid fa-lock mr-1"></i>Kunci
+                </span>
+              `}
             </div>
           </div>
         `;
