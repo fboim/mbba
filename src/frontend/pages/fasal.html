@@ -213,7 +213,12 @@
           </div>
 
           <!-- Submit Button -->
-          <div id="quizActions" class="mt-5 flex justify-end">
+          <div id="quizActions" class="mt-5 flex justify-end gap-3">
+            <button id="cheatBtn" onclick="cheatAnswerAll()"
+              class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-lg transition text-sm"
+              title="Demo: jawab semua benar">
+              <i class="fa-solid fa-check-double text-sm"></i> Jawab Benar
+            </button>
             <button id="submitQuizBtn"
               class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
               <span>Submit & Lanjut</span>
@@ -550,6 +555,29 @@
     }
 
     // ═══════════════════════════════════════
+    // ═══════════════════════════════════════
+  // CHEAT — DEMO: auto answer all correctly
+  // ═══════════════════════════════════════
+  function cheatAnswerAll() {
+    currentSessionQuestions.forEach(q => {
+      selectedAnswers[q.id] = q.correct_answer;
+      if (q.type === 'mc') {
+        document.querySelectorAll(`[data-question-id="${q.id}"] .quiz-option`).forEach(opt => {
+          opt.classList.remove('bg-amber-50', 'border-amber-400');
+          if (opt.dataset.key === q.correct_answer) {
+            opt.classList.add('bg-green-50', 'border-green-400');
+          }
+        });
+      } else {
+        const input = document.querySelector(`[data-question-id="${q.id}"] input`);
+        if (input) { input.value = q.correct_answer; input.classList.add('border-green-400'); }
+      }
+    });
+    const warn = document.getElementById('quizWarning');
+    if (warn) warn.classList.add('hidden');
+    document.getElementById('submitQuizBtn').disabled = false;
+  }
+
     // SUBMIT QUIZ (MC + Fill Arab + Fill Latin)
     // ═══════════════════════════════════════
     document.getElementById('submitQuizBtn').addEventListener('click', () => {
