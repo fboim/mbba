@@ -1147,117 +1147,68 @@
         }).length;
 
         dashboardEl.innerHTML = `
-          <!-- Summary Cards -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-            <div class="bg-blue-600 rounded-lg p-3 text-center">
-              <div class="text-2xl font-bold text-white">${totalStudents}</div>
-              <div class="text-xs text-white/80">Total Siswa</div>
+          <!-- Summary Cards - Compact 2x2 Grid -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+            <div class="bg-blue-600 rounded p-2 text-center">
+              <div class="text-lg font-bold text-white">${totalStudents}</div>
+              <div class="text-xs text-white/80">Siswa</div>
             </div>
-            <div class="bg-green-600 rounded-lg p-3 text-center">
-              <div class="text-2xl font-bold text-white">${completedProgress}</div>
+            <div class="bg-green-600 rounded p-2 text-center">
+              <div class="text-lg font-bold text-white">${completedProgress}</div>
               <div class="text-xs text-white/80">Lulus</div>
             </div>
-            <div class="bg-amber-500 rounded-lg p-3 text-center">
-              <div class="text-2xl font-bold text-white">${recentActivity}</div>
-              <div class="text-xs text-white/80">Aktif 7 Hari</div>
+            <div class="bg-amber-500 rounded p-2 text-center">
+              <div class="text-lg font-bold text-white">${recentActivity}</div>
+              <div class="text-xs text-white/80">7 Hari</div>
             </div>
-            <div class="bg-purple-600 rounded-lg p-3 text-center">
-              <div class="text-2xl font-bold text-white">${avgScore}%</div>
-              <div class="text-xs text-white/80">Rata-rata Skor</div>
+            <div class="bg-purple-600 rounded p-2 text-center">
+              <div class="text-lg font-bold text-white">${avgScore}%</div>
+              <div class="text-xs text-white/80">Skor</div>
             </div>
           </div>
 
-          <!-- Detail Stats -->
-          <div class="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 class="font-bold text-gray-800 text-lg mb-4">Statistik Belajar Siswa</h3>
-
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div class="bg-blue-50 rounded-lg p-3 border border-blue-200 text-center">
-                <div class="text-3xl font-bold text-blue-700">${totalFasals}</div>
-                <div class="text-sm text-blue-600 font-medium">Total Fasal</div>
-              </div>
-              <div class="bg-green-50 rounded-lg p-3 border border-green-200 text-center">
-                <div class="text-3xl font-bold text-green-700">${totalQuizzes}</div>
-                <div class="text-sm text-green-600 font-medium">Total Soal</div>
-              </div>
-              <div class="bg-purple-50 rounded-lg p-3 border border-purple-200 text-center">
-                <div class="text-3xl font-bold text-purple-700">${totalProgress > 0 ? Math.round(totalQuizzes/totalFasals) : 0}</div>
-                <div class="text-sm text-purple-600 font-medium">Soal/Fasal</div>
-              </div>
-              <div class="bg-amber-50 rounded-lg p-3 border border-amber-200 text-center">
-                <div class="text-3xl font-bold text-amber-700">${completionRate}%</div>
-                <div class="text-sm text-amber-600 font-medium">Tingkat Kelulusan</div>
-              </div>
+          <!-- Quick Stats - Simple Row -->
+          <div class="flex flex-wrap gap-2 text-xs">
+            <div class="bg-white rounded p-2 border border-gray-200">
+              <span class="text-gray-500">Fasal:</span>
+              <span class="font-bold text-gray-800 ml-1">${totalFasals}</span>
             </div>
-
-            <!-- Progress Bars -->
-            <div class="space-y-4">
-              <div>
-                <div class="flex justify-between font-semibold text-sm mb-2">
-                  <span class="text-gray-700">Progress Siswa</span>
-                  <span class="text-gray-900">${totalProgress} dari ${totalStudents * totalFasals} aktivitas</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-6">
-                  <div class="bg-blue-600 h-6 rounded-full flex items-center justify-end pr-2">
-                    <span class="text-white text-xs font-bold">${totalProgress}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="flex gap-4">
-                <div class="flex-1">
-                  <div class="flex justify-between text-sm mb-1">
-                    <span class="text-gray-600">Lulus</span>
-                    <span class="font-bold text-green-700">${completedProgress}</span>
-                  </div>
-                  <div class="w-full bg-gray-200 rounded-full h-4">
-                    <div class="bg-green-600 h-4 rounded-full" style="width: ${totalProgress > 0 ? Math.round((completedProgress/totalProgress)*100) : 0}%"></div>
-                  </div>
-                </div>
-                <div class="flex-1">
-                  <div class="flex justify-between text-sm mb-1">
-                    <span class="text-gray-600">Dikerjakan</span>
-                    <span class="font-bold text-amber-700">${unlockedProgress}</span>
-                  </div>
-                  <div class="w-full bg-gray-200 rounded-full h-4">
-                    <div class="bg-amber-500 h-4 rounded-full" style="width: ${totalProgress > 0 ? Math.round((unlockedProgress/totalProgress)*100) : 0}%"></div>
-                  </div>
-                </div>
-              </div>
+            <div class="bg-white rounded p-2 border border-gray-200">
+              <span class="text-gray-500">Soal:</span>
+              <span class="font-bold text-gray-800 ml-1">${totalQuizzes}</span>
             </div>
-
-            <!-- Info Summary -->
-            <div class="mt-6 flex flex-wrap gap-3">
-              <div class="flex items-center gap-2 text-sm text-gray-700">
-                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                <span class="font-medium">Lulus: ${completedProgress}</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-700">
-                <span class="w-3 h-3 bg-amber-500 rounded-full"></span>
-                <span class="font-medium">Dikerjakan: ${unlockedProgress}</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-700">
-                <span class="w-3 h-3 bg-gray-300 rounded-full"></span>
-                <span class="font-medium">Belum: ${Math.max(0, (totalStudents * totalFasals) - totalProgress)}</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-700">
-                <span class="w-3 h-3 bg-purple-500 rounded-full"></span>
-                <span class="font-medium">Skor Tertinggi: ${avgScore}%</span>
-              </div>
+            <div class="bg-white rounded p-2 border border-gray-200">
+              <span class="text-gray-500">Selesai:</span>
+              <span class="font-bold text-green-600 ml-1">${completedProgress}/${totalProgress}</span>
             </div>
-
-            <!-- Quick Actions -->
-            <div class="mt-6 flex gap-3">
-              <button onclick="exportQuizzes()" class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition shadow">
-                <i class="fa-solid fa-download mr-2"></i>Export Quiz
-              </button>
-              <button onclick="showTab('siswa')" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow">
-                <i class="fa-solid fa-users mr-2"></i>Lihat Siswa
-              </button>
-              <button onclick="resetAllProgress()" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition shadow">
-                <i class="fa-solid fa-trash mr-2"></i>Reset Progress
-              </button>
+            <div class="bg-white rounded p-2 border border-gray-200">
+              <span class="text-gray-500">Kelulusan:</span>
+              <span class="font-bold text-amber-600 ml-1">${completionRate}%</span>
             </div>
+          </div>
+
+          <!-- Mini Progress Bar -->
+          <div class="mt-3">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-600">Progress Keseluruhan</span>
+              <span class="font-bold text-gray-800">${totalProgress}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: ${totalProgress > 0 ? Math.min(100, Math.round((totalProgress/(totalStudents*totalFasals))*100)) : 0}%"></div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-3 flex gap-2">
+            <button onclick="exportQuizzes()" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded">
+              <i class="fa-solid fa-download mr-1"></i>Export
+            </button>
+            <button onclick="showTab('siswa')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded">
+              <i class="fa-solid fa-users mr-1"></i>Siswa
+            </button>
+            <button onclick="resetAllProgress()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded">
+              <i class="fa-solid fa-trash mr-1"></i>Reset
+            </button>
           </div>
         `;
       } catch (err) {
