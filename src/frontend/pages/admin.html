@@ -549,16 +549,21 @@
 
           bagianBabs.forEach(bab => {
             const babFasals = fasals.filter(f => f.bab_id === bab.id);
+            const babPreview = bab.content_arab ? bab.content_arab.substring(0, 50) + '...' : '';
             html += `
               <div class="p-3 bg-white rounded border border-slate-200">
                 <div class="flex justify-between items-center">
                   <div>
                     <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded mr-2">BAB</span>
                     <span class="font-medium">${bab.order_index}. ${bab.title}</span>
+                    ${babPreview ? `<span class="text-xs text-slate-400 ml-2">${babPreview}</span>` : ''}
                   </div>
                   <div class="flex gap-2">
-                    <button onclick="editMateri('bab', '${bab.id}', '${bab.title}')" class="text-blue-600 hover:text-blue-800">
-                      <i class="fa-solid fa-edit"></i>
+                    <button onclick="editMateri('bab', '${bab.id}', '${bab.title}')" class="text-blue-600 hover:text-blue-800" title="Edit Nama">
+                      <i class="fa-solid fa-font"></i>
+                    </button>
+                    <button onclick="editContent('bab', '${bab.id}')" class="text-green-600 hover:text-green-800" title="Edit Konten">
+                      <i class="fa-solid fa-file-lines"></i>
                     </button>
                     <button onclick="deleteMateri('bab', '${bab.id}')" class="text-red-600 hover:text-red-800">
                       <i class="fa-solid fa-trash"></i>
@@ -569,15 +574,20 @@
             `;
 
             babFasals.forEach(fasal => {
+              const fasalPreview = fasal.content_arab ? fasal.content_arab.substring(0, 50) + '...' : '';
               html += `
                 <div class="flex justify-between items-center p-2 bg-slate-50 rounded">
-                  <div>
+                  <div class="flex-1">
                     <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded mr-2">FASAL</span>
                     <span>${fasal.order_index}. ${fasal.title}</span>
+                    ${fasalPreview ? `<span class="text-xs text-slate-400 ml-2">${fasalPreview}</span>` : ''}
                   </div>
                   <div class="flex gap-2">
-                    <button onclick="editMateri('fasal', '${fasal.id}', '${fasal.title}')" class="text-blue-600 hover:text-blue-800">
-                      <i class="fa-solid fa-edit"></i>
+                    <button onclick="editMateri('fasal', '${fasal.id}', '${fasal.title}')" class="text-blue-600 hover:text-blue-800" title="Edit Nama">
+                      <i class="fa-solid fa-font"></i>
+                    </button>
+                    <button onclick="editContent('fasal', '${fasal.id}')" class="text-green-600 hover:text-green-800" title="Edit Konten">
+                      <i class="fa-solid fa-file-lines"></i>
                     </button>
                     <button onclick="deleteMateri('fasal', '${fasal.id}')" class="text-red-600 hover:text-red-800">
                       <i class="fa-solid fa-trash"></i>
@@ -712,6 +722,51 @@
           location.reload();
         } else {
           res.json().then(err => alert('Gagal: ' + err.message));
+        }
+      });
+    }
+
+    // ═══════════════════════════════════════
+    // EDIT CONTENT (MATERI)
+    // ═══════════════════════════════════════
+    function editContent(type, id) {
+      // Get current data from the displayed list
+      const tables = { bab: 'bab', fasal: 'fasal' };
+      if (type === 'bagian') {
+        alert('Bagian tidak memiliki konten materi.');
+        return;
+      }
+
+      const contentArab = prompt('Materi Arab (opsional):\n\nKosongkan jika tidak diubah.');
+      if (contentArab === null) return;
+
+      const contentId = prompt('Terjemahan Indonesia (opsional):\n\nKosongkan jika tidak diubah.');
+      if (contentId === null) return;
+
+      // Build update object (only non-empty values)
+      const updates = {};
+      if (contentArab !== '') updates.content_arab = contentArab;
+      if (contentId !== '') updates.content_id = contentId;
+
+      if (Object.keys(updates).length === 0) {
+        alert('Tidak ada perubahan.');
+        return;
+      }
+
+      fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify(updates)
+      }).then(res => {
+        if (res.ok) {
+          alert('Konten berhasil diupdate!');
+          location.reload();
+        } else {
+          res.json().then(err => alert('Gagal: ' + (err.message || 'Unknown error')));
         }
       });
     }
