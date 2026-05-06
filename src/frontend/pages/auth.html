@@ -230,7 +230,7 @@
       try {
         const data = await login(email, password);
         // Redirect ke fasal.html setelah login berhasil
-        window.location.href = 'pages/fasal.html';
+        window.location.href = 'fasal.html';
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
@@ -258,7 +258,7 @@
         await register(email, password, fullName);
         // Langsung login setelah registrasi
         const data = await login(email, password);
-        window.location.href = 'pages/fasal.html';
+        window.location.href = 'fasal.html';
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
@@ -273,7 +273,7 @@
     (async function() {
       const user = await getCurrentUser();
       if (user) {
-        window.location.href = 'pages/fasal.html';
+        window.location.href = 'fasal.html';
       }
     })();
   </script>
