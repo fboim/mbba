@@ -1508,15 +1508,24 @@
     }
 
     function switchContentTab(tab) {
+      // Hide all panels
       document.getElementById('panelArab').classList.add('hidden');
       document.getElementById('panelTrans').classList.add('hidden');
       document.getElementById('panelPreview').classList.add('hidden');
+
+      // Reset tab styles
       document.getElementById('tabArab').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
       document.getElementById('tabTrans').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
       document.getElementById('tabPreview').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
 
+      // Show selected panel and highlight tab
       document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
       document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-primary-600 text-primary-600';
+
+      // Update preview content when showing preview tab
+      if (tab === 'preview') {
+        updatePreview();
+      }
     }
 
     function updatePreview() {
@@ -1526,12 +1535,12 @@
 
       let html = '';
       if (arabInput.value) {
-        html += `<div class="p-3 bg-slate-100 rounded text-right font-arabic text-lg" dir="rtl" lang="ar">${arabInput.value}</div>`;
+        html += `<div class="mb-3"><span class="text-xs text-slate-400 block mb-1">Arab:</span><div class="p-3 bg-slate-100 rounded text-right font-arabic text-lg" dir="rtl" lang="ar">${arabInput.value}</div></div>`;
       }
       if (idInput.value) {
-        html += `<div class="p-3 bg-slate-100 rounded mt-2">${idInput.value}</div>`;
+        html += `<div><span class="text-xs text-slate-400 block mb-1">Indonesia:</span><div class="p-3 bg-slate-100 rounded">${idInput.value}</div></div>`;
       }
-      previewDiv.innerHTML = html || '<p class="text-slate-400 text-center py-8">Preview akan muncul di sini...</p>';
+      previewDiv.innerHTML = html || '<p class="text-slate-400 text-center py-4">Ketik materi di atas untuk melihat preview</p>';
     }
 
     function saveContent() {
@@ -1589,7 +1598,7 @@
           <label class="text-xs font-medium text-slate-500">Materi Arab</label>
           <textarea id="contentArabInput" rows="6"
             class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 font-arabic text-lg"
-            dir="rtl" lang="ar" placeholder="Ketik materi Arab..."></textarea>
+            dir="rtl" lang="ar" oninput="updatePreview()" placeholder="Ketik materi Arab..."></textarea>
         </div>
 
         <!-- Translation Tab -->
@@ -1597,7 +1606,7 @@
           <label class="text-xs font-medium text-slate-500">Terjemahan Indonesia</label>
           <textarea id="contentIdInput" rows="6"
             class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500"
-            placeholder="Ketik terjemahan..."></textarea>
+            oninput="updatePreview()" placeholder="Ketik terjemahan..."></textarea>
         </div>
 
         <!-- Preview Tab -->
