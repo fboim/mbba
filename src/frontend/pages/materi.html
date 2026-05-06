@@ -60,9 +60,14 @@
           <span class="font-bold text-slate-800">MBBA</span>
         </div>
       </div>
-      <button onclick="handleLogout()" class="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500" title="Logout">
-        <i class="fa-solid fa-right-from-bracket text-sm"></i>
-      </button>
+      <div class="flex items-center gap-2">
+        <a id="adminLinkMateri" href="admin.html" class="p-2 rounded-lg hover:bg-amber-50 text-amber-500 hidden" title="Admin Panel">
+          <i class="fa-solid fa-gear text-sm"></i>
+        </a>
+        <button onclick="handleLogout()" class="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500" title="Logout">
+          <i class="fa-solid fa-right-from-bracket text-sm"></i>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -195,6 +200,12 @@
       if (!user) {
         window.location.href = 'auth.html';
         return;
+      }
+
+      // Show admin link if admin/teacher
+      const role = user.user_metadata?.role || 'student';
+      if (role === 'admin' || role === 'teacher') {
+        document.getElementById('adminLinkMateri').classList.remove('hidden');
       }
 
       await loadFasal();
