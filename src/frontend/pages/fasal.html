@@ -95,10 +95,16 @@
         <span class="font-bold text-slate-800 tracking-wide">MBBA</span>
       </div>
 
-      <!-- Progress indicator -->
-      <div class="flex items-center gap-2 text-sm text-slate-500">
-        <i class="fa-solid fa-graduation-cap text-primary-600"></i>
-        <span id="progressText">Bagian 1 — Bab 1</span>
+      <!-- Right side: progress + logout -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 text-sm text-slate-500">
+          <i class="fa-solid fa-graduation-cap text-primary-600"></i>
+          <span id="progressText">Bagian 1 — Bab 1</span>
+        </div>
+        <button onclick="handleLogout()" title="Keluar"
+          class="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition">
+          <i class="fa-solid fa-right-from-bracket text-sm"></i>
+        </button>
       </div>
     </div>
   </header>
@@ -736,6 +742,15 @@
     });
 
     // ═══════════════════════════════════════
+    // ═══════════════════════════════════════
+  // LOGOUT
+  // ═══════════════════════════════════════
+  function handleLogout() {
+    if (!confirm('Yakin ingin keluar?')) return;
+    logout();
+    window.location.href = '../pages/auth.html';
+  }
+
     // INIT — async bootstrap
     // ═══════════════════════════════════════
     async function init() {
