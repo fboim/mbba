@@ -77,12 +77,16 @@
         <span class="font-bold text-slate-800 tracking-wide">MBBA</span>
       </div>
 
-      <!-- Right side: progress + logout -->
-      <div class="flex items-center gap-3">
+      <!-- Right side: progress + actions -->
+      <div class="flex items-center gap-2">
         <div class="flex items-center gap-2 text-sm text-slate-500">
           <i class="fa-solid fa-graduation-cap text-primary-600"></i>
           <span id="progressText">Bagian 1 — Bab 1</span>
         </div>
+        <button id="adminLink" onclick="window.location.href='admin.html'" title="Admin Panel"
+          class="hidden p-2 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition">
+          <i class="fa-solid fa-gear text-sm"></i>
+        </button>
         <button onclick="handleLogout()" title="Keluar"
           class="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition">
           <i class="fa-solid fa-right-from-bracket text-sm"></i>
@@ -768,9 +772,31 @@
         if (cheatBtn) cheatBtn.classList.remove('hidden');
       }
 
+      // Show admin link only for admin/teacher (check stored role first, then refresh from API)
+      const storedRole = localStorage.getItem('sb_user_role');
+      if (storedRole === 'admin' || storedRole === 'teacher') {
+        const adminLink = document.getElementById('adminLink');
+        if (adminLink) adminLink.classList.remove('hidden');
+      }
+
     // INIT — async bootstrap
     // ═══════════════════════════════════════
     async function init() {
+      // Fetch current user and set role for next time
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          const role = user.user_metadata?.role || user.role || 'student';
+          setUserRole(user);
+          if (role === 'admin' || role === 'teacher') {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) adminLink.classList.remove('hidden');
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to get user role:', err);
+      }
+
       try {
         // Fetch kurikulum from API
         kurikulumData = await fetchKurikulum();
