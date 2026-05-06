@@ -1,41 +1,42 @@
 /**
- * quiz.js — Modular Quiz Logic v2
+ * quiz.js — Modular Quiz Logic v3
  *
- * Perubahan dari v1:
- * - Random 10 soal dari bank 30-50 soal
+ * Perubahan dari v2:
+ * - Jumlah soal bisa dikonfigurasi per fasal (quiz_count)
  * - 3 tipe soal: mc / fill-arab / fill-latin
  * - Scoring 100% threshold
  *
  * Passing threshold : 100%
  * Max retry        : unlimited (acak ulang setiap kali)
- * Teacher override : via Supabase Dashboard
  */
 
 const PASSING_THRESHOLD = 100;
-const QUESTIONS_PER_SESSION = 10;
+const DEFAULT_QUESTIONS = 10;
 
 /**
  * Ambil N soal secara random dari bank
  * @param {Array}  bank    — semua soal dari Supabase/API
- * @param {number} n       — jumlah soal yang diambil (default: QUESTIONS_PER_SESSION)
+ * @param {number} count   — jumlah soal yang diambil (default: DEFAULT_QUESTIONS)
  * @returns {Array}        — array soal yang sudah diacak
  */
-function shuffleQuiz(bank, n = QUESTIONS_PER_SESSION) {
+function shuffleQuiz(bank, count = DEFAULT_QUESTIONS) {
   const shuffled = [...bank].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(n, bank.length));
+  return shuffled.slice(0, Math.min(count, bank.length));
 }
 
 /**
  * Initialize quiz — ambil soal acak + render
  * @param {Array}  bank      — array semua soal dari bank
  * @param {string} fasalId   — ID fasal aktif
+ * @param {number} count     — jumlah soal (default dari fasal.quiz_count atau 10)
  * @param {Object} callbacks — { onPass(score, answers), onFail(score, answers) }
  */
-function initQuiz(bank, fasalId, callbacks = {}) {
-  const questions = shuffleQuiz(bank);
+function initQuiz(bank, fasalId, count = DEFAULT_QUESTIONS, callbacks = {}) {
+  const questions = shuffleQuiz(bank, count);
   window._quizState = {
     questions,
     fasalId,
+    count,
     selectedAnswers: {},
     submitted: false,
     callbacks

@@ -443,9 +443,19 @@
         options: typeof q.options === 'string' ? JSON.parse(q.options || '[]') : (q.options || []),
       }));
 
-      // Use shuffleQuiz from quiz.js (exposes 10 random questions)
-      currentSessionQuestions = shuffleQuiz(quizBank);
+      // Get quiz count from fasal config (default 10 if not set)
+      const quizCount = found.quiz_count || 10;
+      const actualCount = Math.min(quizCount, quizBank.length);
+
+      // Use shuffleQuiz from quiz.js with configurable count
+      currentSessionQuestions = shuffleQuiz(quizBank, actualCount);
       renderQuiz(currentSessionQuestions);
+
+      // Show quiz count info
+      const quizInfo = document.getElementById('quizInfo');
+      if (quizInfo) {
+        quizInfo.textContent = `${actualCount} soal dari ${quizBank.length} bank soal`;
+      }
 
       // Show done button if fasal is unlocked but no quiz
       document.getElementById('doneSection').classList.add('hidden');
