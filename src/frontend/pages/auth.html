@@ -69,6 +69,10 @@
           class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition bg-white text-slate-800 shadow-sm">
           Masuk
         </button>
+        <button id="tabMagicLink" onclick="switchTab('magiclink')"
+          class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition text-slate-500">
+          Link Masuk
+        </button>
         <button id="tabRegister" onclick="switchTab('register')"
           class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition text-slate-500">
           Daftar
@@ -158,6 +162,37 @@
         </button>
       </form>
 
+      <!-- Magic Link Form -->
+      <form id="formMagicLink" onsubmit="handleMagicLink(event)" class="hidden">
+        <div class="space-y-4">
+          <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl mb-4">
+            <p class="text-sm text-blue-700">
+              <i class="fa-solid fa-paper-plane mr-1"></i>
+              Kami akan mengirim link masuk ke email Anda. Klik link tersebut untuk login tanpa password.
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+            <div class="relative">
+              <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="email" id="magicEmail" required
+                class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                placeholder="nama@email.com">
+            </div>
+          </div>
+        </div>
+
+        <!-- Info/Error message -->
+        <div id="magicInfo" class="hidden mt-3 p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 text-sm"></div>
+        <div id="magicError" class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"></div>
+
+        <button type="submit" id="magicBtn"
+          class="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+          <span>Kirim Link Masuk</span>
+          <i class="fa-solid fa-paper-plane text-sm"></i>
+        </button>
+      </form>
+
       <p class="text-center text-sm text-slate-400 mt-6">
         Lupa password? Hubungi admin.
       </p>
@@ -172,8 +207,10 @@
     // ═══════════════════════════════════════
     function switchTab(tab) {
       const formLogin = document.getElementById('formLogin');
+      const formMagicLink = document.getElementById('formMagicLink');
       const formRegister = document.getElementById('formRegister');
       const tabLogin = document.getElementById('tabLogin');
+      const tabMagicLink = document.getElementById('tabMagicLink');
       const tabRegister = document.getElementById('tabRegister');
       const loginError = document.getElementById('loginError');
       const regError = document.getElementById('regError');
@@ -181,20 +218,29 @@
       loginError.classList.add('hidden');
       regError.classList.add('hidden');
 
+      // Hide all forms
+      formLogin.classList.add('hidden');
+      formMagicLink.classList.add('hidden');
+      formRegister.classList.add('hidden');
+
+      // Remove active state from all tabs
+      [tabLogin, tabMagicLink, tabRegister].forEach(t => {
+        t.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+        t.classList.add('text-slate-500');
+      });
+
       if (tab === 'login') {
         formLogin.classList.remove('hidden');
-        formRegister.classList.add('hidden');
         tabLogin.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
         tabLogin.classList.remove('text-slate-500');
-        tabRegister.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
-        tabRegister.classList.add('text-slate-500');
+      } else if (tab === 'magiclink') {
+        formMagicLink.classList.remove('hidden');
+        tabMagicLink.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+        tabMagicLink.classList.remove('text-slate-500');
       } else {
-        formLogin.classList.add('hidden');
         formRegister.classList.remove('hidden');
         tabRegister.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
         tabRegister.classList.remove('text-slate-500');
-        tabLogin.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
-        tabLogin.classList.add('text-slate-500');
       }
     }
 
@@ -268,9 +314,62 @@
     }
 
     // ═══════════════════════════════════════
+    // MAGIC LINK
+    // ═══════════════════════════════════════
+    async function handleMagicLink(e) {
+      e.preventDefault();
+      const email = document.getElementById('magicEmail').value;
+      const infoEl = document.getElementById('magicInfo');
+      const errorEl = document.getElementById('magicError');
+      const btn = document.getElementById('magicBtn');
+
+      errorEl.classList.add('hidden');
+      infoEl.classList.add('hidden');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i> <span>Memuat...</span>';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}auth/v1/magiclink`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify({
+            email,
+            options: {
+              redirectTo: `${window.location.origin}/pages/auth.html?magiclink=true`
+            }
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Gagal mengirim link');
+
+        infoEl.textContent = 'Link masuk sudah dikirim ke email Anda. Cek inbox atau folder spam.';
+        infoEl.classList.remove('hidden');
+        btn.classList.add('hidden');
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Kirim Link Masuk</span><i class="fa-solid fa-paper-plane text-sm"></i>';
+      }
+    }
+
+    // ═══════════════════════════════════════
     // AUTO LOGIN IF TOKEN EXISTS
     // ═══════════════════════════════════════
     (async function() {
+      // Check if returned from magic link
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('magiclink') === 'true') {
+        const infoEl = document.getElementById('magicInfo');
+        if (infoEl) {
+          infoEl.textContent = 'Login berhasil via magic link!';
+          infoEl.classList.remove('hidden');
+        }
+      }
+
       const user = await getCurrentUser();
       if (user) {
         window.location.href = 'fasal.html';
