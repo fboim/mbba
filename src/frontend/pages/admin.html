@@ -23,7 +23,7 @@
         <span class="px-1.5 py-0.5 md:px-2 md:py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded">DEMO</span>
       </div>
       <div class="flex items-center gap-2 md:gap-3">
-        <a href="fasal.html" class="text-xs md:text-sm text-slate-500 hover:text-slate-700">
+        <a href="student.html" class="text-xs md:text-sm text-slate-500 hover:text-slate-700">
           <i class="fa-solid fa-arrow-left mr-1"></i><span class="hidden sm:inline">Kembali</span>
         </a>
         <button onclick="handleLogout()" class="p-1.5 md:p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500">
@@ -333,7 +333,7 @@
 
       if (role !== 'admin' && role !== 'teacher') {
         alert('Anda tidak memiliki akses ke halaman ini.');
-        window.location.href = 'fasal.html';
+        window.location.href = 'student.html';
         return;
       }
 
