@@ -253,14 +253,23 @@
 
       <!-- Quiz List -->
       <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
           <h2 class="text-lg font-semibold text-slate-800">
             <i class="fa-solid fa-list text-blue-500 mr-2"></i>Daftar Soal
           </h2>
-          <select id="filterFasal" onchange="loadQuizList()"
-            class="px-4 py-2 border border-slate-200 rounded-lg text-sm">
-            <option value="">Semua Fasal</option>
-          </select>
+          <div class="flex gap-2 items-center">
+            <select id="filterFasal" onchange="loadQuizList()"
+              class="px-4 py-2 border border-slate-200 rounded-lg text-sm">
+              <option value="">Semua Fasal</option>
+            </select>
+            <button onclick="exportQuizzes()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition">
+              <i class="fa-solid fa-download mr-1"></i>Export
+            </button>
+            <label class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition cursor-pointer">
+              <i class="fa-solid fa-upload mr-1"></i>Import
+              <input type="file" id="importFile" accept=".json" onchange="importQuizzes(this)" class="hidden">
+            </label>
+          </div>
         </div>
         <div id="quizList" class="text-slate-500">Loading...</div>
       </div>
@@ -898,6 +907,91 @@
     }
 
     // ═══════════════════════════════════════
+    // ═══════════════════════════════════════
+    // EXPORT QUIZZES
+    // ═══════════════════════════════════════
+    async function exportQuizzes() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/quiz?select=*`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+        });
+        const quizzes = await res.json();
+
+        const dataStr = JSON.stringify(quizzes, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `mbba_quizzes_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        alert('Gagal export: ' + err.message);
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // IMPORT QUIZZES
+    // ═══════════════════════════════════════
+    async function importQuizzes(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      if (!confirm(`Import ${file.name}?\n\nData akan ditambahkan (tidak menimpa data yang sudah ada).`)) {
+        input.value = '';
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        const quizzes = JSON.parse(text);
+
+        if (!Array.isArray(quizzes)) {
+          throw new Error('Format file tidak valid. Harus array JSON.');
+        }
+
+        let success = 0;
+        let failed = 0;
+
+        for (const q of quizzes) {
+          try {
+            const body = {
+              fasal_id: q.fasal_id,
+              type: q.type || 'mc',
+              question: q.question,
+              correct_answer: q.correct_answer,
+              options: q.options || null,
+              order_index: q.order_index || 1
+            };
+
+            const res = await fetch(`${SUPABASE_URL}rest/v1/quiz`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${getToken()}`,
+                'Prefer': 'return=minimal'
+              },
+              body: JSON.stringify(body)
+            });
+
+            if (res.ok) success++;
+            else failed++;
+          } catch (e) {
+            failed++;
+          }
+        }
+
+        alert(`Import selesai!\nBerhasil: ${success}\nGagal: ${failed}`);
+        input.value = '';
+        loadQuizList();
+      } catch (err) {
+        alert('Gagal import: ' + err.message);
+        input.value = '';
+      }
+    }
+
     // CHEAT MODE
     // ═══════════════════════════════════════
     function enableCheatMode() {
