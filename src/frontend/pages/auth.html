@@ -289,8 +289,8 @@
           const role = data.user.user_metadata?.role || 'student';
           setUserRole(data.user);
         }
-        // Redirect ke fasal.html setelah login berhasil
-        window.location.href = 'fasal.html';
+        // Redirect ke student.html (dashboard) setelah login berhasil
+        window.location.href = 'student.html';
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
@@ -388,7 +388,7 @@
       const user = await getCurrentUser();
       if (user) {
         setUserRole(user);
-        window.location.href = 'fasal.html';
+        window.location.href = 'student.html';
       }
     })();
   </script>

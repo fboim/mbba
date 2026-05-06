@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="id" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Materi — MBBA</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2322c55e' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
+  <link rel="stylesheet" href="../css/output.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .arabic-text {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      text-align: right;
+      line-height: 2.5;
+      font-size: 1.3rem;
+    }
+    .arabic-text .harakat {
+      font-size: 0.8em;
+      vertical-align: super;
+    }
+    .content-body {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      text-align: justify;
+      line-height: 2.4;
+      font-size: 1.2rem;
+    }
+    .content-body table {
+      border-collapse: collapse;
+      margin: 1rem 0;
+      direction: ltr;
+    }
+    .content-body td, .content-body th {
+      border: 1px solid #cbd5e1;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    .content-body th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+    <div class="max-w-3xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="student.html" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-sm">م</span>
+          </div>
+          <span class="font-bold text-slate-800">MBBA</span>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500" title="Logout">
+        <i class="fa-solid fa-right-from-bracket text-sm"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="bg-white border-b border-slate-100">
+    <div class="max-w-3xl mx-auto px-4 md:px-6 py-3">
+      <div class="flex items-center gap-2 text-sm text-slate-500">
+        <a href="student.html" class="hover:text-primary-600">Dashboard</a>
+        <i class="fa-solid fa-chevron-right text-xs"></i>
+        <a href="fasal.html" class="hover:text-primary-600">Daftar Fasal</a>
+        <i class="fa-solid fa-chevron-right text-xs"></i>
+        <span id="breadcrumbFasal" class="text-slate-800 font-medium">Memuat...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-3xl mx-auto px-4 md:px-6 py-6">
+
+    <!-- Fasal Header -->
+    <div id="fasalHeader" class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <span id="fasalNumber" class="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded font-semibold">1.1.1</span>
+          <h1 id="fasalTitle" class="text-xl md:text-2xl font-bold text-slate-800 mt-2">Memuat...</h1>
+          <p id="fasalBab" class="text-sm text-slate-500 mt-1">Bab - Bagian</p>
+        </div>
+        <div id="fasalStatus" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">
+          Loading...
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-slate-800">
+          <i class="fa-solid fa-book text-primary-500 mr-2"></i>
+          Konten Materi
+        </h2>
+        <button onclick="toggleArabic()" id="toggleArabicBtn"
+          class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm rounded-lg transition">
+          <i class="fa-solid fa-text-height mr-1"></i> Togel Arab
+        </button>
+      </div>
+      <div id="fasalContent" class="arabic-text content-body min-h-[200px] text-slate-700">
+        <div class="text-center py-8">
+          <i class="fa-solid fa-spinner fa-spin text-2xl text-slate-300 mb-2"></i>
+          <p class="text-slate-400">Memuat konten...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Translation (if available) -->
+    <div id="translationSection" class="bg-white rounded-xl border border-slate-200 p-6 mb-6 hidden">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">
+        <i class="fa-solid fa-language text-blue-500 mr-2"></i>
+        Terjemahan / Penjelasan
+      </h2>
+      <div id="fasalTranslation" class="prose prose-slate max-w-none text-slate-600 leading-relaxed">
+        Memuat...
+      </div>
+    </div>
+
+    <!-- Quiz Action -->
+    <div id="quizAction" class="bg-white rounded-xl border border-slate-200 p-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 class="font-semibold text-slate-800">Ujian / Quiz</h3>
+          <p class="text-sm text-slate-500">Jawab pertanyaan untuk menyelesaikan fasal ini</p>
+        </div>
+        <div class="flex gap-3">
+          <a href="fasal.html" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition">
+            <i class="fa-solid fa-list mr-2"></i>Daftar Fasal
+          </a>
+          <button onclick="startQuiz()" id="startQuizBtn"
+            class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition">
+            <i class="fa-solid fa-play mr-2"></i>Mulai Quiz
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Quiz Modal -->
+  <div id="quizModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b border-slate-200 p-4 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-slate-800">
+          <i class="fa-solid fa-question-circle text-primary-500 mr-2"></i>
+          Quiz <span id="quizFasalName"></span>
+        </h2>
+        <button onclick="closeQuiz()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div id="quizContent" class="p-6">
+        <!-- Quiz will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/quiz.js"></script>
+  <script>
+    let currentFasal = null;
+    let quizBank = [];
+
+    // Get fasal ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const fasalId = urlParams.get('id');
+
+    if (!fasalId) {
+      alert('ID fasal tidak ditemukan');
+      window.location.href = 'student.html';
+    }
+
+    // Load fasal data
+    (async function() {
+      const user = await getCurrentUser();
+      if (!user) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      await loadFasal();
+    })();
+
+    async function loadFasal() {
+      try {
+        // Get fasal detail
+        const fasal = await fetchFasal(fasalId);
+        if (!fasal) {
+          alert('Fasal tidak ditemukan');
+          window.location.href = 'student.html';
+          return;
+        }
+
+        currentFasal = fasal;
+
+        // Update header
+        document.getElementById('breadcrumbFasal').textContent = fasal.title || 'Fasal';
+        document.getElementById('fasalTitle').textContent = fasal.title || 'Fasal';
+        document.getElementById('fasalNumber').textContent = `${fasal.order_index}`;
+
+        // Get bab and bagian info
+        if (fasal.bab) {
+          const bab = fasal.bab;
+          let bagianLabel = 'Bagian';
+          if (bab.bagian) {
+            bagianLabel = `${bab.bagian.order_index}. ${bab.bagian.title || bab.bagian.nama || 'Bagian'}`;
+          }
+          document.getElementById('fasalBab').textContent = `${bab.order_index} ${bab.title || bab.nama} - ${bagianLabel}`;
+        }
+
+        // Load content
+        const content = fasal.content_arab || '<p class="text-center text-slate-400">Konten belum tersedia</p>';
+        document.getElementById('fasalContent').innerHTML = content;
+
+        // Load translation if available
+        if (fasal.content_translation) {
+          document.getElementById('translationSection').classList.remove('hidden');
+          document.getElementById('fasalTranslation').innerHTML = fasal.content_translation;
+        }
+
+        // Check progress status
+        const progress = await fetchFasalProgress(fasalId);
+        updateStatus(progress);
+
+        // Load quiz bank
+        quizBank = await fetchQuizBank(fasalId);
+
+        if (quizBank.length === 0) {
+          document.getElementById('startQuizBtn').disabled = true;
+          document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock mr-2"></i>Belum Ada Quiz';
+        }
+      } catch (err) {
+        console.error('Error loading fasal:', err);
+        document.getElementById('fasalContent').innerHTML = '<p class="text-red-500">Gagal memuat konten</p>';
+      }
+    }
+
+    function updateStatus(progress) {
+      const statusEl = document.getElementById('fasalStatus');
+
+      if (!progress) {
+        statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500';
+        statusEl.textContent = 'Belum Dimulai';
+      } else if (progress.status === 'completed') {
+        statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700';
+        statusEl.textContent = `Lulus (${progress.quiz_score}%)`;
+      } else {
+        statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700';
+        statusEl.textContent = 'Sedang Dikerjakan';
+      }
+    }
+
+    let quizQuestions = [];
+    let currentQuestionIndex = 0;
+    let selectedAnswers = {};
+
+    function startQuiz() {
+      if (quizBank.length === 0) {
+        alert('Belum ada quiz untuk fasal ini');
+        return;
+      }
+
+      document.getElementById('quizModal').classList.remove('hidden');
+      document.getElementById('quizFasalName').textContent = currentFasal.title;
+
+      // Initialize quiz
+      const quizCount = currentFasal.quiz_count || 10;
+      initQuiz(quizBank, currentFasal.id, quizCount, {
+        onPass: (score) => handleQuizComplete(true, score),
+        onFail: (score) => handleQuizComplete(false, score)
+      });
+
+      quizQuestions = window._quizState.questions;
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const state = window._quizState;
+      const q = state.questions[currentQuestionIndex];
+      const container = document.getElementById('quizContent');
+
+      container.innerHTML = `
+        <div class="mb-4 flex items-center justify-between">
+          <span class="text-sm text-slate-500">Soal ${currentQuestionIndex + 1} dari ${state.questions.length}</span>
+          <span class="text-sm text-slate-500">Skor: <span id="currentScore" class="font-bold">0</span>%</span>
+        </div>
+
+        <div class="mb-6 p-4 bg-slate-50 rounded-lg">
+          <p class="text-lg font-medium text-slate-800">${q.question}</p>
+        </div>
+
+        ${q.type === 'mc' && q.options ? `
+          <div class="space-y-3">
+            ${Object.entries(JSON.parse(q.options)).map(([key, val]) => `
+              <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 ${selectedAnswers[q.id] === key ? 'border-primary-500 bg-primary-50' : ''}">
+                <input type="radio" name="answer" value="${key}" ${selectedAnswers[q.id] === key ? 'checked' : ''}
+                  onchange="selectAnswer('${q.id}', '${key}')" class="w-4 h-4 text-primary-600">
+                <span class="font-semibold text-slate-600">${key}.</span>
+                <span class="text-slate-700">${val}</span>
+              </label>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="mb-4">
+            <input type="text" id="answerInput"
+              value="${selectedAnswers[q.id] || ''}"
+              oninput="setAnswer('${q.id}', this.value)"
+              class="w-full px-4 py-3 border border-slate-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="Ketik jawaban...">
+          </div>
+        `}
+
+        <div class="flex justify-between mt-6">
+          <button onclick="prevQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}
+            class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition ${currentQuestionIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}">
+            <i class="fa-solid fa-chevron-left mr-1"></i> Prev
+          </button>
+          ${currentQuestionIndex < state.questions.length - 1 ? `
+            <button onclick="nextQuestion()" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition">
+              Next <i class="fa-solid fa-chevron-right ml-1"></i>
+            </button>
+          ` : `
+            <button onclick="submitQuiz()" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+              Submit <i class="fa-solid fa-check ml-1"></i>
+            </button>
+          `}
+        </div>
+
+        <!-- Question dots -->
+        <div class="flex justify-center gap-2 mt-6">
+          ${state.questions.map((_, i) => `
+            <button onclick="goToQuestion(${i})"
+              class="w-3 h-3 rounded-full ${i === currentQuestionIndex ? 'bg-primary-600' : selectedAnswers[state.questions[i].id] ? 'bg-green-500' : 'bg-slate-300'}">
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function selectAnswer(questionId, answer) {
+      setAnswer(questionId, answer);
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < quizQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+      }
+    }
+
+    function goToQuestion(index) {
+      currentQuestionIndex = index;
+      renderQuestion();
+    }
+
+    function submitQuiz() {
+      const result = submitQuiz();
+      const container = document.getElementById('quizContent');
+
+      const icon = result.passed ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500';
+      const title = result.passed ? 'Selamat!' : 'Belum Lulus';
+      const message = result.passed
+        ? 'Anda menjawab dengan benar semua soal!'
+        : `Skor Anda: ${result.score}%. Syarat kelulusan: 100%`;
+
+      container.innerHTML = `
+        <div class="text-center py-8">
+          <i class="fa-solid ${icon} text-6xl mb-4"></i>
+          <h3 class="text-2xl font-bold text-slate-800 mb-2">${title}</h3>
+          <p class="text-slate-500 mb-6">${message}</p>
+          <p class="text-lg mb-6">
+            Skor: <span class="font-bold text-primary-600">${result.score}%</span><br>
+            <span class="text-sm text-slate-400">${result.correct} dari ${result.total} benar</span>
+          </p>
+          <div class="flex gap-3 justify-center">
+            ${result.passed ? `
+              <button onclick="closeQuiz(); window.location.href='student.html';"
+                class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition">
+                <i class="fa-solid fa-home mr-2"></i>Kembali ke Dashboard
+              </button>
+            ` : `
+              <button onclick="retryQuiz()"
+                class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition">
+                <i class="fa-solid fa-redo mr-2"></i>Coba Lagi
+              </button>
+              <button onclick="closeQuiz()"
+                class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition">
+                Kembali
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    async function handleQuizComplete(passed, score) {
+      const attempts = (await fetchFasalProgress(fasalId))?.quiz_attempts || 0;
+
+      await saveProgress(fasalId, score, attempts + 1, passed ? 'completed' : 'unlocked');
+      await unlockNextFasal(fasalId);
+
+      updateStatus({ status: passed ? 'completed' : 'unlocked', quiz_score: score });
+    }
+
+    function retryQuiz() {
+      resetQuiz(quizBank);
+      quizQuestions = window._quizState.questions;
+      currentQuestionIndex = 0;
+      selectedAnswers = {};
+      renderQuestion();
+    }
+
+    function closeQuiz() {
+      document.getElementById('quizModal').classList.add('hidden');
+    }
+
+    // Arabic toggle
+    function toggleArabic() {
+      document.getElementById('fasalContent').classList.toggle('harakat');
+    }
+
+    function handleLogout() {
+      logout();
+      window.location.href = 'auth.html';
+    }
+  </script>
+</body>
+</html>

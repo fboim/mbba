@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — MBBA</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2322c55e' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
+  <link rel="stylesheet" href="../css/output.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .arabic-text {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      text-align: right;
+      line-height: 2.2;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-sm">م</span>
+        </div>
+        <span class="font-bold text-slate-800">MBBA</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="userName" class="text-sm text-slate-600 hidden md:inline">Hai, Pelajar</span>
+        <button onclick="handleLogout()" class="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500" title="Logout">
+          <i class="fa-solid fa-right-from-bracket text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 md:px-6 py-6">
+
+    <!-- Welcome Section -->
+    <div id="welcomeSection" class="mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
+        <i class="fa-solid fa-graduation-cap text-primary-500 mr-2"></i>
+        Assalamu'alaikum
+      </h1>
+      <p class="text-slate-500">Selamat datang di Madrasah Belajar Bahasa Arab</p>
+    </div>
+
+    <!-- Progress Summary Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <div class="bg-blue-600 rounded-xl p-4 text-white text-center">
+        <div class="text-3xl font-bold" id="totalFasal">0</div>
+        <div class="text-sm opacity-80">Total Fasal</div>
+      </div>
+      <div class="bg-green-600 rounded-xl p-4 text-white text-center">
+        <div class="text-3xl font-bold" id="completedFasal">0</div>
+        <div class="text-sm opacity-80">Selesai</div>
+      </div>
+      <div class="bg-amber-500 rounded-xl p-4 text-white text-center">
+        <div class="text-3xl font-bold" id="avgScore">0%</div>
+        <div class="text-sm opacity-80">Rata-rata</div>
+      </div>
+      <div class="bg-purple-600 rounded-xl p-4 text-white text-center">
+        <div class="text-3xl font-bold" id="totalAttempts">0</div>
+        <div class="text-sm opacity-80">Attempts</div>
+      </div>
+    </div>
+
+    <!-- Continue Learning Section -->
+    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">
+        <i class="fa-solid fa-book-open text-primary-500 mr-2"></i>
+        Mulai Belajar
+      </h2>
+      <div id="fasalList" class="space-y-3">
+        <div class="text-center py-8 text-slate-400">
+          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+          <p>Memuat...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">
+        <i class="fa-solid fa-clock text-amber-500 mr-2"></i>
+        Aktivitas Terakhir
+      </h2>
+      <div id="recentActivity" class="space-y-3">
+        <p class="text-slate-400 text-center py-4">Belum ada aktivitas</p>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h3 class="font-semibold text-slate-700 mb-2">
+          <i class="fa-solid fa-fire text-orange-500 mr-2"></i>
+          Streak Belajar
+        </h3>
+        <div class="flex items-center gap-3">
+          <div class="text-4xl font-bold text-primary-600" id="streakDays">0</div>
+          <div class="text-sm text-slate-500">hari<br>berturut-turut</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h3 class="font-semibold text-slate-700 mb-2">
+          <i class="fa-solid fa-trophy text-yellow-500 mr-2"></i>
+          Pencapaian
+        </h3>
+        <div id="achievements" class="space-y-2">
+          <div class="flex items-center gap-2 text-sm text-slate-400">
+            <i class="fa-regular fa-circle text-xs"></i>
+            <span>1 Fasal Pertama</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script>
+    let allFasals = [];
+    let allBabs = [];
+    let userProgress = [];
+    let fasalMap = {};
+
+    // Check login and load data
+    (async function() {
+      const user = await getCurrentUser();
+      if (!user) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      // Set user name
+      const name = user.user_metadata?.full_name || user.email || 'Pelajar';
+      document.getElementById('userName').textContent = 'Hai, ' + name;
+
+      await loadDashboard();
+    })();
+
+    async function loadDashboard() {
+      try {
+        // Load kurikulum
+        const kurikulum = await fetchKurikulum();
+        allFasals = [];
+        allBabs = [];
+
+        kurikulum.forEach(bagian => {
+          (bagian.bab || []).forEach(bab => {
+            allBabs.push({
+              id: bab.id,
+              label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`
+            });
+            (bab.fasal || []).forEach(fasal => {
+              allFasals.push({
+                id: fasal.id,
+                label: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`,
+                bab_id: bab.id,
+                bab_label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`
+              });
+              fasalMap[fasal.id] = `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`;
+            });
+          });
+        });
+
+        // Load user progress
+        const progressData = await fetchUserProgress();
+        userProgress = progressData;
+
+        updateStats();
+        renderFasalList();
+        renderRecentActivity();
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+      }
+    }
+
+    function updateStats() {
+      const total = allFasals.length;
+      const completed = userProgress.filter(p => p.status === 'completed').length;
+      const avgScore = userProgress.length > 0
+        ? Math.round(userProgress.reduce((sum, p) => sum + (p.quiz_score || 0), 0) / userProgress.length)
+        : 0;
+      const attempts = userProgress.reduce((sum, p) => sum + (p.quiz_attempts || 0), 0);
+
+      document.getElementById('totalFasal').textContent = total;
+      document.getElementById('completedFasal').textContent = completed;
+      document.getElementById('avgScore').textContent = avgScore + '%';
+      document.getElementById('totalAttempts').textContent = attempts;
+
+      // Calculate streak (simple - count consecutive days)
+      const streak = calculateStreak();
+      document.getElementById('streakDays').textContent = streak;
+
+      // Update achievements
+      updateAchievements(completed);
+    }
+
+    function calculateStreak() {
+      if (userProgress.length === 0) return 0;
+
+      // Sort by date descending
+      const dates = userProgress
+        .map(p => new Date(p.completed_at || p.created_at).toDateString())
+        .filter(d => d !== 'Invalid Date');
+      const uniqueDates = [...new Set(dates)].sort((a, b) => new Date(b) - new Date(a));
+
+      if (uniqueDates.length === 0) return 0;
+
+      let streak = 1;
+      const today = new Date().toDateString();
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+      if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) return 0;
+
+      for (let i = 1; i < uniqueDates.length; i++) {
+        const diff = (new Date(uniqueDates[i-1]) - new Date(uniqueDates[i])) / 86400000;
+        if (diff === 1) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function updateAchievements(completed) {
+      const container = document.getElementById('achievements');
+      let html = '';
+
+      // First Fasal
+      if (completed >= 1) {
+        html += '<div class="flex items-center gap-2 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i><span>1 Fasal Pertama</span></div>';
+      } else {
+        html += '<div class="flex items-center gap-2 text-sm text-slate-400"><i class="fa-regular fa-circle"></i><span>1 Fasal Pertama</span></div>';
+      }
+
+      // 5 Fasal
+      if (completed >= 5) {
+        html += '<div class="flex items-center gap-2 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i><span>5 Fasal</span></div>';
+      } else {
+        html += '<div class="flex items-center gap-2 text-sm text-slate-400"><i class="fa-regular fa-circle"></i><span>5 Fasal</span></div>';
+      }
+
+      // Perfect Score
+      const hasPerfect = userProgress.some(p => p.quiz_score === 100);
+      if (hasPerfect) {
+        html += '<div class="flex items-center gap-2 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i><span>Skor Sempurna</span></div>';
+      } else {
+        html += '<div class="flex items-center gap-2 text-sm text-slate-400"><i class="fa-regular fa-circle"></i><span>Skor Sempurna</span></div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderFasalList() {
+      const container = document.getElementById('fasalList');
+
+      if (allFasals.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada fasal</p>';
+        return;
+      }
+
+      let html = '';
+      allFasals.forEach(fasal => {
+        const progress = userProgress.find(p => p.fasal_id === fasal.id);
+        const status = progress?.status || 'locked';
+        const score = progress?.quiz_score || null;
+
+        let statusClass = 'bg-slate-100 text-slate-500';
+        let statusText = 'Belum';
+        let btnClass = 'bg-slate-300 cursor-not-allowed';
+        let btnDisabled = 'disabled';
+
+        if (status === 'completed') {
+          statusClass = 'bg-green-100 text-green-700';
+          statusText = `Lulus (${score}%)`;
+          btnClass = 'bg-primary-600 hover:bg-primary-700';
+          btnDisabled = '';
+        } else if (status === 'unlocked') {
+          statusClass = 'bg-amber-100 text-amber-700';
+          statusText = 'Dikerjakan';
+          btnClass = 'bg-amber-500 hover:bg-amber-600';
+          btnDisabled = '';
+        }
+
+        html += `
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition">
+            <div class="flex-1">
+              <div class="font-medium text-slate-800">${fasal.label}</div>
+              <div class="text-sm text-slate-500">${fasal.bab_label}</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">${statusText}</span>
+              <a href="fasal.html?id=${fasal.id}"
+                class="px-4 py-2 text-white text-sm font-semibold rounded-lg transition ${btnClass}"
+                ${btnDisabled}>
+                ${status === 'completed' ? 'Ulangi' : status === 'unlocked' ? 'Lanjut' : 'Kunci'}
+              </a>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderRecentActivity() {
+      const container = document.getElementById('recentActivity');
+
+      if (userProgress.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-center py-4">Belum ada aktivitas</p>';
+        return;
+      }
+
+      // Sort by date descending and take last 5
+      const recent = [...userProgress]
+        .sort((a, b) => new Date(b.completed_at || b.created_at) - new Date(a.completed_at || a.created_at))
+        .slice(0, 5);
+
+      let html = '';
+      recent.forEach(p => {
+        const fasalLabel = fasalMap[p.fasal_id] || p.fasal_id;
+        const date = new Date(p.completed_at || p.created_at).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        html += `
+          <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center ${p.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}">
+                <i class="fa-solid ${p.status === 'completed' ? 'fa-check' : 'fa-play'} text-sm"></i>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-slate-700">${fasalLabel}</div>
+                <div class="text-xs text-slate-400">${date}</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-bold ${p.status === 'completed' ? 'text-green-600' : 'text-amber-600'}">${p.quiz_score || 0}%</div>
+              <div class="text-xs text-slate-400">${p.quiz_attempts || 1}x attempt</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function handleLogout() {
+      logout();
+      window.location.href = 'auth.html';
+    }
+  </script>
+</body>
+</html>
