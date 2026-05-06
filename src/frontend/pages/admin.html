@@ -197,13 +197,25 @@
     let allFasals = [];
     let allQuizzes = [];
 
-    // Check if logged in
+    // Check if logged in and is admin
     (async function() {
       const user = await getCurrentUser();
       if (!user) {
+        alert('Silakan login dulu.');
         window.location.href = 'auth.html';
         return;
       }
+
+      // Set user role from metadata
+      const role = user.user_metadata?.role || user.role || 'student';
+      setUserRole(user);
+
+      if (role !== 'admin' && role !== 'teacher') {
+        alert('Anda tidak memiliki akses ke halaman ini.');
+        window.location.href = 'fasal.html';
+        return;
+      }
+
       loadStats();
       loadFasalsForSelect();
       loadQuizList();

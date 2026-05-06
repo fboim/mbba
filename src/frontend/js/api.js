@@ -97,6 +97,32 @@ function getToken() {
   return localStorage.getItem('sb_access_token');
 }
 
+/**
+ * Ambil role user
+ * @returns {string|null} 'admin', 'teacher', 'student', atau null
+ */
+function getUserRole() {
+  return localStorage.getItem('sb_user_role');
+}
+
+/**
+ * Cek apakah user adalah admin
+ * @returns {boolean}
+ */
+function isAdmin() {
+  return getUserRole() === 'admin';
+}
+
+/**
+ * Simpan role user setelah login
+ * @param {object} user
+ */
+function setUserRole(user) {
+  // Ambil role dari metadata atau profiles
+  const role = user.user_metadata?.role || user.role || 'student';
+  localStorage.setItem('sb_user_role', role);
+}
+
 // ================================================================
 // KURIKULUM
 // ================================================================

@@ -283,6 +283,11 @@
 
       try {
         const data = await login(email, password);
+        // Set user role from response
+        if (data.user) {
+          const role = data.user.user_metadata?.role || 'student';
+          setUserRole(data.user);
+        }
         // Redirect ke fasal.html setelah login berhasil
         window.location.href = 'fasal.html';
       } catch (err) {
@@ -381,6 +386,7 @@
 
       const user = await getCurrentUser();
       if (user) {
+        setUserRole(user);
         window.location.href = 'fasal.html';
       }
     })();
