@@ -167,6 +167,14 @@
         allFasals = [];
         allBabs = [];
 
+        // Debug: log kurikulum
+        console.log('Kurikulum loaded:', kurikulum);
+
+        if (!kurikulum || kurikulum.length === 0) {
+          document.getElementById('fasalList').innerHTML = '<p class="text-slate-400 text-center py-8">Tidak ada data materi. Hubungi admin.</p>';
+          return;
+        }
+
         kurikulum.forEach(bagian => {
           (bagian.bab || []).forEach(bab => {
             allBabs.push({
