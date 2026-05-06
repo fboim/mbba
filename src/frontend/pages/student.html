@@ -307,12 +307,32 @@
           break;
         }
         if (i === sortedFasals.length - 1) {
-          // All completed
           nextUnlockIndex = sortedFasals.length;
         }
       }
 
-      let html = '';
+      // Progress summary
+      const total = sortedFasals.length;
+      const completed = completedIds.length;
+      const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      let html = `
+        <!-- Progress Summary -->
+        <div class="mb-4 p-3 bg-slate-50 rounded-lg">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm font-medium text-slate-700">Progress Belajar</span>
+            <span class="text-sm font-bold text-primary-600">${completed}/${total} Fasal (${percent}%)</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2">
+            <div class="bg-primary-500 h-2 rounded-full transition-all" style="width: ${percent}%"></div>
+          </div>
+          ${percent === 100 ? '<p class="text-xs text-green-600 mt-2 font-medium"><i class="fa-solid fa-trophy mr-1"></i>Selamat! Anda telah menyelesaikan semua fasal!</p>' : ''}
+        </div>
+      `;
+
+      // List header
+      html += `<div class="font-semibold text-slate-600 text-sm mb-2">Daftar Materi (wajib berurutan):</div>`;
+
       sortedFasals.forEach((fasal, index) => {
         const progress = userProgress.find(p => p.fasal_id === fasal.id);
         const score = progress?.quiz_score || null;
