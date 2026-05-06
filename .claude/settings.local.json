@@ -6,7 +6,10 @@
       "PowerShell(winget install *)",
       "PowerShell(& \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" init; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" add .; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" commit -m \"MBBA MVP: initial commit\"; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" branch -M main; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" remote add origin https://github.com/fboim/mbba; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" push -u origin main)",
       "PowerShell(& \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" config --global user.email \"fboim@mbba.com\"; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" config --global user.name \"FABO I Made\")",
-      "PowerShell(& \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" add .; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" commit -m \"MBBA MVP: initial commit\"; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" branch -M main; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" remote add origin https://github.com/fboim/mbba; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" push -u origin main)"
+      "PowerShell(& \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" add .; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" commit -m \"MBBA MVP: initial commit\"; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" branch -M main; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" remote add origin https://github.com/fboim/mbba; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" push -u origin main)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
