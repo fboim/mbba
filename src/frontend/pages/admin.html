@@ -659,7 +659,7 @@
         }
 
         alert('Materi berhasil ditambahkan!');
-        loadMateri();
+        location.reload();
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
@@ -683,7 +683,7 @@
       }).then(res => {
         if (res.ok) {
           alert('Berhasil diupdate!');
-          loadMateri();
+          location.reload();
         } else {
           res.json().then(err => alert('Gagal: ' + err.message));
         }
@@ -777,11 +777,9 @@
         });
         console.log('Delete response status:', res.status);
 
-        console.log('Delete successful, refreshing list...');
         alert('Berhasil dihapus!');
-        console.log('Calling loadMateri...');
-        loadMateri();
-        console.log('loadMateri called');
+        // Reload page to refresh list
+        location.reload();
       } catch (err) {
         console.error('Delete error:', err);
         alert('Gagal: ' + err.message);
