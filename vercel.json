@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "buildCommand": null,
+  "outputDirectory": "src/frontend",
+  "installCommand": null,
+  "framework": null,
+  "routes": [
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}

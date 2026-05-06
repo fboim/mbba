@@ -1,0 +1,597 @@
+[
+  {
+    "id": "quiz-001",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Apa arti مُسْتَقِيمٌ?",
+    "options": [
+      { "key": "A", "value": "Luas" },
+      { "key": "B", "value": "Berjalan tegak" },
+      { "key": "C", "value": "Tinggi" },
+      { "key": "D", "value": "Baik" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-002",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Manakah kata yang menunjukkan kata benda feminin (muannats)?",
+    "options": [
+      { "key": "A", "value": "الْبَقَرَةُ" },
+      { "key": "B", "value": "الْجِلْدُ" },
+      { "key": "C", "value": "الضَّبْعُ" },
+      { "key": "D", "value": "النَّخْلَةُ" }
+    ],
+    "correct_answer": "D",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-003",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Kalimat \"هَذَا الْجِلْدُ وَاسِعٌ\" terdiri dari berapa kata?",
+    "options": [
+      { "key": "A", "value": "3 kata" },
+      { "key": "B", "value": "4 kata" },
+      { "key": "C", "value": "5 kata" },
+      { "key": "D", "value": "2 kata" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-004",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Apa fungsi isim isyaroh \"هَذَا\"?",
+    "options": [
+      { "key": "A", "value": "Menunjuk kata kerja" },
+      { "key": "B", "value": "Menunjuk kata benda mudzakkar" },
+      { "key": "C", "value": "Menunjuk kata sifat" },
+      { "key": "D", "value": "Menunjuk huruf" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-005",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "\"طَوِيلَةٌ\" adalah kata sifat (shifah) untuk kata...",
+    "options": [
+      { "key": "A", "value": "الْجِلْدُ" },
+      { "key": "B", "value": "النَّخْلَةُ" },
+      { "key": "C", "value": "الْبَقَرَةُ" },
+      { "key": "D", "value": "الضَّبْعُ" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-006",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: هَذَا الضَّبْعُ مُسْتَقِيمٌ. (هَذَا = Ini, الضَّبْعُ = singa, مُسْتَقِيمٌ = berjalan tegak)",
+    "placeholder": "ketik jawaban...",
+    "correct_answer": "مُسْتَقِيمٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-007",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: النَّخْلَةُ",
+    "placeholder": "ketik jawaban latin...",
+    "correct_answer": "an-nakhatu",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-008",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Bentuk feminin dari \"وَاسِعٌ\" adalah...",
+    "options": [
+      { "key": "A", "value": "وَاسِعَةٌ" },
+      { "key": "B", "value": "مُوسِعٌ" },
+      { "key": "C", "value": "إِسْعَةٌ" },
+      { "key": "D", "value": "وَسِيعٌ" }
+    ],
+    "correct_answer": "A",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-009",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: هَذِهِ الْبَقَرَةُ مُسْتَقِيمَةٌ. (هَذِهِ = ini, الْبَقَرَةُ = sapi, مُسْتَقِيمَةٌ = berjalan tegak)",
+    "placeholder": "ketik jawaban...",
+    "correct_answer": "مُسْتَقِيمَةٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-010",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Mengapa \"الْجِلْدُ\" mendapat tanwin?",
+    "options": [
+      { "key": "A", "value": "Karena，它是主词" },
+      { "key": "B", "value": "因为，它是主词" },
+      { "key": "C", "value": "它是主词" },
+      { "key": "D", "value": "以上都不是" }
+    ],
+    "correct_answer": "A",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-011",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: وَاسِعٌ",
+    "placeholder": "ketik jawaban latin...",
+    "correct_answer": "wasi'un",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-012",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Isim Isyaroh untuk mudzakkar terdekat adalah...",
+    "options": [
+      { "key": "A", "value": "هَذِهِ" },
+      { "key": "B", "value": "ذَلِكَ" },
+      { "key": "C", "value": "هَذَا" },
+      { "key": "D", "value": "أُولَئِكَ" }
+    ],
+    "correct_answer": "C",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-013",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: هَذَا الْجِلْدُ ____. (هَذَا = ini, الْجِلْدُ = kulit)",
+    "placeholder": "ketik jawaban...",
+    "correct_answer": "وَاسِعٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-014",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Apa perbedaan antara الضَّبْعُ dan الضَّبْعَةُ?",
+    "options": [
+      { "key": "A", "value": "Tidak ada perbedaan" },
+      { "key": "B", "value": "ضبع adalah mudzakkar, ضبعة adalah muannats" },
+      { "key": "C", "value": "ضبع adalah muannats, ضبعة adalah mudzakkar" },
+      { "key": "D", "value": "Keduanya adalah اسم yang berbeda" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-015",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: طَوِيلَةٌ",
+    "placeholder": "ketik jawaban latin...",
+    "correct_answer": "thawilatum",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-016",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Isim Isyaroh untuk muannats jauh adalah...",
+    "options": [
+      { "key": "A", "value": "هَذَا" },
+      { "key": "B", "value": "تِلْكَ" },
+      { "key": "C", "value": "ذَاكَ" },
+      { "key": "D", "value": "هَذِهِ" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-017",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: هَذِهِ النَّخْلَةُ ____. (هَذِهِ = ini, النَّخْلَةُ = pohon kurma)",
+    "placeholder": "ketik jawaban...",
+    "correct_answer": "طَوِيلَةٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-018",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Dalam kalimat \"الْبَقَرَةُ مُسْتَقِيمَةٌ\", apa fungsi الْبَقَرَةُ?",
+    "options": [
+      { "key": "A", "value": "Predicate (خَبَر)" },
+      { "key": "B", "value": "Subject (مُبْتَدَأ)" },
+      { "key": "C", "value": "Object (مَفْعُول بِه)" },
+      { "key": "D", "value": "Descriptor (نَعْت" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-019",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: مُسْتَقِيمٌ",
+    "placeholder": "ketik jawaban latin...",
+    "correct_answer": "mustaqimun",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-020",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Kata \"هَذَا\" termasuk dalam kategori...",
+    "options": [
+      { "key": "A", "value": "Isim Ma'rifat" },
+      { "key": "B", "value": "Isim Isyaroh" },
+      { "key": "C", "value": "Isim Nakirah" },
+      { "key": "D", "value": "Isim Alam" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-021",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: ____ الْبَقَرَةُ مُسْتَقِيمَةٌ. (kata penunjuk untuk muannats dekat)",
+    "placeholder": "ketik jawaban...",
+    "correct_answer": "هَذِهِ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-022",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Huruf apa yang membuat \"النَّخْلَةُ\" menjadi muannats?",
+    "options": [
+      { "key": "A", "value": "Alif" },
+      { "key": "B", "value": "Ta marbuthah (ة)" },
+      { "key": "C", "value": "Ya" },
+      { "key": "D", "value": "Waw" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-023",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Apa arti وَاسِعٌ?",
+    "options": [
+      { "key": "A", "value": "Tinggi" },
+      { "key": "B", "value": "Luas" },
+      { "key": "C", "value": "Baik" },
+      { "key": "D", "value": "Berjalan tegak" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-024",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: الْبَقَرَةُ",
+    "placeholder": "ketik jawaban latin...",
+    "correct_answer": "al-baqaratu",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-025",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Dalam kalimat nominal (jumlah ismiyah), yang berfungsi sebagai subjek disebut...",
+    "options": [
+      { "key": "A", "value": "Khobar" },
+      { "key": "B", "value": "Mubtada" },
+      { "key": "C", "value": "Fa'il" },
+      { "key": "D", "value": "Na'ib Fa'il" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-026",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: هَذَا الضَّبْعُ مُسْتَقِيمٌ. هَذِهِ الْبَقَرَةُ مُسْتَقِيمَةٌ. هَذَا الْجِلْدُ ____. هَذِهِ النَّخْلَةُ طَوِيلَةٌ.",
+    "placeholder": "ketik jawaban...",
+    "correct_answer": "وَاسِعٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-027",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "مُسْتَقِيمٌ adalah...",
+    "options": [
+      { "key": "A", "value": "Isim (kata benda)" },
+      { "key": "B", "value": "Khobar (predicate)" },
+      { "key": "C", "value": "Fi'il (kata kerja)" },
+      { "key": "D", "value": "Harf (huruf)" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-028",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Isim Isyaroh untuk mudzakkar jauh adalah...",
+    "options": [
+      { "key": "A", "value": "هَذَا" },
+      { "key": "B", "value": "ذَاكَ" },
+      { "key": "C", "value": "تِلْكَ" },
+      { "key": "D", "value": "أُولَئِكَ" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-029",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: الضَّبْعُ",
+    "placeholder": "ketik jawaban latin...",
+    "correct_answer": "adh-dhab'u",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-030",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Apa arti طَوِيلَةٌ?",
+    "options": [
+      { "key": "A", "value": "Luas (feminin)" },
+      { "key": "B", "value": "Tinggi (feminin)" },
+      { "key": "C", "value": "Baik (feminin)" },
+      { "key": "D", "value": "Berjalan tegak (feminin)" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-031",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Isim Isyaroh untuk muannats jauh adalah...",
+    "options": [
+      { "key": "A", "value": "هَذَا" },
+      { "key": "B", "value": "تِلْكَ" },
+      { "key": "C", "value": "ذَاكَ" },
+      { "key": "D", "value": "هَذِهِ" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-032",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: هَذِهِ النَّخْلَةُ ____ (tautan Arab dari kata \"tinggi\" untuk feminin)",
+    "placeholder": "ketik jawaban Arab...",
+    "correct_answer": "طَوِيلَةٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-033",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Dalam kalimat \"الْبَقَرَةُ مُسْتَقِيمَةٌ\", الْبَقَرَةُ adalah...",
+    "options": [
+      { "key": "A", "value": "Khobar" },
+      { "key": "B", "value": "Mubtada" },
+      { "key": "C", "value": "Maf'ul bih" },
+      { "key": "D", "value": "Na't" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-034",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: مُسْتَقِيمٌ",
+    "placeholder": "ketik latin...",
+    "correct_answer": "mustaqimun",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-035",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Kata \"هَذَا\" termasuk kategori...",
+    "options": [
+      { "key": "A", "value": "Isim Ma'rifat" },
+      { "key": "B", "value": "Isim Isyaroh" },
+      { "key": "C", "value": "Isim Nakirah" },
+      { "key": "D", "value": "Isim Alam" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-036",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan: ____ الْبَقَرَةُ مُسْتَقِيمَةٌ (isim isyaroh untuk muannats dekat)",
+    "placeholder": "ketik jawaban Arab...",
+    "correct_answer": "هَذِهِ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-037",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Huruf apa yang membuat \"النَّخْلَةُ\" menjadi muannats?",
+    "options": [
+      { "key": "A", "value": "Alif (ا)" },
+      { "key": "B", "value": "Ta Marbuthah (ة)" },
+      "key": "C", "value": "Ya (ي)" },
+      { "key": "D", "value": "Waw (و)" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-038",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Apa arti وَاسِعٌ?",
+    "options": [
+      { "key": "A", "value": "Tinggi" },
+      { "key": "B", "value": "Luas" },
+      { "key": "C", "value": "Baik" },
+      { "key": "D", "value": "Berjalan tegak" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-039",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: الْبَقَرَةُ",
+    "placeholder": "ketik latin...",
+    "correct_answer": "al-baqaratu",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-040",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Dalam kalimat nominal, yang berfungsi sebagai subjek disebut...",
+    "options": [
+      { "key": "A", "value": "Khobar" },
+      { "key": "B", "value": "Mubtada" },
+      { "key": "C", "value": "Fa'il" },
+      { "key": "D", "value": "Na'ib Fa'il" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-041",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan kalimat ke-3: هَذَا الضَّبْعُ مُسْتَقِيمٌ. هَذِهِ الْبَقَرَةُ مُسْتَقِيمَةٌ. هَذَا الْجِلْدُ ____. هَذِهِ النَّخْلَةُ طَوِيلَةٌ.",
+    "placeholder": "ketik jawaban Arab...",
+    "correct_answer": "وَاسِعٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-042",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "مُسْتَقِيمٌ adalah khobar dari kalimat tersebut. Khobar berfungsi sebagai...",
+    "options": [
+      { "key": "A", "value": "Kata benda (Isim)" },
+      { "key": "B", "value": "Kata sifat (Shifah)" },
+      { "key": "C", "value": "Predicate / pengenai" },
+      { "key": "D", "value": "Kata keterangan (Zarf)" }
+    ],
+    "correct_answer": "C",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-043",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: الضَّبْعُ",
+    "placeholder": "ketik latin...",
+    "correct_answer": "adh-dhabu",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-044",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Isim Isyaroh untuk mudzakkar jauh adalah...",
+    "options": [
+      { "key": "A", "value": "هَذَا" },
+      { "key": "B", "value": "ذَاكَ" },
+      { "key": "C", "value": "تِلْكَ" },
+      { "key": "D", "value": "أُولَئِكَ" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-045",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Lengkapkan dengan isim isyaroh mudzakkar dekat: ____ الضَّبْعُ مُسْتَقِيمٌ",
+    "placeholder": "ketik jawaban Arab...",
+    "correct_answer": "هَذَا",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-046",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Apa arti طَوِيلَةٌ?",
+    "options": [
+      { "key": "A", "value": "Luas (feminin)" },
+      { "key": "B", "value": "Tinggi (feminin)" },
+      { "key": "C", "value": "Baik (feminin)" },
+      { "key": "D", "value": "Berjalan tegak (feminin)" }
+    ],
+    "correct_answer": "B",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-047",
+    "fasal_id": "fasal-001",
+    "type": "fill-latin",
+    "question": "Terjemahkan ke huruf Latin: وَاسِعٌ",
+    "placeholder": "ketik latin...",
+    "correct_answer": "wasiun",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-048",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Kata \"النَّخْلَةُ\" mendapat tanwin karena berfungsi sebagai...",
+    "options": [
+      { "key": "A", "value": "Khobar" },
+      { "key": "B", "value": "Mubtada" },
+      {key": "C", "value": "Isim isyaroh" },
+      { "key": "D", "value": "Na't" }
+    ],
+    "correct_answer": "A",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-049",
+    "fasal_id": "fasal-001",
+    "type": "fill-arab",
+    "question": "Bentuk feminin dari مُسْتَقِيمٌ adalah...",
+    "placeholder": "ketik jawaban Arab...",
+    "correct_answer": "مُسْتَقِيمَةٌ",
+    "passing_threshold": 100
+  },
+  {
+    "id": "quiz-050",
+    "fasal_id": "fasal-001",
+    "type": "mc",
+    "question": "Dalam jumlah ismiyah, mubtada dan khobar membentuk kalimat yang bernilai...",
+    "options": [
+      { "key": "A", "value": "Perintah (Amr)" },
+      { "key": "B", "value": "Pertanyaan (Istifham)" },
+      { "key": "C", "value": "Keterangan (Khabariyah)" },
+      { "key": "D", "value": "Penafian (Nafi)" }
+    ],
+    "correct_answer": "C",
+    "passing_threshold": 100
+  }
+]

@@ -1,0 +1,382 @@
+/**
+ * api.js — Supabase REST API Integration
+ * Menghubungkan frontend ke Supabase backend
+ *
+ * Sebelum dipakai: salin .env.example → .env
+ * lalu isi SUPABASE_URL dan SUPABASE_ANON_KEY
+ */
+
+const SUPABASE_URL = 'https://vbuailpfjyhianfhgpwc.supabase.co/';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZidWFpbHBmanloaWFuZmhncHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5Nzk1NzgsImV4cCI6MjA5MzU1NTU3OH0.DFV5EqMzGsR7a1nSUdB7c_yW81lzgt1-KeVffcsPLGg';
+
+
+// ================================================================
+// AUTH
+// ================================================================
+
+/**
+ * Login dengan email + password
+ * @param {string} email
+ * @param {string} password
+ * @returns {Promise<{user, session}>}
+ */
+async function login(email, password) {
+  const res = await fetch(`${SUPABASE_URL}auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+    },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Login gagal');
+
+  localStorage.setItem('SUPABASE_URL', SUPABASE_URL);
+  localStorage.setItem('SUPABASE_ANON_KEY', SUPABASE_ANON_KEY);
+  if (data.access_token) {
+    localStorage.setItem('sb_access_token', data.access_token);
+    localStorage.setItem('sb_refresh_token', data.refresh_token);
+  }
+  return data;
+}
+
+/**
+ * Daftar akun baru
+ * @param {string} email
+ * @param {string} password
+ * @param {string} fullName
+ * @returns {Promise<{user}>}
+ */
+async function register(email, password, fullName) {
+  const res = await fetch(`${SUPABASE_URL}auth/v1/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+    },
+    body: JSON.stringify({
+      email,
+      password,
+      options: { data: { full_name: fullName, role: 'student' } }
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Registrasi gagal');
+  return data;
+}
+
+/**
+ * Logout — hapus semua token
+ */
+function logout() {
+  localStorage.removeItem('sb_access_token');
+  localStorage.removeItem('sb_refresh_token');
+}
+
+/**
+ * Cek apakah user sudah login
+ * @returns {Promise<object|null>}
+ */
+async function getCurrentUser() {
+  const token = localStorage.getItem('sb_access_token');
+  if (!token) return null;
+
+  const res = await fetch(`${SUPABASE_URL}auth/v1/user`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
+  });
+  if (!res.ok) { logout(); return null; }
+  return res.json();
+}
+
+/**
+ * Ambil access token
+ * @returns {string|null}
+ */
+function getToken() {
+  return localStorage.getItem('sb_access_token');
+}
+
+// ================================================================
+// KURIKULUM
+// ================================================================
+
+/**
+ * Ambil semua Bagian + Bab + Fasal (nested)
+ * @returns {Promise<Array>}
+ */
+async function fetchKurikulum() {
+  const token = getToken();
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+
+  const res = await fetch(
+    `${SUPABASE_URL}rest/v1/bagian?select=*,bab(*,fasal(*,quiz(*)))&order=order_index`,
+    { headers }
+  );
+  if (!res.ok) throw new Error('Gagal mengambil kurikulum');
+  return res.json();
+}
+
+/**
+ * Ambil detail satu Fasal
+ * @param {string} fasalId
+ * @returns {Promise<Object>}
+ */
+async function fetchFasal(fasalId) {
+  const token = getToken();
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+
+  const res = await fetch(
+    `${SUPABASE_URL}rest/v1/fasal?id=eq.${fasalId}&select=*,bab(*,bagian(*))`,
+    { headers }
+  );
+  if (!res.ok) throw new Error('Gagal mengambil fasal');
+  const data = await res.json();
+  return data[0] || null;
+}
+
+/**
+ * Ambil semua quiz dari bank soal satu Fasal
+ * @param {string} fasalId
+ * @returns {Promise<Array>}
+ */
+async function fetchQuizBank(fasalId) {
+  const token = getToken();
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+
+  const res = await fetch(
+    `${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${fasalId}&order=order_index`,
+    { headers }
+  );
+  if (!res.ok) throw new Error('Gagal mengambil bank soal');
+  return res.json();
+}
+
+// ================================================================
+// PROGRESS
+// ================================================================
+
+/**
+ * Ambil semua progress user yang login
+ * @returns {Promise<Array>}
+ */
+async function fetchUserProgress() {
+  const token = getToken();
+  if (!token) return [];
+
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const res = await fetch(
+    `${SUPABASE_URL}rest/v1/user_progress?user_id=eq.${user.id}&select=*`,
+    {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+  if (!res.ok) return [];
+  return res.json();
+}
+
+/**
+ * Ambil progress untuk satu Fasal tertentu
+ * @param {string} fasalId
+ * @returns {Promise<Object|null>}
+ */
+async function fetchFasalProgress(fasalId) {
+  const token = getToken();
+  if (!token) return null;
+
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const res = await fetch(
+    `${SUPABASE_URL}rest/v1/user_progress?user_id=eq.${user.id}&fasal_id=eq.${fasalId}&select=*`,
+    {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data[0] || null;
+}
+
+/**
+ * Simpan / update progress setelah kuis
+ * @param {string} fasalId
+ * @param {number} score
+ * @param {number} attempts
+ * @param {string} status 'in_progress' | 'completed'
+ */
+async function saveProgress(fasalId, score, attempts, status) {
+  const token = getToken();
+  if (!token) return;
+
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const body = {
+    user_id: user.id,
+    fasal_id: fasalId,
+    quiz_score: score,
+    quiz_attempts: attempts,
+    status,
+    completed_at: status === 'completed' ? new Date().toISOString() : null,
+  };
+
+  // Cek existing
+  const existing = await fetchFasalProgress(fasalId);
+
+  if (existing) {
+    // Update
+    await fetch(
+      `${SUPABASE_URL}rest/v1/user_progress?id=eq.${existing.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${token}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify(body),
+      }
+    );
+  } else {
+    // Insert baru
+    await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({ ...body, started_at: new Date().toISOString() }),
+    });
+  }
+}
+
+/**
+ * Unlock Fasal berikutnya (insert/update progress unlocked)
+ * @param {string} fasalId
+ */
+async function unlockNextFasal(fasalId) {
+  const token = getToken();
+  if (!token) return;
+
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const existing = await fetchFasalProgress(fasalId);
+  if (!existing || existing.status === 'locked') {
+    await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({
+        user_id: user.id,
+        fasal_id: fasalId,
+        status: 'unlocked',
+        started_at: new Date().toISOString(),
+      }),
+    });
+  }
+}
+
+// ================================================================
+// TEACHER / ADMIN — MANAGE MATERI
+// ================================================================
+
+/**
+ * Buat Fasal baru (Teacher/Admin only)
+ * @param {Object} fasalData
+ */
+async function createFasal(fasalData) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login sebagai Teacher/Admin');
+
+  const res = await fetch(`${SUPABASE_URL}rest/v1/fasal`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${token}`,
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(fasalData),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Gagal membuat fasal');
+  }
+  return res.json();
+}
+
+/**
+ * Update Fasal
+ * @param {string} fasalId
+ * @param {Object} updates
+ */
+async function updateFasal(fasalId, updates) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+
+  const res = await fetch(
+    `${SUPABASE_URL}rest/v1/fasal?id=eq.${fasalId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify(updates),
+    }
+  );
+  if (!res.ok) throw new Error('Gagal update fasal');
+}
+
+/**
+ * Tambah soal ke bank (Teacher/Admin only)
+ * @param {Object} quizData
+ */
+async function createQuiz(quizData) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login sebagai Teacher/Admin');
+
+  const res = await fetch(`${SUPABASE_URL}rest/v1/quiz`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${token}`,
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(quizData),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Gagal membuat soal');
+  }
+  return res.json();
+}

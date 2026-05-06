@@ -1,0 +1,26 @@
+[
+  {
+    "id": "b0000001-0000-0000-0000-000000000001",
+    "bagian_id": "a0000001-0000-0000-0000-000000000001",
+    "order_index": 1,
+    "title": "Muqoddimah",
+    "is_muqoddimah": true,
+    "is_locked": false
+  },
+  {
+    "id": "b0000001-0000-0000-0000-000000000002",
+    "bagian_id": "a0000001-0000-0000-0000-000000000001",
+    "order_index": 2,
+    "title": "Ad-Dafridu wa Ats-Tsauliy",
+    "is_muqoddimah": false,
+    "is_locked": true
+  },
+  {
+    "id": "b0000001-0000-0000-0000-000000000003",
+    "bagian_id": "a0000001-0000-0000-0000-000000000001",
+    "order_index": 3,
+    "title": "Al-Ismu wal-Kalimatu wal-'Alfadhu",
+    "is_muqoddimah": false,
+    "is_locked": true
+  }
+]

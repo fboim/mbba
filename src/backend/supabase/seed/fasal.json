@@ -1,0 +1,32 @@
+[
+  {
+    "id": "f0000001-0000-0000-0000-000000000001",
+    "bab_id": "b0000001-0000-0000-0000-000000000001",
+    "order_index": 1,
+    "title": "Ad-Dafridu fi al-Jumlah",
+    "content_arab": "هَذَا الضَّبْعُ مُسْتَقِيمٌ. هَذِهِ الْبَقَرَةُ مُسْتَقِيمَةٌ. هَذَا الْجِلْدُ وَاسِعٌ. هَذِهِ النَّخْلَةُ طَوِيلَةٌ.",
+    "content_id": "Ini (binatang buas) singa berjalan tegak. Ini (binatang) sapi berjalan tegak. Kulit ini luas. Pohon kurma itu tinggi.",
+    "audio_url": null,
+    "is_locked": false
+  },
+  {
+    "id": "f0000001-0000-0000-0000-000000000002",
+    "bab_id": "b0000001-0000-0000-0000-000000000001",
+    "order_index": 2,
+    "title": "Al-Ismu wal-Kalimatu",
+    "content_arab": "الْجِلْدُ وَاسِعٌ. الْبَقَرَةُ مُسْتَقِيمَةٌ. النَّخْلَةُ طَوِيلَةٌ. الضَّبْعُ مُسْتَقِيمٌ.",
+    "content_id": "Kulit itu luas. Sapi itu berjalan tegak. Pohon kurma itu tinggi. Singa itu berjalan tegak.",
+    "audio_url": null,
+    "is_locked": true
+  },
+  {
+    "id": "f0000001-0000-0000-0000-000000000003",
+    "bab_id": "b0000001-0000-0000-0000-000000000002",
+    "order_index": 1,
+    "title": "Al-Ismu wal-Fa'lu",
+    "content_arab": "الْغُرْبَالُ نَظِيفٌ. الْبَقَرَةُ كَبِيرَةٌ. الْكَلْبُ صَغِيرٌ. الْعِلْجُ قَوِيٌّ.",
+    "content_id": "Pengayak itu bersih. Sapi itu besar. Anjing itu kecil. Orang itu kuat.",
+    "audio_url": null,
+    "is_locked": true
+  }
+]

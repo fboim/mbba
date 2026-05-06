@@ -1,0 +1,23 @@
+[
+  {
+    "id": "a0000001-0000-0000-0000-000000000001",
+    "order_index": 1,
+    "title": "Al-Qawa'id al-Muta'alliqah bi al-Jumlah",
+    "description": "Qaidah-qaidah nahwu yang berkaitan dengan kalimat.",
+    "is_active": true
+  },
+  {
+    "id": "a0000001-0000-0000-0000-000000000002",
+    "order_index": 2,
+    "title": "Ash-Sharf al-Mukhtasar",
+    "description": "Shorof dasar yang berkaitan dengan fi'il.",
+    "is_active": true
+  },
+  {
+    "id": "a0000001-0000-0000-0000-000000000003",
+    "order_index": 3,
+    "title": "Al-I'rab al-Musharrar",
+    "description": "Penjabaran i'rab secara terperinci.",
+    "is_active": true
+  }
+]
