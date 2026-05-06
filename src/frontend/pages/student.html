@@ -162,7 +162,7 @@
 
     async function loadDashboard() {
       try {
-        // Load kurikulum
+        // Load kurikulum with bab content
         const kurikulum = await fetchKurikulum();
         allFasals = [];
         allBabs = [];
@@ -177,21 +177,36 @@
 
         kurikulum.forEach(bagian => {
           (bagian.bab || []).forEach(bab => {
+            // Add bab to the list (including Muqoddimah)
             allBabs.push({
               id: bab.id,
               label: `Bagian ${bagian.order_index} > Bab ${bab.order_index}`,
-              fullLabel: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`
+              fullLabel: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
+              order_index: bab.order_index,
+              bagian_id: bagian.id,
+              bagian_order: bagian.order_index,
+              title: bab.title || bab.nama,
+              is_muqoddimah: bab.is_muqoddimah || false,
+              content_arab: bab.content_arab || '',
+              content_id: bab.content_id || ''
             });
+
+            // Add bab as first "item" if it's Muqoddimah
+            if (bab.is_muqoddimah) {
+              fasalMap['bab_' + bab.id] = `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${bab.title || bab.nama}`;
+            }
+
+            // Add fasals
             (bab.fasal || []).forEach(fasal => {
               allFasals.push({
                 id: fasal.id,
-                // Full hierarchy: Bagian 1 > Bab 1 > Fasal 1
                 label: `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${fasal.title || fasal.nama || 'Fasal ' + fasal.order_index}`,
                 shortLabel: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`,
                 bab_id: bab.id,
                 bab_label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
                 bagian_id: bagian.id,
-                bagian_label: `Bagian ${bagian.order_index}`
+                bagian_label: `Bagian ${bagian.order_index}`,
+                order_index: `${bagian.order_index}.${bab.order_index}.${fasal.order_index}`
               });
               fasalMap[fasal.id] = `Bagian ${bagian.order_index} > Bab ${bab.order_index} > ${fasal.title || 'Fasal ' + fasal.order_index}`;
             });
@@ -291,103 +306,155 @@
     function renderFasalList() {
       const container = document.getElementById('fasalList');
 
-      if (allFasals.length === 0) {
-        container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada fasal</p>';
-        return;
-      }
+      // Build combined list: Babs (with Muqoddimah first) + Fasals
+      const items = [];
 
-      // Sort fasals by order (bagian, bab, fasal)
+      // Add Muqoddimah first (bab with is_muqoddimah = true)
+      allBabs.forEach(bab => {
+        if (bab.is_muqoddimah) {
+          items.push({
+            type: 'bab',
+            id: bab.id,
+            label: `Bagian ${bab.bagian_order} > Bab ${bab.order_index} > ${bab.title}`,
+            shortLabel: `${bab.bagian_order}.${bab.order_index} ${bab.title}`,
+            bab_label: `Bagian ${bab.bagian_order}`,
+            content_arab: bab.content_arab,
+            content_id: bab.content_id,
+            order: bab.bagian_order * 100 + bab.order_index * 10
+          });
+        }
+      });
+
+      // Sort fasals by order
       const sortedFasals = [...allFasals].sort((a, b) => {
         const aParts = a.label.split('>')[0].trim().replace('Bagian ', '').split('.');
         const bParts = b.label.split('>')[0].trim().replace('Bagian ', '').split('.');
-        const aNum = parseInt(aParts[0]) * 100 + parseInt(aParts[1] || 0);
-        const bNum = parseInt(bParts[0]) * 100 + parseInt(bParts[1] || 0);
+        const aNum = parseInt(aParts[0]) * 1000 + parseInt(aParts[1] || 0) * 100 + parseInt(aParts[2] || 0);
+        const bNum = parseInt(bParts[0]) * 1000 + parseInt(bParts[1] || 0) * 100 + parseInt(bParts[2] || 0);
         return aNum - bNum;
       });
 
-      // Find which fasal is the next unlocked one
+      // Add fasals
+      sortedFasals.forEach(fasal => {
+        const parts = fasal.label.split('>')[0].trim().replace('Bagian ', '').split('.');
+        items.push({
+          type: 'fasal',
+          id: fasal.id,
+          label: fasal.label,
+          shortLabel: fasal.shortLabel || fasal.label,
+          bab_label: fasal.bab_label,
+          content_arab: '',
+          content_id: '',
+          order: parseInt(parts[0]) * 1000 + parseInt(parts[1] || 0) * 100 + parseInt(parts[2] || 0)
+        });
+      });
+
+      if (items.length === 0) {
+        container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada materi. Hubungi admin.</p>';
+        return;
+      }
+
+      // Find which item is the next unlocked one
       const completedIds = userProgress.filter(p => p.status === 'completed').map(p => p.fasal_id);
       let nextUnlockIndex = 0;
-
-      for (let i = 0; i < sortedFasals.length; i++) {
-        if (!completedIds.includes(sortedFasals[i].id)) {
+      for (let i = 0; i < items.length; i++) {
+        const itemId = items[i].type === 'bab' ? 'bab_' + items[i].id : items[i].id;
+        if (!completedIds.includes(itemId)) {
           nextUnlockIndex = i;
           break;
         }
-        if (i === sortedFasals.length - 1) {
-          nextUnlockIndex = sortedFasals.length;
+        if (i === items.length - 1) {
+          nextUnlockIndex = items.length;
         }
       }
 
       // Progress summary
-      const total = sortedFasals.length;
+      const total = items.length;
       const completed = completedIds.length;
       const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
       let html = `
-        <!-- Progress Summary -->
         <div class="mb-4 p-3 bg-slate-50 rounded-lg">
           <div class="flex justify-between items-center mb-2">
             <span class="text-sm font-medium text-slate-700">Progress Belajar</span>
-            <span class="text-sm font-bold text-primary-600">${completed}/${total} Fasal (${percent}%)</span>
+            <span class="text-sm font-bold text-primary-600">${completed}/${total} Materi (${percent}%)</span>
           </div>
           <div class="w-full bg-slate-200 rounded-full h-2">
             <div class="bg-primary-500 h-2 rounded-full transition-all" style="width: ${percent}%"></div>
           </div>
-          ${percent === 100 ? '<p class="text-xs text-green-600 mt-2 font-medium"><i class="fa-solid fa-trophy mr-1"></i>Selamat! Anda telah menyelesaikan semua fasal!</p>' : ''}
         </div>
       `;
 
       // List header
       html += `<div class="font-semibold text-slate-600 text-sm mb-2">Daftar Materi (wajib berurutan):</div>`;
 
-      sortedFasals.forEach((fasal, index) => {
-        const progress = userProgress.find(p => p.fasal_id === fasal.id);
-        const score = progress?.quiz_score || null;
+      items.forEach((item, index) => {
+        const progress = userProgress.find(p => {
+          const progId = item.type === 'bab' ? 'bab_' + item.id : item.id;
+          return p.fasal_id === progId;
+        });
 
-        // Sequential unlock: only index 0 or next in sequence is unlocked
+        // Sequential unlock
         let isUnlocked = index <= nextUnlockIndex;
         let statusClass = 'bg-slate-100 text-slate-500';
-        let statusText = 'Terkunci';
-        let btnClass = 'bg-slate-300 cursor-not-allowed opacity-60';
-        let btnIcon = 'fa-lock';
-        let btnText = 'Kunci';
+        let statusText = 'Tersedia';
+        let btnClass = 'bg-green-600 hover:bg-green-700';
+        let btnIcon = 'fa-play';
+        let btnText = 'Mulai';
 
         if (progress?.status === 'completed') {
           statusClass = 'bg-green-100 text-green-700';
-          statusText = `Lulus (${score}%)`;
+          statusText = `Selesai`;
           btnClass = 'bg-primary-600 hover:bg-primary-700';
           btnIcon = 'fa-book-open';
           btnText = 'Baca Lagi';
-        } else if (isUnlocked) {
-          statusClass = 'bg-blue-100 text-blue-700';
-          statusText = index === 0 ? 'Mulai' : 'Tersedia';
-          btnClass = 'bg-green-600 hover:bg-green-700';
-          btnIcon = 'fa-play';
-          btnText = index === 0 ? 'Mulai' : 'Kerjakan';
+          isUnlocked = true;
+        } else if (!isUnlocked) {
+          statusClass = 'bg-slate-100 text-slate-400';
+          statusText = 'Terkunci';
+          btnClass = 'bg-slate-300 cursor-not-allowed opacity-60';
+          btnIcon = 'fa-lock';
+          btnText = 'Kunci';
         }
 
+        // Determine link
+        const link = item.type === 'bab' ? `materi.html?bab=${item.id}` : `materi.html?id=${item.id}`;
+
+        // Content preview
+        const hasContent = item.content_arab && item.content_arab.trim().length > 0;
+
         html += `
-          <div class="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200 ${isUnlocked && progress?.status !== 'completed' ? 'border-blue-200' : ''} hover:shadow-sm transition">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center ${statusClass}">
-                ${progress?.status === 'completed' ? '<i class="fa-solid fa-check text-sm"></i>' : isUnlocked ? '<i class="fa-solid fa-play text-xs"></i>' : '<i class="fa-solid fa-lock text-xs"></i>'}
+          <div class="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200 ${isUnlocked && !progress?.status ? 'border-blue-200' : ''} hover:shadow-sm transition">
+            <div class="flex items-center gap-3 flex-1">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center ${statusClass}">
+                ${item.type === 'bab' ? '<i class="fa-solid fa-book text-sm"></i>' : '<i class="fa-solid fa-file-lines text-xs"></i>'}
               </div>
               <div class="flex-1">
-                <div class="font-medium text-slate-800">${fasal.shortLabel || fasal.label}</div>
-                <div class="text-sm text-slate-500">${fasal.bab_label}</div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs px-2 py-0.5 rounded ${item.type === 'bab' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'} font-semibold">${item.type === 'bab' ? 'Muqoddimah' : 'Fasal'}</span>
+                  <span class="font-medium text-slate-800">${item.shortLabel || item.label}</span>
+                </div>
+                <div class="text-sm text-slate-500">${item.bab_label}</div>
+                ${hasContent ? '<div class="text-xs text-green-600 mt-1"><i class="fa-solid fa-check-circle mr-1"></i>Materi tersedia</div>' : '<div class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-exclamation-circle mr-1"></i>Belum ada materi</div>'}
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass}">${statusText}</span>
               ${isUnlocked ? `
-                <a href="materi.html?id=${fasal.id}"
-                  class="px-3 py-1.5 ${btnClass} text-white text-xs font-semibold rounded-lg transition shadow-sm">
+                <a href="${link}" class="px-4 py-2 ${btnClass} text-white text-sm font-semibold rounded-lg transition shadow-sm">
                   <i class="fa-solid ${btnIcon} mr-1"></i>${btnText}
                 </a>
               ` : `
-                <span class="px-3 py-1.5 bg-slate-200 text-slate-400 text-xs font-semibold rounded-lg cursor-not-allowed">
+                <span class="px-4 py-2 bg-slate-200 text-slate-400 text-sm font-semibold rounded-lg cursor-not-allowed">
                   <i class="fa-solid fa-lock mr-1"></i>Kunci
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
                 </span>
               `}
             </div>
