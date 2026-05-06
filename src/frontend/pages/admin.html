@@ -1147,105 +1147,86 @@
 
         dashboardEl.innerHTML = `
           <!-- Summary Cards -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white">
-              <div class="flex items-center gap-3">
-                <i class="fa-solid fa-users text-2xl opacity-80"></i>
-                <div>
-                  <div class="text-2xl font-bold">${totalStudents}</div>
-                  <div class="text-sm opacity-80">Total Siswa</div>
-                </div>
-              </div>
+          <div class="grid grid-cols-4 gap-3 mb-4">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-3 text-white text-center">
+              <i class="fa-solid fa-users text-lg mb-1"></i>
+              <div class="text-xl font-bold">${totalStudents}</div>
+              <div class="text-xs opacity-80">Siswa</div>
             </div>
-
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
-              <div class="flex items-center gap-3">
-                <i class="fa-solid fa-check-circle text-2xl opacity-80"></i>
-                <div>
-                  <div class="text-2xl font-bold">${completedProgress}</div>
-                  <div class="text-sm opacity-80">Sudah Lulus</div>
-                </div>
-              </div>
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-3 text-white text-center">
+              <i class="fa-solid fa-check-circle text-lg mb-1"></i>
+              <div class="text-xl font-bold">${completedProgress}</div>
+              <div class="text-xs opacity-80">Lulus</div>
             </div>
-
-            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 text-white">
-              <div class="flex items-center gap-3">
-                <i class="fa-solid fa-fire text-2xl opacity-80"></i>
-                <div>
-                  <div class="text-2xl font-bold">${recentActivity}</div>
-                  <div class="text-sm opacity-80">Aktif 7 Hari</div>
-                </div>
-              </div>
+            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg p-3 text-white text-center">
+              <i class="fa-solid fa-fire text-lg mb-1"></i>
+              <div class="text-xl font-bold">${recentActivity}</div>
+              <div class="text-xs opacity-80">7 Hari</div>
             </div>
-
-            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white">
-              <div class="flex items-center gap-3">
-                <i class="fa-solid fa-star text-2xl opacity-80"></i>
-                <div>
-                  <div class="text-2xl font-bold">${avgScore}%</div>
-                  <div class="text-sm opacity-80">Rata-rata Skor</div>
-                </div>
-              </div>
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-3 text-white text-center">
+              <i class="fa-solid fa-star text-lg mb-1"></i>
+              <div class="text-xl font-bold">${avgScore}%</div>
+              <div class="text-xs opacity-80">Skor</div>
             </div>
           </div>
 
-          <!-- Progress Overview -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Detailed Stats - Side by Side -->
+          <div class="grid grid-cols-2 gap-4">
             <!-- Progress Stats -->
-            <div class="bg-slate-50 rounded-xl p-4">
-              <h3 class="font-semibold text-slate-700 mb-4">Statistik Progress</h3>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm text-slate-600">Total Progress</span>
-                  <span class="font-semibold">${totalProgress}</span>
+            <div class="bg-slate-50 rounded-lg p-3">
+              <h3 class="font-semibold text-slate-700 mb-2 text-sm">Statistik Progress</h3>
+              <div class="space-y-1 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Total</span>
+                  <span class="font-medium">${totalProgress}</span>
                 </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm text-slate-600">Lulus</span>
-                  <span class="font-semibold text-green-600">${completedProgress}</span>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Lulus</span>
+                  <span class="font-medium text-green-600">${completedProgress}</span>
                 </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm text-slate-600">Sedang Dikerjakan</span>
-                  <span class="font-semibold text-amber-600">${unlockedProgress}</span>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Dikerjakan</span>
+                  <span class="font-medium text-amber-600">${unlockedProgress}</span>
                 </div>
-                <div class="mt-4">
-                  <div class="flex justify-between text-xs text-slate-500 mb-1">
-                    <span>Tingkat Kelulusan</span>
-                    <span>${completionRate}%</span>
+                <div class="mt-2">
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-400">Kelulusan</span>
+                    <span class="text-slate-500">${completionRate}%</span>
                   </div>
-                  <div class="w-full bg-slate-200 rounded-full h-2">
-                    <div class="bg-green-500 h-2 rounded-full transition-all" style="width: ${completionRate}%"></div>
+                  <div class="w-full bg-slate-200 rounded-full h-1.5">
+                    <div class="bg-green-500 h-1.5 rounded-full" style="width: ${completionRate}%"></div>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Content Stats -->
-            <div class="bg-slate-50 rounded-xl p-4">
-              <h3 class="font-semibold text-slate-700 mb-4">Statistik Konten</h3>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm text-slate-600">Total Fasal</span>
-                  <span class="font-semibold">${totalFasals}</span>
+            <div class="bg-slate-50 rounded-lg p-3">
+              <h3 class="font-semibold text-slate-700 mb-2 text-sm">Statistik Konten</h3>
+              <div class="space-y-1 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Fasal</span>
+                  <span class="font-medium">${totalFasals}</span>
                 </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm text-slate-600">Total Soal Quiz</span>
-                  <span class="font-semibold">${totalQuizzes}</span>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Soal Quiz</span>
+                  <span class="font-medium">${totalQuizzes}</span>
                 </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm text-slate-600">Soal per Fasal</span>
-                  <span class="font-semibold">${totalFasals > 0 ? Math.round(totalQuizzes / totalFasals) : 0}</span>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Soal/Fasal</span>
+                  <span class="font-medium">${totalFasals > 0 ? Math.round(totalQuizzes / totalFasals) : 0}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Quick Actions -->
-          <div class="mt-6 flex flex-wrap gap-2">
-            <button onclick="exportQuizzes()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition">
-              <i class="fa-solid fa-download mr-2"></i>Export Data
+          <div class="mt-4 flex gap-2">
+            <button onclick="exportQuizzes()" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-lg transition">
+              <i class="fa-solid fa-download mr-1"></i>Export
             </button>
-            <button onclick="showTab('siswa')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition">
-              <i class="fa-solid fa-users mr-2"></i>Lihat Semua Siswa
+            <button onclick="showTab('siswa')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition">
+              <i class="fa-solid fa-users mr-1"></i>Siswa
             </button>
           </div>
         `;
