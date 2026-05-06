@@ -49,6 +49,10 @@
         class="px-4 py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200">
         <i class="fa-solid fa-question mr-2"></i>Kelola Soal
       </button>
+      <button onclick="showTab('siswa')" id="tabSiswa"
+        class="px-4 py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200">
+        <i class="fa-solid fa-users mr-2"></i>Progress Siswa
+      </button>
     </div>
 
     <!-- Stats Section -->
@@ -292,6 +296,18 @@
       loadQuizList();
     })();
 
+    <!-- Student Progress Section -->
+    <div id="sectionSiswa" class="hidden space-y-6">
+
+      <!-- Student Progress List -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-800 mb-4">
+          <i class="fa-solid fa-users text-blue-500 mr-2"></i>Progress Semua Siswa
+        </h2>
+        <div id="studentProgress" class="text-slate-500">Loading...</div>
+      </div>
+    </div>
+
     // ═══════════════════════════════════════
     // TAB SWITCHING
     // ═══════════════════════════════════════
@@ -300,9 +316,10 @@
       document.getElementById('sectionStats').classList.add('hidden');
       document.getElementById('sectionMateri').classList.add('hidden');
       document.getElementById('sectionQuiz').classList.add('hidden');
+      document.getElementById('sectionSiswa').classList.add('hidden');
 
       // Reset all tabs
-      ['tabStats', 'tabMateri', 'tabQuiz'].forEach(id => {
+      ['tabStats', 'tabMateri', 'tabQuiz', 'tabSiswa'].forEach(id => {
         const el = document.getElementById(id);
         el.classList.remove('bg-primary-600', 'text-white');
         el.classList.add('bg-slate-100', 'text-slate-600');
@@ -312,7 +329,8 @@
       const sections = {
         stats: 'sectionStats',
         materi: 'sectionMateri',
-        quiz: 'sectionQuiz'
+        quiz: 'sectionQuiz',
+        siswa: 'sectionSiswa'
       };
 
       document.getElementById(sections[tab]).classList.remove('hidden');
@@ -322,6 +340,7 @@
 
       // Load data for the section
       if (tab === 'materi') loadMateri();
+      if (tab === 'siswa') loadStudentProgress();
     }
 
     // ═══════════════════════════════════════
@@ -951,6 +970,102 @@
 
     // ═══════════════════════════════════════
     // LOGOUT
+    // ═══════════════════════════════════════
+    // STUDENT PROGRESS
+    // ═══════════════════════════════════════
+    async function loadStudentProgress() {
+      const container = document.getElementById('studentProgress');
+
+      try {
+        // Get all progress
+        const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          }
+        });
+
+        if (!progressRes.ok) {
+          throw new Error('Gagal mengambil progress');
+        }
+
+        const progressData = await progressRes.json();
+
+        // Build fasal map for display
+        const fasalMap = {};
+        allFasals.forEach(f => { fasalMap[f.id] = f.label; });
+
+        if (progressData.length === 0) {
+          container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada progress siswa</p>';
+          return;
+        }
+
+        // Group by user
+        const userProgress = {};
+        progressData.forEach(p => {
+          if (!userProgress[p.user_id]) {
+            userProgress[p.user_id] = {
+              completed: [],
+              inProgress: [],
+              unlocked: []
+            };
+          }
+          if (p.status === 'completed') {
+            userProgress[p.user_id].completed.push(p);
+          } else if (p.status === 'unlocked') {
+            userProgress[p.user_id].unlocked.push(p);
+          }
+        });
+
+        let html = `
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50">
+                <tr>
+                  <th class="px-4 py-2 text-left">#</th>
+                  <th class="px-4 py-2 text-left">Status</th>
+                  <th class="px-4 py-2 text-left">Fasal</th>
+                  <th class="px-4 py-2 text-left">Skor</th>
+                  <th class="px-4 py-2 text-left">Percobaan</th>
+                  <th class="px-4 py-2 text-left">Tanggal</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        let no = 1;
+        Object.entries(userProgress).forEach(([userId, data]) => {
+          // Show completed first
+          data.completed.forEach(p => {
+            html += `
+              <tr class="border-t border-slate-100 hover:bg-slate-50">
+                <td class="px-4 py-2">${no++}</td>
+                <td class="px-4 py-2">
+                  <span class="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700">Lulus</span>
+                </td>
+                <td class="px-4 py-2">${fasalMap[p.fasal_id] || p.fasal_id}</td>
+                <td class="px-4 py-2">${p.quiz_score || 0}%</td>
+                <td class="px-4 py-2">${p.quiz_attempts || 1}x</td>
+                <td class="px-4 py-2 text-xs text-slate-400">${p.completed_at ? new Date(p.completed_at).toLocaleDateString('id-ID') : '-'}</td>
+              </tr>
+            `;
+          });
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">Total: ${progressData.length} records progress</p>
+        `;
+
+        container.innerHTML = html;
+      } catch (err) {
+        console.error('Error loading student progress:', err);
+        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+      }
+    }
+
     // ═══════════════════════════════════════
     function handleLogout() {
       logout();
