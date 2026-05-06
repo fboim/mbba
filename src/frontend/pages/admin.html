@@ -476,6 +476,7 @@
     }
 
     async function loadMateri() {
+      console.log('loadMateri: starting...');
       const container = document.getElementById('materiList');
 
       try {
@@ -491,9 +492,12 @@
           })
         ]);
 
+        console.log('loadMateri: responses received', bagiansRes.status, babsRes.status, fasalsRes.status);
+
         const bagians = await bagiansRes.json();
         const babs = await babsRes.json();
         const fasals = await fasalsRes.json();
+        console.log('loadMateri: data loaded', bagians.length, 'bagians', babs.length, 'babs', fasals.length, 'fasals');
 
         let html = '';
         bagians.forEach(bagian => {
@@ -570,7 +574,9 @@
         });
 
         container.innerHTML = html || '<p class="text-slate-400 text-center py-8">Belum ada materi</p>';
+        console.log('loadMateri: done, updated container');
       } catch (err) {
+        console.error('loadMateri error:', err);
         container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
       }
     }
