@@ -186,11 +186,29 @@
           <i class="fa-solid fa-plus text-green-500 mr-2"></i>Tambah Soal Baru
         </h2>
 
-        <!-- Select Fasal -->
+        <!-- Select Level (Bab or Fasal) -->
         <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Level</label>
+          <select id="quizLevel" onchange="updateQuizLevelForm()"
+            class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="fasal">Fasal</option>
+            <option value="bab">Bab</option>
+          </select>
+        </div>
+
+        <!-- Select Fasal (shown for Fasal level) -->
+        <div id="quizFasalSelect" class="mb-4">
           <label class="block text-sm font-medium text-slate-700 mb-1">Fasal</label>
           <select id="newQuizFasal" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
             <option value="">Pilih Fasal...</option>
+          </select>
+        </div>
+
+        <!-- Select Bab (shown for Bab level) -->
+        <div id="quizBabSelect" class="mb-4 hidden">
+          <label class="block text-sm font-medium text-slate-700 mb-1">Bab</label>
+          <select id="newQuizBab" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="">Pilih Bab...</option>
           </select>
         </div>
 
@@ -259,9 +277,17 @@
             <i class="fa-solid fa-list text-blue-500 mr-2"></i>Daftar Soal
           </h2>
           <div class="flex gap-2 items-center">
+            <select id="quizLevelFilter" onchange="updateQuizFilter()"
+              class="px-3 py-2 border border-slate-200 rounded-lg text-sm">
+              <option value="fasal">Fasal</option>
+              <option value="bab">Bab</option>
+            </select>
             <select id="filterFasal" onchange="loadQuizList()"
               class="px-4 py-2 border border-slate-200 rounded-lg text-sm">
               <option value="">Semua Fasal</option>
+            </select>
+            <select id="filterBab" onchange="loadQuizList()" class="hidden px-4 py-2 border border-slate-200 rounded-lg text-sm">
+              <option value="">Semua Bab</option>
             </select>
             <button onclick="exportQuizzes()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition">
               <i class="fa-solid fa-download mr-1"></i>Export
@@ -352,34 +378,65 @@
     }
 
     // ═══════════════════════════════════════
-    // LOAD FASALS FOR DROPDOWN
+    // LOAD FASALS AND BABS FOR DROPDOWN
     // ═══════════════════════════════════════
     async function loadFasalsForSelect() {
       try {
         const data = await fetchKurikulum();
         allFasals = [];
+        allBabs = [];
+
         data.forEach(bagian => {
           (bagian.bab || []).forEach(bab => {
+            allBabs.push({
+              id: bab.id,
+              label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
+              bagian_id: bagian.id
+            });
             (bab.fasal || []).forEach(fasal => {
               allFasals.push({
                 id: fasal.id,
-                label: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`
+                label: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`,
+                bab_id: bab.id
               });
             });
           });
         });
 
-        const selectNew = document.getElementById('newQuizFasal');
+        // Populate Fasal select in form
+        const selectFasalNew = document.getElementById('newQuizFasal');
+        selectFasalNew.innerHTML = '<option value="">Pilih Fasal...</option>' +
+          allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
+
+        // Populate Bab select in form
+        const selectBabNew = document.getElementById('newQuizBab');
+        selectBabNew.innerHTML = '<option value="">Pilih Bab...</option>' +
+          allBabs.map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+
+        // Populate filter selects
         const selectFilter = document.getElementById('filterFasal');
-
-        selectNew.innerHTML = '<option value="">Pilih Fasal...</option>' +
-          allFasals.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
-
         selectFilter.innerHTML = '<option value="">Semua Fasal</option>' +
-          allFasals.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
+          allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
+
+        const selectBabFilter = document.getElementById('filterBab');
+        selectBabFilter.innerHTML = '<option value="">Semua Bab</option>' +
+          allBabs.map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
       } catch (err) {
-        console.error('Gagal load fasals:', err);
+        console.error('Gagal load data:', err);
       }
+    }
+
+    function updateQuizLevelForm() {
+      const level = document.getElementById('quizLevel').value;
+      document.getElementById('quizFasalSelect').classList.toggle('hidden', level !== 'fasal');
+      document.getElementById('quizBabSelect').classList.toggle('hidden', level !== 'bab');
+    }
+
+    function updateQuizFilter() {
+      const level = document.getElementById('quizLevelFilter').value;
+      document.getElementById('filterFasal').classList.toggle('hidden', level !== 'fasal');
+      document.getElementById('filterBab').classList.toggle('hidden', level !== 'bab');
+      loadQuizList();
     }
 
     // ═══════════════════════════════════════
@@ -387,12 +444,18 @@
     // ═══════════════════════════════════════
     async function loadQuizList() {
       const container = document.getElementById('quizList');
-      const fasalId = document.getElementById('filterFasal').value;
+      const level = document.getElementById('quizLevelFilter').value;
+      const fasalFilter = document.getElementById('filterFasal').value;
+      const babFilter = document.getElementById('filterBab').value;
 
       try {
-        // Load all quizzes or filter by fasal
+        // Build filter URL
         let url = `${SUPABASE_URL}rest/v1/quiz?order=order_index`;
-        if (fasalId) url += `&fasal_id=eq.${fasalId}`;
+        if (level === 'fasal' && fasalFilter) {
+          url += `&fasal_id=eq.${fasalFilter.replace('fasal:', '')}`;
+        } else if (level === 'bab' && babFilter) {
+          url += `&bab_id=eq.${babFilter.replace('bab:', '')}`;
+        }
 
         const res = await fetch(url, {
           headers: {
@@ -413,9 +476,9 @@
               <thead class="bg-slate-50">
                 <tr>
                   <th class="px-4 py-2 text-left">#</th>
+                  <th class="px-4 py-2 text-left">Level</th>
                   <th class="px-4 py-2 text-left">Tipe</th>
                   <th class="px-4 py-2 text-left">Pertanyaan</th>
-                  <th class="px-4 py-2 text-left">Jawaban</th>
                   <th class="px-4 py-2 text-center">Aksi</th>
                 </tr>
               </thead>
@@ -424,14 +487,18 @@
                   <tr class="border-t border-slate-100 hover:bg-slate-50">
                     <td class="px-4 py-2">${i + 1}</td>
                     <td class="px-4 py-2">
+                      <span class="px-2 py-1 rounded text-xs font-semibold ${q.bab_id ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">
+                        ${q.bab_id ? 'BAB' : 'FASAL'}
+                      </span>
+                    </td>
+                    <td class="px-4 py-2">
                       <span class="px-2 py-1 rounded text-xs font-semibold ${
-                        q.type === 'mc' ? 'bg-blue-100 text-blue-700' :
-                        q.type === 'fill-arab' ? 'bg-green-100 text-green-700' :
-                        'bg-purple-100 text-purple-700'
+                        q.type === 'mc' ? 'bg-green-100 text-green-700' :
+                        q.type === 'fill-arab' ? 'bg-emerald-100 text-emerald-700' :
+                        'bg-orange-100 text-orange-700'
                       }">${q.type.toUpperCase()}</span>
                     </td>
                     <td class="px-4 py-2 max-w-xs truncate">${q.question}</td>
-                    <td class="px-4 py-2">${q.correct_answer}</td>
                     <td class="px-4 py-2 text-center">
                       <button onclick="deleteQuiz('${q.id}')" class="text-red-500 hover:text-red-700">
                         <i class="fa-solid fa-trash"></i>
@@ -889,7 +956,7 @@
     // ADD NEW QUIZ
     // ═══════════════════════════════════════
     async function addNewQuiz() {
-      const fasalId = document.getElementById('newQuizFasal').value;
+      const level = document.getElementById('quizLevel').value;
       const type = document.getElementById('newQuizType').value;
       const question = document.getElementById('newQuizQuestion').value.trim();
       const answer = document.getElementById('newQuizAnswer').value.trim();
@@ -897,14 +964,36 @@
 
       errorEl.classList.add('hidden');
 
-      if (!fasalId || !question || !answer) {
+      // Get the ID based on level
+      let targetId;
+      if (level === 'fasal') {
+        targetId = document.getElementById('newQuizFasal').value;
+      } else {
+        targetId = document.getElementById('newQuizBab').value;
+      }
+
+      if (!targetId || !question || !answer) {
         errorEl.textContent = 'Lengkapi semua field yang diperlukan.';
         errorEl.classList.remove('hidden');
         return;
       }
 
+      // Parse level and id
+      const [quizLevel, quizId] = targetId.split(':');
+      const body = {
+        type,
+        question,
+        correct_answer: answer,
+        order_index: allQuizzes.filter(q => quizLevel === 'fasal' ? q.fasal_id === quizId : q.bab_id === quizId).length + 1
+      };
+
+      if (quizLevel === 'fasal') {
+        body.fasal_id = quizId;
+      } else {
+        body.bab_id = quizId;
+      }
+
       // Build options for MC
-      let options = null;
       if (type === 'mc') {
         const a = document.getElementById('mcA').value.trim();
         const b = document.getElementById('mcB').value.trim();
@@ -915,7 +1004,7 @@
           errorEl.classList.remove('hidden');
           return;
         }
-        options = JSON.stringify({ A: a, B: b, C: c, D: d });
+        body.options = JSON.stringify({ A: a, B: b, C: c, D: d });
       }
 
       try {
@@ -927,14 +1016,7 @@
             'Authorization': `Bearer ${getToken()}`,
             'Prefer': 'return=representation'
           },
-          body: JSON.stringify({
-            fasal_id: fasalId,
-            type,
-            question,
-            correct_answer: answer,
-            options,
-            order_index: allQuizzes.filter(q => q.fasal_id === fasalId).length + 1
-          })
+          body: JSON.stringify(body)
         });
 
         if (!res.ok) {
@@ -943,7 +1025,6 @@
         }
 
         // Clear form
-        document.getElementById('newQuizFasal').value = '';
         document.getElementById('newQuizQuestion').value = '';
         document.getElementById('newQuizAnswer').value = '';
         document.getElementById('mcA').value = '';
