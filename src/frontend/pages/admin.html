@@ -336,7 +336,7 @@
             (bab.fasal || []).forEach(fasal => {
               allFasals.push({
                 id: fasal.id,
-                nama: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.nama}`
+                label: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`
               });
             });
           });
@@ -346,10 +346,10 @@
         const selectFilter = document.getElementById('filterFasal');
 
         selectNew.innerHTML = '<option value="">Pilih Fasal...</option>' +
-          allFasals.map(f => `<option value="${f.id}">${f.nama}</option>`).join('');
+          allFasals.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
 
         selectFilter.innerHTML = '<option value="">Semua Fasal</option>' +
-          allFasals.map(f => `<option value="${f.id}">${f.nama}</option>`).join('');
+          allFasals.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
       } catch (err) {
         console.error('Gagal load fasals:', err);
       }
@@ -454,7 +454,7 @@
 
         const select = document.getElementById('newBabBagian');
         select.innerHTML = '<option value="">Pilih Bagian...</option>' +
-          allBagians.map(b => `<option value="${b.id}">${b.order_index}. ${b.nama}</option>`).join('');
+          allBagians.map(b => `<option value="${b.id}">${b.order_index}. ${b.title || b.nama}</option>`).join('');
       } catch (err) {
         console.error('Gagal load bagians:', err);
       }
@@ -469,7 +469,7 @@
 
         const select = document.getElementById('newFasalBab');
         select.innerHTML = '<option value="">Pilih Bab...</option>' +
-          allBabs.map(b => `<option value="${b.id}">${b.order_index}. ${b.nama}</option>`).join('');
+          allBabs.map(b => `<option value="${b.id}">${b.order_index}. ${b.title || b.nama}</option>`).join('');
       } catch (err) {
         console.error('Gagal load babs:', err);
       }
@@ -507,10 +507,10 @@
               <div class="flex justify-between items-center">
                 <div>
                   <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded mr-2">BAGIAN</span>
-                  <span class="font-semibold">${bagian.order_index}. ${bagian.nama}</span>
+                  <span class="font-semibold">${bagian.order_index}. ${bagian.title}</span>
                 </div>
                 <div class="flex gap-2">
-                  <button onclick="editMateri('bagian', '${bagian.id}', '${bagian.nama}')" class="text-blue-600 hover:text-blue-800">
+                  <button onclick="editMateri('bagian', '${bagian.id}', '${bagian.title}')" class="text-blue-600 hover:text-blue-800">
                     <i class="fa-solid fa-edit"></i>
                   </button>
                   <button onclick="deleteMateri('bagian', '${bagian.id}')" class="text-red-600 hover:text-red-800">
@@ -528,10 +528,10 @@
                 <div class="flex justify-between items-center">
                   <div>
                     <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded mr-2">BAB</span>
-                    <span class="font-medium">${bab.order_index}. ${bab.nama}</span>
+                    <span class="font-medium">${bab.order_index}. ${bab.title}</span>
                   </div>
                   <div class="flex gap-2">
-                    <button onclick="editMateri('bab', '${bab.id}', '${bab.nama}')" class="text-blue-600 hover:text-blue-800">
+                    <button onclick="editMateri('bab', '${bab.id}', '${bab.title}')" class="text-blue-600 hover:text-blue-800">
                       <i class="fa-solid fa-edit"></i>
                     </button>
                     <button onclick="deleteMateri('bab', '${bab.id}')" class="text-red-600 hover:text-red-800">
@@ -547,10 +547,10 @@
                 <div class="flex justify-between items-center p-2 bg-slate-50 rounded">
                   <div>
                     <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded mr-2">FASAL</span>
-                    <span>${fasal.order_index}. ${fasal.nama}</span>
+                    <span>${fasal.order_index}. ${fasal.title}</span>
                   </div>
                   <div class="flex gap-2">
-                    <button onclick="editMateri('fasal', '${fasal.id}', '${fasal.nama}')" class="text-blue-600 hover:text-blue-800">
+                    <button onclick="editMateri('fasal', '${fasal.id}', '${fasal.title}')" class="text-blue-600 hover:text-blue-800">
                       <i class="fa-solid fa-edit"></i>
                     </button>
                     <button onclick="deleteMateri('fasal', '${fasal.id}')" class="text-red-600 hover:text-red-800">
@@ -590,8 +590,8 @@
         let body = {};
 
         if (type === 'bagian') {
-          const nama = document.getElementById('newBagianNama').value.trim();
-          if (!nama) { errorEl.textContent = 'Nama bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
+          const title = document.getElementById('newBagianNama').value.trim();
+          if (!title) { errorEl.textContent = 'Nama bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
 
           const res = await fetch(`${SUPABASE_URL}rest/v1/bagian`, {
             method: 'POST',
@@ -601,7 +601,7 @@
               'Authorization': `Bearer ${getToken()}`,
               'Prefer': 'return=representation'
             },
-            body: JSON.stringify({ nama, order_index: allBagians.length + 1 })
+            body: JSON.stringify({ title, order_index: allBagians.length + 1 })
           });
 
           if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
@@ -611,10 +611,10 @@
           updateMateriForm();
 
         } else if (type === 'bab') {
-          const nama = document.getElementById('newBabNama').value.trim();
+          const title = document.getElementById('newBabNama').value.trim();
           const bagianId = document.getElementById('newBabBagian').value;
-          const materi = document.getElementById('newBabMateri').value.trim();
-          if (!nama || !bagianId) { errorEl.textContent = 'Nama bab dan bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
+          const contentArab = document.getElementById('newBabMateri').value.trim();
+          if (!title || !bagianId) { errorEl.textContent = 'Nama bab dan bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
 
           const existingBabs = allBabs.filter(b => b.bagian_id === bagianId);
           const res = await fetch(`${SUPABASE_URL}rest/v1/bab`, {
@@ -625,7 +625,7 @@
               'Authorization': `Bearer ${getToken()}`,
               'Prefer': 'return=representation'
             },
-            body: JSON.stringify({ nama, bagian_id: bagianId, materi, order_index: existingBabs.length + 1 })
+            body: JSON.stringify({ title, bagian_id: bagianId, content_arab: contentArab, order_index: existingBabs.length + 1 })
           });
 
           if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
@@ -635,10 +635,10 @@
           document.getElementById('newBabMateri').value = '';
 
         } else if (type === 'fasal') {
-          const nama = document.getElementById('newFasalNama').value.trim();
+          const title = document.getElementById('newFasalNama').value.trim();
           const babId = document.getElementById('newFasalBab').value;
           const quizCount = parseInt(document.getElementById('newFasalQuizCount').value) || 10;
-          if (!nama || !babId) { errorEl.textContent = 'Nama fasal dan bab diperlukan'; errorEl.classList.remove('hidden'); return; }
+          if (!title || !babId) { errorEl.textContent = 'Nama fasal dan bab diperlukan'; errorEl.classList.remove('hidden'); return; }
 
           const res = await fetch(`${SUPABASE_URL}rest/v1/fasal`, {
             method: 'POST',
@@ -648,7 +648,7 @@
               'Authorization': `Bearer ${getToken()}`,
               'Prefer': 'return=representation'
             },
-            body: JSON.stringify({ nama, bab_id: babId, order_index: 1, quiz_count: quizCount })
+            body: JSON.stringify({ title, bab_id: babId, order_index: 1, quiz_count: quizCount })
           });
 
           if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
@@ -666,9 +666,9 @@
       }
     }
 
-    function editMateri(type, id, nama) {
-      const newNama = prompt(`Edit nama ${type}:`, nama);
-      if (!newNama || newNama === nama) return;
+    function editMateri(type, id, currentTitle) {
+      const newTitle = prompt(`Edit nama ${type}:`, currentTitle);
+      if (!newTitle || newTitle === currentTitle) return;
 
       const tables = { bagian: 'bagian', bab: 'bab', fasal: 'fasal' };
 
@@ -679,7 +679,7 @@
           'apikey': SUPABASE_ANON_KEY,
           'Authorization': `Bearer ${getToken()}`
         },
-        body: JSON.stringify({ nama: newNama })
+        body: JSON.stringify({ title: newTitle })
       }).then(res => {
         if (res.ok) {
           alert('Berhasil diupdate!');
