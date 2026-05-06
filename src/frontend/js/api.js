@@ -223,10 +223,13 @@ async function fetchFasalProgress(fasalId) {
  * @param {string} status 'in_progress' | 'completed'
  */
 async function saveProgress(fasalId, score, attempts, status) {
+  console.log('saveProgress called:', { fasalId, score, attempts, status });
   const token = getToken();
+  console.log('token:', token ? 'exists' : 'null');
   if (!token) return;
 
   const user = await getCurrentUser();
+  console.log('user:', user);
   if (!user) return;
 
   const body = {
