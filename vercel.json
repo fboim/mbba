@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "buildCommand": null,
   "outputDirectory": "src/frontend",
-  "installCommand": null,
-  "framework": null,
-  "routes": [
-    { "src": "/(.*)", "dest": "/$1" }
+  "rewrites": [
+    { "source": "/", "destination": "/pages/index.html" },
+    { "source": "/pages/:match", "destination": "/pages/:match" },
+    { "source": "/auth", "destination": "/pages/auth.html" },
+    { "source": "/fasal", "destination": "/pages/fasal.html" },
+    { "source": "/(.*)", "destination": "/pages/$1" }
   ]
 }
