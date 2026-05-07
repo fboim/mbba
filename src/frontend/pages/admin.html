@@ -794,7 +794,7 @@
               'Authorization': `Bearer ${getToken()}`,
               'Prefer': 'return=representation'
             },
-            body: JSON.stringify({ title, bab_id: babId, order_index: 1, quiz_count: quizCount })
+            body: JSON.stringify({ title, bab_id: babId, order_index: 1, quiz_count: quizCount, content_arab: '' })
           });
 
           if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
