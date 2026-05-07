@@ -4,225 +4,240 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil — MBBA</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2322c55e' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2316a34a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
   <link rel="stylesheet" href="../css/output.css">
+  <link rel="stylesheet" href="../css/modern.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <style>
-    .arabic-text {
-      font-family: 'Amiri', serif;
-      direction: rtl;
-      text-align: right;
-      line-height: 2.2;
-    }
-  </style>
 </head>
-<body class="bg-slate-50 font-sans min-h-screen">
+<body class="bg-gradient-to-br from-slate-50 via-white to-slate-100 font-sans antialiased min-h-screen">
 
   <!-- Header -->
-  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
-    <div class="max-w-2xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
+  <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50">
+    <div class="max-w-3xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <a href="student.html" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+        <a href="student.html" class="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-primary-600 transition-all">
           <i class="fa-solid fa-arrow-left"></i>
         </a>
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-            <span class="text-white font-bold text-sm">م</span>
+        <a href="student.html" class="flex items-center gap-2 group">
+          <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-md">
+            <span class="text-white font-bold text-sm" style="font-family: 'Amiri', serif;">م</span>
           </div>
-          <span class="font-bold text-slate-800">MBBA</span>
-        </div>
+          <span class="font-bold text-lg text-dark-800 hidden sm:block">MBBA</span>
+        </a>
       </div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="max-w-2xl mx-auto px-4 md:px-6 py-6">
+  <main class="max-w-3xl mx-auto px-4 md:px-6 py-8">
 
-    <!-- Profile Header -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-      <div class="flex items-center gap-4 mb-6">
-        <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center">
-          <span id="avatarInitial" class="text-3xl font-bold text-primary-600">P</span>
-        </div>
-        <div>
-          <h1 id="profileName" class="text-xl font-bold text-slate-800">Memuat...</h1>
-          <p id="profileEmail" class="text-slate-500">email@example.com</p>
-          <span id="profileRole" class="inline-block mt-2 px-3 py-1 bg-primary-100 text-primary-700 text-xs font-semibold rounded-full">Pelajar</span>
+    <!-- Profile Header Card -->
+    <div class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 animate-fade-in-up">
+      <div class="bg-gradient-to-r from-primary-50 via-white to-primary-50/50 px-6 py-6">
+        <div class="flex items-center gap-5">
+          <div class="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+            <span id="avatarInitial" class="text-3xl font-bold text-primary-600">P</span>
+          </div>
+          <div>
+            <h1 id="profileName" class="text-2xl font-bold text-dark-800 mb-1">Memuat...</h1>
+            <p id="profileEmail" class="text-slate-500 mb-2">email@example.com</p>
+            <span id="profileRole" class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-100 text-primary-700 text-xs font-semibold rounded-full">
+              <i class="fa-solid fa-graduation-cap text-xs"></i>Pelajar
+            </span>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-4 text-center">
-        <div class="p-4 bg-slate-50 rounded-lg">
-          <div id="statCompleted" class="text-2xl font-bold text-green-600">0</div>
-          <div class="text-sm text-slate-500">Fasal Selesai</div>
-        </div>
-        <div class="p-4 bg-slate-50 rounded-lg">
-          <div id="statAvgScore" class="text-2xl font-bold text-blue-600">0%</div>
-          <div class="text-sm text-slate-500">Rata-rata</div>
-        </div>
-        <div class="p-4 bg-slate-50 rounded-lg">
-          <div id="statStreak" class="text-2xl font-bold text-amber-500">0</div>
-          <div class="text-sm text-slate-500">Streak Hari</div>
+      <!-- Stats -->
+      <div class="px-6 py-5 bg-slate-50/50">
+        <div class="grid grid-cols-3 gap-4">
+          <div class="text-center p-3 bg-white rounded-xl shadow-sm">
+            <div id="statCompleted" class="text-2xl font-bold text-success-500">0</div>
+            <div class="text-xs text-slate-500 mt-1">Fasal Selesai</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-xl shadow-sm">
+            <div id="statAvgScore" class="text-2xl font-bold text-info-500">0%</div>
+            <div class="text-xs text-slate-500 mt-1">Rata-rata</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-xl shadow-sm">
+            <div id="statStreak" class="text-2xl font-bold text-warning-500">0</div>
+            <div class="text-xs text-slate-500 mt-1">Hari Streak</div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-      <h2 class="text-lg font-semibold text-slate-800 mb-4">
-        <i class="fa-solid fa-bolt text-primary-500 mr-2"></i>
-        Aksi Cepat
-      </h2>
-      <div class="grid grid-cols-2 gap-3">
-        <a href="student.html" class="flex items-center gap-3 p-4 bg-slate-50 hover:bg-slate-100 rounded-lg transition">
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-home text-blue-600"></i>
+    <div class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 animate-fade-in-up">
+      <div class="px-6 py-5 border-b border-slate-100">
+        <h2 class="text-lg font-bold text-dark-800 flex items-center gap-3">
+          <div class="w-9 h-9 bg-primary-100 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-bolt text-primary-600"></i>
           </div>
-          <div>
-            <div class="font-semibold text-slate-800">Dashboard</div>
-            <div class="text-xs text-slate-500">Lihat progreso</div>
-          </div>
-        </a>
-        <a href="student.html" class="flex items-center gap-3 p-4 bg-slate-50 hover:bg-slate-100 rounded-lg transition">
-          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-book text-green-600"></i>
-          </div>
-          <div>
-            <div class="font-semibold text-slate-800">Daftar Fasal</div>
-            <div class="text-xs text-slate-500">Lihat semua materi</div>
-          </div>
-        </a>
-        <a href="materi.html" class="flex items-center gap-3 p-4 bg-slate-50 hover:bg-slate-100 rounded-lg transition">
-          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-graduation-cap text-purple-600"></i>
-          </div>
-          <div>
-            <div class="font-semibold text-slate-800">Materi</div>
-            <div class="text-xs text-slate-500">Belajar kontent</div>
-          </div>
-        </a>
-        <button onclick="confirmLogout()" class="flex items-center gap-3 p-4 bg-red-50 hover:bg-red-100 rounded-lg transition text-left">
-          <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-sign-out-alt text-red-600"></i>
-          </div>
-          <div>
-            <div class="font-semibold text-red-700">Keluar</div>
-            <div class="text-xs text-red-400">Logout dari aplikasi</div>
-          </div>
-        </button>
+          Aksi Cepat
+        </h2>
+      </div>
+      <div class="p-4">
+        <div class="grid grid-cols-2 gap-3">
+          <a href="student.html" class="card p-4 hover-lift flex items-center gap-4 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-info-100 to-info-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
+              <i class="fa-solid fa-home text-info-600 text-lg"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-dark-800">Dashboard</div>
+              <div class="text-xs text-slate-500">Lihat progreso</div>
+            </div>
+          </a>
+          <a href="student.html" class="card p-4 hover-lift flex items-center gap-4 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-success-100 to-success-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
+              <i class="fa-solid fa-book text-success-600 text-lg"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-dark-800">Daftar Fasal</div>
+              <div class="text-xs text-slate-500">Lihat semua materi</div>
+            </div>
+          </a>
+          <a href="materi.html" class="card p-4 hover-lift flex items-center gap-4 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
+              <i class="fa-solid fa-graduation-cap text-purple-600 text-lg"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-dark-800">Materi</div>
+              <div class="text-xs text-slate-500">Belajar konten</div>
+            </div>
+          </a>
+          <button onclick="confirmLogout()" class="card p-4 hover-lift flex items-center gap-4 group text-left w-full">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
+              <i class="fa-solid fa-sign-out-alt text-red-600 text-lg"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-red-700">Keluar</div>
+              <div class="text-xs text-red-400">Logout aplikasi</div>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Achievements -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-      <h2 class="text-lg font-semibold text-slate-800 mb-4">
-        <i class="fa-solid fa-trophy text-amber-500 mr-2"></i>
-        Pencapaian
-      </h2>
-      <div id="achievements" class="space-y-3">
-        <!-- Achievements will be loaded here -->
+    <div class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 animate-fade-in-up">
+      <div class="px-6 py-5 border-b border-slate-100">
+        <h2 class="text-lg font-bold text-dark-800 flex items-center gap-3">
+          <div class="w-9 h-9 bg-warning-100 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-trophy text-warning-600"></i>
+          </div>
+          Pencapaian
+        </h2>
+      </div>
+      <div id="achievements" class="p-4 space-y-3">
+        <!-- Achievements loaded by JS -->
       </div>
     </div>
 
     <!-- Settings -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 class="text-lg font-semibold text-slate-800 mb-4">
-        <i class="fa-solid fa-cog text-slate-500 mr-2"></i>
-        Pengaturan
-      </h2>
-      <div class="space-y-3">
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+    <div class="card bg-white rounded-3xl shadow-card overflow-hidden animate-fade-in-up">
+      <div class="px-6 py-5 border-b border-slate-100">
+        <h2 class="text-lg font-bold text-dark-800 flex items-center gap-3">
+          <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-cog text-slate-600"></i>
+          </div>
+          Pengaturan
+        </h2>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
           <div class="flex items-center gap-3">
-            <i class="fa-solid fa-moon text-slate-400"></i>
-            <span class="text-slate-700">Mode Gelap</span>
+            <div class="w-10 h-10 bg-dark-100 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-moon text-slate-500"></i>
+            </div>
+            <span class="font-medium text-slate-700">Mode Gelap</span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" id="darkModeToggle" class="sr-only peer">
-            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+            <div class="w-12 h-7 bg-dark-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-500"></div>
           </label>
         </div>
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
           <div class="flex items-center gap-3">
-            <i class="fa-solid fa-language text-slate-400"></i>
-            <span class="text-slate-700">Bahasa</span>
+            <div class="w-10 h-10 bg-dark-100 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-language text-slate-500"></i>
+            </div>
+            <span class="font-medium text-slate-700">Bahasa</span>
           </div>
-          <select class="px-3 py-1.5 border border-slate-200 rounded-lg text-sm">
+          <select class="px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500">
             <option value="id">Indonesia</option>
             <option value="ar">العربية</option>
             <option value="en">English</option>
           </select>
         </div>
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
           <div class="flex items-center gap-3">
-            <i class="fa-solid fa-bell text-slate-400"></i>
-            <span class="text-slate-700">Notifikasi</span>
+            <div class="w-10 h-10 bg-dark-100 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-bell text-slate-500"></i>
+            </div>
+            <span class="font-medium text-slate-700">Notifikasi</span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" class="sr-only peer" checked>
-            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+            <div class="w-12 h-7 bg-dark-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-500"></div>
           </label>
         </div>
       </div>
     </div>
 
     <!-- App Info -->
-    <div class="mt-6 text-center text-xs text-slate-400">
-      <p>MBBA v1.0 — Madrasah Belajar Bahasa Arab</p>
-      <p class="mt-1">Kitab Mukhtarat</p>
+    <div class="mt-8 text-center text-sm text-slate-400">
+      <p class="font-medium">MBBA v1.0</p>
+      <p class="text-xs mt-1">Madrasah Belajar Bahasa Arab — Kitab Mukhtarat</p>
     </div>
 
   </main>
 
   <script src="../js/api.js"></script>
   <script>
-    let userProgress = [];
+    var userProgress = [];
 
-    // Check login and load profile
     (async function() {
-      const user = await getCurrentUser();
+      var user = await getCurrentUser();
       if (!user) {
         window.location.href = 'auth.html';
         return;
       }
-
-      // Load profile data
       loadProfile(user);
       await loadProgress();
     })();
 
     function loadProfile(user) {
-      const name = user.user_metadata?.full_name || user.email || 'Pelajar';
-      const email = user.email || '';
-      const role = user.user_metadata?.role || 'student';
+      var name = user.user_metadata?.full_name || user.email || 'Pelajar';
+      var email = user.email || '';
+      var role = user.user_metadata?.role || 'student';
 
       document.getElementById('profileName').textContent = name;
       document.getElementById('profileEmail').textContent = email;
       document.getElementById('avatarInitial').textContent = name.charAt(0).toUpperCase();
 
-      const roleLabel = role === 'admin' ? 'Admin' : role === 'teacher' ? 'Guru' : 'Pelajar';
-      document.getElementById('profileRole').textContent = roleLabel;
+      var roleLabel = role === 'admin' ? 'Admin' : role === 'teacher' ? 'Guru' : 'Pelajar';
+      var roleIcon = role === 'admin' ? 'fa-shield-halved' : role === 'teacher' ? 'fa-chalkboard-teacher' : 'fa-graduation-cap';
+      document.getElementById('profileRole').innerHTML = '<i class="fa-solid ' + roleIcon + ' text-xs"></i>' + roleLabel;
     }
 
     async function loadProgress() {
       try {
         userProgress = await fetchUserProgress();
 
-        // Update stats
-        const completed = userProgress.filter(p => p.status === 'completed').length;
-        const avgScore = userProgress.length > 0
-          ? Math.round(userProgress.reduce((sum, p) => sum + (p.quiz_score || 0), 0) / userProgress.length)
+        var completed = userProgress.filter(function(p) { return p.status === 'completed'; }).length;
+        var avgScore = userProgress.length > 0
+          ? Math.round(userProgress.reduce(function(sum, p) { return sum + (p.quiz_score || 0); }, 0) / userProgress.length)
           : 0;
 
         document.getElementById('statCompleted').textContent = completed;
         document.getElementById('statAvgScore').textContent = avgScore + '%';
 
-        // Calculate streak
-        const streak = calculateStreak();
+        var streak = calculateStreak();
         document.getElementById('statStreak').textContent = streak;
 
-        // Update achievements
         renderAchievements(completed, avgScore);
       } catch (err) {
         console.error('Error loading progress:', err);
@@ -231,56 +246,51 @@
 
     function calculateStreak() {
       if (userProgress.length === 0) return 0;
-
-      const dates = userProgress
-        .map(p => new Date(p.completed_at || p.created_at).toDateString())
-        .filter(d => d !== 'Invalid Date');
-      const uniqueDates = [...new Set(dates)].sort((a, b) => new Date(b) - new Date(a));
-
+      var dates = userProgress
+        .map(function(p) { return new Date(p.completed_at || p.created_at).toDateString(); })
+        .filter(function(d) { return d !== 'Invalid Date'; });
+      var uniqueDates = [...new Set(dates)].sort(function(a, b) { return new Date(b) - new Date(a); });
       if (uniqueDates.length === 0) return 0;
-
-      const today = new Date().toDateString();
-      const yesterday = new Date(Date.now() - 86400000).toDateString();
-
+      var today = new Date().toDateString();
+      var yesterday = new Date(Date.now() - 86400000).toDateString();
       if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) return 0;
-
-      let streak = 1;
-      for (let i = 1; i < uniqueDates.length; i++) {
-        const diff = (new Date(uniqueDates[i-1]) - new Date(uniqueDates[i])) / 86400000;
-        if (diff === 1) {
-          streak++;
-        } else {
-          break;
-        }
+      var streak = 1;
+      for (var i = 1; i < uniqueDates.length; i++) {
+        var diff = (new Date(uniqueDates[i-1]) - new Date(uniqueDates[i])) / 86400000;
+        if (diff === 1) streak++; else break;
       }
       return streak;
     }
 
     function renderAchievements(completed, avgScore) {
-      const container = document.getElementById('achievements');
-      const achievements = [
-        { id: 'first', label: '1 Fasal Pertama', icon: 'fa-star', condition: completed >= 1, color: 'amber' },
-        { id: 'five', label: '5 Fasal Selesai', icon: 'fa-fire', condition: completed >= 5, color: 'orange' },
-        { id: 'perfect', label: 'Skor Sempurna 100%', icon: 'fa-crown', condition: avgScore === 100, color: 'yellow' },
-        { id: 'streak7', label: '7 Hari Streak', icon: 'fa-calendar-check', condition: calculateStreak() >= 7, color: 'green' },
-        { id: 'ten', label: '10 Fasal Selesai', icon: 'fa-trophy', condition: completed >= 10, color: 'purple' },
-        { id: 'all', label: 'Semua Fasal Selesai', icon: 'fa-medal', condition: false, color: 'primary' },
+      var container = document.getElementById('achievements');
+      var streak = calculateStreak();
+      var achievements = [
+        { id: 'first', label: '1 Fasal Pertama', icon: 'fa-star', condition: completed >= 1, color: 'amber', bg: 'from-amber-100 to-orange-100' },
+        { id: 'five', label: '5 Fasal Selesai', icon: 'fa-fire', condition: completed >= 5, color: 'orange', bg: 'from-orange-100 to-red-100' },
+        { id: 'perfect', label: 'Skor Sempurna 100%', icon: 'fa-crown', condition: avgScore === 100, color: 'yellow', bg: 'from-yellow-100 to-amber-100' },
+        { id: 'streak7', label: '7 Hari Streak', icon: 'fa-calendar-check', condition: streak >= 7, color: 'green', bg: 'from-green-100 to-emerald-100' },
+        { id: 'ten', label: '10 Fasal Selesai', icon: 'fa-trophy', condition: completed >= 10, color: 'purple', bg: 'from-purple-100 to-pink-100' },
+        { id: 'all', label: 'Semua Fasal Selesai', icon: 'fa-medal', condition: false, color: 'slate', bg: 'from-slate-100 to-gray-100' }
       ];
 
-      container.innerHTML = achievements.map(a => `
-        <div class="flex items-center gap-3 p-3 rounded-lg ${a.condition ? 'bg-amber-50 border border-amber-200' : 'bg-slate-50'}">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center ${a.condition ? 'bg-amber-100' : 'bg-slate-100'}">
-            <i class="fa-solid ${a.icon} ${a.condition ? 'text-amber-500' : 'text-slate-400'}"></i>
-          </div>
-          <div class="flex-1">
-            <div class="font-medium ${a.condition ? 'text-amber-700' : 'text-slate-500'}">${a.label}</div>
-            <div class="text-xs ${a.condition ? 'text-amber-500' : 'text-slate-400'}">
-              ${a.condition ? 'Tercapai!' : 'Belum tercapai'}
-            </div>
-          </div>
-          ${a.condition ? '<i class="fa-solid fa-check-circle text-amber-500"></i>' : '<i class="fa-regular fa-circle text-slate-300"></i>'}
-        </div>
-      `).join('');
+      container.innerHTML = achievements.map(function(a) {
+        return '<div class="flex items-center gap-4 p-4 rounded-xl ' + (a.condition ? 'bg-gradient-to-r ' + a.bg : 'bg-slate-50') + ' transition-all">' +
+          '<div class="w-12 h-12 rounded-xl flex items-center justify-center ' + (a.condition ? 'bg-white/80 shadow-md' : 'bg-slate-100') + '">' +
+          '<i class="fa-solid ' + a.icon + ' ' + (a.condition ? 'text-' + a.color + '-500' : 'text-slate-400') + ' text-lg"></i>' +
+          '</div>' +
+          '<div class="flex-1">' +
+          '<div class="font-semibold ' + (a.condition ? 'text-slate-800' : 'text-slate-500') + '">' + a.label + '</div>' +
+          '<div class="text-xs ' + (a.condition ? 'text-' + a.color + '-500' : 'text-slate-400') + '">' +
+          (a.condition ? '<i class="fa-solid fa-check mr-1"></i>Tercapai!' : 'Belum tercapai') +
+          '</div>' +
+          '</div>' +
+          '<div>' +
+          (a.condition
+            ? '<div class="w-8 h-8 bg-gradient-to-br from-success-400 to-emerald-500 rounded-full flex items-center justify-center shadow-md"><i class="fa-solid fa-check text-white text-sm"></i></div>'
+            : '<div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center"><i class="fa-regular fa-circle text-slate-300"></i></div>') +
+          '</div></div>';
+      }).join('');
     }
 
     function confirmLogout() {

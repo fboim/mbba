@@ -6,92 +6,111 @@
   <title>Admin — MBBA</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2322c55e' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
   <link rel="stylesheet" href="../css/output.css">
+  <link rel="stylesheet" href="../css/modern.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-slate-50 font-sans min-h-screen">
+<body class="bg-slate-50 font-sans antialiased">
 
   <!-- Header -->
-  <header class="bg-white border-b border-slate-200 shadow-sm">
-    <div class="flex items-center justify-between px-4 md:px-6 h-12 md:h-14">
-      <div class="flex items-center gap-2 md:gap-3">
-        <div class="w-7 h-7 md:w-8 md:h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-          <span class="text-white font-bold text-xs md:text-sm">م</span>
-        </div>
-        <span class="font-bold text-slate-800 text-sm md:text-base">MBBA Admin</span>
-        <span class="px-1.5 py-0.5 md:px-2 md:py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded">DEMO</span>
-      </div>
-      <div class="flex items-center gap-2 md:gap-3">
-        <a href="student.html" class="text-xs md:text-sm text-slate-500 hover:text-slate-700">
-          <i class="fa-solid fa-arrow-left mr-1"></i><span class="hidden sm:inline">Kembali</span>
+  <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="student.html" class="flex items-center gap-2 group">
+          <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shadow-md">
+            <span class="text-white font-bold text-sm">م</span>
+          </div>
+          <span class="font-bold text-lg text-dark-800">MBBA</span>
         </a>
-        <button onclick="handleLogout()" class="p-1.5 md:p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500">
-          <i class="fa-solid fa-right-from-bracket text-sm"></i>
+        <span class="badge badge-warning">
+          <i class="fa-solid fa-shield-halved mr-1 text-xs"></i>Admin
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="student.html" class="btn btn-secondary text-sm">
+          <i class="fa-solid fa-arrow-left mr-2"></i><span class="hide-mobile">Kembali</span>
+        </a>
+        <button onclick="handleLogout()" class="btn btn-ghost text-sm">
+          <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Main -->
-  <main class="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8">
+  <main class="max-w-6xl mx-auto px-4 md:px-6 py-8">
 
     <!-- Navigation Tabs -->
-    <div id="navTabs" class="flex gap-2 mb-4 md:mb-6 flex-wrap overflow-x-auto">
+    <div id="navTabs" class="flex gap-2 mb-6 flex-wrap">
       <button type="button" onclick="showTab('stats')" id="tabStats"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
-        <i class="fa-solid fa-chart-bar mr-1 md:mr-2"></i><span class="hidden sm:inline">Stats</span>
+        class="btn bg-primary-500 text-white shadow-lg shadow-primary-500/25">
+        <i class="fa-solid fa-chart-bar mr-2"></i><span class="hide-mobile">Stats</span>
       </button>
       <button type="button" onclick="showTab('materi')" id="tabMateri"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
-        <i class="fa-solid fa-book mr-1 md:mr-2"></i><span class="hidden sm:inline">Kelola Materi</span>
+        class="btn btn-secondary">
+        <i class="fa-solid fa-book mr-2"></i><span class="hide-mobile">Kelola Materi</span>
       </button>
       <button type="button" onclick="showTab('quiz')" id="tabQuiz"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
-        <i class="fa-solid fa-question mr-1 md:mr-2"></i><span class="hidden sm:inline">Kelola Soal</span>
+        class="btn btn-secondary">
+        <i class="fa-solid fa-question mr-2"></i><span class="hide-mobile">Kelola Soal</span>
       </button>
       <button type="button" onclick="showTab('siswa')" id="tabSiswa"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
-        <i class="fa-solid fa-users mr-1 md:mr-2"></i><span class="hidden sm:inline">Progress Siswa</span>
+        class="btn btn-secondary">
+        <i class="fa-solid fa-users mr-2"></i><span class="hide-mobile">Progress Siswa</span>
       </button>
     </div>
 
     <!-- Stats Section -->
-    <div id="sectionStats" class="space-y-4 md:space-y-6">
+    <div id="sectionStats" class="space-y-6">
 
       <!-- Analytics Dashboard -->
-      <div class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 shadow-sm max-w-4xl mx-auto w-full">
-        <h2 class="text-base md:text-lg font-semibold text-slate-800 mb-3 md:mb-4">
-          <i class="fa-solid fa-chart-line text-blue-500 mr-2"></i>Dashboard Analytics
+      <div class="card-static p-6 animate-fade-in-up">
+        <h2 class="text-lg font-bold text-dark-800 mb-4 flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-chart-line text-blue-600"></i>
+          </div>
+          Dashboard Analytics
         </h2>
-        <div id="analyticsDashboard" class="text-slate-500">Loading...</div>
+        <div id="analyticsDashboard" class="text-slate-500">
+          <div class="flex items-center justify-center py-8">
+            <div class="spinner spinner-lg"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Demo Tools -->
-      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 class="text-lg font-semibold text-slate-800 mb-4">
-          <i class="fa-solid fa-flask text-amber-500 mr-2"></i>Demo Tools
+      <div class="card-static p-6 animate-fade-in-up delay-100">
+        <h2 class="text-lg font-bold text-dark-800 mb-2 flex items-center gap-3">
+          <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-flask text-amber-600"></i>
+          </div>
+          Demo Tools
         </h2>
-        <p class="text-slate-500 text-sm mb-4">Tools ini hanya untuk testing/demo. Sembunyikan di production.</p>
+        <p class="text-sm text-slate-500 mb-4">Tools ini hanya untuk testing/demo. Sembunyikan di production.</p>
 
-        <div class="space-y-4">
-          <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <h3 class="font-medium text-slate-700 mb-2">Jawab Semua Benar</h3>
-            <p class="text-sm text-slate-500 mb-3">Otomatis jawab semua soal kuis dengan benar. Hanya untuk demo.</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="p-5 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+            <h3 class="font-semibold text-green-800 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-check-double"></i> Jawab Semua Benar
+            </h3>
+            <p class="text-sm text-green-600 mb-3">Otomatis jawab semua soal kuis dengan benar. Hanya untuk demo.</p>
             <button onclick="enableCheatMode()"
-              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition text-sm">
-              <i class="fa-solid fa-check-double mr-2"></i>Aktifkan Cheat Mode
+              class="btn bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/25 text-sm">
+              <i class="fa-solid fa-check mr-2"></i>Aktifkan Cheat Mode
             </button>
-            <p id="cheatStatus" class="text-sm text-slate-500 mt-2 hidden">
-              <i class="fa-solid fa-check-circle text-green-500 mr-1"></i> Cheat mode aktif!
+            <p id="cheatStatus" class="text-sm text-green-600 mt-3 hidden">
+              <i class="fa-solid fa-check-circle mr-1"></i> Cheat mode aktif!
             </p>
           </div>
 
-          <div class="p-4 bg-red-50 rounded-lg border border-red-200">
-            <h3 class="font-medium text-red-700 mb-2">Reset Progress</h3>
-            <p class="text-sm text-red-500 mb-3">Hapus semua progress kuis user (hanya untuk testing).</p>
+          <div class="p-5 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl border border-red-200">
+            <h3 class="font-semibold text-red-800 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-trash"></i> Reset Progress
+            </h3>
+            <p class="text-sm text-red-600 mb-3">Hapus semua progress kuis user (hanya untuk testing).</p>
             <button onclick="resetAllProgress()"
-              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-sm">
+              class="btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white shadow-lg shadow-red-500/25 text-sm">
               <i class="fa-solid fa-trash mr-2"></i>Reset Semua Progress
             </button>
           </div>
@@ -103,17 +122,19 @@
     <div id="sectionMateri" class="hidden space-y-6">
 
       <!-- Add New Materi -->
-      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 class="text-lg font-semibold text-slate-800 mb-4">
-          <i class="fa-solid fa-plus text-green-500 mr-2"></i>Tambah Materi Baru
+      <div class="card-static p-6 animate-fade-in-up">
+        <h2 class="text-lg font-bold text-dark-800 mb-4 flex items-center gap-3">
+          <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-plus text-green-600"></i>
+          </div>
+          Tambah Materi Baru
         </h2>
 
-        <!-- Select type -->
         <div class="grid grid-cols-3 gap-4 mb-4">
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Tipe</label>
+            <label class="block text-sm font-medium text-slate-600 mb-2">Tipe</label>
             <select id="newMateriType" onchange="updateMateriForm()"
-              class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+              class="input">
               <option value="bagian">Bagian</option>
               <option value="bab">Bab</option>
               <option value="fasal">Fasal</option>
@@ -121,37 +142,32 @@
           </div>
         </div>
 
-        <!-- Form fields -->
-        <div class="space-y-3">
+        <div class="space-y-4">
           <div id="bagianFields">
-            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Bagian</label>
-            <input type="text" id="newBagianNama" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Contoh: Al-Qawa'id al-Muta'alliqah bi al-Jumlah">
+            <label class="block text-sm font-medium text-slate-600 mb-2">Nama Bagian</label>
+            <input type="text" id="newBagianNama" class="input" placeholder="Contoh: Al-Qawa'id al-Muta'alliqah bi al-Jumlah">
           </div>
 
           <div id="babFields" class="hidden">
-            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Bab</label>
-            <input type="text" id="newBabNama" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Contoh: Muqoddimah">
-            <label class="block text-sm font-medium text-slate-700 mb-1 mt-2">Bagian Induk</label>
-            <select id="newBabBagian" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+            <label class="block text-sm font-medium text-slate-600 mb-2">Nama Bab</label>
+            <input type="text" id="newBabNama" class="input" placeholder="Contoh: Muqoddimah">
+            <label class="block text-sm font-medium text-slate-600 mb-2 mt-4">Bagian Induk</label>
+            <select id="newBabBagian" class="input">
               <option value="">Pilih Bagian...</option>
             </select>
-            <label class="block text-sm font-medium text-slate-700 mb-1 mt-2">Materi Bab (opsional)</label>
-            <textarea id="newBabMateri" rows="3" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Materi singkat untuk bab ini..."></textarea>
+            <label class="block text-sm font-medium text-slate-600 mb-2 mt-4">Materi Bab (opsional)</label>
+            <textarea id="newBabMateri" rows="3" class="input" placeholder="Materi singkat untuk bab ini..."></textarea>
           </div>
 
           <div id="fasalFields" class="hidden">
-            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Fasal</label>
-            <input type="text" id="newFasalNama" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Contoh: Isim (Benda)">
-            <label class="block text-sm font-medium text-slate-700 mb-1 mt-2">Bab Induk</label>
-            <select id="newFasalBab" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+            <label class="block text-sm font-medium text-slate-600 mb-2">Nama Fasal</label>
+            <input type="text" id="newFasalNama" class="input" placeholder="Contoh: Isim (Benda)">
+            <label class="block text-sm font-medium text-slate-600 mb-2 mt-4">Bab Induk</label>
+            <select id="newFasalBab" class="input">
               <option value="">Pilih Bab...</option>
             </select>
-            <label class="block text-sm font-medium text-slate-700 mb-1 mt-2">Jumlah Soal Quiz</label>
-            <select id="newFasalQuizCount" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+            <label class="block text-sm font-medium text-slate-600 mb-2 mt-4">Jumlah Soal Quiz</label>
+            <select id="newFasalQuizCount" class="input">
               <option value="3">3 soal</option>
               <option value="5">5 soal</option>
               <option value="10" selected>10 soal</option>
@@ -161,19 +177,26 @@
           </div>
         </div>
 
-        <div id="addMateriError" class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+        <div id="addMateriError" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"></div>
         <button onclick="addNewMateri()"
-          class="mt-4 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition">
+          class="btn btn-primary mt-4 shadow-lg shadow-primary-500/25">
           <i class="fa-solid fa-plus mr-2"></i>Tambah
         </button>
       </div>
 
       <!-- Materi List -->
-      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 class="text-lg font-semibold text-slate-800 mb-4">
-          <i class="fa-solid fa-list text-blue-500 mr-2"></i>Daftar Materi
+      <div class="card-static p-6 animate-fade-in-up delay-100">
+        <h2 class="text-lg font-bold text-dark-800 mb-4 flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-list text-blue-600"></i>
+          </div>
+          Daftar Materi
         </h2>
-        <div id="materiList" class="text-slate-500">Loading...</div>
+        <div id="materiList" class="text-slate-500">
+          <div class="flex items-center justify-center py-8">
+            <div class="spinner"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -181,134 +204,133 @@
     <div id="sectionQuiz" class="hidden space-y-6">
 
       <!-- Add New Question -->
-      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 class="text-lg font-semibold text-slate-800 mb-4">
-          <i class="fa-solid fa-plus text-green-500 mr-2"></i>Tambah Soal Baru
+      <div class="card-static p-6 animate-fade-in-up">
+        <h2 class="text-lg font-bold text-dark-800 mb-4 flex items-center gap-3">
+          <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-plus text-green-600"></i>
+          </div>
+          Tambah Soal Baru
         </h2>
 
-        <!-- Select Level (Bab or Fasal) -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Level</label>
-          <select id="quizLevel" onchange="updateQuizLevelForm()"
-            class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
-            <option value="fasal">Fasal</option>
-            <option value="bab">Bab</option>
-          </select>
-        </div>
-
-        <!-- Select Fasal (shown for Fasal level) -->
-        <div id="quizFasalSelect" class="mb-4">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Fasal</label>
-          <select id="newQuizFasal" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
-            <option value="">Pilih Fasal...</option>
-          </select>
-        </div>
-
-        <!-- Select Bab (shown for Bab level) -->
-        <div id="quizBabSelect" class="mb-4 hidden">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Bab</label>
-          <select id="newQuizBab" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
-            <option value="">Pilih Bab...</option>
-          </select>
-        </div>
-
-        <!-- Question Type -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Tipe Soal</label>
-          <select id="newQuizType" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
-            <option value="mc">Pilihan Ganda (MC)</option>
-            <option value="fill-arab">Isi Arab (Fill-Arab)</option>
-            <option value="fill-latin">Isi Latin (Fill-Latin)</option>
-          </select>
-        </div>
-
-        <!-- Question Text -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Pertanyaan</label>
-          <textarea id="newQuizQuestion" rows="2"
-            class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            placeholder="Ketik pertanyaan..."></textarea>
-        </div>
-
-        <!-- MC Options (shown only for MC type) -->
-        <div id="mcOptions" class="mb-4 space-y-2">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Opsi Jawaban (MC)</label>
-          <div class="flex gap-2">
-            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">A</span>
-            <input type="text" id="mcA" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Opsi A">
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-2">Level</label>
+            <select id="quizLevel" onchange="updateQuizLevelForm()" class="input">
+              <option value="fasal">Fasal</option>
+              <option value="bab">Bab</option>
+            </select>
           </div>
-          <div class="flex gap-2">
-            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">B</span>
-            <input type="text" id="mcB" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Opsi B">
+          <div id="quizFasalSelect">
+            <label class="block text-sm font-medium text-slate-600 mb-2">Fasal</label>
+            <select id="newQuizFasal" class="input">
+              <option value="">Pilih Fasal...</option>
+            </select>
           </div>
-          <div class="flex gap-2">
-            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">C</span>
-            <input type="text" id="mcC" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Opsi C">
-          </div>
-          <div class="flex gap-2">
-            <span class="w-8 py-2 text-center bg-slate-100 rounded font-semibold">D</span>
-            <input type="text" id="mcD" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg"
-              placeholder="Opsi D">
+          <div id="quizBabSelect" class="hidden">
+            <label class="block text-sm font-medium text-slate-600 mb-2">Bab</label>
+            <select id="newQuizBab" class="input">
+              <option value="">Pilih Bab...</option>
+            </select>
           </div>
         </div>
 
-        <!-- Correct Answer -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Jawaban Benar</label>
-          <input type="text" id="newQuizAnswer" class="w-full px-4 py-2 border border-slate-200 rounded-lg"
-            placeholder="Untuk MC: A/B/C/D, untuk fill: ketik jawaban">
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-2">Tipe Soal</label>
+            <select id="newQuizType" class="input">
+              <option value="mc">Pilihan Ganda (MC)</option>
+              <option value="fill-arab">Isi Arab (Fill-Arab)</option>
+              <option value="fill-latin">Isi Latin (Fill-Latin)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-2">Jawaban Benar</label>
+            <input type="text" id="newQuizAnswer" class="input" placeholder="Untuk MC: A/B/C/D">
+          </div>
         </div>
 
-        <!-- Submit Button -->
-        <div id="addQuizError" class="hidden mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
-        <button onclick="addNewQuiz()"
-          class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-slate-600 mb-2">Pertanyaan</label>
+          <textarea id="newQuizQuestion" rows="2" class="input" placeholder="Ketik pertanyaan..."></textarea>
+        </div>
+
+        <div id="mcOptions" class="mb-4 space-y-3">
+          <label class="block text-sm font-medium text-slate-600 mb-2">Opsi Jawaban (MC)</label>
+          <div class="flex gap-3">
+            <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">A</span>
+            <input type="text" id="mcA" class="input flex-1" placeholder="Opsi A">
+          </div>
+          <div class="flex gap-3">
+            <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">B</span>
+            <input type="text" id="mcB" class="input flex-1" placeholder="Opsi B">
+          </div>
+          <div class="flex gap-3">
+            <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">C</span>
+            <input type="text" id="mcC" class="input flex-1" placeholder="Opsi C">
+          </div>
+          <div class="flex gap-3">
+            <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">D</span>
+            <input type="text" id="mcD" class="input flex-1" placeholder="Opsi D">
+          </div>
+        </div>
+
+        <div id="addQuizError" class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"></div>
+        <button onclick="addNewQuiz()" class="btn btn-primary shadow-lg shadow-primary-500/25">
           <i class="fa-solid fa-plus mr-2"></i>Tambah Soal
         </button>
       </div>
 
       <!-- Quiz List -->
-      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <div class="card-static p-6 animate-fade-in-up delay-100">
         <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
-          <h2 class="text-lg font-semibold text-slate-800">
-            <i class="fa-solid fa-list text-blue-500 mr-2"></i>Daftar Soal
+          <h2 class="text-lg font-bold text-dark-800 flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-list text-blue-600"></i>
+            </div>
+            Daftar Soal
           </h2>
-          <div class="flex gap-2 items-center">
-            <select id="quizLevelFilter" onchange="updateQuizFilter()"
-              class="px-3 py-2 border border-slate-200 rounded-lg text-sm">
+          <div class="flex flex-wrap gap-2 items-center">
+            <select id="quizLevelFilter" onchange="updateQuizFilter()" class="input text-sm py-2">
               <option value="fasal">Fasal</option>
               <option value="bab">Bab</option>
             </select>
-            <select id="filterFasal" onchange="loadQuizList()"
-              class="px-4 py-2 border border-slate-200 rounded-lg text-sm">
+            <select id="filterFasal" onchange="loadQuizList()" class="input text-sm py-2">
               <option value="">Semua Fasal</option>
             </select>
-            <select id="filterBab" onchange="loadQuizList()" class="hidden px-4 py-2 border border-slate-200 rounded-lg text-sm">
+            <select id="filterBab" onchange="loadQuizList()" class="hidden input text-sm py-2">
               <option value="">Semua Bab</option>
             </select>
-            <button onclick="exportQuizzes()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition">
+            <button onclick="exportQuizzes()" class="btn bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/25 text-sm">
               <i class="fa-solid fa-download mr-1"></i>Export
             </button>
-            <label class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition cursor-pointer">
+            <label class="btn bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg shadow-blue-500/25 text-sm cursor-pointer">
               <i class="fa-solid fa-upload mr-1"></i>Import
               <input type="file" id="importFile" accept=".json" onchange="importQuizzes(this)" class="hidden">
             </label>
           </div>
         </div>
-        <div id="quizList" class="text-slate-500">Loading...</div>
+        <div id="quizList" class="text-slate-500">
+          <div class="flex items-center justify-center py-8">
+            <div class="spinner"></div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Student Progress Section -->
     <div id="sectionSiswa" class="hidden space-y-6">
-      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h2 class="text-lg font-semibold text-slate-800 mb-4">
-          <i class="fa-solid fa-users text-blue-500 mr-2"></i>Progress Semua Siswa
+      <div class="card-static p-6 animate-fade-in-up">
+        <h2 class="text-lg font-bold text-dark-800 mb-4 flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-users text-blue-600"></i>
+          </div>
+          Progress Semua Siswa
         </h2>
-        <div id="studentProgress" class="text-slate-500">Loading...</div>
+        <div id="studentProgress" class="text-slate-500">
+          <div class="flex items-center justify-center py-8">
+            <div class="spinner"></div>
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -319,7 +341,6 @@
     let allBabs = [];
     let allQuizzes = [];
 
-    // Check if logged in and is admin
     (async function() {
       const user = await getCurrentUser();
       if (!user) {
@@ -328,7 +349,6 @@
         return;
       }
 
-      // Set user role from metadata
       const role = user.user_metadata?.role || user.role || 'student';
       setUserRole(user);
 
@@ -343,24 +363,19 @@
       loadQuizList();
     })();
 
-    // ═══════════════════════════════════════
     // TAB SWITCHING
-    // ═══════════════════════════════════════
     function showTab(tab) {
-      // Hide all sections
       document.getElementById('sectionStats').classList.add('hidden');
       document.getElementById('sectionMateri').classList.add('hidden');
       document.getElementById('sectionQuiz').classList.add('hidden');
       document.getElementById('sectionSiswa').classList.add('hidden');
 
-      // Reset all tabs
       ['tabStats', 'tabMateri', 'tabQuiz', 'tabSiswa'].forEach(id => {
         const el = document.getElementById(id);
-        el.classList.remove('bg-primary-600', 'text-white');
-        el.classList.add('bg-slate-100', 'text-slate-600');
+        el.classList.remove('bg-primary-500', 'text-white', 'shadow-lg', 'shadow-primary-500/25');
+        el.classList.add('btn-secondary');
       });
 
-      // Show selected section and highlight tab
       const sections = {
         stats: 'sectionStats',
         materi: 'sectionMateri',
@@ -370,17 +385,13 @@
 
       document.getElementById(sections[tab]).classList.remove('hidden');
       const activeTab = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-      activeTab.classList.add('bg-primary-600', 'text-white');
-      activeTab.classList.remove('bg-slate-100', 'text-slate-600');
+      activeTab.classList.add('bg-primary-500', 'text-white', 'shadow-lg', 'shadow-primary-500/25');
+      activeTab.classList.remove('btn-secondary');
 
-      // Load data for the section
       if (tab === 'materi') loadMateri();
       if (tab === 'siswa') loadStudentProgress();
     }
 
-    // ═══════════════════════════════════════
-    // LOAD FASALS AND BABS FOR DROPDOWN
-    // ═══════════════════════════════════════
     async function loadFasalsForSelect() {
       try {
         const data = await fetchKurikulum();
@@ -390,7 +401,6 @@
 
         data.forEach(bagian => {
           (bagian.bab || []).forEach(bab => {
-            // Track bab with is_muqoddimah (bab tanpa fasal, langsung bisa diikutkan student)
             if (bab.is_muqoddimah) {
               hasMuqoddimah = true;
               allBabs.push({
@@ -410,59 +420,30 @@
           });
         });
 
-        // Update Level dropdown based on available content
         const quizLevelSelect = document.getElementById('quizLevel');
         quizLevelSelect.innerHTML = '';
+        if (allFasals.length > 0) quizLevelSelect.innerHTML += '<option value="fasal">Fasal</option>';
+        if (allBabs.length > 0) quizLevelSelect.innerHTML += '<option value="bab">Bab (Muqoddimah)</option>';
+        if (!allFasals.length && allBabs.length) quizLevelSelect.value = 'bab';
 
-        const hasFasals = allFasals.length > 0;
-        const hasBabs = allBabs.length > 0;
-
-        // Add options based on what's available
-        if (hasFasals) {
-          quizLevelSelect.innerHTML += '<option value="fasal">Fasal</option>';
-        }
-        if (hasBabs) {
-          quizLevelSelect.innerHTML += '<option value="bab">Bab (Muqoddimah)</option>';
-        }
-
-        // If only one option, select it automatically
-        if (!hasFasals && hasBabs) {
-          quizLevelSelect.value = 'bab';
-        } else if (hasFasals && !hasBabs) {
-          quizLevelSelect.value = 'fasal';
-        }
-
-        // Also update the filter dropdown
         const quizLevelFilter = document.getElementById('quizLevelFilter');
         quizLevelFilter.innerHTML = '';
-        if (hasFasals) {
-          quizLevelFilter.innerHTML += '<option value="fasal">Fasal</option>';
-        }
-        if (hasBabs) {
-          quizLevelFilter.innerHTML += '<option value="bab">Bab</option>';
-        }
+        if (allFasals.length > 0) quizLevelFilter.innerHTML += '<option value="fasal">Fasal</option>';
+        if (allBabs.length > 0) quizLevelFilter.innerHTML += '<option value="bab">Bab</option>';
 
-        // Populate Fasal select in form
         const selectFasalNew = document.getElementById('newQuizFasal');
-        selectFasalNew.innerHTML = '<option value="">Pilih Fasal...</option>' +
-          allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
+        selectFasalNew.innerHTML = '<option value="">Pilih Fasal...</option>' + allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
 
-        // Populate Bab select in form (only muqoddimah babs)
         const selectBabNew = document.getElementById('newQuizBab');
-        selectBabNew.innerHTML = '<option value="">Pilih Bab...</option>' +
-          allBabs.filter(b => b.is_muqoddimah).map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+        selectBabNew.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.filter(b => b.is_muqoddimah).map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
 
-        // Update quiz level form visibility
         updateQuizLevelForm();
 
-        // Populate filter selects
         const selectFilter = document.getElementById('filterFasal');
-        selectFilter.innerHTML = '<option value="">Semua Fasal</option>' +
-          allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
+        selectFilter.innerHTML = '<option value="">Semua Fasal</option>' + allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
 
         const selectBabFilter = document.getElementById('filterBab');
-        selectBabFilter.innerHTML = '<option value="">Semua Bab</option>' +
-          allBabs.map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+        selectBabFilter.innerHTML = '<option value="">Semua Bab</option>' + allBabs.map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
 
       } catch (err) {
         console.error('Gagal load data:', err);
@@ -482,9 +463,6 @@
       loadQuizList();
     }
 
-    // ═══════════════════════════════════════
-    // LOAD QUIZ LIST
-    // ═══════════════════════════════════════
     async function loadQuizList() {
       const container = document.getElementById('quizList');
       const level = document.getElementById('quizLevelFilter').value;
@@ -492,24 +470,17 @@
       const babFilter = document.getElementById('filterBab').value;
 
       try {
-        // Build filter URL
         let url = `${SUPABASE_URL}rest/v1/quiz?order=order_index`;
-        if (level === 'fasal' && fasalFilter) {
-          url += `&fasal_id=eq.${fasalFilter.replace('fasal:', '')}`;
-        } else if (level === 'bab' && babFilter) {
-          url += `&bab_id=eq.${babFilter.replace('bab:', '')}`;
-        }
+        if (level === 'fasal' && fasalFilter) url += `&fasal_id=eq.${fasalFilter.replace('fasal:', '')}`;
+        else if (level === 'bab' && babFilter) url += `&bab_id=eq.${babFilter.replace('bab:', '')}`;
 
         const res = await fetch(url, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`
-          }
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
         });
         allQuizzes = await res.json();
 
         if (allQuizzes.length === 0) {
-          container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada soal</p>';
+          container.innerHTML = '<div class="text-center py-12"><div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-question text-3xl text-slate-300"></i></div><p class="text-slate-400">Belum ada soal</p></div>';
           return;
         }
 
@@ -518,32 +489,26 @@
             <table class="w-full text-sm">
               <thead class="bg-slate-50">
                 <tr>
-                  <th class="px-4 py-2 text-left">#</th>
-                  <th class="px-4 py-2 text-left">Level</th>
-                  <th class="px-4 py-2 text-left">Tipe</th>
-                  <th class="px-4 py-2 text-left">Pertanyaan</th>
-                  <th class="px-4 py-2 text-center">Aksi</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-600">#</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-600">Level</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-600">Tipe</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-600">Pertanyaan</th>
+                  <th class="px-4 py-3 text-center font-semibold text-slate-600">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 ${allQuizzes.map((q, i) => `
                   <tr class="border-t border-slate-100 hover:bg-slate-50">
-                    <td class="px-4 py-2">${i + 1}</td>
-                    <td class="px-4 py-2">
-                      <span class="px-2 py-1 rounded text-xs font-semibold ${q.bab_id ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">
-                        ${q.bab_id ? 'BAB' : 'FASAL'}
-                      </span>
+                    <td class="px-4 py-3 text-slate-500">${i + 1}</td>
+                    <td class="px-4 py-3">
+                      <span class="badge ${q.bab_id ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${q.bab_id ? 'BAB' : 'FASAL'}</span>
                     </td>
-                    <td class="px-4 py-2">
-                      <span class="px-2 py-1 rounded text-xs font-semibold ${
-                        q.type === 'mc' ? 'bg-green-100 text-green-700' :
-                        q.type === 'fill-arab' ? 'bg-emerald-100 text-emerald-700' :
-                        'bg-orange-100 text-orange-700'
-                      }">${q.type.toUpperCase()}</span>
+                    <td class="px-4 py-3">
+                      <span class="badge ${q.type === 'mc' ? 'bg-green-100 text-green-700' : q.type === 'fill-arab' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">${q.type.toUpperCase()}</span>
                     </td>
-                    <td class="px-4 py-2 max-w-xs truncate">${q.question}</td>
-                    <td class="px-4 py-2 text-center">
-                      <button onclick="deleteQuiz('${q.id}')" class="text-red-500 hover:text-red-700">
+                    <td class="px-4 py-3 max-w-xs truncate text-slate-700">${q.question}</td>
+                    <td class="px-4 py-3 text-center">
+                      <button onclick="deleteQuiz('${q.id}')" class="p-2 hover:bg-red-50 rounded-lg text-red-500 hover:text-red-700 transition-colors">
                         <i class="fa-solid fa-trash"></i>
                       </button>
                     </td>
@@ -552,16 +517,13 @@
               </tbody>
             </table>
           </div>
-          <p class="text-xs text-slate-400 mt-2">Total: ${allQuizzes.length} soal</p>
+          <p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-database mr-1"></i>Total: ${allQuizzes.length} soal</p>
         `;
       } catch (err) {
-        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+        container.innerHTML = `<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle mr-2"></i>Error: ${err.message}</div>`;
       }
     }
 
-    // ═══════════════════════════════════════
-    // MATERI MANAGEMENT
-    // ═══════════════════════════════════════
     let allBagians = [];
 
     function updateMateriForm() {
@@ -570,9 +532,8 @@
       document.getElementById('babFields').classList.add('hidden');
       document.getElementById('fasalFields').classList.add('hidden');
 
-      if (type === 'bagian') {
-        document.getElementById('bagianFields').classList.remove('hidden');
-      } else if (type === 'bab') {
+      if (type === 'bagian') document.getElementById('bagianFields').classList.remove('hidden');
+      else if (type === 'bab') {
         document.getElementById('babFields').classList.remove('hidden');
         loadBagiansForDropdown();
       } else if (type === 'fasal') {
@@ -587,10 +548,8 @@
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
         });
         allBagians = await res.json();
-
         const select = document.getElementById('newBabBagian');
-        select.innerHTML = '<option value="">Pilih Bagian...</option>' +
-          allBagians.map(b => `<option value="${b.id}">${b.order_index}. ${b.title || b.nama}</option>`).join('');
+        select.innerHTML = '<option value="">Pilih Bagian...</option>' + allBagians.map(b => `<option value="${b.id}">${b.order_index}. ${b.title || b.nama}</option>`).join('');
       } catch (err) {
         console.error('Gagal load bagians:', err);
       }
@@ -602,19 +561,15 @@
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
         });
         allBabs = await res.json();
-
         const select = document.getElementById('newFasalBab');
-        select.innerHTML = '<option value="">Pilih Bab...</option>' +
-          allBabs.map(b => `<option value="${b.id}">${b.order_index}. ${b.title || b.nama}</option>`).join('');
+        select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.order_index}. ${b.title || b.nama}</option>`).join('');
       } catch (err) {
         console.error('Gagal load babs:', err);
       }
     }
 
     async function loadMateri() {
-      console.log('loadMateri: starting...');
       const container = document.getElementById('materiList');
-
       const headers = {
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${getToken()}`,
@@ -628,102 +583,52 @@
           fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, { headers })
         ]);
 
-        console.log('loadMateri: responses received', bagiansRes.status, babsRes.status, fasalsRes.status);
-
         const bagians = await bagiansRes.json();
         const babs = await babsRes.json();
         const fasals = await fasalsRes.json();
-        console.log('loadMateri: data loaded', bagians.length, 'bagians', babs.length, 'babs', fasals.length, 'fasals');
 
         let html = '';
         bagians.forEach(bagian => {
           const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
-          html += `
-            <div class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div class="flex justify-between items-center">
-                <div>
-                  <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded mr-2">BAGIAN</span>
-                  <span class="font-semibold">${bagian.order_index}. ${bagian.title}</span>
-                </div>
-                <div class="flex gap-2">
-                  <button onclick="editMateri('bagian', '${bagian.id}', '${bagian.title}')" class="text-blue-600 hover:text-blue-800">
-                    <i class="fa-solid fa-edit"></i>
-                  </button>
-                  <button onclick="deleteMateri('bagian', '${bagian.id}')" class="text-red-600 hover:text-red-800">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="ml-6 mt-2 space-y-2">
-          `;
+          html += `<div class="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">`;
+          html += `<div class="flex justify-between items-center mb-3">`;
+          html += `<div class="flex items-center gap-2"><span class="badge bg-blue-500 text-white">BAGIAN</span><span class="font-bold text-blue-800">${bagian.order_index}. ${bagian.title}</span></div>`;
+          html += `<div class="flex gap-2">`;
+          html += `<button onclick="editMateri('bagian', '${bagian.id}', '${bagian.title}')" class="p-2 hover:bg-white rounded-lg text-blue-600 transition-colors"><i class="fa-solid fa-edit"></i></button>`;
+          html += `<button onclick="deleteMateri('bagian', '${bagian.id}')" class="p-2 hover:bg-white rounded-lg text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>`;
+          html += `</div></div>`;
+          html += `<div class="ml-4 space-y-3">`;
 
           bagianBabs.forEach(bab => {
             const babFasals = fasals.filter(f => f.bab_id === bab.id);
-            const babPreview = bab.content_arab ? bab.content_arab.substring(0, 50) + '...' : '';
-            html += `
-              <div class="p-3 bg-white rounded border border-slate-200">
-                <div class="flex justify-between items-center">
-                  <div>
-                    <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded mr-2">BAB</span>
-                    <span class="font-medium">${bab.order_index}. ${bab.title}</span>
-                    ${babPreview ? `<span class="text-xs text-slate-400 ml-2">${babPreview}</span>` : ''}
-                  </div>
-                  <div class="flex gap-2">
-                    <button onclick="editMateri('bab', '${bab.id}', '${bab.title}')" class="text-blue-600 hover:text-blue-800" title="Edit Nama">
-                      <i class="fa-solid fa-font"></i>
-                    </button>
-                    <button onclick="openContentModal('bab', '${bab.id}')" class="text-green-600 hover:text-green-800" title="Edit Konten">
-                      <i class="fa-solid fa-file-lines"></i>
-                    </button>
-                    <button onclick="deleteMateri('bab', '${bab.id}')" class="text-red-600 hover:text-red-800">
-                      <i class="fa-solid fa-trash"></i>
-                    </button>
-                  </div>
-                </div>
-                <div class="ml-6 mt-2 space-y-1">
-            `;
+            html += `<div class="p-3 bg-white rounded-lg border border-slate-200">`;
+            html += `<div class="flex justify-between items-center mb-2">`;
+            html += `<div class="flex items-center gap-2"><span class="badge bg-green-500 text-white">BAB</span><span class="font-semibold text-green-800">${bab.order_index}. ${bab.title}</span></div>`;
+            html += `<div class="flex gap-2">`;
+            html += `<button onclick="editMateri('bab', '${bab.id}', '${bab.title}')" class="p-2 hover:bg-slate-50 rounded-lg text-blue-600 transition-colors"><i class="fa-solid fa-font"></i></button>`;
+            html += `<button onclick="openContentModal('bab', '${bab.id}')" class="p-2 hover:bg-slate-50 rounded-lg text-green-600 transition-colors"><i class="fa-solid fa-file-lines"></i></button>`;
+            html += `<button onclick="deleteMateri('bab', '${bab.id}')" class="p-2 hover:bg-slate-50 rounded-lg text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>`;
+            html += `</div></div>`;
+            html += `<div class="ml-4 space-y-2">`;
 
             babFasals.forEach(fasal => {
-              const fasalPreview = fasal.content_arab ? fasal.content_arab.substring(0, 50) + '...' : '';
-              html += `
-                <div class="flex justify-between items-center p-2 bg-slate-50 rounded">
-                  <div class="flex-1">
-                    <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded mr-2">FASAL</span>
-                    <span>${fasal.order_index}. ${fasal.title}</span>
-                    ${fasalPreview ? `<span class="text-xs text-slate-400 ml-2">${fasalPreview}</span>` : ''}
-                  </div>
-                  <div class="flex gap-2">
-                    <button onclick="editMateri('fasal', '${fasal.id}', '${fasal.title}')" class="text-blue-600 hover:text-blue-800" title="Edit Nama">
-                      <i class="fa-solid fa-font"></i>
-                    </button>
-                    <button onclick="openContentModal('fasal', '${fasal.id}')" class="text-green-600 hover:text-green-800" title="Edit Konten">
-                      <i class="fa-solid fa-file-lines"></i>
-                    </button>
-                    <button onclick="deleteMateri('fasal', '${fasal.id}')" class="text-red-600 hover:text-red-800">
-                      <i class="fa-solid fa-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              `;
+              html += `<div class="flex justify-between items-center p-2 bg-slate-50 rounded-lg">`;
+              html += `<div class="flex items-center gap-2"><span class="badge bg-amber-500 text-white">FASAL</span><span class="text-slate-700">${fasal.order_index}. ${fasal.title}</span></div>`;
+              html += `<div class="flex gap-2">`;
+              html += `<button onclick="editMateri('fasal', '${fasal.id}', '${fasal.title}')" class="p-1.5 hover:bg-white rounded text-blue-600 transition-colors"><i class="fa-solid fa-font text-sm"></i></button>`;
+              html += `<button onclick="openContentModal('fasal', '${fasal.id}')" class="p-1.5 hover:bg-white rounded text-green-600 transition-colors"><i class="fa-solid fa-file-lines text-sm"></i></button>`;
+              html += `<button onclick="deleteMateri('fasal', '${fasal.id}')" class="p-1.5 hover:bg-white rounded text-red-500 transition-colors"><i class="fa-solid fa-trash text-sm"></i></button>`;
+              html += `</div></div>`;
             });
 
-            html += `
-                </div>
-              </div>
-            `;
+            html += `</div></div>`;
           });
-
-          html += `
-              </div>
-            </div>
-          `;
+          html += `</div></div>`;
         });
 
-        container.innerHTML = html || '<p class="text-slate-400 text-center py-8">Belum ada materi</p>';
-        console.log('loadMateri: done, updated container');
+        container.innerHTML = html || '<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-folder-open text-4xl mb-4"></i><p>Belum ada materi</p></div>';
       } catch (err) {
-        console.error('loadMateri error:', err);
-        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+        container.innerHTML = `<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle mr-2"></i>Error: ${err.message}</div>`;
       }
     }
 
@@ -738,94 +643,46 @@
         if (type === 'bagian') {
           const title = document.getElementById('newBagianNama').value.trim();
           if (!title) { errorEl.textContent = 'Nama bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
-
           const res = await fetch(`${SUPABASE_URL}rest/v1/bagian`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': `Bearer ${getToken()}`,
-              'Prefer': 'return=representation'
-            },
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' },
             body: JSON.stringify({ title, order_index: allBagians.length + 1 })
           });
-
           if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
-
           document.getElementById('newBagianNama').value = '';
-          document.getElementById('newMateriType').value = 'bagian';
-          updateMateriForm();
-
         } else if (type === 'bab') {
           const title = document.getElementById('newBabNama').value.trim();
           const bagianId = document.getElementById('newBabBagian').value;
           const contentArab = document.getElementById('newBabMateri').value.trim();
           if (!title || !bagianId) { errorEl.textContent = 'Nama bab dan bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
-
           const existingBabs = allBabs.filter(b => b.bagian_id === bagianId);
           const res = await fetch(`${SUPABASE_URL}rest/v1/bab`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': `Bearer ${getToken()}`,
-              'Prefer': 'return=representation'
-            },
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' },
             body: JSON.stringify({ title, bagian_id: bagianId, content_arab: contentArab, order_index: existingBabs.length + 1 })
           });
-
           if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
-
           document.getElementById('newBabNama').value = '';
           document.getElementById('newBabBagian').value = '';
           document.getElementById('newBabMateri').value = '';
-
         } else if (type === 'fasal') {
           const title = document.getElementById('newFasalNama').value.trim();
           const babId = document.getElementById('newFasalBab').value;
           const quizCount = parseInt(document.getElementById('newFasalQuizCount').value) || 10;
           if (!title || !babId) { errorEl.textContent = 'Nama fasal dan bab diperlukan'; errorEl.classList.remove('hidden'); return; }
-
-          // Get current max order_index for this bab
           let orderIndex = 1;
           try {
-            const countRes = await fetch(
-              `${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${babId}&select=order_index&order=order_index.desc&limit=1`,
-              { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
-            );
-            if (countRes.ok) {
-              const existing = await countRes.json();
-              if (existing.length > 0) orderIndex = existing[0].order_index + 1;
-            }
-          } catch (e) { console.error('Error getting max order:', e); }
-
+            const countRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${babId}&select=order_index&order=order_index.desc&limit=1`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } });
+            if (countRes.ok) { const existing = await countRes.json(); if (existing.length > 0) orderIndex = existing[0].order_index + 1; }
+          } catch (e) {}
           const res = await fetch(`${SUPABASE_URL}rest/v1/fasal`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': `Bearer ${getToken()}`,
-              'Prefer': 'return=representation'
-            },
-            body: JSON.stringify({
-              title,
-              bab_id: babId,
-              order_index: orderIndex,
-              quiz_count: quizCount,
-              content_arab: '',
-              content_id: ''
-            })
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' },
+            body: JSON.stringify({ title, bab_id: babId, order_index: orderIndex, quiz_count: quizCount, content_arab: '', content_id: '' })
           });
-
-          if (!res.ok) {
-            const err = await res.json();
-            console.error('Add fasal error:', err);
-            throw new Error(err.message || 'Gagal menambahkan fasal');
-          }
-
+          if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
           document.getElementById('newFasalNama').value = '';
           document.getElementById('newFasalBab').value = '';
-          document.getElementById('newFasalQuizCount').value = '10';
         }
 
         alert('Materi berhasil ditambahkan!');
@@ -839,265 +696,100 @@
     function editMateri(type, id, currentTitle) {
       const newTitle = prompt(`Edit nama ${type}:`, currentTitle);
       if (!newTitle || newTitle === currentTitle) return;
-
       const tables = { bagian: 'bagian', bab: 'bab', fasal: 'fasal' };
-
       fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${getToken()}`
-        },
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
         body: JSON.stringify({ title: newTitle })
-      }).then(res => {
-        if (res.ok) {
-          alert('Berhasil diupdate!');
-          location.reload();
-        } else {
-          res.json().then(err => alert('Gagal: ' + err.message));
-        }
-      });
-    }
-
-    // ═══════════════════════════════════════
-    // EDIT CONTENT (MATERI)
-    // ═══════════════════════════════════════
-    async function editContent(type, id) {
-      const tables = { bab: 'bab', fasal: 'fasal' };
-      if (type === 'bagian') {
-        alert('Bagian tidak memiliki konten materi.');
-        return;
-      }
-
-      // Fetch current data first
-      try {
-        const res = await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`
-          }
-        });
-        const data = await res.json();
-        const current = data[0];
-
-        const currentArab = current.content_arab || '';
-        const currentId = current.content_id || '';
-
-        const contentArab = prompt('Materi Arab:\n(Kosongkan jika tidak diubah)', currentArab);
-        if (contentArab === null) return;
-
-        const contentId = prompt('Terjemahan Indonesia:\n(Kosongkan jika tidak diubah)', currentId);
-        if (contentId === null) return;
-
-        // Build update object (only changed values)
-        const updates = {};
-        if (contentArab !== currentArab) updates.content_arab = contentArab;
-        if (contentId !== currentId) updates.content_id = contentId;
-
-        if (Object.keys(updates).length === 0) {
-          alert('Tidak ada perubahan.');
-          return;
-        }
-
-        const updateRes = await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`
-          },
-          body: JSON.stringify(updates)
-        });
-
-        if (updateRes.ok) {
-          alert('Konten berhasil diupdate!');
-          location.reload();
-        } else {
-          const err = await updateRes.json();
-          alert('Gagal: ' + (err.message || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Gagal mengambil data: ' + err.message);
-      }
+      }).then(res => { if (res.ok) { alert('Berhasil diupdate!'); location.reload(); } else { res.json().then(err => alert('Gagal: ' + err.message)); } });
     }
 
     async function deleteMateri(type, id) {
-      console.log('Delete requested:', type, id);
       if (!confirm(`Yakin ingin hapus ${type} ini?\n\nPERHATIAN: Semua data turunan juga akan dihapus.`)) return;
-
       const token = getToken();
-      if (!token) { alert('Session expired. Silakan login ulang.'); return; }
-
+      if (!token) { alert('Session expired.'); return; }
       const tables = { bagian: 'bagian', bab: 'bab', fasal: 'fasal' };
 
       try {
-        // First delete related data based on type
         if (type === 'fasal') {
-          console.log('Deleting quizzes for fasal:', id);
-          await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${id}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          });
-          await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${id}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          });
+          await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+          await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
         }
-
         if (type === 'bab') {
-          console.log('Deleting bab:', id);
-          const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          });
+          const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           const fasals = await fasalsRes.json();
-          console.log('Found fasals:', fasals.length);
           for (const f of fasals) {
-            await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, {
-              method: 'DELETE',
-              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-            });
-            await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${f.id}`, {
-              method: 'DELETE',
-              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-            });
+            await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+            await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           }
-          await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          });
+          await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
         }
-
         if (type === 'bagian') {
-          console.log('Deleting bagian:', id);
-          const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          });
+          const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           const babs = await babsRes.json();
-          console.log('Found babs:', babs.length);
           for (const b of babs) {
-            const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${b.id}`, {
-              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-            });
+            const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${b.id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
             const fasals = await fasalsRes.json();
             for (const f of fasals) {
-              await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, {
-                method: 'DELETE',
-                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-              });
-              await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${f.id}`, {
-                method: 'DELETE',
-                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-              });
+              await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+              await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
             }
-            await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${b.id}`, {
-              method: 'DELETE',
-              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-            });
+            await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${b.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           }
-          await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          });
+          await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
         }
 
-        // Now delete the main record
-        console.log('Deleting main record:', tables[type], id);
-        const res = await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
-          method: 'DELETE',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-        });
-        console.log('Delete response status:', res.status);
-
+        await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
         alert('Berhasil dihapus!');
-        // Reload page to refresh list
         location.reload();
       } catch (err) {
-        console.error('Delete error:', err);
         alert('Gagal: ' + err.message);
       }
     }
 
-    // ═══════════════════════════════════════
-    // ADD NEW QUIZ
-    // ═══════════════════════════════════════
     async function addNewQuiz() {
       const level = document.getElementById('quizLevel').value;
       const type = document.getElementById('newQuizType').value;
       const question = document.getElementById('newQuizQuestion').value.trim();
       const answer = document.getElementById('newQuizAnswer').value.trim();
       const errorEl = document.getElementById('addQuizError');
-
       errorEl.classList.add('hidden');
 
-      // Get the ID based on level
       let targetId;
-      if (level === 'fasal') {
-        targetId = document.getElementById('newQuizFasal').value;
-      } else {
-        targetId = document.getElementById('newQuizBab').value;
-      }
+      if (level === 'fasal') targetId = document.getElementById('newQuizFasal').value;
+      else targetId = document.getElementById('newQuizBab').value;
 
-      if (!targetId || !question || !answer) {
-        errorEl.textContent = 'Lengkapi semua field yang diperlukan.';
-        errorEl.classList.remove('hidden');
-        return;
-      }
+      if (!targetId || !question || !answer) { errorEl.textContent = 'Lengkapi semua field.'; errorEl.classList.remove('hidden'); return; }
 
-      // Parse level and id
       const [quizLevel, quizId] = targetId.split(':');
       const body = {
-        type,
-        question,
-        correct_answer: answer,
+        type, question, correct_answer: answer,
         order_index: allQuizzes.filter(q => quizLevel === 'fasal' ? q.fasal_id === quizId : q.bab_id === quizId).length + 1
       };
+      if (quizLevel === 'fasal') body.fasal_id = quizId; else body.bab_id = quizId;
 
-      if (quizLevel === 'fasal') {
-        body.fasal_id = quizId;
-      } else {
-        body.bab_id = quizId;
-      }
-
-      // Build options for MC
       if (type === 'mc') {
         const a = document.getElementById('mcA').value.trim();
         const b = document.getElementById('mcB').value.trim();
         const c = document.getElementById('mcC').value.trim();
         const d = document.getElementById('mcD').value.trim();
-        if (!a || !b || !c || !d) {
-          errorEl.textContent = 'Lengkapi semua opsi jawaban MC.';
-          errorEl.classList.remove('hidden');
-          return;
-        }
+        if (!a || !b || !c || !d) { errorEl.textContent = 'Lengkapi semua opsi MC.'; errorEl.classList.remove('hidden'); return; }
         body.options = JSON.stringify({ A: a, B: b, C: c, D: d });
       }
 
       try {
         const res = await fetch(`${SUPABASE_URL}rest/v1/quiz`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`,
-            'Prefer': 'return=representation'
-          },
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' },
           body: JSON.stringify(body)
         });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.message || 'Gagal menambah soal');
-        }
-
-        // Clear form
+        if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
         document.getElementById('newQuizQuestion').value = '';
         document.getElementById('newQuizAnswer').value = '';
         document.getElementById('mcA').value = '';
         document.getElementById('mcB').value = '';
         document.getElementById('mcC').value = '';
         document.getElementById('mcD').value = '';
-
         alert('Soal berhasil ditambahkan!');
         loadQuizList();
       } catch (err) {
@@ -1106,19 +798,12 @@
       }
     }
 
-    // ═══════════════════════════════════════
-    // DELETE QUIZ
-    // ═══════════════════════════════════════
     async function deleteQuiz(id) {
-      if (!confirm('Yakin ingin hapus soal ini?')) return;
-
+      if (!confirm('Yakin hapus soal ini?')) return;
       try {
         await fetch(`${SUPABASE_URL}rest/v1/quiz?id=eq.${id}`, {
           method: 'DELETE',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`
-          }
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
         });
         loadQuizList();
       } catch (err) {
@@ -1126,21 +811,12 @@
       }
     }
 
-    // ═══════════════════════════════════════
-    // ═══════════════════════════════════════
-    // EXPORT QUIZZES
-    // ═══════════════════════════════════════
     async function exportQuizzes() {
       try {
-        const res = await fetch(`${SUPABASE_URL}rest/v1/quiz?select=*`, {
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
-        });
+        const res = await fetch(`${SUPABASE_URL}rest/v1/quiz?select=*`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } });
         const quizzes = await res.json();
-
-        const dataStr = JSON.stringify(quizzes, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(quizzes, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = url;
         a.download = `mbba_quizzes_${new Date().toISOString().split('T')[0]}.json`;
@@ -1151,58 +827,23 @@
       }
     }
 
-    // ═══════════════════════════════════════
-    // IMPORT QUIZZES
-    // ═══════════════════════════════════════
     async function importQuizzes(input) {
       const file = input.files[0];
       if (!file) return;
-
-      if (!confirm(`Import ${file.name}?\n\nData akan ditambahkan (tidak menimpa data yang sudah ada).`)) {
-        input.value = '';
-        return;
-      }
+      if (!confirm(`Import ${file.name}?\n\nData akan ditambahkan.`)) { input.value = ''; return; }
 
       try {
         const text = await file.text();
         const quizzes = JSON.parse(text);
-
-        if (!Array.isArray(quizzes)) {
-          throw new Error('Format file tidak valid. Harus array JSON.');
-        }
-
-        let success = 0;
-        let failed = 0;
-
+        if (!Array.isArray(quizzes)) throw new Error('Format file tidak valid.');
+        let success = 0, failed = 0;
         for (const q of quizzes) {
           try {
-            const body = {
-              fasal_id: q.fasal_id,
-              type: q.type || 'mc',
-              question: q.question,
-              correct_answer: q.correct_answer,
-              options: q.options || null,
-              order_index: q.order_index || 1
-            };
-
-            const res = await fetch(`${SUPABASE_URL}rest/v1/quiz`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${getToken()}`,
-                'Prefer': 'return=minimal'
-              },
-              body: JSON.stringify(body)
-            });
-
-            if (res.ok) success++;
-            else failed++;
-          } catch (e) {
-            failed++;
-          }
+            const body = { fasal_id: q.fasal_id, type: q.type || 'mc', question: q.question, correct_answer: q.correct_answer, options: q.options || null, order_index: q.order_index || 1 };
+            const res = await fetch(`${SUPABASE_URL}rest/v1/quiz`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=minimal' }, body: JSON.stringify(body) });
+            if (res.ok) success++; else failed++;
+          } catch (e) { failed++; }
         }
-
         alert(`Import selesai!\nBerhasil: ${success}\nGagal: ${failed}`);
         input.value = '';
         loadQuizList();
@@ -1212,30 +853,17 @@
       }
     }
 
-    // CHEAT MODE
-    // ═══════════════════════════════════════
     function enableCheatMode() {
       localStorage.setItem('mbba_cheat_mode', 'true');
       document.getElementById('cheatStatus').classList.remove('hidden');
     }
 
-    // ═══════════════════════════════════════
-    // RESET ALL PROGRESS
-    // ═══════════════════════════════════════
     async function resetAllProgress() {
-      if (!confirm('Yakin ingin reset semua progress? Ini tidak bisa di-undo.')) return;
-
+      if (!confirm('Yakin reset semua progress?')) return;
       const token = getToken();
       if (!token) return;
-
       try {
-        await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
-          method: 'DELETE',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${token}`,
-          }
-        });
+        await fetch(`${SUPABASE_URL}rest/v1/user_progress`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
         alert('Semua progress berhasil di-reset!');
         loadStats();
       } catch (err) {
@@ -1243,29 +871,17 @@
       }
     }
 
-    // ═══════════════════════════════════════
-    // LOAD STATS
-    // ═══════════════════════════════════════
     async function loadStats() {
       const dashboardEl = document.getElementById('analyticsDashboard');
       const token = getToken();
       if (!token) return;
 
       try {
-        // Fetch all data
         const [progressRes, usersRes, quizRes, fasalRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          }),
-          fetch(`${SUPABASE_URL}auth/v1/users`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          }),
-          fetch(`${SUPABASE_URL}rest/v1/quiz?select=id`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-          })
+          fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}auth/v1/users`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}rest/v1/quiz?select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } })
         ]);
 
         const progress = await progressRes.json().catch(() => []);
@@ -1273,257 +889,103 @@
         const quizzes = await quizRes.json().catch(() => []);
         const fasals = await fasalRes.json().catch(() => []);
 
-        // Calculate stats
         const totalStudents = users.length || 1;
         const totalProgress = progress.length;
         const completedProgress = progress.filter(p => p.status === 'completed').length;
         const unlockedProgress = progress.filter(p => p.status === 'unlocked').length;
-        const avgScore = progress.length > 0
-          ? Math.round(progress.reduce((sum, p) => sum + (p.quiz_score || 0), 0) / progress.length)
-          : 0;
+        const avgScore = progress.length > 0 ? Math.round(progress.reduce((sum, p) => sum + (p.quiz_score || 0), 0) / progress.length) : 0;
         const totalQuizzes = quizzes.length || 0;
         const totalFasals = fasals.length || 1;
-        const completionRate = totalProgress > 0 ? Math.round((completedProgress / totalProgress) * 100) : 0;
-
-        // Recent activity (last 7 days)
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        const recentActivity = progress.filter(p => {
-          const date = new Date(p.created_at || p.completed_at);
-          return date >= weekAgo;
-        }).length;
 
         dashboardEl.innerHTML = `
-          <!-- Summary Cards - Compact 2x2 Grid -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-            <div class="bg-blue-600 rounded p-2 text-center">
-              <div class="text-lg font-bold text-white">${totalStudents}</div>
-              <div class="text-xs text-white/80">Siswa</div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="card p-4 text-center bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+              <div class="text-3xl font-bold mb-1">${totalStudents}</div>
+              <div class="text-sm opacity-80">Siswa</div>
             </div>
-            <div class="bg-green-600 rounded p-2 text-center">
-              <div class="text-lg font-bold text-white">${completedProgress}</div>
-              <div class="text-xs text-white/80">Lulus</div>
+            <div class="card p-4 text-center bg-gradient-to-br from-green-500 to-green-600 text-white">
+              <div class="text-3xl font-bold mb-1">${completedProgress}</div>
+              <div class="text-sm opacity-80">Lulus</div>
             </div>
-            <div class="bg-amber-500 rounded p-2 text-center">
-              <div class="text-lg font-bold text-white">${recentActivity}</div>
-              <div class="text-xs text-white/80">7 Hari</div>
+            <div class="card p-4 text-center bg-gradient-to-br from-amber-500 to-amber-600 text-white">
+              <div class="text-3xl font-bold mb-1">${totalProgress}</div>
+              <div class="text-sm opacity-80">Total Progress</div>
             </div>
-            <div class="bg-purple-600 rounded p-2 text-center">
-              <div class="text-lg font-bold text-white">${avgScore}%</div>
-              <div class="text-xs text-white/80">Skor</div>
-            </div>
-          </div>
-
-          <!-- Quick Stats - Simple Row -->
-          <div class="flex flex-wrap gap-2 text-xs">
-            <div class="bg-white rounded p-2 border border-gray-200">
-              <span class="text-gray-500">Fasal:</span>
-              <span class="font-bold text-gray-800 ml-1">${totalFasals}</span>
-            </div>
-            <div class="bg-white rounded p-2 border border-gray-200">
-              <span class="text-gray-500">Soal:</span>
-              <span class="font-bold text-gray-800 ml-1">${totalQuizzes}</span>
-            </div>
-            <div class="bg-white rounded p-2 border border-gray-200">
-              <span class="text-gray-500">Selesai:</span>
-              <span class="font-bold text-green-600 ml-1">${completedProgress}/${totalProgress}</span>
-            </div>
-            <div class="bg-white rounded p-2 border border-gray-200">
-              <span class="text-gray-500">Kelulusan:</span>
-              <span class="font-bold text-amber-600 ml-1">${completionRate}%</span>
+            <div class="card p-4 text-center bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+              <div class="text-3xl font-bold mb-1">${avgScore}%</div>
+              <div class="text-sm opacity-80">Skor Avg</div>
             </div>
           </div>
-
-          <!-- Mini Progress Bar -->
-          <div class="mt-3">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-gray-600">Progress Keseluruhan</span>
-              <span class="font-bold text-gray-800">${totalProgress}</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-blue-600 h-2 rounded-full" style="width: ${totalProgress > 0 ? Math.min(100, Math.round((totalProgress/(totalStudents*totalFasals))*100)) : 0}%"></div>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="mt-3 flex gap-2">
-            <button onclick="exportQuizzes()" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded">
-              <i class="fa-solid fa-download mr-1"></i>Export
-            </button>
-            <button onclick="showTab('siswa')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded">
-              <i class="fa-solid fa-users mr-1"></i>Siswa
-            </button>
-            <button onclick="resetAllProgress()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded">
-              <i class="fa-solid fa-trash mr-1"></i>Reset
-            </button>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div class="p-3 bg-slate-50 rounded-xl"><span class="text-slate-500">Fasal:</span> <span class="font-bold text-slate-800 ml-1">${totalFasals}</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><span class="text-slate-500">Soal:</span> <span class="font-bold text-slate-800 ml-1">${totalQuizzes}</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><span class="text-slate-500">Selesai:</span> <span class="font-bold text-green-600 ml-1">${completedProgress}/${totalProgress}</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><span class="text-slate-500">Kelulusan:</span> <span class="font-bold text-amber-600 ml-1">${totalProgress > 0 ? Math.round((completedProgress/totalProgress)*100) : 0}%</span></div>
           </div>
         `;
       } catch (err) {
-        console.error('Analytics error:', err);
-        dashboardEl.innerHTML = `<p class="text-red-500">Error loading analytics: ${err.message}</p>`;
+        dashboardEl.innerHTML = `<div class="text-center py-8 text-red-500"><i class="fa-solid fa-exclamation-triangle mr-2"></i>Error loading analytics</div>`;
       }
     }
 
-    // ═══════════════════════════════════════
-    // LOGOUT
-    // ═══════════════════════════════════════
-    // STUDENT PROGRESS
-    // ═══════════════════════════════════════
+    function handleLogout() {
+      logout();
+      window.location.href = 'auth.html';
+    }
+
     async function loadStudentProgress() {
       const container = document.getElementById('studentProgress');
-
       try {
-        // Get all progress
-        const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`
-          }
-        });
-
-        if (!progressRes.ok) {
-          throw new Error('Gagal mengambil progress');
-        }
-
+        const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } });
+        if (!progressRes.ok) throw new Error('Gagal mengambil progress');
         const progressData = await progressRes.json();
 
-        // Build fasal map for display
         const fasalMap = {};
         allFasals.forEach(f => { fasalMap[f.id] = f.label; });
 
         if (progressData.length === 0) {
-          container.innerHTML = '<p class="text-slate-400 text-center py-8">Belum ada progress siswa</p>';
+          container.innerHTML = '<div class="text-center py-12"><div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-users text-3xl text-slate-300"></i></div><p class="text-slate-400">Belum ada progress siswa</p></div>';
           return;
         }
 
-        // Group by user
         const userProgress = {};
         progressData.forEach(p => {
-          if (!userProgress[p.user_id]) {
-            userProgress[p.user_id] = {
-              completed: [],
-              inProgress: [],
-              unlocked: []
-            };
-          }
-          if (p.status === 'completed') {
-            userProgress[p.user_id].completed.push(p);
-          } else if (p.status === 'unlocked') {
-            userProgress[p.user_id].unlocked.push(p);
-          }
+          if (!userProgress[p.user_id]) userProgress[p.user_id] = { completed: [], unlocked: [] };
+          if (p.status === 'completed') userProgress[p.user_id].completed.push(p);
+          else if (p.status === 'unlocked') userProgress[p.user_id].unlocked.push(p);
         });
 
-        let html = `
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50">
-                <tr>
-                  <th class="px-4 py-2 text-left">#</th>
-                  <th class="px-4 py-2 text-left">Status</th>
-                  <th class="px-4 py-2 text-left">Fasal</th>
-                  <th class="px-4 py-2 text-left">Skor</th>
-                  <th class="px-4 py-2 text-left">Percobaan</th>
-                  <th class="px-4 py-2 text-left">Tanggal</th>
-                  <th class="px-4 py-2 text-left">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-        `;
-
+        let html = `<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-50"><tr><th class="px-4 py-3 text-left font-semibold text-slate-600">#</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Status</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Fasal</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Skor</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Tanggal</th><th class="px-4 py-3 text-center font-semibold text-slate-600">Aksi</th></tr></thead><tbody>`;
         let no = 1;
         Object.entries(userProgress).forEach(([userId, data]) => {
-          // Show completed first
           data.completed.forEach(p => {
-            html += `
-              <tr class="border-t border-slate-100 hover:bg-slate-50">
-                <td class="px-4 py-2">${no++}</td>
-                <td class="px-4 py-2">
-                  <span class="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700">Lulus</span>
-                </td>
-                <td class="px-4 py-2">${fasalMap[p.fasal_id] || p.fasal_id}</td>
-                <td class="px-4 py-2">${p.quiz_score || 0}%</td>
-                <td class="px-4 py-2">${p.quiz_attempts || 1}x</td>
-                <td class="px-4 py-2 text-xs text-slate-400">${p.completed_at ? new Date(p.completed_at).toLocaleDateString('id-ID') : '-'}</td>
-                <td class="px-4 py-2">
-                  <button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="text-blue-600 hover:text-blue-800">
-                    <i class="fa-solid fa-edit"></i>
-                  </button>
-                </td>
-              </tr>
-            `;
+            html += `<tr class="border-t border-slate-100"><td class="px-4 py-3 text-slate-500">${no++}</td><td class="px-4 py-3"><span class="badge badge-success"><i class="fa-solid fa-check mr-1 text-xs"></i>Lulus</span></td><td class="px-4 py-3 text-slate-700">${fasalMap[p.fasal_id] || p.fasal_id}</td><td class="px-4 py-3 font-bold text-green-600">${p.quiz_score || 0}%</td><td class="px-4 py-3 text-xs text-slate-400">${p.completed_at ? new Date(p.completed_at).toLocaleDateString('id-ID') : '-'}</td><td class="px-4 py-3 text-center"><button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="p-2 hover:bg-blue-50 rounded-lg text-blue-500 transition-colors"><i class="fa-solid fa-edit"></i></button></td></tr>`;
           });
-          // Show unlocked/in_progress
-          [...data.unlocked, ...data.inProgress].forEach(p => {
-            html += `
-              <tr class="border-t border-slate-100 hover:bg-slate-50">
-                <td class="px-4 py-2">${no++}</td>
-                <td class="px-4 py-2">
-                  <span class="px-2 py-1 rounded text-xs font-semibold bg-amber-100 text-amber-700">${p.status || 'in_progress'}</span>
-                </td>
-                <td class="px-4 py-2">${fasalMap[p.fasal_id] || p.fasal_id}</td>
-                <td class="px-4 py-2">${p.quiz_score || '-'}</td>
-                <td class="px-4 py-2">${p.quiz_attempts || '-'}</td>
-                <td class="px-4 py-2 text-xs text-slate-400">-</td>
-                <td class="px-4 py-2">
-                  <button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="text-blue-600 hover:text-blue-800">
-                    <i class="fa-solid fa-edit"></i>
-                  </button>
-                </td>
-              </tr>
-            `;
+          data.unlocked.forEach(p => {
+            html += `<tr class="border-t border-slate-100"><td class="px-4 py-3 text-slate-500">${no++}</td><td class="px-4 py-3"><span class="badge badge-warning"><i class="fa-solid fa-spinner mr-1 text-xs"></i>${p.status || 'in_progress'}</span></td><td class="px-4 py-3 text-slate-700">${fasalMap[p.fasal_id] || p.fasal_id}</td><td class="px-4 py-3 font-bold text-amber-600">${p.quiz_score || '-'}</td><td class="px-4 py-3 text-xs text-slate-400">-</td><td class="px-4 py-3 text-center"><button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="p-2 hover:bg-blue-50 rounded-lg text-blue-500 transition-colors"><i class="fa-solid fa-edit"></i></button></td></tr>`;
           });
         });
-
-        html += `
-              </tbody>
-            </table>
-          </div>
-          <p class="text-xs text-slate-400 mt-2">Total: ${progressData.length} records progress</p>
-        `;
-
+        html += `</tbody></table></div><p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-database mr-1"></i>Total: ${progressData.length} records progress</p>`;
         container.innerHTML = html;
       } catch (err) {
-        console.error('Error loading student progress:', err);
-        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+        container.innerHTML = `<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle mr-2"></i>Error: ${err.message}</div>`;
       }
     }
 
-    // ═══════════════════════════════════════
-    // EDIT PROGRESS (Override Score)
-    // ═══════════════════════════════════════
     async function editProgress(id, currentScore, currentStatus) {
       const newScore = prompt('Edit Skor Quiz (%):', currentScore);
       if (newScore === null || newScore === String(currentScore)) return;
-
       const score = parseInt(newScore);
-      if (isNaN(score) || score < 0 || score > 100) {
-        alert('Skor harus angka 0-100');
-        return;
-      }
-
+      if (isNaN(score) || score < 0 || score > 100) { alert('Skor harus angka 0-100'); return; }
       const newStatus = score === 100 ? 'completed' : 'in_progress';
       const completedAt = newStatus === 'completed' ? new Date().toISOString() : null;
-
       try {
         const res = await fetch(`${SUPABASE_URL}rest/v1/user_progress?id=eq.${id}`, {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`
-          },
-          body: JSON.stringify({
-            quiz_score: score,
-            status: newStatus,
-            completed_at: completedAt
-          })
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify({ quiz_score: score, status: newStatus, completed_at: completedAt })
         });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.message);
-        }
-
+        if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
         alert('Skor berhasil diupdate!');
         loadStudentProgress();
       } catch (err) {
@@ -1531,15 +993,6 @@
       }
     }
 
-    // ═══════════════════════════════════════
-    function handleLogout() {
-      logout();
-      window.location.href = 'auth.html';
-    }
-
-    // ═══════════════════════════════════════
-    // CONTENT EDITOR MODAL
-    // ═══════════════════════════════════════
     let currentEditContent = { type: null, id: null };
 
     function openContentModal(type, id) {
@@ -1550,21 +1003,14 @@
       const idInput = document.getElementById('contentIdInput');
 
       title.textContent = 'Edit Konten ' + (type === 'bab' ? 'Bab' : 'Fasal');
-
-      // Fetch current data
       const tables = { bab: 'bab', fasal: 'fasal' };
-      fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${getToken()}`
-        }
-      }).then(res => res.json()).then(data => {
+      if (type === 'bagian') { alert('Bagian tidak memiliki konten.'); return; }
+      fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }).then(res => res.json()).then(data => {
         const current = data[0];
         arabInput.value = current.content_arab || '';
         idInput.value = current.content_id || '';
         switchContentTab('arab');
       });
-
       modal.classList.remove('hidden');
     }
 
@@ -1574,125 +1020,71 @@
     }
 
     function switchContentTab(tab) {
-      // Hide all panels
       document.getElementById('panelArab').classList.add('hidden');
       document.getElementById('panelTrans').classList.add('hidden');
       document.getElementById('panelPreview').classList.add('hidden');
-
-      // Reset tab styles
       document.getElementById('tabArab').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
       document.getElementById('tabTrans').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
       document.getElementById('tabPreview').className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500';
-
-      // Show selected panel and highlight tab
       document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
-      document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-primary-600 text-primary-600';
-
-      // Update preview content when showing preview tab
-      if (tab === 'preview') {
-        updatePreview();
-      }
+      document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-3 py-1.5 text-sm font-semibold border-b-2 border-primary-500 text-primary-600';
+      if (tab === 'preview') updatePreview();
     }
 
     function updatePreview() {
       const arabInput = document.getElementById('contentArabInput');
       const idInput = document.getElementById('contentIdInput');
       const previewDiv = document.getElementById('contentPreview');
-
       let html = '';
-      if (arabInput.value) {
-        html += `<div class="mb-3"><span class="text-xs text-slate-400 block mb-1">Arab:</span><div class="p-3 bg-slate-100 rounded text-right font-arabic text-lg" dir="rtl" lang="ar">${arabInput.value}</div></div>`;
-      }
-      if (idInput.value) {
-        html += `<div><span class="text-xs text-slate-400 block mb-1">Indonesia:</span><div class="p-3 bg-slate-100 rounded">${idInput.value}</div></div>`;
-      }
-      previewDiv.innerHTML = html || '<p class="text-slate-400 text-center py-4">Ketik materi di atas untuk melihat preview</p>';
+      if (arabInput.value) html += `<div class="mb-4"><span class="text-xs text-slate-500 block mb-2">Arab:</span><div class="p-4 bg-slate-100 rounded-lg text-right text-xl" dir="rtl" lang="ar" style="font-family:'Amiri',serif">${arabInput.value}</div></div>`;
+      if (idInput.value) html += `<div><span class="text-xs text-slate-500 block mb-2">Indonesia:</span><div class="p-4 bg-slate-100 rounded-lg">${idInput.value}</div></div>`;
+      previewDiv.innerHTML = html || '<p class="text-slate-400 text-center py-8">Ketik materi untuk melihat preview</p>';
     }
 
     function saveContent() {
       const { type, id } = currentEditContent;
       if (!type || !id) return;
-
       const tables = { bab: 'bab', fasal: 'fasal' };
-      const updates = {
-        content_arab: document.getElementById('contentArabInput').value,
-        content_id: document.getElementById('contentIdInput').value
-      };
-
+      const updates = { content_arab: document.getElementById('contentArabInput').value, content_id: document.getElementById('contentIdInput').value };
       fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${getToken()}`
-        },
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
         body: JSON.stringify(updates)
       }).then(res => {
-        if (res.ok) {
-          alert('Konten berhasil disimpan!');
-          closeContentModal();
-          location.reload();
-        } else {
-          res.json().then(err => alert('Gagal: ' + (err.message || 'Unknown error')));
-        }
+        if (res.ok) { alert('Konten berhasil disimpan!'); closeContentModal(); location.reload(); }
+        else { res.json().then(err => alert('Gagal: ' + (err.message || 'Unknown error'))); }
       });
     }
   </script>
 
   <!-- Content Editor Modal -->
-  <div id="contentModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
-      <!-- Header -->
-      <div class="flex justify-between items-center px-4 py-3 border-b bg-slate-50">
-        <h3 id="contentModalTitle" class="font-bold text-slate-800">Edit Konten</h3>
-        <button onclick="closeContentModal()" class="p-1.5 hover:bg-slate-200 rounded">
-          <i class="fa-solid fa-times text-slate-500"></i>
-        </button>
+  <div id="contentModal" class="modal-backdrop hidden">
+    <div class="modal-content w-full max-w-2xl mx-4">
+      <div class="bg-gradient-to-r from-slate-50 to-white px-6 py-4 border-b flex items-center justify-between">
+        <h3 id="contentModalTitle" class="font-bold text-dark-800">Edit Konten</h3>
+        <button onclick="closeContentModal()" class="p-2 hover:bg-slate-200 rounded-lg transition-colors"><i class="fa-solid fa-times text-slate-500"></i></button>
       </div>
-
-      <!-- Body -->
-      <div class="flex-1 overflow-y-auto p-4">
-        <!-- Tabs -->
-        <div class="flex gap-1 mb-4 border-b">
-          <button onclick="switchContentTab('arab')" id="tabArab" class="px-3 py-1.5 text-sm font-semibold border-b-2 border-primary-600 text-primary-600">Arab</button>
-          <button onclick="switchContentTab('trans')" id="tabTrans" class="px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500">Terjemahan</button>
-          <button onclick="switchContentTab('preview')" id="tabPreview" class="px-3 py-1.5 text-sm font-semibold border-b-2 border-transparent text-slate-500">Preview</button>
+      <div class="p-6 max-h-[60vh] overflow-y-auto">
+        <div class="flex gap-2 mb-4 border-b pb-2">
+          <button onclick="switchContentTab('arab')" id="tabArab" class="px-4 py-2 text-sm font-semibold border-b-2 border-primary-500 text-primary-600">Arab</button>
+          <button onclick="switchContentTab('trans')" id="tabTrans" class="px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500">Terjemahan</button>
+          <button onclick="switchContentTab('preview')" id="tabPreview" class="px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500">Preview</button>
         </div>
-
-        <!-- Arab Tab -->
-        <div id="panelArab" class="space-y-2">
-          <label class="text-xs font-medium text-slate-500">Materi Arab</label>
-          <textarea id="contentArabInput" rows="6"
-            class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 font-arabic text-lg"
-            dir="rtl" lang="ar" oninput="updatePreview()" placeholder="Ketik materi Arab..."></textarea>
+        <div id="panelArab" class="space-y-3">
+          <label class="text-sm font-medium text-slate-600">Materi Arab</label>
+          <textarea id="contentArabInput" rows="6" class="input" dir="rtl" lang="ar" style="font-family:'Amiri',serif" oninput="updatePreview()" placeholder="Ketik materi Arab..."></textarea>
         </div>
-
-        <!-- Translation Tab -->
-        <div id="panelTrans" class="hidden space-y-2">
-          <label class="text-xs font-medium text-slate-500">Terjemahan Indonesia</label>
-          <textarea id="contentIdInput" rows="6"
-            class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500"
-            oninput="updatePreview()" placeholder="Ketik terjemahan..."></textarea>
+        <div id="panelTrans" class="hidden space-y-3">
+          <label class="text-sm font-medium text-slate-600">Terjemahan Indonesia</label>
+          <textarea id="contentIdInput" rows="6" class="input" oninput="updatePreview()" placeholder="Ketik terjemahan..."></textarea>
         </div>
-
-        <!-- Preview Tab -->
         <div id="panelPreview" class="hidden">
-          <div class="bg-slate-50 rounded-lg p-4 min-h-[150px]">
-            <div id="contentPreview" class="text-sm">
-              <p class="text-slate-400 text-center py-8">Preview akan muncul di sini...</p>
-            </div>
-          </div>
+          <div id="contentPreview" class="bg-slate-50 rounded-xl p-4 min-h-[150px]"><p class="text-slate-400 text-center py-8">Preview akan muncul di sini...</p></div>
         </div>
       </div>
-
-      <!-- Footer -->
-      <div class="flex justify-end gap-2 px-4 py-3 border-t bg-slate-50">
-        <button onclick="closeContentModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-lg">
-          Batal
-        </button>
-        <button onclick="saveContent()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg">
-          <i class="fa-solid fa-save mr-1"></i>Simpan
-        </button>
+      <div class="flex justify-end gap-3 px-6 py-4 border-t bg-slate-50">
+        <button onclick="closeContentModal()" class="btn btn-secondary">Batal</button>
+        <button onclick="saveContent()" class="btn btn-primary shadow-lg shadow-primary-500/25"><i class="fa-solid fa-save mr-2"></i>Simpan</button>
       </div>
     </div>
   </div>

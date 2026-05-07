@@ -1,0 +1,872 @@
+/* Modern UI Design System for MBBA */
+
+/* ============================================
+   CSS Variables (Design Tokens)
+   ============================================ */
+:root {
+  /* Primary Colors */
+  --primary-50: #ecfdf5;
+  --primary-100: #dcfce7;
+  --primary-500: #22c55e;
+  --primary-600: #16a34a;
+  --primary-700: #15803d;
+  --primary-glow: rgba(34, 197, 94, 0.4);
+
+  /* Dark Theme Colors */
+  --dark-50: #f8fafc;
+  --dark-100: #f1f5f9;
+  --dark-200: #e2e8f0;
+  --dark-700: #334155;
+  --dark-800: #1e293b;
+  --dark-900: #0f172a;
+
+  /* Semantic Colors */
+  --success-500: #22c55e;
+  --warning-500: #f59e0b;
+  --error-500: #ef4444;
+
+  /* Spacing */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* Shadows */
+  --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-large: 0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 30px rgba(34, 197, 94, 0.4);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Selection */
+::selection {
+  background-color: var(--primary-100);
+  color: var(--primary-700);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dark-300, #cbd5e1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-400, #94a3b8);
+}
+
+/* ============================================
+   Typography Classes
+   ============================================ */
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-dark {
+  background: linear-gradient(135deg, var(--dark-800), var(--dark-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-shadow-soft {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Arabic Text Styles */
+.arabic-text {
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+  direction: rtl;
+  text-align: right;
+  line-height: 2.5;
+  font-size: 1.3rem;
+}
+
+.arabic-hero {
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+  direction: rtl;
+  line-height: 2.8;
+}
+
+/* ============================================
+   Card Components
+   ============================================ */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-normal);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+.card-static {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================
+   Button Components
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+  color: white;
+  box-shadow: 0 2px 10px rgba(34, 197, 94, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--dark-100);
+  color: var(--dark-700);
+}
+
+.btn-secondary:hover {
+  background: var(--dark-200);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--dark-600);
+}
+
+.btn-ghost:hover {
+  background: var(--dark-100);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary-500);
+  color: var(--primary-600);
+}
+
+.btn-outline:hover {
+  background: var(--primary-50);
+}
+
+/* ============================================
+   Input Components
+   ============================================ */
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  border: 2px solid var(--dark-200);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  background: white;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.input::placeholder {
+  color: var(--dark-400, #94a3b8);
+}
+
+.input-error {
+  border-color: var(--error-500);
+}
+
+.input-error:focus {
+  border-color: var(--error-500);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Input with icon */
+.input-icon-wrapper {
+  position: relative;
+}
+
+.input-icon-wrapper .input {
+  padding-left: 2.75rem;
+}
+
+.input-icon-wrapper .icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dark-400, #94a3b8);
+  pointer-events: none;
+}
+
+/* ============================================
+   Badge / Status Components
+   ============================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+}
+
+.badge-success {
+  background: var(--success-500);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.badge-error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.badge-info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.badge-neutral {
+  background: var(--dark-100);
+  color: var(--dark-700);
+}
+
+/* ============================================
+   Progress Bar
+   ============================================ */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--dark-100);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+  transition: width var(--transition-slow);
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.6s ease-out forwards;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+/* Staggered Animation Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* ============================================
+   Gradient Backgrounds
+   ============================================ */
+.bg-gradient-hero {
+  background: linear-gradient(135deg, #15803d 0%, #166534 50%, #14532d 100%);
+}
+
+.bg-gradient-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,1) 100%);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(135deg, var(--dark-800), var(--dark-900));
+}
+
+/* ============================================
+   Hover Effects
+   ============================================ */
+.hover-lift {
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-large);
+}
+
+.hover-scale {
+  transition: transform var(--transition-fast);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-glow:hover {
+  box-shadow: var(--shadow-glow);
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+.loading-skeleton {
+  background: linear-gradient(90deg, var(--dark-100) 25%, var(--dark-200) 50%, var(--dark-100) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--dark-200);
+  border-top-color: var(--primary-500);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner-lg {
+  width: 40px;
+  height: 40px;
+  border-width: 4px;
+}
+
+/* ============================================
+   Modal Styles
+   ============================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 50;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-large);
+  z-index: 51;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: bounceIn 0.3s ease-out;
+}
+
+/* ============================================
+   Quiz Specific Styles
+   ============================================ */
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: white;
+  border: 2px solid var(--dark-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quiz-option:hover {
+  border-color: var(--primary-400, #4ade80);
+  background: var(--primary-50);
+}
+
+.quiz-option.selected {
+  border-color: var(--primary-500);
+  background: var(--primary-50);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.quiz-option.correct {
+  border-color: var(--success-500);
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+}
+
+.quiz-option.incorrect {
+  border-color: var(--error-500);
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+}
+
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+@media (max-width: 640px) {
+  .card {
+    border-radius: var(--radius-md);
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+  }
+
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 641px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   Dark Mode Support (Future)
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  /* Dark mode styles can be added here */
+}
+
+/* ============================================
+   Module Card Component
+   3 Status: completed, in-progress, locked
+   ============================================ */
+.module-card {
+  position: relative;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.module-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+/* Status Indicator Line */
+.module-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+/* Completed State */
+.module-card.completed::before {
+  background: linear-gradient(180deg, var(--primary-500), var(--primary-600));
+}
+
+.module-card.completed {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.03) 0%, white 50%);
+  border-color: rgba(34, 197, 94, 0.15);
+}
+
+.module-card.completed:hover {
+  border-color: var(--primary-500);
+}
+
+/* In Progress State */
+.module-card.in-progress::before {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+}
+
+.module-card.in-progress {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, white 50%);
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+.module-card.in-progress:hover {
+  border-color: #3b82f6;
+}
+
+/* Locked State */
+.module-card.locked {
+  opacity: 0.7;
+}
+
+.module-card.locked::before {
+  background: var(--dark-300, #cbd5e1);
+}
+
+.module-card.locked:hover {
+  transform: none;
+}
+
+/* Card Header */
+.module-card-header {
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.module-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.module-card.completed .module-card-icon {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
+
+.module-card.in-progress .module-card-icon {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.module-card.locked .module-card-icon {
+  background: var(--dark-100);
+}
+
+.module-card.completed .module-card-icon i {
+  color: var(--primary-600);
+}
+
+.module-card.in-progress .module-card-icon i {
+  color: #3b82f6;
+}
+
+.module-card.locked .module-card-icon i {
+  color: var(--dark-400, #94a3b8);
+}
+
+/* Card Body */
+.module-card-body {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.module-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark-800);
+  margin-bottom: 0.25rem;
+}
+
+.module-card.locked .module-card-title {
+  color: var(--dark-400, #94a3b8);
+}
+
+.module-card-subtitle {
+  font-size: 0.875rem;
+  color: var(--dark-500, #64748b);
+}
+
+/* Card Footer */
+.module-card-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--dark-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+/* Progress Bar */
+.module-card-progress {
+  width: 100%;
+  height: 6px;
+  background: var(--dark-100);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.module-card-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+  transition: width var(--transition-slow);
+}
+
+.module-card.in-progress .module-card-progress-fill {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+
+/* Status Badge */
+.module-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+}
+
+.module-card.completed .module-card-status {
+  background: var(--primary-500);
+  color: white;
+}
+
+.module-card.in-progress .module-card-status {
+  background: #3b82f6;
+  color: white;
+}
+
+.module-card.locked .module-card-status {
+  background: var(--dark-200, #e2e8f0);
+  color: var(--dark-500, #64748b);
+}
+
+/* Action Button */
+.module-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.module-card.completed .module-card-action {
+  background: var(--dark-100);
+  color: var(--dark-700);
+}
+
+.module-card.completed .module-card-action:hover {
+  background: var(--dark-200);
+}
+
+.module-card.in-progress .module-card-action {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+  color: white;
+  box-shadow: 0 2px 10px rgba(34, 197, 94, 0.3);
+}
+
+.module-card.in-progress .module-card-action:hover {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+  transform: translateY(-1px);
+}
+
+.module-card.locked .module-card-action {
+  background: var(--dark-100);
+  color: var(--dark-400, #94a3b8);
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
