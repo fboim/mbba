@@ -218,48 +218,35 @@
         var progress = null;
         try {
           progress = await fetchBabProgress(babId);
-        } catch (e) {
-          console.warn('Bab progress fetch skipped:', e.message);
-        }
+        } catch (e) {}
+
         updateStatus(progress);
 
         // Load quiz for bab
-        console.log('Loading quiz for bab:', babId);
         quizBank = [];
         try {
           // First try bab_id
           quizBank = await fetchQuizBankBab(babId);
-          console.log('Quiz by bab_id:', quizBank.length);
 
           // If no quiz by bab_id, try fasal_id (if bab has fasals)
           if (quizBank.length === 0 && currentBab) {
-            console.log('No quiz by bab_id, trying fasals...');
-            // Try to get quizzes from associated fasals
             const fasalRes = await fetch(
               `${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${babId}&select=id`,
               { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() } }
             );
             const fasals = await fasalRes.json();
-            console.log('Fasals in this bab:', fasals.length);
 
             for (var f of fasals) {
               var fQuizzes = await fetchQuizBank(f.id);
               quizBank = quizBank.concat(fQuizzes);
-              console.log('Quiz from fasal', f.id, ':', fQuizzes.length);
             }
           }
-          console.log('Total quiz bank:', quizBank.length);
-        } catch (e) {
-          console.error('Quiz load error:', e);
-        }
+        } catch (e) {}
 
         if (quizBank.length === 0) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
           document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock mr-2"></i>Belum Ada Quiz';
-          console.log('No quiz found for bab_id:', babId);
-        } else {
-          console.log('Quiz found! Button should be active');
         }
 
       } catch (err) {
@@ -374,10 +361,6 @@
     var quizBankLoaded = [];
 
     function startQuiz() {
-      console.log('startQuiz called');
-      console.log('quizBank length:', quizBank.length);
-      console.log('quizBank:', quizBank);
-
       if (quizBank.length === 0) {
         alert('Belum ada quiz');
         return;
