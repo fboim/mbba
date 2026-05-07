@@ -307,8 +307,9 @@ async function fetchFasalProgress(fasalId) {
   const user = await getCurrentUser();
   if (!user) return null;
 
+  const encodedFasalId = encodeURIComponent(fasalId);
   const res = await fetch(
-    `${SUPABASE_URL}rest/v1/user_progress?user_id=eq.${user.id}&fasal_id=eq.${fasalId}&select=*`,
+    `${SUPABASE_URL}rest/v1/user_progress?user_id=eq.${user.id}&fasal_id=eq.${encodedFasalId}&select=*`,
     {
       headers: {
         'apikey': SUPABASE_ANON_KEY,
