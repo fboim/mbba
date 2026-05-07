@@ -531,7 +531,6 @@
       // For bab, use the bab ID directly (not prefixed)
       // For fasal, use the fasal ID
       var id = currentFasal ? currentFasal.id : currentBab.id;
-      var displayId = currentFasal ? currentFasal.id : ('bab_' + currentBab.id);
 
       var attempts = 1;
       var existing = null;
@@ -542,8 +541,8 @@
       }
       if (existing) attempts = (existing.quiz_attempts || 0) + 1;
 
-      console.log('Saving progress for:', displayId, 'status:', passed ? 'completed' : 'unlocked');
-      await saveProgress(displayId, score, attempts, passed ? 'completed' : 'unlocked');
+      console.log('Saving progress for:', id, 'status:', passed ? 'completed' : 'unlocked');
+      await saveProgress(id, score, attempts, passed ? 'completed' : 'unlocked');
       console.log('Progress saved');
 
       updateStatus({ status: passed ? 'completed' : 'unlocked', quiz_score: score });

@@ -229,7 +229,7 @@ async function fetchQuizBankBab(babId) {
 }
 
 /**
- * Ambil progress untuk satu Bab (dengan fasal_id = 'bab_{id}')
+ * Ambil progress untuk satu Bab
  * @param {string} babId
  * @returns {Promise<Object|null>}
  */
@@ -240,14 +240,11 @@ async function fetchBabProgress(babId) {
   const user = await getCurrentUser();
   if (!user) return null;
 
-  const fasalId = 'bab_' + babId;
-
-  // Try with encoded ID first
-  const encodedFasalId = encodeURIComponent(fasalId);
+  const encodedBabId = encodeURIComponent(babId);
 
   try {
     const res = await fetch(
-      `${SUPABASE_URL}rest/v1/user_progress?user_id=eq.${user.id}&fasal_id=eq.${encodedFasalId}&select=*`,
+      `${SUPABASE_URL}rest/v1/user_progress?user_id=eq.${user.id}&fasal_id=eq.${encodedBabId}&select=*`,
       {
         headers: {
           'apikey': SUPABASE_ANON_KEY,
