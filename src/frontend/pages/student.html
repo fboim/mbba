@@ -120,8 +120,6 @@
         allFasals = [];
         allBabs = [];
 
-        console.log('Kurikulum loaded:', kurikulum);
-
         if (!kurikulum || kurikulum.length === 0) {
           document.getElementById('fasalList').innerHTML = '<div class="text-center py-8 text-slate-400"><i class="fa-solid fa-folder-open text-4xl mb-4"></i><p>Tidak ada data materi</p></div>';
           updateStats();
@@ -154,9 +152,6 @@
             });
           });
         });
-
-        console.log('Babs:', allBabs);
-        console.log('Fasals:', allFasals);
 
         var progressData = await fetchUserProgress();
         userProgress = progressData || [];
