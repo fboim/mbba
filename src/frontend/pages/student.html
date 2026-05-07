@@ -252,11 +252,12 @@
 
       html += '<div class="font-semibold text-slate-600 text-sm mb-2">Daftar Materi (wajib berurutan):</div>';
 
-      // Find first unlocked
+      // Find first unlocked (check both direct ID and bab_X format)
       var nextUnlock = 0;
       for (var i = 0; i < items.length; i++) {
-        var itemId = items[i].type === 'bab' ? 'bab_' + items[i].id : items[i].id;
-        if (!completedIds.includes(itemId)) {
+        var itemId = items[i].id;
+        var isCompleted = completedIds.includes(itemId) || completedIds.includes('bab_' + itemId);
+        if (!isCompleted) {
           nextUnlock = i;
           break;
         }
@@ -265,8 +266,9 @@
 
       // Render items
       items.forEach(function(item, index) {
-        var itemId = item.type === 'bab' ? 'bab_' + item.id : item.id;
-        var progress = userProgress.find(function(p) { return p.fasal_id === itemId; });
+        // For bab items, use bab.id directly; for fasal items, use fasal id
+        var itemId = item.type === 'bab' ? item.id : item.id;
+        var progress = userProgress.find(function(p) { return p.fasal_id === itemId || p.fasal_id === 'bab_' + itemId; });
         var isUnlocked = index <= nextUnlock;
         var isCompleted = progress && progress.status === 'completed';
 
