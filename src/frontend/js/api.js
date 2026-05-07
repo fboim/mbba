@@ -327,13 +327,10 @@ async function fetchFasalProgress(fasalId) {
  * @param {string} status 'in_progress' | 'completed'
  */
 async function saveProgress(fasalId, score, attempts, status) {
-  console.log('saveProgress called:', { fasalId, score, attempts, status });
   const token = getToken();
-  console.log('token:', token ? 'exists' : 'null');
   if (!token) return;
 
   const user = await getCurrentUser();
-  console.log('user:', user);
   if (!user) return;
 
   const body = {
@@ -345,16 +342,12 @@ async function saveProgress(fasalId, score, attempts, status) {
     completed_at: status === 'completed' ? new Date().toISOString() : null,
   };
 
-  // Cek existing (skip check if fasalId contains bab_ prefix to avoid encoding issues)
   let existing = null;
   try {
     existing = await fetchFasalProgress(fasalId);
-  } catch (e) {
-    console.warn('Could not check existing progress:', e);
-  }
+  } catch (e) {}
 
   if (existing) {
-    // Update
     const updateRes = await fetch(
       `${SUPABASE_URL}rest/v1/user_progress?id=eq.${existing.id}`,
       {
@@ -368,14 +361,8 @@ async function saveProgress(fasalId, score, attempts, status) {
         body: JSON.stringify(body),
       }
     );
-    if (!updateRes.ok) {
-      const err = await updateRes.text();
-      console.error('Update progress failed:', err);
-    }
   } else {
-    // Insert baru
     const postBody = { ...body, started_at: new Date().toISOString() };
-    console.log('Inserting new progress:', postBody);
 
     const insertRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
       method: 'POST',
@@ -387,37 +374,8 @@ async function saveProgress(fasalId, score, attempts, status) {
       },
       body: JSON.stringify(postBody),
     });
-
-    if (!insertRes.ok) {
-      const err = await insertRes.json();
-      console.error('Insert progress failed:', err);
-      // Try without optional fields
-      const minimalBody = {
-        user_id: user.id,
-        fasal_id: fasalId,
-        status,
-        quiz_score: score,
-        quiz_attempts: attempts
-      };
-      console.log('Retrying with minimal body:', minimalBody);
-
-      const retryRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${token}`,
-          'Prefer': 'return=representation',
-        },
-        body: JSON.stringify(minimalBody),
-      });
-
-      if (!retryRes.ok) {
-        const retryErr = await retryRes.json();
-        console.error('Retry failed:', retryErr);
-      } else {
-        console.log('Retry successful!');
-      }
+  }
+}
     } else {
       const data = await insertRes.json();
       console.log('Progress inserted:', data);
