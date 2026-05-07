@@ -84,6 +84,9 @@ function submitQuiz() {
   return { score, passed, correct, total: state.questions.length, results };
 }
 
+// Export for use in other scripts
+window.submitQuizResult = submitQuiz;
+
 /**
  * Normalize jawaban untuk perbandingan
  * - Hilangkan spasi berlebihan
