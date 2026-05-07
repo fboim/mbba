@@ -215,13 +215,52 @@
         }
 
         // Check progress
-        var progress = await fetchFasalProgress('bab_' + babId);
+        var progress = null;
+        try {
+          progress = await fetchBabProgress(babId);
+        } catch (e) {
+          console.warn('Bab progress fetch skipped:', e.message);
+        }
         updateStatus(progress);
 
-        // No quiz for bab
-        document.getElementById('startQuizBtn').disabled = true;
-        document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
-        document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock mr-2"></i>Tidak Ada Quiz';
+        // Load quiz for bab
+        console.log('Loading quiz for bab:', babId);
+        quizBank = [];
+        try {
+          // First try bab_id
+          quizBank = await fetchQuizBankBab(babId);
+          console.log('Quiz by bab_id:', quizBank.length);
+
+          // If no quiz by bab_id, try fasal_id (if bab has fasals)
+          if (quizBank.length === 0 && currentBab) {
+            console.log('No quiz by bab_id, trying fasals...');
+            // Try to get quizzes from associated fasals
+            const fasalRes = await fetch(
+              `${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${babId}&select=id`,
+              { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() } }
+            );
+            const fasals = await fasalRes.json();
+            console.log('Fasals in this bab:', fasals.length);
+
+            for (var f of fasals) {
+              var fQuizzes = await fetchQuizBank(f.id);
+              quizBank = quizBank.concat(fQuizzes);
+              console.log('Quiz from fasal', f.id, ':', fQuizzes.length);
+            }
+          }
+          console.log('Total quiz bank:', quizBank.length);
+        } catch (e) {
+          console.error('Quiz load error:', e);
+        }
+
+        if (quizBank.length === 0) {
+          document.getElementById('startQuizBtn').disabled = true;
+          document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock mr-2"></i>Belum Ada Quiz';
+          console.log('No quiz found for bab_id:', babId);
+        } else {
+          console.log('Quiz found! Button should be active');
+        }
 
       } catch (err) {
         console.error('Error:', err);
@@ -278,15 +317,32 @@
         }
 
         // Check progress
-        var progress = await fetchFasalProgress(fasalId);
+        var progress = null;
+        try {
+          progress = await fetchFasalProgress(fasalId);
+        } catch (e) {
+          console.error('Error fetching progress:', e);
+        }
         updateStatus(progress);
 
         // Load quiz
-        quizBank = await fetchQuizBank(fasalId);
+        console.log('Loading quiz for fasal:', fasalId);
+        quizBank = [];
+        try {
+          quizBank = await fetchQuizBank(fasalId);
+          console.log('Quiz bank loaded:', quizBank.length, 'questions');
+        } catch (e) {
+          console.error('Error loading quiz:', e);
+        }
+        console.log('Quiz bank data:', quizBank);
+
         if (quizBank.length === 0) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
           document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock mr-2"></i>Belum Ada Quiz';
+          console.log('No quiz found for fasal_id:', fasalId);
+        } else {
+          console.log('Quiz found! Button should be active');
         }
 
       } catch (err) {
@@ -312,45 +368,83 @@
     var quizQuestions = [];
     var currentQuestionIndex = 0;
     var selectedAnswers = {};
+    var quizBankLoaded = [];
 
     function startQuiz() {
+      console.log('startQuiz called');
+      console.log('quizBank length:', quizBank.length);
+      console.log('quizBank:', quizBank);
+
       if (quizBank.length === 0) {
         alert('Belum ada quiz');
         return;
       }
       document.getElementById('quizModal').classList.remove('hidden');
-      document.getElementById('quizFasalName').textContent = currentFasal ? currentFasal.title : '';
 
+      var quizId = currentFasal ? currentFasal.id : ('bab_' + currentBab.id);
+      var quizTitle = currentFasal ? currentFasal.title : currentBab.title;
       var quizCount = (currentFasal && currentFasal.quiz_count) || 10;
-      initQuiz(quizBank, currentFasal.id, quizCount, {
-        onPass: function(score) { handleQuizComplete(true, score); },
-        onFail: function(score) { handleQuizComplete(false, score); }
+
+      // Initialize quiz from quiz.js
+      initQuiz(quizBank, quizId, quizCount, {
+        onPass: function(score, correct, total, results) {
+          handleQuizComplete(true, score, correct, total);
+        },
+        onFail: function(score, correct, total, results) {
+          handleQuizComplete(false, score, correct, total);
+        }
       });
 
+      quizBankLoaded = quizBank;
       quizQuestions = window._quizState.questions;
+      currentQuestionIndex = 0;
+      selectedAnswers = {};
       renderQuestion();
     }
 
     function renderQuestion() {
       var state = window._quizState;
+      if (!state || !state.questions || state.questions.length === 0) {
+        document.getElementById('quizContent').innerHTML = '<p class="text-red-500">Quiz tidak tersedia</p>';
+        return;
+      }
+
       var q = state.questions[currentQuestionIndex];
       var container = document.getElementById('quizContent');
+      var answers = state.selectedAnswers || {};
 
       container.innerHTML = '<div class="mb-4 text-sm text-slate-500">Soal ' + (currentQuestionIndex + 1) + ' dari ' + state.questions.length + '</div>';
 
-      container.innerHTML += '<div class="mb-6 p-4 bg-slate-50 rounded-lg"><p class="text-lg font-medium text-slate-800">' + q.question + '</p></div>';
+      var qText = q.type === 'mc' ? q.question : q.question;
+      container.innerHTML += '<div class="mb-6 p-4 bg-slate-50 rounded-lg"><p class="text-lg font-medium text-slate-800">' + qText + '</p></div>';
 
       if (q.type === 'mc' && q.options) {
-        var opts = JSON.parse(q.options);
+        var opts;
+        try {
+          var parsed = JSON.parse(q.options);
+          // Check if it's an array (new format) or object (old format)
+          if (Array.isArray(parsed)) {
+            opts = {};
+            parsed.forEach(function(item) {
+              opts[item.key] = item.value;
+            });
+          } else {
+            opts = parsed;
+          }
+        } catch (e) {
+          console.error('Failed to parse options:', e);
+          opts = {};
+        }
         container.innerHTML += '<div class="space-y-3">';
         for (var key in opts) {
-          container.innerHTML += '<label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50' + (selectedAnswers[q.id] === key ? ' border-primary-500 bg-primary-50' : '') + '">' +
-            '<input type="radio" name="answer" value="' + key + '" ' + (selectedAnswers[q.id] === key ? 'checked' : '') + ' onchange="selectAnswer(\'' + q.id + '\', \'' + key + '\')" class="w-4 h-4 text-primary-600">' +
+          var isSelected = answers[q.id] === key;
+          container.innerHTML += '<label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50' + (isSelected ? ' border-primary-500 bg-primary-50' : '') + '">' +
+            '<input type="radio" name="answer" value="' + key + '" ' + (isSelected ? 'checked' : '') + ' onchange="selectAnswer(\'' + q.id + '\', \'' + key + '\')" class="w-4 h-4 text-primary-600">' +
             '<span class="font-semibold text-slate-600">' + key + '.</span><span>' + opts[key] + '</span></label>';
         }
         container.innerHTML += '</div>';
       } else {
-        container.innerHTML += '<div class="mb-4"><input type="text" id="answerInput" value="' + (selectedAnswers[q.id] || '') + '" oninput="setAnswer(\'' + q.id + '\', this.value)" class="w-full px-4 py-3 border border-slate-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="Ketik jawaban..."></div>';
+        container.innerHTML += '<div class="mb-4"><input type="text" id="answerInput" value="' + (answers[q.id] || '') + '" oninput="setAnswer(\'' + q.id + '\', this.value)" class="w-full px-4 py-3 border border-slate-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="Ketik jawaban..."></div>';
       }
 
       var prevBtn = currentQuestionIndex === 0 ? 'disabled' : '';
@@ -365,10 +459,10 @@
       }
       container.innerHTML += '</div>';
 
-      // Question dots
       container.innerHTML += '<div class="flex justify-center gap-2 mt-6">';
-      state.questions.forEach(function(_, i) {
-        var dotClass = i === currentQuestionIndex ? 'bg-primary-600' : (selectedAnswers[state.questions[i].id] ? 'bg-green-500' : 'bg-slate-300');
+      state.questions.forEach(function(qi, i) {
+        var isAnswered = answers[qi.id] ? true : false;
+        var dotClass = i === currentQuestionIndex ? 'bg-primary-600' : (isAnswered ? 'bg-green-500' : 'bg-slate-300');
         container.innerHTML += '<button onclick="goToQuestion(' + i + ')" class="w-3 h-3 rounded-full ' + dotClass + '"></button>';
       });
       container.innerHTML += '</div>';
@@ -399,12 +493,12 @@
     }
 
     function submitQuiz() {
-      var result = submitQuiz();
+      var result = submitQuizFromState();
       var container = document.getElementById('quizContent');
 
       var icon = result.passed ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500';
       var title = result.passed ? 'Selamat!' : 'Belum Lulus';
-      var msg = result.passed ? 'Anda menjawab benar semua!' : 'Skor: ' + result.score + '%. Syarat: 100%';
+      var msg = result.passed ? 'Anda menjawab 100% benar!' : 'Skor: ' + result.score + '%. Syarat: 100%';
 
       container.innerHTML = '<div class="text-center py-8">' +
         '<i class="fa-solid ' + icon + ' text-6xl mb-4"></i>' +
@@ -413,7 +507,7 @@
         '<p class="text-lg mb-6">' + result.correct + ' dari ' + result.total + ' benar</p>';
 
       if (result.passed) {
-        container.innerHTML += '<button onclick="closeQuiz(); window.location.href=\'student.html\';" class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg"><i class="fa-solid fa-home mr-2"></i>Kembali</button>';
+        container.innerHTML += '<button onclick="closeQuiz(); window.location.href=\'student.html\';" class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg"><i class="fa-solid fa-home mr-2"></i>Kembali ke Dashboard</button>';
       } else {
         container.innerHTML += '<button onclick="retryQuiz()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg mr-2"><i class="fa-solid fa-redo mr-2"></i>Coba Lagi</button>';
         container.innerHTML += '<button onclick="closeQuiz()" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg">Kembali</button>';
@@ -421,17 +515,27 @@
       container.innerHTML += '</div>';
     }
 
-    async function handleQuizComplete(passed, score) {
+    function submitQuizFromState() {
+      return submitQuiz();
+    }
+
+    async function handleQuizComplete(passed, score, correct, total) {
       var id = currentFasal ? currentFasal.id : ('bab_' + currentBab.id);
       var attempts = 1;
-      var existing = await fetchFasalProgress(id);
+      var existing = null;
+      try {
+        existing = await fetchFasalProgress(id);
+      } catch (e) {}
       if (existing) attempts = (existing.quiz_attempts || 0) + 1;
       await saveProgress(id, score, attempts, passed ? 'completed' : 'unlocked');
       updateStatus({ status: passed ? 'completed' : 'unlocked', quiz_score: score });
     }
 
     function retryQuiz() {
-      resetQuiz(quizBank);
+      if (quizBankLoaded.length === 0) {
+        quizBankLoaded = quizBank;
+      }
+      resetQuiz(quizBankLoaded);
       quizQuestions = window._quizState.questions;
       currentQuestionIndex = 0;
       selectedAnswers = {};

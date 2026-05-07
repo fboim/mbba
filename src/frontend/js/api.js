@@ -179,12 +179,92 @@ async function fetchQuizBank(fasalId) {
     ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
   };
 
-  const res = await fetch(
-    `${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${fasalId}&order=order_index`,
-    { headers }
-  );
-  if (!res.ok) throw new Error('Gagal mengambil bank soal');
-  return res.json();
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${fasalId}&order=order_index`,
+      { headers }
+    );
+    if (!res.ok) {
+      console.error('fetchQuizBank error:', res.status, res.statusText);
+      return [];
+    }
+    return res.json();
+  } catch (err) {
+    console.error('fetchQuizBank exception:', err);
+    return [];
+  }
+}
+
+/**
+ * Ambil semua quiz dari bank soal satu Bab
+ * @param {string} babId
+ * @returns {Promise<Array>}
+ */
+async function fetchQuizBankBab(babId) {
+  const token = getToken();
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+
+  try {
+    console.log('fetchQuizBankBab: fetching for bab_id:', babId);
+    const res = await fetch(
+      `${SUPABASE_URL}rest/v1/quiz?bab_id=eq.${babId}&order=order_index`,
+      { headers }
+    );
+    console.log('fetchQuizBankBab: response status:', res.status);
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('fetchQuizBankBab error:', res.status, text);
+      return [];
+    }
+    const data = await res.json();
+    console.log('fetchQuizBankBab: got', data.length, 'quizzes');
+    return data;
+  } catch (err) {
+    console.error('fetchQuizBankBab exception:', err);
+    return [];
+  }
+}
+
+/**
+ * Ambil progress untuk satu Bab (dengan fasal_id = 'bab_{id}')
+ * @param {string} babId
+ * @returns {Promise<Object|null>}
+ */
+async function fetchBabProgress(babId) {
+  const token = getToken();
+  if (!token) return null;
+
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const fasalId = 'bab_' + babId;
+
+  // Try with encoded ID first
+  const encodedFasalId = encodeURIComponent(fasalId);
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}rest/v1/user_progress?user_id=eq.${user.id}&fasal_id=eq.${encodedFasalId}&select=*`,
+      {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    );
+    if (!res.ok) {
+      console.log('fetchBabProgress: skipping (user has no progress for bab yet)');
+      return null; // No progress yet for new bab
+    }
+    const data = await res.json();
+    return data[0] || null;
+  } catch (err) {
+    console.error('fetchBabProgress error:', err);
+    return null; // Graceful fallback
+  }
 }
 
 // ================================================================

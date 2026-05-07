@@ -316,6 +316,7 @@
   <script src="../js/api.js"></script>
   <script>
     let allFasals = [];
+    let allBabs = [];
     let allQuizzes = [];
 
     // Check if logged in and is admin
@@ -385,14 +386,20 @@
         const data = await fetchKurikulum();
         allFasals = [];
         allBabs = [];
+        let hasMuqoddimah = false;
 
         data.forEach(bagian => {
           (bagian.bab || []).forEach(bab => {
-            allBabs.push({
-              id: bab.id,
-              label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
-              bagian_id: bagian.id
-            });
+            // Track bab with is_muqoddimah (bab tanpa fasal, langsung bisa diikutkan student)
+            if (bab.is_muqoddimah) {
+              hasMuqoddimah = true;
+              allBabs.push({
+                id: bab.id,
+                label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`,
+                bagian_id: bagian.id,
+                is_muqoddimah: true
+              });
+            }
             (bab.fasal || []).forEach(fasal => {
               allFasals.push({
                 id: fasal.id,
@@ -403,15 +410,50 @@
           });
         });
 
+        // Update Level dropdown based on available content
+        const quizLevelSelect = document.getElementById('quizLevel');
+        quizLevelSelect.innerHTML = '';
+
+        const hasFasals = allFasals.length > 0;
+        const hasBabs = allBabs.length > 0;
+
+        // Add options based on what's available
+        if (hasFasals) {
+          quizLevelSelect.innerHTML += '<option value="fasal">Fasal</option>';
+        }
+        if (hasBabs) {
+          quizLevelSelect.innerHTML += '<option value="bab">Bab (Muqoddimah)</option>';
+        }
+
+        // If only one option, select it automatically
+        if (!hasFasals && hasBabs) {
+          quizLevelSelect.value = 'bab';
+        } else if (hasFasals && !hasBabs) {
+          quizLevelSelect.value = 'fasal';
+        }
+
+        // Also update the filter dropdown
+        const quizLevelFilter = document.getElementById('quizLevelFilter');
+        quizLevelFilter.innerHTML = '';
+        if (hasFasals) {
+          quizLevelFilter.innerHTML += '<option value="fasal">Fasal</option>';
+        }
+        if (hasBabs) {
+          quizLevelFilter.innerHTML += '<option value="bab">Bab</option>';
+        }
+
         // Populate Fasal select in form
         const selectFasalNew = document.getElementById('newQuizFasal');
         selectFasalNew.innerHTML = '<option value="">Pilih Fasal...</option>' +
           allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
 
-        // Populate Bab select in form
+        // Populate Bab select in form (only muqoddimah babs)
         const selectBabNew = document.getElementById('newQuizBab');
         selectBabNew.innerHTML = '<option value="">Pilih Bab...</option>' +
-          allBabs.map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+          allBabs.filter(b => b.is_muqoddimah).map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+
+        // Update quiz level form visibility
+        updateQuizLevelForm();
 
         // Populate filter selects
         const selectFilter = document.getElementById('filterFasal');
@@ -421,6 +463,7 @@
         const selectBabFilter = document.getElementById('filterBab');
         selectBabFilter.innerHTML = '<option value="">Semua Bab</option>' +
           allBabs.map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+
       } catch (err) {
         console.error('Gagal load data:', err);
       }
