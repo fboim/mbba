@@ -37,21 +37,21 @@
   <main class="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-8">
 
     <!-- Navigation Tabs -->
-    <div class="flex gap-2 mb-4 md:mb-6 flex-wrap overflow-x-auto">
-      <button onclick="showTab('stats')" id="tabStats"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm">
+    <div id="navTabs" class="flex gap-2 mb-4 md:mb-6 flex-wrap overflow-x-auto">
+      <button type="button" onclick="showTab('stats')" id="tabStats"
+        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
         <i class="fa-solid fa-chart-bar mr-1 md:mr-2"></i><span class="hidden sm:inline">Stats</span>
       </button>
-      <button onclick="showTab('materi')" id="tabMateri"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm">
+      <button type="button" onclick="showTab('materi')" id="tabMateri"
+        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
         <i class="fa-solid fa-book mr-1 md:mr-2"></i><span class="hidden sm:inline">Kelola Materi</span>
       </button>
-      <button onclick="showTab('quiz')" id="tabQuiz"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm">
+      <button type="button" onclick="showTab('quiz')" id="tabQuiz"
+        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
         <i class="fa-solid fa-question mr-1 md:mr-2"></i><span class="hidden sm:inline">Kelola Soal</span>
       </button>
-      <button onclick="showTab('siswa')" id="tabSiswa"
-        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm">
+      <button type="button" onclick="showTab('siswa')" id="tabSiswa"
+        class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 whitespace-nowrap text-sm cursor-pointer">
         <i class="fa-solid fa-users mr-1 md:mr-2"></i><span class="hidden sm:inline">Progress Siswa</span>
       </button>
     </div>
@@ -347,6 +347,7 @@
     // TAB SWITCHING
     // ═══════════════════════════════════════
     function showTab(tab) {
+      console.log('showTab called with:', tab);
       // Hide all sections
       document.getElementById('sectionStats').classList.add('hidden');
       document.getElementById('sectionMateri').classList.add('hidden');
