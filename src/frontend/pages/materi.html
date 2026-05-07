@@ -493,7 +493,14 @@
     }
 
     function submitQuiz() {
-      var result = submitQuizFromState();
+      var result;
+      try {
+        result = submitQuiz();
+      } catch (e) {
+        console.error('Quiz submit error:', e);
+        alert('Gagal submit quiz. Silakan coba lagi.');
+        return;
+      }
       var container = document.getElementById('quizContent');
 
       var icon = result.passed ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500';
@@ -513,10 +520,6 @@
         container.innerHTML += '<button onclick="closeQuiz()" class="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg">Kembali</button>';
       }
       container.innerHTML += '</div>';
-    }
-
-    function submitQuizFromState() {
-      return submitQuiz();
     }
 
     async function handleQuizComplete(passed, score, correct, total) {
