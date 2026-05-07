@@ -184,13 +184,9 @@ async function fetchQuizBank(fasalId) {
       `${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${fasalId}&order=order_index`,
       { headers }
     );
-    if (!res.ok) {
-      console.error('fetchQuizBank error:', res.status, res.statusText);
-      return [];
-    }
+    if (!res.ok) return [];
     return res.json();
   } catch (err) {
-    console.error('fetchQuizBank exception:', err);
     return [];
   }
 }
@@ -208,22 +204,13 @@ async function fetchQuizBankBab(babId) {
   };
 
   try {
-    console.log('fetchQuizBankBab: fetching for bab_id:', babId);
     const res = await fetch(
       `${SUPABASE_URL}rest/v1/quiz?bab_id=eq.${babId}&order=order_index`,
       { headers }
     );
-    console.log('fetchQuizBankBab: response status:', res.status);
-    if (!res.ok) {
-      const text = await res.text();
-      console.error('fetchQuizBankBab error:', res.status, text);
-      return [];
-    }
-    const data = await res.json();
-    console.log('fetchQuizBankBab: got', data.length, 'quizzes');
-    return data;
+    if (!res.ok) return [];
+    return res.json();
   } catch (err) {
-    console.error('fetchQuizBankBab exception:', err);
     return [];
   }
 }
@@ -252,15 +239,11 @@ async function fetchBabProgress(babId) {
         },
       }
     );
-    if (!res.ok) {
-      console.log('fetchBabProgress: skipping (user has no progress for bab yet)');
-      return null; // No progress yet for new bab
-    }
+    if (!res.ok) return null;
     const data = await res.json();
     return data[0] || null;
   } catch (err) {
-    console.error('fetchBabProgress error:', err);
-    return null; // Graceful fallback
+    return null;
   }
 }
 
@@ -374,12 +357,6 @@ async function saveProgress(fasalId, score, attempts, status) {
       },
       body: JSON.stringify(postBody),
     });
-  }
-}
-    } else {
-      const data = await insertRes.json();
-      console.log('Progress inserted:', data);
-    }
   }
 }
 
