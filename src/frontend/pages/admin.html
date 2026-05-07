@@ -485,21 +485,21 @@
         }
 
         container.innerHTML = `
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
             <table class="w-full text-sm">
-              <thead class="bg-slate-50">
+              <thead class="bg-slate-100">
                 <tr>
-                  <th class="px-4 py-3 text-left font-semibold text-slate-600">#</th>
-                  <th class="px-4 py-3 text-left font-semibold text-slate-600">Level</th>
-                  <th class="px-4 py-3 text-left font-semibold text-slate-600">Tipe</th>
-                  <th class="px-4 py-3 text-left font-semibold text-slate-600">Pertanyaan</th>
-                  <th class="px-4 py-3 text-center font-semibold text-slate-600">Aksi</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">#</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">Level</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">Tipe</th>
+                  <th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">Pertanyaan</th>
+                  <th class="px-4 py-3 text-center font-semibold text-slate-700 border-b border-slate-200">Aksi</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="bg-white">
                 ${allQuizzes.map((q, i) => `
-                  <tr class="border-t border-slate-100 hover:bg-slate-50">
-                    <td class="px-4 py-3 text-slate-500">${i + 1}</td>
+                  <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="px-4 py-3 text-slate-600">${i + 1}</td>
                     <td class="px-4 py-3">
                       <span class="badge ${q.bab_id ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${q.bab_id ? 'BAB' : 'FASAL'}</span>
                     </td>
@@ -955,14 +955,14 @@
           else if (p.status === 'unlocked') userProgress[p.user_id].unlocked.push(p);
         });
 
-        let html = `<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-50"><tr><th class="px-4 py-3 text-left font-semibold text-slate-600">#</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Status</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Fasal</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Skor</th><th class="px-4 py-3 text-left font-semibold text-slate-600">Tanggal</th><th class="px-4 py-3 text-center font-semibold text-slate-600">Aksi</th></tr></thead><tbody>`;
+        let html = `<div class="overflow-x-auto border border-slate-200 rounded-xl"><table class="w-full text-sm"><thead class="bg-slate-100"><tr><th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">#</th><th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">Status</th><th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">Fasal</th><th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">Skor</th><th class="px-4 py-3 text-left font-semibold text-slate-700 border-b border-slate-200">Tanggal</th><th class="px-4 py-3 text-center font-semibold text-slate-700 border-b border-slate-200">Aksi</th></tr></thead><tbody class="bg-white">`;
         let no = 1;
         Object.entries(userProgress).forEach(([userId, data]) => {
           data.completed.forEach(p => {
-            html += `<tr class="border-t border-slate-100"><td class="px-4 py-3 text-slate-500">${no++}</td><td class="px-4 py-3"><span class="badge badge-success"><i class="fa-solid fa-check mr-1 text-xs"></i>Lulus</span></td><td class="px-4 py-3 text-slate-700">${fasalMap[p.fasal_id] || p.fasal_id}</td><td class="px-4 py-3 font-bold text-green-600">${p.quiz_score || 0}%</td><td class="px-4 py-3 text-xs text-slate-400">${p.completed_at ? new Date(p.completed_at).toLocaleDateString('id-ID') : '-'}</td><td class="px-4 py-3 text-center"><button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="p-2 hover:bg-blue-50 rounded-lg text-blue-500 transition-colors"><i class="fa-solid fa-edit"></i></button></td></tr>`;
+            html += `<tr class="border-b border-slate-100 bg-white"><td class="px-4 py-3 text-slate-600">${no++}</td><td class="px-4 py-3"><span class="badge badge-success"><i class="fa-solid fa-check mr-1 text-xs"></i>Lulus</span></td><td class="px-4 py-3 text-slate-700">${fasalMap[p.fasal_id] || p.fasal_id}</td><td class="px-4 py-3 font-bold text-green-600">${p.quiz_score || 0}%</td><td class="px-4 py-3 text-xs text-slate-500">${p.completed_at ? new Date(p.completed_at).toLocaleDateString('id-ID') : '-'}</td><td class="px-4 py-3 text-center"><button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="p-2 hover:bg-blue-50 rounded-lg text-blue-500 transition-colors"><i class="fa-solid fa-edit"></i></button></td></tr>`;
           });
           data.unlocked.forEach(p => {
-            html += `<tr class="border-t border-slate-100"><td class="px-4 py-3 text-slate-500">${no++}</td><td class="px-4 py-3"><span class="badge badge-warning"><i class="fa-solid fa-spinner mr-1 text-xs"></i>${p.status || 'in_progress'}</span></td><td class="px-4 py-3 text-slate-700">${fasalMap[p.fasal_id] || p.fasal_id}</td><td class="px-4 py-3 font-bold text-amber-600">${p.quiz_score || '-'}</td><td class="px-4 py-3 text-xs text-slate-400">-</td><td class="px-4 py-3 text-center"><button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="p-2 hover:bg-blue-50 rounded-lg text-blue-500 transition-colors"><i class="fa-solid fa-edit"></i></button></td></tr>`;
+            html += `<tr class="border-b border-slate-100 bg-white"><td class="px-4 py-3 text-slate-600">${no++}</td><td class="px-4 py-3"><span class="badge badge-warning"><i class="fa-solid fa-spinner mr-1 text-xs"></i>${p.status || 'in_progress'}</span></td><td class="px-4 py-3 text-slate-700">${fasalMap[p.fasal_id] || p.fasal_id}</td><td class="px-4 py-3 font-bold text-amber-600">${p.quiz_score || '-'}</td><td class="px-4 py-3 text-xs text-slate-500">-</td><td class="px-4 py-3 text-center"><button onclick="editProgress('${p.id}', ${p.quiz_score || 0}, '${p.status}')" class="p-2 hover:bg-blue-50 rounded-lg text-blue-500 transition-colors"><i class="fa-solid fa-edit"></i></button></td></tr>`;
           });
         });
         html += `</tbody></table></div><p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-database mr-1"></i>Total: ${progressData.length} records progress</p>`;
