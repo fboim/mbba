@@ -541,24 +541,14 @@
       container.innerHTML += '</div>';
 
       // Navigation buttons
-      container.innerHTML += '<div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 mt-6 pt-4 border-t border-slate-100">';
-
       var prevDisabled = currentQuestionIndex === 0;
-      container.innerHTML += '<button onclick="prevQuestion()" class="flex-1 sm:flex-none px-4 py-3 rounded-xl font-medium text-sm text-center transition-all ' + (prevDisabled ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-100 hover:bg-slate-200 text-slate-700') + '" ' + (prevDisabled ? 'disabled' : '') + '>';
-      container.innerHTML += 'Kembali';
-      container.innerHTML += '</button>';
+      var backBtn = prevDisabled
+        ? '<button disabled class="flex-1 sm:flex-none px-4 py-3 rounded-xl font-medium text-sm text-center bg-slate-100 text-slate-400 cursor-not-allowed">Kembali</button>'
+        : '<button onclick="prevQuestion()" class="flex-1 sm:flex-none px-4 py-3 rounded-xl font-medium text-sm text-center bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all">Kembali</button>';
+      var nextBtn = '<button onclick="nextQuestion()" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-semibold text-sm text-center bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg shadow-primary-500/30 transition-all">Lanjut</button>';
+      var submitBtn = '<button onclick="submitQuiz()" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-semibold text-sm text-center bg-gradient-to-r from-success-500 to-emerald-600 hover:from-success-600 hover:to-emerald-700 text-white shadow-lg shadow-success-500/30 transition-all">Kirim</button>';
 
-      if (currentQuestionIndex < state.questions.length - 1) {
-        container.innerHTML += '<button onclick="nextQuestion()" class="flex-1 sm:flex-none px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-semibold text-sm text-center shadow-lg shadow-primary-500/30 transition-all">';
-        container.innerHTML += 'Lanjut';
-        container.innerHTML += '</button>';
-      } else {
-        container.innerHTML += '<button onclick="submitQuiz()" class="flex-1 sm:flex-none px-6 py-3 bg-gradient-to-r from-success-500 to-emerald-600 hover:from-success-600 hover:to-emerald-700 text-white rounded-xl font-semibold text-sm text-center shadow-lg shadow-success-500/30 transition-all">';
-        container.innerHTML += 'Kirim';
-        container.innerHTML += '</button>';
-      }
-
-      container.innerHTML += '</div>';
+      container.innerHTML += '<div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 mt-6 pt-4 border-t border-slate-100">' + backBtn + (currentQuestionIndex < state.questions.length - 1 ? nextBtn : submitBtn) + '</div>';
     }
 
     function selectAnswer(qid, ans) {
