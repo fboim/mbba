@@ -538,6 +538,201 @@
     .animate-fade-up {
       animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
+
+    /* Audio Recorder */
+    .audio-recorder {
+      border: 2px dashed var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .audio-recorder:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .audio-recorder.recording {
+      border-color: var(--red);
+      background: var(--red-soft);
+    }
+    .record-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    .record-btn.idle {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+    .record-btn.idle:hover {
+      background: var(--red);
+      color: white;
+      transform: scale(1.1);
+    }
+    .record-btn.recording {
+      background: var(--red);
+      color: white;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .record-timer {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .record-status {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .record-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+    .audio-preview {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--bg-base);
+      border-radius: var(--radius-md);
+    }
+    .audio-waveform {
+      height: 48px;
+      background: var(--border-subtle);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .audio-waveform canvas {
+      width: 100%;
+      height: 100%;
+    }
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .audio-play-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .audio-play-btn:hover {
+      transform: scale(1.1);
+    }
+    .audio-progress {
+      flex: 1;
+      height: 6px;
+      background: var(--border-soft);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .audio-progress-bar {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.1s;
+    }
+    .audio-time {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      min-width: 80px;
+    }
+
+    /* Audio Upload Area */
+    .audio-upload-area {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .upload-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .upload-divider span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .upload-divider::before,
+    .upload-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    /* Existing Audio Display */
+    .existing-audio {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--accent-soft);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .existing-audio-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .existing-audio-info {
+      flex: 1;
+    }
+    .existing-audio-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .existing-audio-duration {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .delete-audio-btn {
+      padding: 8px;
+      background: var(--red-soft);
+      color: var(--red);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .delete-audio-btn:hover {
+      background: var(--red);
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -593,6 +788,10 @@
       <button type="button" onclick="showTab('siswa')" id="tabSiswa" class="tab-btn">
         <i class="fa-solid fa-users"></i>
         <span>Siswa</span>
+      </button>
+      <button type="button" onclick="showTab('audio')" id="tabAudio" class="tab-btn">
+        <i class="fa-solid fa-microphone"></i>
+        <span>Audio</span>
       </button>
     </div>
 
@@ -903,21 +1102,121 @@
       </div>
     </div>
 
-    <!-- Siswa Tab -->
-    <div id="contentSiswa" class="tab-content">
+    <!-- Audio Tab -->
+    <div id="contentAudio" class="tab-content">
       <div class="bento-grid">
         <div class="bento-card bento-span-3">
           <div class="bento-inner">
             <div class="bento-header">
-              <div class="bento-icon bento-icon-blue">
-                <i class="fa-solid fa-users"></i>
+              <div class="bento-icon bento-icon-amber">
+                <i class="fa-solid fa-microphone"></i>
               </div>
               <div>
-                <h3 class="bento-title">Progress Siswa</h3>
-                <p class="bento-subtitle">Pantau perkembangan belajar</p>
+                <h3 class="bento-title">Rekam Audio Materi</h3>
+                <p class="bento-subtitle">Rekam audio penjelasan untuk setiap materi</p>
               </div>
             </div>
-            <div id="studentProgress" class="loading">
+
+            <!-- Select Materi -->
+            <div class="form-group">
+              <label class="form-label">Pilih Materi</label>
+              <select id="audioMateriSelect" onchange="loadAudioForMateri()" class="form-select">
+                <option value="">Pilih Bab atau Fasal...</option>
+              </select>
+            </div>
+
+            <!-- Recording Area -->
+            <div id="recordingArea" class="hidden">
+              <!-- Existing Audio -->
+              <div id="existingAudioSection" class="hidden">
+                <div class="existing-audio">
+                  <div class="existing-audio-icon">
+                    <i class="fa-solid fa-volume-up"></i>
+                  </div>
+                  <div class="existing-audio-info">
+                    <div class="existing-audio-name">Audio Tersimpan</div>
+                    <div id="existingAudioDuration" class="existing-audio-duration">-</div>
+                  </div>
+                  <button onclick="playExistingAudio()" class="p-2 hover:bg-green-100 rounded-xl text-green-600 transition-colors" title="Putar">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                  <button onclick="deleteAudio()" class="delete-audio-btn" title="Hapus">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Audio Recorder -->
+              <div id="audioRecorder" class="audio-recorder">
+                <div id="recordTimer" class="record-timer">00:00</div>
+                <div id="recordStatus" class="record-status">Klik untuk mulai merekam</div>
+                <button id="recordBtn" onclick="toggleRecording()" class="record-btn idle">
+                  <i class="fa-solid fa-microphone"></i>
+                </button>
+                <div class="record-actions">
+                  <button onclick="resetRecording()" class="btn btn-secondary btn-sm" id="resetBtn" disabled>
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                  </button>
+                  <button onclick="saveRecording()" class="btn btn-primary btn-sm" id="saveBtn" disabled>
+                    <i class="fa-solid fa-save"></i> Simpan Audio
+                  </button>
+                </div>
+
+                <!-- Audio Preview -->
+                <div id="audioPreview" class="audio-preview hidden">
+                  <div class="audio-waveform">
+                    <canvas id="waveformCanvas"></canvas>
+                  </div>
+                  <div class="audio-controls">
+                    <button id="playBtn" onclick="playRecording()" class="audio-play-btn">
+                      <i class="fa-solid fa-play"></i>
+                    </button>
+                    <div class="audio-progress">
+                      <div id="audioProgressBar" class="audio-progress-bar"></div>
+                    </div>
+                    <span id="audioTimeDisplay" class="audio-time">00:00 / 00:00</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upload Option -->
+              <div class="audio-upload-area">
+                <div class="upload-divider">
+                  <span>atau upload file audio</span>
+                </div>
+                <label class="btn btn-secondary btn-block" style="cursor: pointer;">
+                  <i class="fa-solid fa-upload"></i> Pilih File Audio
+                  <input type="file" id="audioFileInput" accept="audio/*" onchange="handleAudioUpload(this)" class="hidden">
+                </label>
+                <p id="uploadFileName" class="text-xs text-slate-400 mt-2 text-center"></p>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="audioEmptyState" class="empty-state">
+              <div class="empty-icon">
+                <i class="fa-solid fa-microphone"></i>
+              </div>
+              <p class="empty-text">Pilih materi terlebih dahulu untuk merekam audio</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio List -->
+      <div class="bento-grid" style="margin-top: 24px;">
+        <div class="bento-card bento-span-3">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-blue">
+                <i class="fa-solid fa-list"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Daftar Audio</h3>
+                <p class="bento-subtitle">Kelola semua audio yang sudah diupload</p>
+              </div>
+            </div>
+            <div id="audioList" class="loading">
               <div class="spinner"></div>
             </div>
           </div>
@@ -941,6 +1240,7 @@
           <div class="flex gap-2 mb-4 border-b pb-2">
             <button onclick="switchContentTab('arab')" id="tabArab" class="px-4 py-2 text-sm font-semibold border-b-2 border-primary-500 text-primary-600">Arab</button>
             <button onclick="switchContentTab('trans')" id="tabTrans" class="px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500">Terjemahan</button>
+            <button onclick="switchContentTab('audio')" id="tabAudio" class="px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500">Audio</button>
             <button onclick="switchContentTab('preview')" id="tabPreview" class="px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500">Preview</button>
           </div>
           <div id="panelArab" class="space-y-3">
@@ -950,6 +1250,14 @@
           <div id="panelTrans" class="hidden space-y-3">
             <label class="text-sm font-medium text-slate-600">Terjemahan Indonesia</label>
             <textarea id="contentIdInput" rows="6" class="form-textarea" oninput="updatePreview()" placeholder="Ketik terjemahan..."></textarea>
+          </div>
+          <div id="panelAudio" class="hidden space-y-3">
+            <div class="form-group">
+              <label class="form-label">URL Audio (opsional)</label>
+              <input type="url" id="contentAudioUrl" class="form-input" placeholder="https://example.com/audio.mp3">
+            </div>
+            <p class="text-xs text-slate-500">Anda bisa mengupload audio dari tab Audio di halaman utama, atau masukkan URL audio langsung di sini.</p>
+            <div id="currentAudioPreview" class="mt-3"></div>
           </div>
           <div id="panelPreview" class="hidden">
             <div id="contentPreview" class="bg-slate-50 rounded-xl p-4 min-h-[150px]">
@@ -1525,6 +1833,7 @@
       const title = document.getElementById('contentModalTitle');
       const arabInput = document.getElementById('contentArabInput');
       const idInput = document.getElementById('contentIdInput');
+      const audioUrlInput = document.getElementById('contentAudioUrl');
 
       title.textContent = 'Edit Konten ' + (type === 'bab' ? 'Bab' : 'Fasal');
       const tables = { bab: 'bab', fasal: 'fasal' };
@@ -1533,6 +1842,17 @@
         const current = data[0];
         arabInput.value = current.content_arab || '';
         idInput.value = current.content_id || '';
+        audioUrlInput.value = current.audio_url || '';
+        if (current.audio_url) {
+          document.getElementById('currentAudioPreview').innerHTML = `
+            <div class="p-3 bg-green-50 rounded-xl flex items-center gap-3">
+              <i class="fa-solid fa-volume-up text-green-600"></i>
+              <span class="text-sm text-green-700">Audio tersedia - <a href="${current.audio_url}" target="_blank" class="underline">Buka</a></span>
+            </div>
+          `;
+        } else {
+          document.getElementById('currentAudioPreview').innerHTML = '';
+        }
         switchContentTab('arab');
       });
       modal.classList.remove('hidden');
@@ -1546,9 +1866,11 @@
     function switchContentTab(tab) {
       document.getElementById('panelArab').classList.add('hidden');
       document.getElementById('panelTrans').classList.add('hidden');
+      document.getElementById('panelAudio').classList.add('hidden');
       document.getElementById('panelPreview').classList.add('hidden');
       document.getElementById('tabArab').className = 'px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500';
       document.getElementById('tabTrans').className = 'px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500';
+      document.getElementById('tabAudio').className = 'px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500';
       document.getElementById('tabPreview').className = 'px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500';
       document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
       document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).className = 'px-4 py-2 text-sm font-semibold border-b-2 border-primary-500 text-primary-600';
@@ -1569,7 +1891,11 @@
       const { type, id } = currentEditContent;
       if (!type || !id) return;
       const tables = { bab: 'bab', fasal: 'fasal' };
-      const updates = { content_arab: document.getElementById('contentArabInput').value, content_id: document.getElementById('contentIdInput').value };
+      const updates = {
+        content_arab: document.getElementById('contentArabInput').value,
+        content_id: document.getElementById('contentIdInput').value,
+        audio_url: document.getElementById('contentAudioUrl').value || null
+      };
       fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
@@ -1584,6 +1910,535 @@
       logout();
       window.location.href = 'auth.html';
     }
+
+    // ==================== AUDIO FEATURES ====================
+
+    // Audio Recording State
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordedBlob = null;
+    let recordedAudioUrl = null;
+    let isRecording = false;
+    let recordingStartTime = null;
+    let recordingTimerInterval = null;
+    let selectedMateriType = null;
+    let selectedMateriId = null;
+    let currentAudioUrl = null;
+    let uploadedFile = null;
+
+    // Initialize Audio Tab
+    async function initAudioTab() {
+      const select = document.getElementById('audioMateriSelect');
+      select.innerHTML = '<option value="">Pilih Bab atau Fasal...</option>';
+
+      // Add Bab options
+      const babOptionGroup = allBabs.filter(b => b.is_muqoddimah).map(b =>
+        `<option value="bab:${b.id}">Bab - ${b.label}</option>`
+      ).join('');
+
+      // Add Fasal options
+      const fasalOptionGroup = allFasals.map(f =>
+        `<option value="fasal:${f.id}">Fasal - ${f.label}</option>`
+      ).join('');
+
+      select.innerHTML = '<option value="">Pilih Bab atau Fasal...</option>' +
+        (babOptionGroup ? '<optgroup label="Bab">' + babOptionGroup + '</optgroup>' : '') +
+        (fasalOptionGroup ? '<optgroup label="Fasal">' + fasalOptionGroup + '</optgroup>' : '');
+
+      loadAudioList();
+    }
+
+    // Load Audio for Selected Materi
+    async function loadAudioForMateri() {
+      const select = document.getElementById('audioMateriSelect');
+      const value = select.value;
+
+      if (!value) {
+        document.getElementById('recordingArea').classList.add('hidden');
+        document.getElementById('audioEmptyState').classList.remove('hidden');
+        return;
+      }
+
+      const [type, id] = value.split(':');
+      selectedMateriType = type;
+      selectedMateriId = id;
+
+      document.getElementById('recordingArea').classList.remove('hidden');
+      document.getElementById('audioEmptyState').classList.add('hidden');
+
+      // Reset recording state
+      resetRecording();
+      document.getElementById('existingAudioSection').classList.add('hidden');
+
+      // Check if audio exists for this materi
+      try {
+        let table = type === 'bab' ? 'bab' : 'fasal';
+        const res = await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${id}&select=audio_url`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+
+        if (data.length > 0 && data[0].audio_url) {
+          currentAudioUrl = data[0].audio_url;
+          document.getElementById('existingAudioSection').classList.remove('hidden');
+          document.getElementById('existingAudioDuration').textContent = 'Audio tersedia';
+        }
+      } catch (err) {
+        console.error('Error loading audio:', err);
+      }
+    }
+
+    // Toggle Recording
+    async function toggleRecording() {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+
+    // Start Recording
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          recordedAudioUrl = URL.createObjectURL(recordedBlob);
+
+          // Show preview
+          document.getElementById('audioPreview').classList.remove('hidden');
+          document.getElementById('saveBtn').disabled = false;
+          document.getElementById('resetBtn').disabled = false;
+
+          // Draw waveform
+          drawWaveform(recordedAudioUrl);
+
+          // Setup audio element for playback
+          setupAudioPlayback(recordedBlob);
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        recordingStartTime = Date.now();
+
+        // Update UI
+        const recordBtn = document.getElementById('recordBtn');
+        recordBtn.classList.remove('idle');
+        recordBtn.classList.add('recording');
+        recordBtn.innerHTML = '<i class="fa-solid fa-stop"></i>';
+
+        document.getElementById('recordStatus').textContent = 'Sedang merekam...';
+        document.getElementById('recordingArea').classList.add('recording');
+
+        // Start timer
+        recordingTimerInterval = setInterval(updateRecordingTimer, 100);
+
+      } catch (err) {
+        alert('Tidak dapat mengakses mikrofon. Pastikan izin diberikan.');
+        console.error('Recording error:', err);
+      }
+    }
+
+    // Stop Recording
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      }
+
+      isRecording = false;
+      clearInterval(recordingTimerInterval);
+
+      // Update UI
+      const recordBtn = document.getElementById('recordBtn');
+      recordBtn.classList.remove('recording');
+      recordBtn.classList.add('idle');
+      recordBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+
+      document.getElementById('recordStatus').textContent = 'Rekaman selesai';
+      document.getElementById('recordingArea').classList.remove('recording');
+    }
+
+    // Update Recording Timer
+    function updateRecordingTimer() {
+      const elapsed = Date.now() - recordingStartTime;
+      const minutes = Math.floor(elapsed / 60000);
+      const seconds = Math.floor((elapsed % 60000) / 1000);
+      document.getElementById('recordTimer').textContent =
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // Reset Recording
+    function resetRecording() {
+      stopRecording();
+
+      recordedBlob = null;
+      recordedAudioUrl = null;
+
+      document.getElementById('recordTimer').textContent = '00:00';
+      document.getElementById('recordStatus').textContent = 'Klik untuk mulai merekam';
+      document.getElementById('audioPreview').classList.add('hidden');
+      document.getElementById('saveBtn').disabled = true;
+      document.getElementById('resetBtn').disabled = true;
+
+      const recordBtn = document.getElementById('recordBtn');
+      recordBtn.classList.remove('recording');
+      recordBtn.classList.add('idle');
+      recordBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+
+      uploadedFile = null;
+      document.getElementById('audioFileInput').value = '';
+      document.getElementById('uploadFileName').textContent = '';
+    }
+
+    // Draw Waveform
+    async function drawWaveform(audioUrl) {
+      const canvas = document.getElementById('waveformCanvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 48;
+
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const response = await fetch(audioUrl);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        const data = audioBuffer.getChannelData(0);
+        const step = Math.ceil(data.length / canvas.width);
+        const amp = canvas.height / 2;
+
+        ctx.fillStyle = 'var(--accent-soft)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = 'var(--accent)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        for (let i = 0; i < canvas.width; i++) {
+          let min = 1.0;
+          let max = -1.0;
+          for (let j = 0; j < step; j++) {
+            const datum = data[(i * step) + j];
+            if (datum < min) min = datum;
+            if (datum > max) max = datum;
+          }
+          ctx.moveTo(i, (1 + min) * amp);
+          ctx.lineTo(i, (1 + max) * amp);
+        }
+
+        ctx.stroke();
+      } catch (err) {
+        console.error('Waveform error:', err);
+        // Fallback: draw simple bars
+        ctx.fillStyle = 'var(--accent-soft)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'var(--accent)';
+        for (let i = 0; i < 50; i++) {
+          const height = Math.random() * 30 + 10;
+          ctx.fillRect(i * (canvas.width / 50), (canvas.height - height) / 2, 4, height);
+        }
+      }
+    }
+
+    // Setup Audio Playback
+    let playbackAudio = null;
+    function setupAudioPlayback(blob) {
+      if (playbackAudio) {
+        playbackAudio.pause();
+        playbackAudio = null;
+      }
+
+      playbackAudio = new Audio(URL.createObjectURL(blob));
+      playbackAudio.addEventListener('loadedmetadata', () => {
+        const duration = playbackAudio.duration;
+        document.getElementById('audioTimeDisplay').textContent =
+          `00:00 / ${formatTime(duration)}`;
+      });
+
+      playbackAudio.addEventListener('timeupdate', () => {
+        const progress = (playbackAudio.currentTime / playbackAudio.duration) * 100;
+        document.getElementById('audioProgressBar').style.width = progress + '%';
+        document.getElementById('audioTimeDisplay').textContent =
+          `${formatTime(playbackAudio.currentTime)} / ${formatTime(playbackAudio.duration)}`;
+      });
+
+      playbackAudio.addEventListener('ended', () => {
+        document.getElementById('playBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+      });
+    }
+
+    // Play Recording
+    function playRecording() {
+      if (!playbackAudio) return;
+
+      if (playbackAudio.paused) {
+        playbackAudio.play();
+        document.getElementById('playBtn').innerHTML = '<i class="fa-solid fa-pause"></i>';
+      } else {
+        playbackAudio.pause();
+        document.getElementById('playBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+      }
+    }
+
+    // Format Time
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // Save Recording
+    async function saveRecording() {
+      if (!selectedMateriType || !selectedMateriId) {
+        alert('Pilih materi terlebih dahulu');
+        return;
+      }
+
+      const audioToSave = recordedBlob || uploadedFile;
+      if (!audioToSave) {
+        alert('Tidak ada audio untuk disimpan');
+        return;
+      }
+
+      try {
+        // Upload audio to Supabase Storage
+        const fileName = `${selectedMateriType}_${selectedMateriId}_${Date.now()}.webm`;
+        const formData = new FormData();
+        formData.append('file', audioToSave, fileName);
+
+        // Using direct REST API for upload
+        const token = getToken();
+        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/mbba-audio/${fileName}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': audioToSave.type || 'audio/webm'
+          },
+          body: audioToSave
+        });
+
+        if (!uploadRes.ok) throw new Error('Gagal upload audio');
+
+        const audioUrl = `${SUPABASE_URL}/storage/v1/object/public/mbba-audio/${fileName}`;
+
+        // Update materi with audio URL
+        const table = selectedMateriType === 'bab' ? 'bab' : 'fasal';
+        const updateRes = await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${selectedMateriId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`,
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({ audio_url: audioUrl })
+        });
+
+        if (!updateRes.ok) throw new Error('Gagal menyimpan URL audio');
+
+        alert('Audio berhasil disimpan!');
+        resetRecording();
+        loadAudioForMateri();
+        loadAudioList();
+
+      } catch (err) {
+        alert('Gagal menyimpan audio: ' + err.message);
+        console.error('Save error:', err);
+      }
+    }
+
+    // Handle Audio File Upload
+    function handleAudioUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      uploadedFile = file;
+      document.getElementById('uploadFileName').textContent = file.name;
+
+      // Show preview
+      const audioUrl = URL.createObjectURL(file);
+      document.getElementById('audioPreview').classList.remove('hidden');
+
+      drawWaveform(audioUrl);
+      setupAudioPlayback(file);
+
+      document.getElementById('saveBtn').disabled = false;
+    }
+
+    // Play Existing Audio
+    async function playExistingAudio() {
+      if (!currentAudioUrl) return;
+
+      if (playbackAudio && playbackAudio.src === currentAudioUrl) {
+        if (playbackAudio.paused) {
+          playbackAudio.play();
+        } else {
+          playbackAudio.pause();
+        }
+        return;
+      }
+
+      playbackAudio = new Audio(currentAudioUrl);
+      playbackAudio.play();
+    }
+
+    // Delete Audio
+    async function deleteAudio() {
+      if (!selectedMateriType || !selectedMateriId) return;
+      if (!confirm('Yakin hapus audio ini?')) return;
+
+      try {
+        const table = selectedMateriType === 'bab' ? 'bab' : 'fasal';
+        await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${selectedMateriId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ audio_url: null })
+        });
+
+        currentAudioUrl = null;
+        alert('Audio berhasil dihapus!');
+        loadAudioForMateri();
+        loadAudioList();
+
+      } catch (err) {
+        alert('Gagal hapus audio: ' + err.message);
+      }
+    }
+
+    // Load Audio List
+    async function loadAudioList() {
+      const container = document.getElementById('audioList');
+
+      try {
+        const [babsRes, fasalsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title)&audio_url=not.is.null`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+          }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title)&audio_url=not.is.null`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+          })
+        ]);
+
+        const babs = await babsRes.json().catch(() => []);
+        const fasals = await fasalsRes.json().catch(() => []);
+
+        const allAudio = [
+          ...babs.map(b => ({ ...b, type: 'bab', label: b.title, parent: b.bagian?.title || 'Tanpa Bagian' })),
+          ...fasals.map(f => ({ ...f, type: 'fasal', label: f.title, parent: f.bab?.title || 'Tanpa Bab' }))
+        ];
+
+        if (allAudio.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-music"></i></div><p class="empty-text">Belum ada audio yang diupload</p></div>`;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Tipe</th>
+                  <th>Materi</th>
+                  <th>Bagian</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allAudio.map((a, i) => `
+                  <tr>
+                    <td>${i + 1}</td>
+                    <td><span class="badge ${a.type === 'bab' ? 'badge-purple' : 'badge-blue'}">${a.type.toUpperCase()}</span></td>
+                    <td class="font-medium">${a.label}</td>
+                    <td class="text-slate-500">${a.parent}</td>
+                    <td>
+                      <div class="flex gap-2">
+                        <button onclick="playAudioFromList('${a.audio_url}')" class="p-2 hover:bg-green-50 rounded-xl text-green-600 transition-colors">
+                          <i class="fa-solid fa-play"></i>
+                        </button>
+                        <button onclick="deleteAudioFromList('${a.type}', '${a.id}', '${a.audio_url}')" class="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-music mr-1"></i>Total: ${allAudio.length} audio</p>
+        `;
+      } catch (err) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ${err.message}</p></div>`;
+      }
+    }
+
+    // Play Audio from List
+    function playAudioFromList(url) {
+      if (playbackAudio) {
+        playbackAudio.pause();
+      }
+      playbackAudio = new Audio(url);
+      playbackAudio.play();
+    }
+
+    // Delete Audio from List
+    async function deleteAudioFromList(type, id, url) {
+      if (!confirm('Yakin hapus audio ini?')) return;
+
+      try {
+        const table = type === 'bab' ? 'bab' : 'fasal';
+        await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ audio_url: null })
+        });
+
+        alert('Audio berhasil dihapus!');
+        loadAudioList();
+
+      } catch (err) {
+        alert('Gagal hapus audio: ' + err.message);
+      }
+    }
+
+    // Update Tab Switching to include Audio
+    const originalShowTab = showTab;
+    showTab = function(tab) {
+      const contents = ['Stats', 'Materi', 'Quiz', 'Siswa', 'Audio'];
+      contents.forEach(c => {
+        const contentEl = document.getElementById('content' + c);
+        const tabEl = document.getElementById('tab' + c);
+        if (contentEl) contentEl.classList.remove('active');
+        if (tabEl) tabEl.classList.remove('active');
+      });
+
+      const contentEl = document.getElementById('content' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      const tabEl = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      if (contentEl) contentEl.classList.add('active');
+      if (tabEl) tabEl.classList.add('active');
+
+      if (tab === 'materi') loadMateri();
+      if (tab === 'siswa') loadStudentProgress();
+      if (tab === 'audio') initAudioTab();
+    };
   </script>
 </body>
 </html>

@@ -687,6 +687,125 @@
     .animate-fade-up {
       animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
+
+    /* Audio Player */
+    .audio-player-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .audio-player-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .audio-player-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--purple-soft);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--purple);
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .audio-player-info h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .audio-player-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .audio-player-body {
+      padding: 24px;
+    }
+    .audio-waveform {
+      height: 64px;
+      background: var(--bg-base);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .audio-waveform canvas {
+      width: 100%;
+      height: 100%;
+    }
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .audio-play-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, var(--purple), #7C3AED);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
+      flex-shrink: 0;
+    }
+    .audio-play-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45);
+    }
+    .audio-play-btn.playing {
+      animation: pulse-glow 2s infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35); }
+      50% { box-shadow: 0 4px 24px rgba(139, 92, 246, 0.6); }
+    }
+    .audio-progress-container {
+      flex: 1;
+    }
+    .audio-progress-bar {
+      height: 6px;
+      background: var(--border-soft);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .audio-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), #A78BFA);
+      width: 0%;
+      transition: width 0.1s ease;
+    }
+    .audio-time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .audio-no-content {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-muted);
+    }
+    .audio-no-content i {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
   </style>
 </head>
 <body>
@@ -753,6 +872,38 @@
           <div id="fasalStatus" class="header-status">
             <i class="fa-regular fa-circle"></i>
             <span>Belum Dimulai</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audio Player Card -->
+    <div id="audioPlayerSection" class="audio-player-card animate-fade-up hidden">
+      <div class="audio-player-header">
+        <div class="audio-player-icon">
+          <i class="fa-solid fa-volume-up"></i>
+        </div>
+        <div class="audio-player-info">
+          <h3>Audio Penjelasan</h3>
+          <p>Dengarkan bacaan materi ini</p>
+        </div>
+      </div>
+      <div class="audio-player-body">
+        <div class="audio-waveform">
+          <canvas id="studentWaveformCanvas"></canvas>
+        </div>
+        <div class="audio-controls">
+          <button id="studentAudioPlayBtn" onclick="toggleStudentAudio()" class="audio-play-btn">
+            <i class="fa-solid fa-play"></i>
+          </button>
+          <div class="audio-progress-container">
+            <div class="audio-progress-bar" onclick="seekStudentAudio(event)">
+              <div id="studentAudioProgressFill" class="audio-progress-fill"></div>
+            </div>
+            <div class="audio-time-display">
+              <span id="studentAudioCurrentTime">00:00</span>
+              <span id="studentAudioDuration">00:00</span>
+            </div>
           </div>
         </div>
       </div>
@@ -885,7 +1036,7 @@
 
     async function loadBab(babId) {
       try {
-        var res = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + babId + '&select=*,bagian(*)', {
+        var res = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + babId + '&select=*,bagian(*),audio_url', {
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
         });
         var data = await res.json();
@@ -955,6 +1106,17 @@
         }
 
         currentFasal = fasal;
+
+        // Fetch audio URL
+        try {
+          var audioRes = await fetch(SUPABASE_URL + 'rest/v1/fasal?id=eq.' + fasalId + '&select=audio_url', {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+          });
+          var audioData = await audioRes.json();
+          if (audioData.length > 0) {
+            currentFasal.audio_url = audioData[0].audio_url;
+          }
+        } catch (e) {}
 
         var bagianOrder = 1;
         var babOrder = 1;
@@ -1239,6 +1401,139 @@
       logout();
       window.location.href = 'auth.html';
     }
+
+    // Audio Player for Student
+    var studentAudio = null;
+    var studentAudioUrl = null;
+    var isStudentAudioPlaying = false;
+
+    function initStudentAudioPlayer(audioUrl) {
+      if (!audioUrl) {
+        document.getElementById('audioPlayerSection').classList.add('hidden');
+        return;
+      }
+
+      studentAudioUrl = audioUrl;
+      document.getElementById('audioPlayerSection').classList.remove('hidden');
+
+      studentAudio = new Audio(audioUrl);
+      studentAudio.addEventListener('loadedmetadata', function() {
+        var duration = studentAudio.duration;
+        document.getElementById('studentAudioDuration').textContent = formatStudentTime(duration);
+        drawStudentWaveform(audioUrl);
+      });
+
+      studentAudio.addEventListener('timeupdate', function() {
+        var progress = (studentAudio.currentTime / studentAudio.duration) * 100;
+        document.getElementById('studentAudioProgressFill').style.width = progress + '%';
+        document.getElementById('studentAudioCurrentTime').textContent = formatStudentTime(studentAudio.currentTime);
+      });
+
+      studentAudio.addEventListener('ended', function() {
+        isStudentAudioPlaying = false;
+        document.getElementById('studentAudioPlayBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+        document.getElementById('studentAudioPlayBtn').classList.remove('playing');
+        document.getElementById('studentAudioProgressFill').style.width = '0%';
+      });
+    }
+
+    function toggleStudentAudio() {
+      if (!studentAudio) return;
+
+      if (isStudentAudioPlaying) {
+        studentAudio.pause();
+        document.getElementById('studentAudioPlayBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+        document.getElementById('studentAudioPlayBtn').classList.remove('playing');
+      } else {
+        studentAudio.play();
+        document.getElementById('studentAudioPlayBtn').innerHTML = '<i class="fa-solid fa-pause"></i>';
+        document.getElementById('studentAudioPlayBtn').classList.add('playing');
+      }
+      isStudentAudioPlaying = !isStudentAudioPlaying;
+    }
+
+    function seekStudentAudio(event) {
+      if (!studentAudio) return;
+      var progressBar = event.currentTarget;
+      var rect = progressBar.getBoundingClientRect();
+      var clickX = event.clientX - rect.left;
+      var width = rect.width;
+      var percentage = clickX / width;
+      studentAudio.currentTime = studentAudio.duration * percentage;
+    }
+
+    function formatStudentTime(seconds) {
+      if (isNaN(seconds)) return '00:00';
+      var mins = Math.floor(seconds / 60);
+      var secs = Math.floor(seconds % 60);
+      return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    }
+
+    async function drawStudentWaveform(audioUrl) {
+      var canvas = document.getElementById('studentWaveformCanvas');
+      var ctx = canvas.getContext('2d');
+
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 64;
+
+      try {
+        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        var response = await fetch(audioUrl);
+        var arrayBuffer = await response.arrayBuffer();
+        var audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        var data = audioBuffer.getChannelData(0);
+        var step = Math.ceil(data.length / canvas.width);
+        var amp = canvas.height / 2;
+
+        ctx.fillStyle = 'var(--bg-base)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = 'var(--purple)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        for (var i = 0; i < canvas.width; i++) {
+          var min = 1.0;
+          var max = -1.0;
+          for (var j = 0; j < step; j++) {
+            var datum = data[(i * step) + j];
+            if (datum < min) min = datum;
+            if (datum > max) max = datum;
+          }
+          ctx.moveTo(i, (1 + min) * amp);
+          ctx.lineTo(i, (1 + max) * amp);
+        }
+
+        ctx.stroke();
+      } catch (err) {
+        console.error('Waveform error:', err);
+        ctx.fillStyle = 'var(--bg-base)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'var(--purple)';
+        for (var i = 0; i < 60; i++) {
+          var height = Math.random() * 40 + 10;
+          ctx.fillRect(i * (canvas.width / 60), (canvas.height - height) / 2, 3, height);
+        }
+      }
+    }
+
+    // Update loadBab and loadFasal to init audio
+    var originalLoadBab = loadBab;
+    loadBab = async function(babId) {
+      await originalLoadBab(babId);
+      if (currentBab && currentBab.audio_url) {
+        initStudentAudioPlayer(currentBab.audio_url);
+      }
+    };
+
+    var originalLoadFasal = loadFasal;
+    loadFasal = async function(fasalId) {
+      await originalLoadFasal(fasalId);
+      if (currentFasal && currentFasal.audio_url) {
+        initStudentAudioPlayer(currentFasal.audio_url);
+      }
+    };
   </script>
 </body>
 </html>
