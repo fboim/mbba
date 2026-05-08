@@ -4,200 +4,750 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil — MBBA</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2316a34a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23059669' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
   <link rel="stylesheet" href="../css/output.css">
   <link rel="stylesheet" href="../css/modern.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body class="bg-gradient-to-br from-slate-50 via-white to-slate-100 font-sans antialiased min-h-screen">
+  <style>
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+    }
 
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    .dark body {
+      background: #0f172a;
+      color: #f1f5f9;
+    }
+
+    /* Header */
+    .page-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .dark .page-header {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: #1e293b;
+    }
+
+    .header-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .back-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      color: #64748b;
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: #f1f5f9;
+      color: #047857;
+    }
+
+    .dark .back-btn:hover {
+      background: #1e293b;
+      color: #34d399;
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      background: linear-gradient(135deg, #34d399, #059669);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon span {
+      font-family: 'Amiri', serif;
+      font-size: 1rem;
+      color: white;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #1e293b;
+    }
+
+    .dark .logo-text {
+      color: #f1f5f9;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+
+    .dark .profile-card {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .profile-header {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5, #ecfdf5);
+      padding: 1.5rem;
+    }
+
+    .dark .profile-header {
+      background: linear-gradient(135deg, #064e3b, #065f46, #064e3b);
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .profile-avatar {
+      width: 4.5rem;
+      height: 4.5rem;
+      background: linear-gradient(135deg, #34d399, #059669);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 8px 20px -5px rgba(5, 150, 105, 0.4);
+    }
+
+    .profile-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+
+    .dark .profile-name {
+      color: #f1f5f9;
+    }
+
+    .profile-email {
+      color: #64748b;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .dark .profile-email {
+      color: #94a3b8;
+    }
+
+    .profile-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      background: white;
+      color: #047857;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .dark .profile-role {
+      background: rgba(255,255,255,0.1);
+      color: #6ee7b7;
+    }
+
+    /* Stats Section */
+    .profile-stats {
+      padding: 1.25rem;
+      background: #f8fafc;
+    }
+
+    .dark .profile-stats {
+      background: #0f172a;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 14px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .dark .stat-item {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-number.green { color: #059669; }
+    .stat-number.blue { color: #2563eb; }
+    .stat-number.amber { color: #d97706; }
+
+    .dark .stat-number.green { color: #34d399; }
+    .dark .stat-number.blue { color: #60a5fa; }
+    .dark .stat-number.amber { color: #fbbf24; }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .dark .stat-label {
+      color: #94a3b8;
+    }
+
+    /* Section Card */
+    .section-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+
+    .dark .section-card {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .section-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dark .section-header {
+      border-color: #1e293b;
+    }
+
+    .section-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .section-icon.green {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #047857;
+    }
+
+    .dark .section-icon.green {
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      color: #6ee7b7;
+    }
+
+    .section-icon.amber {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #d97706;
+    }
+
+    .dark .section-icon.amber {
+      background: linear-gradient(135deg, #78350f, #92400e);
+      color: #fcd34d;
+    }
+
+    .section-icon.slate {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .dark .section-icon.slate {
+      background: #334155;
+      color: #94a3b8;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .dark .section-title {
+      color: #f1f5f9;
+    }
+
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* Quick Actions */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dark .action-btn {
+      background: #0f172a;
+      border-color: #334155;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .action-icon.blue {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: #2563eb;
+    }
+
+    .dark .action-icon.blue {
+      background: linear-gradient(135deg, #1e3a8a, #1e40af);
+      color: #60a5fa;
+    }
+
+    .action-icon.green {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #047857;
+    }
+
+    .dark .action-icon.green {
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      color: #6ee7b7;
+    }
+
+    .action-icon.purple {
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+      color: #7c3aed;
+    }
+
+    .dark .action-icon.purple {
+      background: linear-gradient(135deg, #4c1d95, #5b21b6);
+      color: #a78bfa;
+    }
+
+    .action-icon.red {
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
+      color: #dc2626;
+    }
+
+    .dark .action-icon.red {
+      background: linear-gradient(135deg, #7f1d1d, #991b1b);
+      color: #f87171;
+    }
+
+    .action-content {
+      flex: 1;
+    }
+
+    .action-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #1e293b;
+    }
+
+    .dark .action-title {
+      color: #f1f5f9;
+    }
+
+    .action-subtitle {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .dark .action-subtitle {
+      color: #94a3b8;
+    }
+
+    .action-btn.red .action-title {
+      color: #dc2626;
+    }
+
+    .dark .action-btn.red .action-title {
+      color: #f87171;
+    }
+
+    /* Settings List */
+    .settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .dark .settings-item {
+      background: #0f172a;
+    }
+
+    .settings-item:hover {
+      background: #f1f5f9;
+    }
+
+    .dark .settings-item:hover {
+      background: #1e293b;
+    }
+
+    .settings-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .settings-label {
+      font-weight: 500;
+      color: #475569;
+    }
+
+    .dark .settings-label {
+      color: #cbd5e1;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 28px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #e2e8f0;
+      border-radius: 28px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: #059669;
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* Select */
+    .settings-select {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      background: white;
+      color: #475569;
+    }
+
+    .dark .settings-select {
+      background: #0f172a;
+      border-color: #334155;
+      color: #cbd5e1;
+    }
+
+    /* App Info */
+    .app-info {
+      text-align: center;
+      padding: 2rem;
+      color: #94a3b8;
+    }
+
+    .app-version {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .dark .app-version {
+      color: #64748b;
+    }
+
+    .app-tagline {
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
   <!-- Header -->
-  <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50">
-    <div class="max-w-3xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="student.html" class="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-primary-600 transition-all">
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="student.html" class="back-btn">
           <i class="fa-solid fa-arrow-left"></i>
         </a>
-        <a href="student.html" class="flex items-center gap-2 group">
-          <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-md">
-            <span class="text-white font-bold text-sm" style="font-family: 'Amiri', serif;">م</span>
+        <a href="student.html" class="logo-link">
+          <div class="logo-icon">
+            <span>م</span>
           </div>
-          <span class="font-bold text-lg text-dark-800 hidden sm:block">MBBA</span>
+          <span class="logo-text">MBBA</span>
         </a>
       </div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="max-w-3xl mx-auto px-4 md:px-6 py-8">
-
-    <!-- Profile Header Card -->
-    <div class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 animate-fade-in-up">
-      <div class="bg-gradient-to-r from-primary-50 via-white to-primary-50/50 px-6 py-6">
-        <div class="flex items-center gap-5">
-          <div class="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/20">
-            <span id="avatarInitial" class="text-3xl font-bold text-primary-600">P</span>
-          </div>
+  <main class="main-content">
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-info">
+          <div id="avatarInitial" class="profile-avatar">P</div>
           <div>
-            <h1 id="profileName" class="text-2xl font-bold text-dark-800 mb-1">Memuat...</h1>
-            <p id="profileEmail" class="text-slate-500 mb-2">email@example.com</p>
-            <span id="profileRole" class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-100 text-primary-700 text-xs font-semibold rounded-full">
-              <i class="fa-solid fa-graduation-cap text-xs"></i>Pelajar
+            <h1 id="profileName" class="profile-name">Memuat...</h1>
+            <p id="profileEmail" class="profile-email">email@example.com</p>
+            <span id="profileRole" class="profile-role">
+              <i class="fa-solid fa-graduation-cap"></i>
+              Pelajar
             </span>
           </div>
         </div>
       </div>
-
-      <!-- Stats -->
-      <div class="px-6 py-5 bg-slate-50/50">
-        <div class="grid grid-cols-3 gap-4">
-          <div class="text-center p-3 bg-white rounded-xl shadow-sm">
-            <div id="statCompleted" class="text-2xl font-bold text-success-500">0</div>
-            <div class="text-xs text-slate-500 mt-1">Fasal Selesai</div>
+      <div class="profile-stats">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div id="statCompleted" class="stat-number green">0</div>
+            <div class="stat-label">Fasal Selesai</div>
           </div>
-          <div class="text-center p-3 bg-white rounded-xl shadow-sm">
-            <div id="statAvgScore" class="text-2xl font-bold text-info-500">0%</div>
-            <div class="text-xs text-slate-500 mt-1">Rata-rata</div>
+          <div class="stat-item">
+            <div id="statAvgScore" class="stat-number blue">0%</div>
+            <div class="stat-label">Rata-rata</div>
           </div>
-          <div class="text-center p-3 bg-white rounded-xl shadow-sm">
-            <div id="statStreak" class="text-2xl font-bold text-warning-500">0</div>
-            <div class="text-xs text-slate-500 mt-1">Hari Streak</div>
+          <div class="stat-item">
+            <div id="statStreak" class="stat-number amber">0</div>
+            <div class="stat-label">Hari Streak</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 animate-fade-in-up">
-      <div class="px-6 py-5 border-b border-slate-100">
-        <h2 class="text-lg font-bold text-dark-800 flex items-center gap-3">
-          <div class="w-9 h-9 bg-primary-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-bolt text-primary-600"></i>
-          </div>
-          Aksi Cepat
-        </h2>
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon green">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <h2 class="section-title">Aksi Cepat</h2>
       </div>
-      <div class="p-4">
-        <div class="grid grid-cols-2 gap-3">
-          <a href="student.html" class="card p-4 hover-lift flex items-center gap-4 group">
-            <div class="w-12 h-12 bg-gradient-to-br from-info-100 to-info-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
-              <i class="fa-solid fa-home text-info-600 text-lg"></i>
+      <div class="section-body">
+        <div class="actions-grid">
+          <a href="student.html" class="action-btn">
+            <div class="action-icon blue">
+              <i class="fa-solid fa-home"></i>
             </div>
-            <div>
-              <div class="font-semibold text-dark-800">Dashboard</div>
-              <div class="text-xs text-slate-500">Lihat progreso</div>
-            </div>
-          </a>
-          <a href="student.html" class="card p-4 hover-lift flex items-center gap-4 group">
-            <div class="w-12 h-12 bg-gradient-to-br from-success-100 to-success-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
-              <i class="fa-solid fa-book text-success-600 text-lg"></i>
-            </div>
-            <div>
-              <div class="font-semibold text-dark-800">Daftar Fasal</div>
-              <div class="text-xs text-slate-500">Lihat semua materi</div>
+            <div class="action-content">
+              <div class="action-title">Dashboard</div>
+              <div class="action-subtitle">Lihat progreso</div>
             </div>
           </a>
-          <a href="materi.html" class="card p-4 hover-lift flex items-center gap-4 group">
-            <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
-              <i class="fa-solid fa-graduation-cap text-purple-600 text-lg"></i>
+          <a href="student.html" class="action-btn">
+            <div class="action-icon green">
+              <i class="fa-solid fa-book"></i>
             </div>
-            <div>
-              <div class="font-semibold text-dark-800">Materi</div>
-              <div class="text-xs text-slate-500">Belajar konten</div>
+            <div class="action-content">
+              <div class="action-title">Daftar Fasal</div>
+              <div class="action-subtitle">Lihat semua materi</div>
             </div>
           </a>
-          <button onclick="confirmLogout()" class="card p-4 hover-lift flex items-center gap-4 group text-left w-full">
-            <div class="w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
-              <i class="fa-solid fa-sign-out-alt text-red-600 text-lg"></i>
+          <a href="materi.html" class="action-btn">
+            <div class="action-icon purple">
+              <i class="fa-solid fa-graduation-cap"></i>
             </div>
-            <div>
-              <div class="font-semibold text-red-700">Keluar</div>
-              <div class="text-xs text-red-400">Logout aplikasi</div>
+            <div class="action-content">
+              <div class="action-title">Materi</div>
+              <div class="action-subtitle">Belajar konten</div>
+            </div>
+          </a>
+          <button onclick="confirmLogout()" class="action-btn red">
+            <div class="action-icon red">
+              <i class="fa-solid fa-sign-out-alt"></i>
+            </div>
+            <div class="action-content">
+              <div class="action-title">Keluar</div>
+              <div class="action-subtitle">Logout aplikasi</div>
             </div>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Achievements -->
-    <div class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 animate-fade-in-up">
-      <div class="px-6 py-5 border-b border-slate-100">
-        <h2 class="text-lg font-bold text-dark-800 flex items-center gap-3">
-          <div class="w-9 h-9 bg-warning-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-trophy text-warning-600"></i>
-          </div>
-          Pencapaian
-        </h2>
-      </div>
-      <div id="achievements" class="p-4 space-y-3">
-        <!-- Achievements loaded by JS -->
-      </div>
-    </div>
-
     <!-- Settings -->
-    <div class="card bg-white rounded-3xl shadow-card overflow-hidden animate-fade-in-up">
-      <div class="px-6 py-5 border-b border-slate-100">
-        <h2 class="text-lg font-bold text-dark-800 flex items-center gap-3">
-          <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-cog text-slate-600"></i>
-          </div>
-          Pengaturan
-        </h2>
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon slate">
+          <i class="fa-solid fa-cog"></i>
+        </div>
+        <h2 class="section-title">Pengaturan</h2>
       </div>
-      <div class="p-4 space-y-3">
-        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-dark-100 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-moon text-slate-500"></i>
+      <div class="section-body">
+        <div class="settings-list">
+          <div class="settings-item">
+            <div class="settings-left">
+              <div class="section-icon slate" style="width: 2.5rem; height: 2.5rem; border-radius: 8px;">
+                <i class="fa-solid fa-moon"></i>
+              </div>
+              <span class="settings-label">Mode Gelap</span>
             </div>
-            <span class="font-medium text-slate-700">Mode Gelap</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="darkModeToggle">
+              <span class="toggle-slider"></span>
+            </label>
           </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="darkModeToggle" class="sr-only peer">
-            <div class="w-12 h-7 bg-dark-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-500"></div>
-          </label>
-        </div>
-        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-dark-100 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-language text-slate-500"></i>
+          <div class="settings-item">
+            <div class="settings-left">
+              <div class="section-icon slate" style="width: 2.5rem; height: 2.5rem; border-radius: 8px;">
+                <i class="fa-solid fa-language"></i>
+              </div>
+              <span class="settings-label">Bahasa</span>
             </div>
-            <span class="font-medium text-slate-700">Bahasa</span>
+            <select class="settings-select">
+              <option value="id">Indonesia</option>
+              <option value="ar">العربية</option>
+              <option value="en">English</option>
+            </select>
           </div>
-          <select class="px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500">
-            <option value="id">Indonesia</option>
-            <option value="ar">العربية</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-dark-100 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-bell text-slate-500"></i>
+          <div class="settings-item">
+            <div class="settings-left">
+              <div class="section-icon slate" style="width: 2.5rem; height: 2.5rem; border-radius: 8px;">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+              <span class="settings-label">Notifikasi</span>
             </div>
-            <span class="font-medium text-slate-700">Notifikasi</span>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
           </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="sr-only peer" checked>
-            <div class="w-12 h-7 bg-dark-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-500"></div>
-          </label>
         </div>
       </div>
     </div>
 
     <!-- App Info -->
-    <div class="mt-8 text-center text-sm text-slate-400">
-      <p class="font-medium">MBBA v1.0</p>
-      <p class="text-xs mt-1">Madrasah Belajar Bahasa Arab — Kitab Mukhtarat</p>
+    <div class="app-info">
+      <p class="app-version">MBBA v1.0</p>
+      <p class="app-tagline">Madrasah Belajar Bahasa Arab — Kitab Mukhtarat</p>
     </div>
-
   </main>
 
   <script src="../js/api.js"></script>
   <script>
     var userProgress = [];
+
+    // Dark mode toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (localStorage.getItem('mbba-theme') === 'dark' ||
+        (!localStorage.getItem('mbba-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      darkModeToggle.checked = true;
+    }
+    darkModeToggle.addEventListener('change', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('mbba-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
 
     (async function() {
       var user = await getCurrentUser();
@@ -220,7 +770,7 @@
 
       var roleLabel = role === 'admin' ? 'Admin' : role === 'teacher' ? 'Guru' : 'Pelajar';
       var roleIcon = role === 'admin' ? 'fa-shield-halved' : role === 'teacher' ? 'fa-chalkboard-teacher' : 'fa-graduation-cap';
-      document.getElementById('profileRole').innerHTML = '<i class="fa-solid ' + roleIcon + ' text-xs"></i>' + roleLabel;
+      document.getElementById('profileRole').innerHTML = '<i class="fa-solid ' + roleIcon + '"></i>' + roleLabel;
     }
 
     async function loadProgress() {
@@ -237,8 +787,6 @@
 
         var streak = calculateStreak();
         document.getElementById('statStreak').textContent = streak;
-
-        renderAchievements(completed, avgScore);
       } catch (err) {
         console.error('Error loading progress:', err);
       }
@@ -260,37 +808,6 @@
         if (diff === 1) streak++; else break;
       }
       return streak;
-    }
-
-    function renderAchievements(completed, avgScore) {
-      var container = document.getElementById('achievements');
-      var streak = calculateStreak();
-      var achievements = [
-        { id: 'first', label: '1 Fasal Pertama', icon: 'fa-star', condition: completed >= 1, color: 'amber', bg: 'from-amber-100 to-orange-100' },
-        { id: 'five', label: '5 Fasal Selesai', icon: 'fa-fire', condition: completed >= 5, color: 'orange', bg: 'from-orange-100 to-red-100' },
-        { id: 'perfect', label: 'Skor Sempurna 100%', icon: 'fa-crown', condition: avgScore === 100, color: 'yellow', bg: 'from-yellow-100 to-amber-100' },
-        { id: 'streak7', label: '7 Hari Streak', icon: 'fa-calendar-check', condition: streak >= 7, color: 'green', bg: 'from-green-100 to-emerald-100' },
-        { id: 'ten', label: '10 Fasal Selesai', icon: 'fa-trophy', condition: completed >= 10, color: 'purple', bg: 'from-purple-100 to-pink-100' },
-        { id: 'all', label: 'Semua Fasal Selesai', icon: 'fa-medal', condition: false, color: 'slate', bg: 'from-slate-100 to-gray-100' }
-      ];
-
-      container.innerHTML = achievements.map(function(a) {
-        return '<div class="flex items-center gap-4 p-4 rounded-xl ' + (a.condition ? 'bg-gradient-to-r ' + a.bg : 'bg-slate-50') + ' transition-all">' +
-          '<div class="w-12 h-12 rounded-xl flex items-center justify-center ' + (a.condition ? 'bg-white/80 shadow-md' : 'bg-slate-100') + '">' +
-          '<i class="fa-solid ' + a.icon + ' ' + (a.condition ? 'text-' + a.color + '-500' : 'text-slate-400') + ' text-lg"></i>' +
-          '</div>' +
-          '<div class="flex-1">' +
-          '<div class="font-semibold ' + (a.condition ? 'text-slate-800' : 'text-slate-500') + '">' + a.label + '</div>' +
-          '<div class="text-xs ' + (a.condition ? 'text-' + a.color + '-500' : 'text-slate-400') + '">' +
-          (a.condition ? '<i class="fa-solid fa-check mr-1"></i>Tercapai!' : 'Belum tercapai') +
-          '</div>' +
-          '</div>' +
-          '<div>' +
-          (a.condition
-            ? '<div class="w-8 h-8 bg-gradient-to-br from-success-400 to-emerald-500 rounded-full flex items-center justify-center shadow-md"><i class="fa-solid fa-check text-white text-sm"></i></div>'
-            : '<div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center"><i class="fa-regular fa-circle text-slate-300"></i></div>') +
-          '</div></div>';
-      }).join('');
     }
 
     function confirmLogout() {

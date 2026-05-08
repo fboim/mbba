@@ -4,243 +4,675 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Masuk — MBBA</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2316a34a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23059669' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
   <link rel="stylesheet" href="../css/output.css">
   <link rel="stylesheet" href="../css/modern.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .arabic-hero {
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .auth-container {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 1024px) {
+      .auth-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Branding Side */
+    .branding-side {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      text-align: center;
+      position: relative;
+    }
+
+    @media (min-width: 1024px) {
+      .branding-side {
+        display: flex;
+      }
+    }
+
+    .branding-logo {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #34d399, #059669);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.5);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .branding-logo span {
       font-family: 'Amiri', serif;
+      font-size: 3rem;
+      color: white;
+    }
+
+    .branding-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .branding-subtitle {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 2rem;
+    }
+
+    .branding-arabic {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 2.5rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .branding-arabic-text {
+      font-family: 'Amiri', serif;
+      font-size: 1.5rem;
+      color: white;
       direction: rtl;
-      line-height: 2.8;
+    }
+
+    .branding-desc {
+      color: rgba(255,255,255,0.8);
+      max-width: 400px;
+      line-height: 1.7;
+    }
+
+    .branding-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .branding-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #34d399;
+      font-size: 1.25rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .branding-icon:nth-child(2) { animation-delay: 0.5s; }
+    .branding-icon:nth-child(3) { animation-delay: 1s; }
+
+    /* Form Side */
+    .form-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Mobile Logo */
+    .mobile-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 1024px) {
+      .mobile-logo {
+        display: none;
+      }
+    }
+
+    .mobile-logo-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #34d399, #059669);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px -5px rgba(5, 150, 105, 0.5);
+    }
+
+    .mobile-logo-icon span {
+      font-family: 'Amiri', serif;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .mobile-logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    /* Auth Card */
+    .auth-card {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .dark .auth-card {
+      background: #1e293b;
+    }
+
+    /* Tab Toggle */
+    .tab-toggle {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 4px;
+      margin-bottom: 2rem;
+    }
+
+    .dark .tab-toggle {
+      background: #0f172a;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #64748b;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dark .tab-btn {
+      color: #94a3b8;
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: #047857;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .dark .tab-btn.active {
+      background: #1e293b;
+      color: #34d399;
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: #475569;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #475569;
+      margin-bottom: 0.5rem;
+    }
+
+    .dark .form-label {
+      color: #cbd5e1;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.875rem 1rem 0.875rem 3rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: white;
+      color: #1e293b;
+      transition: all 0.2s ease;
+    }
+
+    .dark .form-input {
+      background: #0f172a;
+      border-color: #334155;
+      color: #f1f5f9;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #059669;
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 0.25rem;
+      transition: color 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      color: #475569;
+    }
+
+    /* Error Message */
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dark .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    /* Info Message */
+    .info-message {
+      background: rgba(5, 150, 105, 0.1);
+      border: 1px solid rgba(5, 150, 105, 0.3);
+      color: #047857;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dark .info-message {
+      background: rgba(5, 150, 105, 0.15);
+      border-color: rgba(5, 150, 105, 0.3);
+      color: #6ee7b7;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px -3px rgba(5, 150, 105, 0.4);
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -3px rgba(5, 150, 105, 0.5);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .submit-btn.loading {
+      pointer-events: none;
+    }
+
+    .submit-btn.loading::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Success State */
+    .success-state {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #34d399, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      color: white;
+      animation: bounceIn 0.6s ease;
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.5); }
+      50% { transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .success-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .dark .success-title {
+      color: #f1f5f9;
+    }
+
+    .success-text {
+      color: #64748b;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .dark .success-text {
+      color: #94a3b8;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #f1f5f9;
+      color: #475569;
+      border-radius: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .back-btn:hover {
+      background: #e2e8f0;
+    }
+
+    /* Footer Link */
+    .footer-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .footer-link a {
+      color: #64748b;
+      font-size: 0.875rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link a:hover {
+      color: #047857;
+    }
+
+    .dark .footer-link a:hover {
+      color: #34d399;
+    }
+
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 font-sans antialiased min-h-screen">
-
-  <!-- Background decorations -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-500/10 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
-    <div class="absolute bottom-0 left-0 w-[800px] h-[800px] bg-primary-600/10 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
-  </div>
-
-  <div class="relative min-h-screen flex">
-
-    <!-- LEFT: Branding (desktop) -->
-    <div class="hidden lg:flex lg:w-1/2 flex-col items-center justify-center px-12 relative">
-      <div class="text-center max-w-md animate-fade-in-up">
-        <div class="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary-500/30 animate-float">
-          <span class="text-white font-bold text-5xl" style="font-family: 'Amiri', serif;">م</span>
-        </div>
-
-        <h1 class="text-4xl font-bold text-white mb-2">MBBA</h1>
-        <p class="text-primary-300 text-xl mb-8">Madrasah Belajar Bahasa Arab</p>
-
-        <div class="arabic-hero text-2xl text-primary-200 mb-8 opacity-90">
-          اَلسَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ
-        </div>
-
-        <p class="text-slate-400 text-sm leading-relaxed">
-          Belajar nahwu dan shorof menggunakan Kitab Mukhtarat dengan metode yang terstruktur dan mudah dipahami.
-        </p>
+<body>
+  <div class="auth-container">
+    <!-- Branding Side (Desktop) -->
+    <div class="branding-side">
+      <div class="branding-logo">
+        <span>م</span>
       </div>
-
-      <!-- Floating icons -->
-      <div class="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-4">
-        <div class="w-14 h-14 bg-white/5 backdrop-blur-sm rounded-xl flex items-center justify-center animate-float">
-          <i class="fa-solid fa-book text-primary-400 text-xl"></i>
-        </div>
-        <div class="w-14 h-14 bg-white/5 backdrop-blur-sm rounded-xl flex items-center justify-center animate-float" style="animation-delay: 0.5s">
-          <i class="fa-solid fa-graduation-cap text-primary-400 text-xl"></i>
-        </div>
-        <div class="w-14 h-14 bg-white/5 backdrop-blur-sm rounded-xl flex items-center justify-center animate-float" style="animation-delay: 1s">
-          <i class="fa-solid fa-clipboard-check text-primary-400 text-xl"></i>
-        </div>
+      <h1 class="branding-title">MBBA</h1>
+      <p class="branding-subtitle">Madrasah Belajar Bahasa Arab</p>
+      <div class="branding-arabic">
+        <p class="branding-arabic-text">اَلسَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ</p>
+      </div>
+      <p class="branding-desc">
+        Belajar nahwu dan shorof menggunakan Kitab Mukhtarat dengan metode yang terstruktur dan mudah dipahami.
+      </p>
+      <div class="branding-icons">
+        <div class="branding-icon"><i class="fa-solid fa-book"></i></div>
+        <div class="branding-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="branding-icon"><i class="fa-solid fa-clipboard-check"></i></div>
       </div>
     </div>
 
-    <!-- RIGHT: Auth Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 relative">
-      <div class="w-full max-w-md">
-
+    <!-- Form Side -->
+    <div class="form-side">
+      <div class="form-container">
         <!-- Mobile Logo -->
-        <div class="lg:hidden flex items-center gap-3 mb-8 justify-center animate-fade-in">
-          <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
-            <span class="text-white font-bold text-xl" style="font-family: 'Amiri', serif;">م</span>
+        <div class="mobile-logo">
+          <div class="mobile-logo-icon">
+            <span>م</span>
           </div>
-          <span class="font-bold text-2xl text-white">MBBA</span>
+          <span class="mobile-logo-text">MBBA</span>
         </div>
 
-        <!-- Card -->
-        <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10 animate-fade-in-up">
-
+        <!-- Auth Card -->
+        <div class="auth-card">
           <!-- Tab Toggle -->
-          <div class="flex bg-dark-800/50 rounded-2xl p-1.5 mb-8">
-            <button id="tabLogin" onclick="switchTab('login')"
-              class="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-primary-500 text-white shadow-lg">
-              Masuk
-            </button>
-            <button id="tabMagicLink" onclick="switchTab('magiclink')"
-              class="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white">
-              Link Masuk
-            </button>
-            <button id="tabRegister" onclick="switchTab('register')"
-              class="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white">
-              Daftar
-            </button>
+          <div class="tab-toggle">
+            <button class="tab-btn active" data-tab="login">Masuk</button>
+            <button class="tab-btn" data-tab="magiclink">Link Masuk</button>
+            <button class="tab-btn" data-tab="register">Daftar</button>
           </div>
 
           <!-- Login Form -->
-          <form id="formLogin" onsubmit="handleLogin(event)">
-            <div class="space-y-5">
-              <div class="animate-fade-in-up">
-                <label class="block text-sm font-medium text-slate-300 mb-2">Email</label>
-                <div class="relative">
-                  <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                  <input type="email" id="loginEmail" required
-                    class="w-full pl-12 pr-4 py-3.5 bg-dark-800/50 border border-dark-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                    placeholder="nama@email.com">
-                </div>
-              </div>
-
-              <div class="animate-fade-in-up" style="animation-delay: 0.1s">
-                <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
-                <div class="relative">
-                  <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                  <input type="password" id="loginPassword" required
-                    class="w-full pl-12 pr-12 py-3.5 bg-dark-800/50 border border-dark-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                    placeholder="Minimal 6 karakter">
-                  <button type="button" onclick="togglePassword('loginPassword', this)"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors">
-                    <i class="fa-solid fa-eye text-sm"></i>
-                  </button>
-                </div>
+          <form id="formLogin">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input type="email" id="loginEmail" required class="form-input" placeholder="nama@email.com">
               </div>
             </div>
 
-            <!-- Error message -->
-            <div id="loginError" class="hidden mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-              <p class="text-red-400 text-sm"><i class="fa-solid fa-circle-exclamation mr-2"></i><span id="loginErrorText"></span></p>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="loginPassword" required class="form-input" placeholder="Minimal 6 karakter">
+                <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
             </div>
 
-            <button type="submit" id="loginBtn"
-              class="w-full mt-6 py-3.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-semibold shadow-lg shadow-primary-500/25 transition-all duration-200 flex items-center justify-center gap-2 animate-fade-in-up">
+            <div id="loginError" class="error-message hidden">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              <span id="loginErrorText"></span>
+            </div>
+
+            <button type="submit" id="loginBtn" class="submit-btn">
               <span>Masuk</span>
-              <i class="fa-solid fa-arrow-right text-sm"></i>
+              <i class="fa-solid fa-arrow-right"></i>
             </button>
           </form>
 
           <!-- Register Form -->
-          <form id="formRegister" onsubmit="handleRegister(event)" class="hidden">
-            <div class="space-y-5">
-              <div class="animate-fade-in-up">
-                <label class="block text-sm font-medium text-slate-300 mb-2">Nama Lengkap</label>
-                <div class="relative">
-                  <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                  <input type="text" id="regName" required
-                    class="w-full pl-12 pr-4 py-3.5 bg-dark-800/50 border border-dark-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                    placeholder="Abdullah Rahman">
-                </div>
-              </div>
-
-              <div class="animate-fade-in-up" style="animation-delay: 0.1s">
-                <label class="block text-sm font-medium text-slate-300 mb-2">Email</label>
-                <div class="relative">
-                  <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                  <input type="email" id="regEmail" required
-                    class="w-full pl-12 pr-4 py-3.5 bg-dark-800/50 border border-dark-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                    placeholder="nama@email.com">
-                </div>
-              </div>
-
-              <div class="animate-fade-in-up" style="animation-delay: 0.2s">
-                <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
-                <div class="relative">
-                  <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                  <input type="password" id="regPassword" required minlength="6"
-                    class="w-full pl-12 pr-12 py-3.5 bg-dark-800/50 border border-dark-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                    placeholder="Minimal 6 karakter">
-                  <button type="button" onclick="togglePassword('regPassword', this)"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors">
-                    <i class="fa-solid fa-eye text-sm"></i>
-                  </button>
-                </div>
+          <form id="formRegister" class="hidden">
+            <div class="form-group">
+              <label class="form-label">Nama Lengkap</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" id="regName" required class="form-input" placeholder="Abdullah Rahman">
               </div>
             </div>
 
-            <div id="regError" class="hidden mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-              <p class="text-red-400 text-sm"><i class="fa-solid fa-circle-exclamation mr-2"></i><span id="regErrorText"></span></p>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input type="email" id="regEmail" required class="form-input" placeholder="nama@email.com">
+              </div>
             </div>
 
-            <button type="submit" id="regBtn"
-              class="w-full mt-6 py-3.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-semibold shadow-lg shadow-primary-500/25 transition-all duration-200 flex items-center justify-center gap-2">
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="regPassword" required minlength="6" class="form-input" placeholder="Minimal 6 karakter">
+                <button type="button" class="password-toggle" onclick="togglePassword('regPassword', this)">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="regError" class="error-message hidden">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              <span id="regErrorText"></span>
+            </div>
+
+            <button type="submit" id="regBtn" class="submit-btn">
               <span>Daftar Sekarang</span>
-              <i class="fa-solid fa-user-plus text-sm"></i>
+              <i class="fa-solid fa-user-plus"></i>
             </button>
           </form>
 
           <!-- Register Success -->
-          <div id="regSuccess" class="hidden text-center py-4">
-            <div class="w-20 h-20 bg-gradient-to-br from-success-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-success-500/30 animate-bounce-in">
-              <i class="fa-solid fa-check text-white text-3xl"></i>
+          <div id="regSuccess" class="success-state hidden">
+            <div class="success-icon">
+              <i class="fa-solid fa-check"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white mb-3">Pendaftaran Berhasil!</h3>
-            <p id="regSuccessText" class="text-slate-400 text-sm mb-6 leading-relaxed">
+            <h3 class="success-title">Pendaftaran Berhasil!</h3>
+            <p id="regSuccessText" class="success-text">
               Kami telah mengirim link verifikasi ke email Anda.<br>
               Buka email dan klik link tersebut untuk mengaktifkan akun.
             </p>
-            <button onclick="switchTab('login')"
-              class="px-6 py-3 bg-dark-700 hover:bg-dark-600 text-white rounded-xl font-medium transition-colors">
-              <i class="fa-solid fa-arrow-left mr-2"></i> Kembali ke Login
+            <button onclick="switchTab('login')" class="back-btn">
+              <i class="fa-solid fa-arrow-left"></i>
+              Kembali ke Login
             </button>
           </div>
 
           <!-- Magic Link Form -->
-          <form id="formMagicLink" onsubmit="handleMagicLink(event)" class="hidden">
-            <div class="p-4 bg-primary-500/10 border border-primary-500/30 rounded-xl mb-5">
-              <p class="text-primary-300 text-sm">
-                <i class="fa-solid fa-paper-plane mr-2"></i>
-                Kami akan mengirim link masuk ke email Anda. Klik link tersebut untuk login tanpa password.
-              </p>
+          <form id="formMagicLink" class="hidden">
+            <div class="info-message">
+              <i class="fa-solid fa-paper-plane"></i>
+              Kami akan mengirim link masuk ke email Anda. Klik link tersebut untuk login tanpa password.
             </div>
 
-            <div class="animate-fade-in-up">
-              <label class="block text-sm font-medium text-slate-300 mb-2">Email</label>
-              <div class="relative">
-                <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="email" id="magicEmail" required
-                  class="w-full pl-12 pr-4 py-3.5 bg-dark-800/50 border border-dark-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                  placeholder="nama@email.com">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input type="email" id="magicEmail" required class="form-input" placeholder="nama@email.com">
               </div>
             </div>
 
-            <div id="magicInfo" class="hidden mt-4 p-4 bg-primary-500/10 border border-primary-500/30 rounded-xl">
-              <p class="text-primary-300 text-sm"><i class="fa-solid fa-check-circle mr-2"></i><span id="magicInfoText"></span></p>
+            <div id="magicInfo" class="info-message hidden">
+              <i class="fa-solid fa-check-circle"></i>
+              <span id="magicInfoText"></span>
             </div>
-            <div id="magicError" class="hidden mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-              <p class="text-red-400 text-sm"><i class="fa-solid fa-circle-exclamation mr-2"></i><span id="magicErrorText"></span></p>
+            <div id="magicError" class="error-message hidden">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              <span id="magicErrorText"></span>
             </div>
 
-            <button type="submit" id="magicBtn"
-              class="w-full mt-6 py-3.5 bg-gradient-to-r from-info-500 to-blue-600 hover:from-info-600 hover:to-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-info-500/25 transition-all duration-200 flex items-center justify-center gap-2">
+            <button type="submit" id="magicBtn" class="submit-btn">
               <span>Kirim Link Masuk</span>
-              <i class="fa-solid fa-paper-plane text-sm"></i>
+              <i class="fa-solid fa-paper-plane"></i>
             </button>
           </form>
 
-          <p class="text-center text-sm text-slate-500 mt-6">
-            Lupa password? Hubungi admin.
+          <p class="footer-link">
+            <a href="index.html">
+              <i class="fa-solid fa-arrow-left"></i>
+              Kembali ke Beranda
+            </a>
           </p>
-        </div>
-
-        <!-- Footer -->
-        <div class="text-center mt-8 animate-fade-in">
-          <a href="index.html" class="text-slate-400 hover:text-white text-sm transition-colors inline-flex items-center gap-2">
-            <i class="fa-solid fa-arrow-left text-xs"></i>
-            Kembali ke Beranda
-          </a>
         </div>
       </div>
     </div>
@@ -248,46 +680,31 @@
 
   <script src="../js/api.js"></script>
   <script>
+    // Tab Switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
     function switchTab(tab) {
-      var formLogin = document.getElementById('formLogin');
-      var formMagicLink = document.getElementById('formMagicLink');
-      var formRegister = document.getElementById('formRegister');
-      var regSuccess = document.getElementById('regSuccess');
-      var tabLogin = document.getElementById('tabLogin');
-      var tabMagicLink = document.getElementById('tabMagicLink');
-      var tabRegister = document.getElementById('tabRegister');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+      document.getElementById('formLogin').classList.add('hidden');
+      document.getElementById('formMagicLink').classList.add('hidden');
+      document.getElementById('formRegister').classList.add('hidden');
+      document.getElementById('regSuccess').classList.add('hidden');
 
       document.getElementById('loginError').classList.add('hidden');
       document.getElementById('regError').classList.add('hidden');
 
-      formLogin.classList.add('hidden');
-      formMagicLink.classList.add('hidden');
-      formRegister.classList.add('hidden');
-      regSuccess.classList.add('hidden');
-
-      [tabLogin, tabMagicLink, tabRegister].forEach(function(t) {
-        t.classList.remove('bg-primary-500', 'text-white', 'shadow-lg');
-        t.classList.add('text-slate-400');
-      });
-
-      if (tab === 'login') {
-        formLogin.classList.remove('hidden');
-        tabLogin.classList.add('bg-primary-500', 'text-white', 'shadow-lg');
-        tabLogin.classList.remove('text-slate-400');
-      } else if (tab === 'magiclink') {
-        formMagicLink.classList.remove('hidden');
-        tabMagicLink.classList.add('bg-primary-500', 'text-white', 'shadow-lg');
-        tabMagicLink.classList.remove('text-slate-400');
-      } else {
-        formRegister.classList.remove('hidden');
-        tabRegister.classList.add('bg-primary-500', 'text-white', 'shadow-lg');
-        tabRegister.classList.remove('text-slate-400');
-      }
+      if (tab === 'login') document.getElementById('formLogin').classList.remove('hidden');
+      else if (tab === 'magiclink') document.getElementById('formMagicLink').classList.remove('hidden');
+      else document.getElementById('formRegister').classList.remove('hidden');
     }
 
     function togglePassword(inputId, btn) {
-      var input = document.getElementById(inputId);
-      var icon = btn.querySelector('i');
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
       if (input.type === 'password') {
         input.type = 'text';
         icon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -299,40 +716,40 @@
 
     async function handleLogin(e) {
       e.preventDefault();
-      var email = document.getElementById('loginEmail').value;
-      var password = document.getElementById('loginPassword').value;
-      var errorEl = document.getElementById('loginError');
-      var errorText = document.getElementById('loginErrorText');
-      var btn = document.getElementById('loginBtn');
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+      const errorText = document.getElementById('loginErrorText');
+      const btn = document.getElementById('loginBtn');
 
       errorEl.classList.add('hidden');
       btn.disabled = true;
-      btn.innerHTML = '<div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div> Memuat...';
+      btn.innerHTML = '<span class="loading"></span> Memuat...';
 
       try {
-        var data = await login(email, password);
+        const data = await login(email, password);
         if (data.user) setUserRole(data.user);
         window.location.href = 'student.html';
       } catch (err) {
         errorText.textContent = err.message;
         errorEl.classList.remove('hidden');
         btn.disabled = false;
-        btn.innerHTML = '<span>Masuk</span><i class="fa-solid fa-arrow-right text-sm"></i>';
+        btn.innerHTML = '<span>Masuk</span><i class="fa-solid fa-arrow-right"></i>';
       }
     }
 
     async function handleRegister(e) {
       e.preventDefault();
-      var fullName = document.getElementById('regName').value;
-      var email = document.getElementById('regEmail').value;
-      var password = document.getElementById('regPassword').value;
-      var errorEl = document.getElementById('regError');
-      var errorText = document.getElementById('regErrorText');
-      var btn = document.getElementById('regBtn');
+      const fullName = document.getElementById('regName').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const errorEl = document.getElementById('regError');
+      const errorText = document.getElementById('regErrorText');
+      const btn = document.getElementById('regBtn');
 
       errorEl.classList.add('hidden');
       btn.disabled = true;
-      btn.innerHTML = '<div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div> Memuat...';
+      btn.innerHTML = '<span class="loading"></span> Memuat...';
 
       try {
         await register(email, password, fullName);
@@ -342,31 +759,31 @@
         errorText.textContent = err.message;
         errorEl.classList.remove('hidden');
         btn.disabled = false;
-        btn.innerHTML = '<span>Daftar Sekarang</span><i class="fa-solid fa-user-plus text-sm"></i>';
+        btn.innerHTML = '<span>Daftar Sekarang</span><i class="fa-solid fa-user-plus"></i>';
       }
     }
 
     async function handleMagicLink(e) {
       e.preventDefault();
-      var email = document.getElementById('magicEmail').value;
-      var infoEl = document.getElementById('magicInfo');
-      var infoText = document.getElementById('magicInfoText');
-      var errorEl = document.getElementById('magicError');
-      var errorText = document.getElementById('magicErrorText');
-      var btn = document.getElementById('magicBtn');
+      const email = document.getElementById('magicEmail').value;
+      const infoEl = document.getElementById('magicInfo');
+      const infoText = document.getElementById('magicInfoText');
+      const errorEl = document.getElementById('magicError');
+      const errorText = document.getElementById('magicErrorText');
+      const btn = document.getElementById('magicBtn');
 
       errorEl.classList.add('hidden');
       infoEl.classList.add('hidden');
       btn.disabled = true;
-      btn.innerHTML = '<div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div> Memuat...';
+      btn.innerHTML = '<span class="loading"></span> Memuat...';
 
       try {
-        var res = await fetch(SUPABASE_URL + 'auth/v1/magiclink', {
+        const res = await fetch(SUPABASE_URL + 'auth/v1/magiclink', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
           body: JSON.stringify({ email: email, options: { redirectTo: window.location.origin + '/pages/auth.html?magiclink=true' } })
         });
-        var data = await res.json();
+        const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Gagal mengirim link');
 
         infoText.textContent = 'Link masuk sudah dikirim ke email Anda. Cek inbox atau folder spam.';
@@ -376,22 +793,26 @@
         errorText.textContent = err.message;
         errorEl.classList.remove('hidden');
         btn.disabled = false;
-        btn.innerHTML = '<span>Kirim Link Masuk</span><i class="fa-solid fa-paper-plane text-sm"></i>';
+        btn.innerHTML = '<span>Kirim Link Masuk</span><i class="fa-solid fa-paper-plane"></i>';
       }
     }
 
+    document.getElementById('formLogin').addEventListener('submit', handleLogin);
+    document.getElementById('formRegister').addEventListener('submit', handleRegister);
+    document.getElementById('formMagicLink').addEventListener('submit', handleMagicLink);
+
     (async function() {
-      var urlParams = new URLSearchParams(window.location.search);
+      const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('magiclink') === 'true') {
-        var infoEl = document.getElementById('magicInfo');
+        const infoEl = document.getElementById('magicInfo');
         if (infoEl) {
-          var infoText = document.getElementById('magicInfoText');
+          const infoText = document.getElementById('magicInfoText');
           infoText.textContent = 'Login berhasil via magic link!';
           infoEl.classList.remove('hidden');
         }
       }
 
-      var user = await getCurrentUser();
+      const user = await getCurrentUser();
       if (user) {
         setUserRole(user);
         window.location.href = 'student.html';
