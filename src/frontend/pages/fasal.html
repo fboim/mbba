@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad-Dafridu fi al-Jumlah — MBBA</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23059669' width='32' height='32' rx='8'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-base: #F8F9FA;
+      --bg-card: #FFFFFF;
+      --text-primary: #1A1D23;
+      --text-secondary: #4A5568;
+      --text-muted: #94A3B8;
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --border-soft: rgba(0, 0, 0, 0.08);
+      --accent: #059669;
+      --accent-light: #10B981;
+      --accent-soft: #ECFDF5;
+      --accent-glow: rgba(5, 150, 105, 0.15);
+      --amber: #F59E0B;
+      --amber-soft: #FFFBEB;
+      --blue: #3B82F6;
+      --blue-soft: #EFF6FF;
+      --purple: #8B5CF6;
+      --purple-soft: #F5F3FF;
+      --red: #EF4444;
+      --red-soft: #FEE2E2;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.02);
+      --shadow-md: 0 2px 4px rgba(0,0,0,0.02), 0 8px 16px rgba(0,0,0,0.03);
+      --shadow-lg: 0 4px 8px rgba(0,0,0,0.03), 0 16px 32px rgba(0,0,0,0.04);
+      --radius-sm: 16px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --radius-xl: 36px;
+    }
+
+    .dark {
+      --bg-base: #0C0E14;
+      --bg-card: #141820;
+      --text-primary: #F1F5F9;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --border-subtle: rgba(255, 255, 255, 0.04);
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --accent-soft: rgba(5, 150, 105, 0.12);
+      --accent-glow: rgba(16, 185, 129, 0.2);
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --blue-soft: rgba(59, 130, 246, 0.12);
+      --purple-soft: rgba(139, 92, 246, 0.12);
+      --red-soft: rgba(239, 68, 68, 0.12);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.15);
+      --shadow-md: 0 2px 4px rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.2);
+      --shadow-lg: 0 4px 8px rgba(0,0,0,0.3), 0 16px 32px rgba(0,0,0,0.25);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    ::selection { background: var(--accent-soft); color: var(--accent); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 3px; }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+    /* Arabic Typography — 35% larger for diacritics clarity */
+    .arabic {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      text-align: right;
+      line-height: 2.4;
+      letter-spacing: 0.01em;
+    }
+    .arabic-xs { font-size: 1.05rem; line-height: 2.2; }
+    .arabic-sm { font-size: 1.25rem; line-height: 2.4; }
+    .arabic-md { font-size: 1.5rem; line-height: 2.6; }
+    .arabic-lg { font-size: 1.85rem; line-height: 2.8; }
+    .arabic-xl { font-size: 2.25rem; line-height: 3; }
+    .arabic-2xl { font-size: 2.75rem; line-height: 3.2; }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px) { .bento-grid { gap: 24px; } }
+    @media (min-width: 1024px) {
+      .bento-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 1280px) {
+      .bento-grid { gap: 28px; }
+    }
+
+    .bento-span-2 { grid-column: span 1; }
+    @media (min-width: 1024px) { .bento-span-2 { grid-column: span 2; } }
+    .bento-span-3 { grid-column: span 1; }
+    @media (min-width: 768px) { .bento-span-3 { grid-column: span 2; } }
+    @media (min-width: 1024px) { .bento-span-3 { grid-column: span 3; } }
+
+    /* Bento Card */
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bento-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-soft);
+    }
+
+    .bento-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    @media (min-width: 768px) {
+      .bento-header { padding: 28px 32px; }
+    }
+
+    .bento-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+    }
+    .bento-icon-green { background: var(--accent-soft); color: var(--accent); }
+    .bento-icon-amber { background: var(--amber-soft); color: var(--amber); }
+    .bento-icon-blue { background: var(--blue-soft); color: var(--blue); }
+    .bento-icon-purple { background: var(--purple-soft); color: var(--purple); }
+
+    .bento-title { font-size: 1.05rem; font-weight: 700; }
+    .bento-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    .bento-body { padding: 28px; }
+    @media (min-width: 768px) {
+      .bento-body { padding: 32px; }
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(248, 249, 250, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .dark .nav { background: rgba(12, 14, 20, 0.85); }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    .nav-logo-icon {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(145deg, var(--accent), var(--accent-light));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35);
+    }
+    .nav-logo-icon .arabic { font-size: 1.6rem; color: white; line-height: 1; }
+    .nav-logo-text { font-weight: 800; font-size: 1.35rem; letter-spacing: -0.03em; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .nav-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 16px 24px;
+    }
+    .breadcrumb-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+    }
+    .breadcrumb-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .breadcrumb-link:hover { color: var(--accent); }
+    .breadcrumb-sep { color: var(--border-soft); }
+    .breadcrumb-current { color: var(--accent); font-weight: 600; }
+
+    /* Main Content */
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* Header Card */
+    .header-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .header-gradient {
+      background: linear-gradient(135deg, var(--accent-soft) 0%, transparent 60%);
+      padding: 32px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .header-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .header-badges { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.7rem;
+    }
+    .badge-green { background: var(--accent-soft); color: var(--accent); }
+    .badge-blue { background: var(--blue-soft); color: var(--blue); }
+    .header-title {
+      font-size: clamp(1.6rem, 4vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .header-subtitle { color: var(--text-secondary); font-size: 0.9rem; }
+    .header-status {
+      background: var(--bg-base);
+      border-radius: var(--radius-md);
+      padding: 16px 24px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .header-status-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; }
+    .header-status-value {
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .header-status-value.pending { color: var(--text-muted); }
+    .header-status-value.completed { color: var(--accent); }
+
+    /* Grammar Rule Box */
+    .rule-box {
+      background: linear-gradient(135deg, var(--accent-soft) 0%, rgba(236, 253, 245, 0.5) 100%);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .dark .rule-box {
+      background: linear-gradient(135deg, var(--accent-soft) 0%, rgba(5, 150, 105, 0.08) 100%);
+    }
+    .rule-arabic {
+      font-family: 'Amiri', serif;
+      font-size: 1.75rem;
+      color: var(--accent);
+      text-align: center;
+      direction: rtl;
+      line-height: 2.2;
+      margin-bottom: 16px;
+    }
+    .rule-translation {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    /* Rule Points */
+    .rule-points { list-style: none; }
+    .rule-point {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .rule-point:last-child { border-bottom: none; }
+    .rule-point-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .rule-point-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .rule-point-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Conjugation Table */
+    .conj-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    .conj-table th {
+      background: var(--bg-base);
+      padding: 14px 16px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      border-bottom: 2px solid var(--border-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .conj-table th:first-child { text-align: left; border-radius: 10px 0 0 0; }
+    .conj-table th:last-child { border-radius: 0 10px 0 0; }
+    .conj-table td {
+      padding: 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .conj-table td:first-child { text-align: left; font-weight: 500; }
+    .conj-table tr:last-child td { border-bottom: none; }
+    .conj-table tr:hover td { background: var(--bg-base); }
+    .conj-arabic {
+      font-family: 'Amiri', serif;
+      font-size: 1.15rem;
+      direction: rtl;
+    }
+
+    /* Word Breakdown */
+    .word-parts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: center;
+    }
+    .word-part {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+    .word-part-arabic {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .word-part-label { color: var(--text-muted); }
+
+    /* I'rab Analysis */
+    .example-card {
+      background: var(--bg-base);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .example-arabic {
+      font-family: 'Amiri', serif;
+      font-size: 1.75rem;
+      direction: rtl;
+      text-align: center;
+      line-height: 2.2;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .example-translation {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+    }
+
+    .analysis-grid { display: grid; gap: 12px; }
+    .analysis-item {
+      display: flex;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .analysis-word {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 18px;
+      background: var(--accent-soft);
+      font-family: 'Amiri', serif;
+      font-size: 1.2rem;
+      direction: rtl;
+      color: var(--accent);
+      font-weight: 600;
+      min-width: 110px;
+    }
+    .analysis-info {
+      flex: 1;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--bg-card);
+    }
+    .analysis-type {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .analysis-type i { color: var(--text-muted); font-size: 0.75rem; }
+    .analysis-irab {
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-top: 3px;
+    }
+
+    /* Notes Box */
+    .notes-box {
+      background: linear-gradient(135deg, var(--purple-soft) 0%, rgba(245, 243, 255, 0.5) 100%);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .dark .notes-box {
+      background: linear-gradient(135deg, var(--purple-soft) 0%, rgba(139, 92, 246, 0.08) 100%);
+    }
+    .notes-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .notes-title i { color: var(--purple); }
+    .note-point {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .note-point:last-child { border-bottom: none; }
+    .note-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--purple-soft);
+      color: var(--purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Practice Examples */
+    .practice-item {
+      background: var(--bg-base);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .practice-item:last-child { margin-bottom: 0; }
+    .practice-item .arabic-sm { color: var(--accent); margin-bottom: 6px; }
+    .practice-item .practice-translation { color: var(--text-secondary); font-size: 0.85rem; }
+
+    /* Action Card */
+    .action-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .action-info { display: flex; align-items: center; gap: 18px; }
+    .action-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+    .action-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+    .action-desc { font-size: 0.85rem; color: var(--text-secondary); }
+    .action-buttons { display: flex; gap: 12px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: linear-gradient(145deg, var(--accent), var(--accent-light));
+      color: white;
+      box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(5, 150, 105, 0.4);
+    }
+    .btn-secondary {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      border: 1px solid var(--border-soft);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-subtle);
+      padding: 40px 24px;
+    }
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 12px; }
+    .footer-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(145deg, var(--accent), var(--accent-light));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer-logo .arabic { font-size: 1.1rem; color: white; }
+    .footer-text { font-size: 0.85rem; color: var(--text-secondary); }
+    .footer-copyright {
+      width: 100%;
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up { animation: fadeInUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+    .opacity-0 { opacity: 0; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content { flex-direction: column; }
+      .header-status { width: 100%; }
+      .action-card { flex-direction: column; text-align: center; }
+      .action-buttons { width: 100%; flex-direction: column; }
+      .action-buttons .btn { width: 100%; }
+      .analysis-word { min-width: 90px; font-size: 1rem; padding: 12px 14px; }
+      .conj-table { font-size: 0.85rem; }
+      .conj-table th, .conj-table td { padding: 12px 10px; }
+      .conj-arabic { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">
+          <span class="arabic">م</span>
+        </div>
+        <span class="nav-logo-text">MBBA</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="student.html" class="nav-btn" title="Kembali ke Dashboard">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <button class="nav-btn" id="theme-toggle" aria-label="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <div class="breadcrumb-inner">
+      <a href="student.html" class="breadcrumb-link">
+        <i class="fa-solid fa-home"></i>
+      </a>
+      <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+      <a href="student.html" class="breadcrumb-link">Kitab Mukhtarat</a>
+      <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+      <a href="#" class="breadcrumb-link">Bagian 1</a>
+      <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+      <a href="#" class="breadcrumb-link">Bab 1</a>
+      <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+      <span class="breadcrumb-current">Ad-Dafridu fi al-Jumlah</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Header Card -->
+    <div class="header-card animate-fade-up">
+      <div class="header-gradient">
+        <div class="header-content">
+          <div>
+            <div class="header-badges">
+              <span class="badge badge-green">
+                <i class="fa-solid fa-book"></i>
+                1.1.1
+              </span>
+              <span class="badge badge-blue">
+                <i class="fa-solid fa-file-lines"></i>
+                FASAL
+              </span>
+            </div>
+            <h1 class="header-title">Ad-Dafridu fi al-Jumlah</h1>
+            <p class="header-subtitle">Bab 1 — Bagian 1 | Qaidah Kalimat (Ad-Dafridu)</p>
+          </div>
+          <div class="header-status">
+            <div class="header-status-label">Status</div>
+            <div class="header-status-value pending">
+              <i class="fa-regular fa-circle"></i>
+              Belum Dimulai
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="bento-grid">
+
+      <!-- Box 1: Grammar Rule Definition (Full Width) -->
+      <div class="bento-card bento-span-3 opacity-0" data-animate>
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-green">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div>
+            <h2 class="bento-title">Qaidah (Aturan Grammar)</h2>
+            <p class="bento-subtitle">Definisi dan Penjelasan</p>
+          </div>
+        </div>
+        <div class="bento-body">
+          <div class="rule-box">
+            <p class="rule-arabic">اَلدَّفْرُ ضِدُّ الْجَمْعِ</p>
+            <p class="rule-translation">"Daffr (penafian) adalah kebalikan dari Jam' (pengelompokan)"</p>
+          </div>
+
+          <ul class="rule-points">
+            <li class="rule-point">
+              <span class="rule-point-num">1</span>
+              <div>
+                <div class="rule-point-title">Isim Daffr (Kata Penafian)</div>
+                <div class="rule-point-desc">Kata yang menunjukkan penafian atau отрицание, digunakan untuk meniadakan sesuatu dalam kalimat.</div>
+              </div>
+            </li>
+            <li class="rule-point">
+              <span class="rule-point-num">2</span>
+              <div>
+                <div class="rule-point-title">Isim Ma'tuf (Kata yang Ditautkan)</div>
+                <div class="rule-point-desc">Kata yang mengikuti kata penafian, biasanya dalam keadaan jar (majrur).</div>
+              </div>
+            </li>
+            <li class="rule-point">
+              <span class="rule-point-num">3</span>
+              <div>
+                <div class="rule-point-title">Fi'il Ma'tuf (Kata Kerja Ditautkan)</div>
+                <div class="rule-point-desc">Kata kerja yang mengikuti Isim Ma'tuf, biasanya dalam bentuk mudhari' (present tense).</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Box 2: Verb Conjugation Table (Tashrif) -->
+      <div class="bento-card opacity-0" data-animate>
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-amber">
+            <i class="fa-solid fa-table-cells"></i>
+          </div>
+          <div>
+            <h2 class="bento-title">Tashrif (Konjugasi)</h2>
+            <p class="bento-subtitle">Tabel Konjugasi Fi'il</p>
+          </div>
+        </div>
+        <div class="bento-body">
+          <table class="conj-table">
+            <thead>
+              <tr>
+                <th>Kata</th>
+                <th>Arab</th>
+                <th>Arti</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Isim Daffr</td>
+                <td class="conj-arabic">لَيْسَ</td>
+                <td>bukan</td>
+              </tr>
+              <tr>
+                <td>Mudzakkar</td>
+                <td class="conj-arabic">لَيْسَ الْ...</td>
+                <td>bukan ... (lk)</td>
+              </tr>
+              <tr>
+                <td>Muannats</td>
+                <td class="conj-arabic">لَيْسَتِ الْ...</td>
+                <td>bukan ... (pr)</td>
+              </tr>
+              <tr>
+                <td>Jamak</td>
+                <td class="conj-arabic">لَيْسُوا الْ...</td>
+                <td>bukan ... (jm)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="word-parts">
+            <span class="word-part">
+              <span class="word-part-arabic">لَيْسَ</span>
+              <span class="word-part-label">= penafian</span>
+            </span>
+            <span class="word-part">
+              <span class="word-part-arabic">ت</span>
+              <span class="word-part-label">= ta marbuthah</span>
+            </span>
+            <span class="word-part">
+              <span class="word-part-arabic">ُوا</span>
+              <span class="word-part-label">= dhamir jamak</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box 3: Important Notes -->
+      <div class="bento-card opacity-0" data-animate>
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-purple">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <div>
+            <h2 class="bento-title">Catatan Penting</h2>
+            <p class="bento-subtitle">Poin-poin Tambahan</p>
+          </div>
+        </div>
+        <div class="bento-body">
+          <ul class="rule-points">
+            <li class="rule-point">
+              <span class="note-icon" style="background: var(--purple-soft); color: var(--purple);">!</span>
+              <div>
+                <div class="rule-point-title">Harakat I'rab</div>
+                <div class="rule-point-desc">Isim Daffr "Laisa" dirodkan karena fi'il mu'tal faa.</div>
+              </div>
+            </li>
+            <li class="rule-point">
+              <span class="note-icon" style="background: var(--purple-soft); color: var(--purple);">!</span>
+              <div>
+                <div class="rule-point-title">Ma'tuf alaih</div>
+                <div class="rule-point-desc">Isim Ma'tuf selalu majrur (berharakat kasrah).</div>
+              </div>
+            </li>
+            <li class="rule-point">
+              <span class="note-icon" style="background: var(--purple-soft); color: var(--purple);">!</span>
+              <div>
+                <div class="rule-point-title">Ma'tuf</div>
+                <div class="rule-point-desc">Fi'il Ma'tuf mengikuti Isim Ma'tuf dalam hal tashrif.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Box 4: I'rab Analysis Example 1 (Wide) -->
+      <div class="bento-card bento-span-2 opacity-0" data-animate>
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-blue">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </div>
+          <div>
+            <h2 class="bento-title">Analisis I'rab (1)</h2>
+            <p class="bento-subtitle">Penjabaran Case Endings</p>
+          </div>
+        </div>
+        <div class="bento-body">
+          <div class="example-card">
+            <p class="example-arabic">هَذَا الضَّبْعُ مُسْتَقِيمٌ</p>
+            <p class="example-translation">"Ini (binatang buas) singa berjalan tegak"</p>
+
+            <div class="analysis-grid">
+              <div class="analysis-item">
+                <div class="analysis-word">هَذَا</div>
+                <div class="analysis-info">
+                  <span class="analysis-type">
+                    <i class="fa-solid fa-tag"></i>
+                    Isim Isyarah (Demonstrative)
+                  </span>
+                  <span class="analysis-irab">Rofa' (Mubtada')</span>
+                </div>
+              </div>
+
+              <div class="analysis-item">
+                <div class="analysis-word">الضَّبْعُ</div>
+                <div class="analysis-info">
+                  <span class="analysis-type">
+                    <i class="fa-solid fa-tag"></i>
+                    Ism (Subjek)
+                  </span>
+                  <span class="analysis-irab">Rofa' (Khabar)</span>
+                </div>
+              </div>
+
+              <div class="analysis-item">
+                <div class="analysis-word">مُسْتَقِيمٌ</div>
+                <div class="analysis-info">
+                  <span class="analysis-type">
+                    <i class="fa-solid fa-tag"></i>
+                    Sifah (Adjective)
+                  </span>
+                  <span class="analysis-irab">Rofa' (Na'at)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="notes-box" style="background: linear-gradient(135deg, var(--blue-soft) 0%, rgba(59, 130, 246, 0.08) 100%);">
+            <div class="notes-title" style="color: var(--blue);">
+              <i class="fa-solid fa-circle-info"></i>
+              Pola Kalimat
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7;">
+              <strong>Pola:</strong> Isim Isyarah + Ism (mudzakkar) + Sifah<br>
+              <strong>Ciri:</strong> Dhammah pada akhir kata (rofa')
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box 5: I'rab Analysis Example 2 -->
+      <div class="bento-card opacity-0" data-animate>
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-blue">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </div>
+          <div>
+            <h2 class="bento-title">Analisis I'rab (2)</h2>
+            <p class="bento-subtitle">Contoh Muannats</p>
+          </div>
+        </div>
+        <div class="bento-body">
+          <div class="example-card">
+            <p class="example-arabic">هَذِهِ الْبَقَرَةُ مُسْتَقِيمَةٌ</p>
+            <p class="example-translation">"Ini (binatang) sapi berjalan tegak"</p>
+
+            <div class="analysis-grid">
+              <div class="analysis-item">
+                <div class="analysis-word">هَذِهِ</div>
+                <div class="analysis-info">
+                  <span class="analysis-type">
+                    <i class="fa-solid fa-tag"></i>
+                    Isim Isyarah (Muannats)
+                  </span>
+                  <span class="analysis-irab">Rofa' (Mubtada')</span>
+                </div>
+              </div>
+
+              <div class="analysis-item">
+                <div class="analysis-word">الْبَقَرَةُ</div>
+                <div class="analysis-info">
+                  <span class="analysis-type">
+                    <i class="fa-solid fa-tag"></i>
+                    Ism (Muannats)
+                  </span>
+                  <span class="analysis-irab">Rofa' (Khabar)</span>
+                </div>
+              </div>
+
+              <div class="analysis-item">
+                <div class="analysis-word">مُسْتَقِيمَةٌ</div>
+                <div class="analysis-info">
+                  <span class="analysis-type">
+                    <i class="fa-solid fa-tag"></i>
+                    Sifah (Muannats)
+                  </span>
+                  <span class="analysis-irab">Rofa' (Na'at) — Ta Marbuthah</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="word-parts" style="margin-top: 16px;">
+            <span class="word-part">
+              <span class="word-part-arabic">هُ</span>
+              <span class="word-part-label">= dhammah (mudzakkar)</span>
+            </span>
+            <span class="word-part">
+              <span class="word-part-arabic">هِ</span>
+              <span class="word-part-label">= kasrah (muannats)</span>
+            </span>
+            <span class="word-part">
+              <span class="word-part-arabic">ٌ</span>
+              <span class="word-part-label">= dhammah</span>
+            </span>
+            <span class="word-part">
+              <span class="word-part-arabic">َةٌ</span>
+              <span class="word-part-label">= ta marbuthah</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Box 6: Practice Sentences (Wide) -->
+      <div class="bento-card bento-span-2 opacity-0" data-animate>
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-green">
+            <i class="fa-solid fa-pencil"></i>
+          </div>
+          <div>
+            <h2 class="bento-title">Latihan</h2>
+            <p class="bento-subtitle">Kalimat Contoh</p>
+          </div>
+        </div>
+        <div class="bento-body">
+          <div class="practice-item">
+            <p class="arabic-md">هَذَا الْجِلْدُ وَاسِعٌ</p>
+            <p class="practice-translation">"Kulit ini luas"</p>
+          </div>
+          <div class="practice-item">
+            <p class="arabic-md">هَذِهِ النَّخْلَةُ طَوِيلَةٌ</p>
+            <p class="practice-translation">"Pohon kurma ini tinggi"</p>
+          </div>
+          <div class="practice-item">
+            <p class="arabic-md">اَلنَّخْلَةُ طَوِيلَةٌ</p>
+            <p class="practice-translation">"Pohon kurma itu tinggi"</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Action Card -->
+    <div class="action-card animate-fade-up delay-500">
+      <div class="action-info">
+        <div class="action-icon">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <div>
+          <h3 class="action-title">Tes Verifikasi</h3>
+          <p class="action-desc">Jawab pertanyaan untuk menyelesaikan fasal ini</p>
+        </div>
+      </div>
+      <div class="action-buttons">
+        <a href="student.html" class="btn btn-secondary">
+          <i class="fa-solid fa-list"></i>
+          Daftar Fasal
+        </a>
+        <button class="btn btn-primary" onclick="startQuiz()">
+          <i class="fa-solid fa-play"></i>
+          Mulai Tes
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="arabic">م</span>
+        </div>
+        <span class="footer-text">MBBA — Madrasah Belajar Bahasa Arab</span>
+      </div>
+      <p class="footer-copyright">&copy; 2024 MBBA. Hak Cipta Dilindungi.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('mbba-theme') === 'dark' ||
+        (!localStorage.getItem('mbba-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+      themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+      localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
+      themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    });
+
+    // Start Quiz
+    function startQuiz() {
+      alert('Fitur kuis akan segera hadir! Sambungkan ke database Supabase untuk mengaktifkan.');
+    }
+
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-up');
+          entry.target.classList.remove('opacity-0');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('[data-animate]').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

@@ -4,188 +4,814 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Materi — MBBA</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2316a34a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
-  <link rel="stylesheet" href="../css/output.css">
-  <link rel="stylesheet" href="../css/modern.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23059669' width='32' height='32' rx='8'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Amiri,serif' font-size='20' fill='white'>م</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/output.css">
   <style>
-    .arabic-text {
+    :root {
+      --bg-base: #F8F9FA;
+      --bg-card: #FFFFFF;
+      --text-primary: #1A1D23;
+      --text-secondary: #4A5568;
+      --text-muted: #94A3B8;
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --border-soft: rgba(0, 0, 0, 0.08);
+      --accent: #059669;
+      --accent-light: #10B981;
+      --accent-soft: #ECFDF5;
+      --amber: #F59E0B;
+      --amber-soft: #FFFBEB;
+      --blue: #3B82F6;
+      --blue-soft: #EFF6FF;
+      --purple: #8B5CF6;
+      --purple-soft: #F5F3FF;
+      --red: #EF4444;
+      --red-soft: #FEF2F2;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.02);
+      --shadow-md: 0 2px 4px rgba(0,0,0,0.02), 0 8px 16px rgba(0,0,0,0.03);
+      --shadow-lg: 0 4px 8px rgba(0,0,0,0.03), 0 16px 32px rgba(0,0,0,0.04);
+      --radius-sm: 16px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+    }
+
+    .dark {
+      --bg-base: #0C0E14;
+      --bg-card: #141820;
+      --bg-elevated: #1A1F2B;
+      --text-primary: #F1F5F9;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --border-subtle: rgba(255, 255, 255, 0.04);
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --accent-soft: rgba(5, 150, 105, 0.12);
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --blue-soft: rgba(59, 130, 246, 0.12);
+      --purple-soft: rgba(139, 92, 246, 0.12);
+      --red-soft: rgba(239, 68, 68, 0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    ::selection { background: var(--accent-soft); color: var(--accent); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 3px; }
+
+    /* Arabic Typography — 35% larger for diacritics */
+    .arabic {
       font-family: 'Amiri', serif;
       direction: rtl;
       text-align: right;
       line-height: 2.4;
+      letter-spacing: 0.01em;
+    }
+    .arabic-sm { font-size: 1.25rem; line-height: 2.4; }
+    .arabic-md { font-size: 1.6rem; line-height: 2.6; }
+    .arabic-lg { font-size: 2rem; line-height: 2.8; }
+    .arabic-xl { font-size: 2.4rem; line-height: 3; }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 768px) {
+      .bento-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .bento-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    }
+
+    .bento-span-2 { grid-column: span 1; }
+    @media (min-width: 1024px) { .bento-span-2 { grid-column: span 2; } }
+    .bento-span-3 { grid-column: span 1; }
+    @media (min-width: 768px) { .bento-span-3 { grid-column: span 2; } }
+    @media (min-width: 1024px) { .bento-span-3 { grid-column: span 3; } }
+
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bento-inner {
+      padding: 24px;
+    }
+    @media (min-width: 768px) {
+      .bento-inner { padding: 28px; }
+    }
+
+    /* Navigation */
+    .nav {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(248, 249, 250, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .dark .nav {
+      background: rgba(12, 14, 20, 0.9);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    .nav-logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(145deg, var(--accent), var(--accent-light));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+    }
+    .nav-logo-icon .arabic { font-size: 1.5rem; color: white; font-family: 'Amiri', serif; }
+    .nav-logo-text { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .nav-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+    }
+    .nav-btn-text {
+      width: auto;
+      padding: 0 16px;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 16px 24px;
+    }
+    .breadcrumb-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .breadcrumb-list {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+    }
+    .breadcrumb-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .breadcrumb-link:hover { color: var(--accent); }
+    .breadcrumb-sep { color: var(--text-muted); }
+    .breadcrumb-current { color: var(--accent); font-weight: 600; }
+
+    /* Main Container */
+    .main-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Header Card */
+    .header-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .header-card-inner {
+      background: linear-gradient(135deg, var(--accent-soft), #D1FAE5);
+      padding: 24px;
+      border-bottom: 1px solid rgba(5, 150, 105, 0.1);
+    }
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-green { background: var(--accent-soft); color: var(--accent); }
+    .badge-amber { background: var(--amber-soft); color: var(--amber); }
+    .badge-blue { background: var(--blue-soft); color: var(--blue); }
+    .badge-slate { background: var(--bg-base); color: var(--text-muted); }
+    .badge-success { background: var(--accent-soft); color: var(--accent); }
+    .header-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .header-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .header-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Bento Card Header */
+    .bento-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .bento-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .bento-icon-green { background: var(--accent-soft); color: var(--accent); }
+    .bento-icon-blue { background: var(--blue-soft); color: var(--blue); }
+    .bento-icon-purple { background: var(--purple-soft); color: var(--purple); }
+    .bento-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Content Boxes */
+    .content-box {
+      padding: 24px;
+    }
+    .arabic-content {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      text-align: right;
+      line-height: 2.6;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+    }
+    .translation-content {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    /* Quiz Action Card */
+    .quiz-action-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .quiz-action-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    .quiz-action-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .quiz-action-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-soft);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
       font-size: 1.25rem;
     }
-    .option-card {
-      transition: all 0.2s ease;
+    .quiz-action-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
     }
-    .option-card:hover:not(.selected):not(.disabled) {
-      border-color: #16a34a;
-      background: #ecfdf5;
+    .quiz-action-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
-    .option-card.selected {
-      border-color: #16a34a;
-      background: #ecfdf5;
-      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+    .quiz-action-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
     }
-    .option-card.correct {
-      border-color: #22c55e;
-      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      text-decoration: none;
     }
-    .option-card.incorrect {
-      border-color: #ef4444;
-      background: linear-gradient(135deg, #fee2e2, #fecaca);
+    .btn-primary {
+      background: linear-gradient(145deg, var(--accent), var(--accent-light));
+      color: white;
+      box-shadow: 0 4px 16px rgba(5, 150, 105, 0.25);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+    }
+    .btn-secondary {
+      background: var(--bg-base);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-soft);
+    }
+    .btn-secondary:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    /* Quiz Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 29, 35, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .modal-content {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 640px;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .modal-title-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-soft);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+    .modal-title-text h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .modal-title-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .modal-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+    }
+    .modal-close:hover {
+      background: var(--bg-base);
+      color: var(--text-primary);
+    }
+
+    /* Progress Bar */
+    .quiz-progress {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .quiz-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .quiz-progress-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .quiz-progress-percent {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .quiz-progress-bar {
+      height: 6px;
+      background: var(--bg-base);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .quiz-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+    .quiz-progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     .progress-dot {
-      transition: all 0.3s ease;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--bg-base);
+      transition: all 0.3s;
+      cursor: pointer;
     }
     .progress-dot.current {
+      background: var(--accent);
       transform: scale(1.3);
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
+    .progress-dot.answered { background: var(--blue); }
+    .progress-dot.correct { background: var(--accent); }
+    .progress-dot.wrong { background: var(--red); }
+
+    /* Quiz Body */
+    .quiz-body {
+      padding: 24px;
     }
-    .float-animation {
-      animation: float 3s ease-in-out infinite;
+    .quiz-question-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .quiz-question-type.mc { background: var(--blue-soft); color: var(--blue); }
+    .quiz-question-type.arab { background: var(--accent-soft); color: var(--accent); }
+    .quiz-question-type.latin { background: var(--amber-soft); color: var(--amber); }
+    .quiz-question-box {
+      padding: 20px;
+      background: var(--bg-base);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+    }
+    .quiz-question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-card);
+      border: 2px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .quiz-option:hover:not(.disabled) {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .quiz-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .quiz-option.correct {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .quiz-option.incorrect {
+      border-color: var(--red);
+      background: var(--red-soft);
+    }
+    .quiz-option-key {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      background: var(--bg-base);
+      color: var(--text-muted);
+    }
+    .quiz-option.selected .quiz-option-key {
+      background: var(--accent);
+      color: white;
+    }
+    .quiz-option-text {
+      flex: 1;
+      font-weight: 500;
+    }
+    .quiz-option-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .quiz-option.selected .quiz-option-check {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: white;
+    }
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      margin-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Fill Input */
+    .quiz-fill-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+    .quiz-fill-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      color: var(--text-muted);
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up {
+      animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-white to-slate-100 font-sans antialiased min-h-screen">
+<body>
 
-  <!-- Header -->
-  <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50">
-    <div class="max-w-4xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
       <div class="flex items-center gap-3">
-        <a href="student.html" class="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-primary-600 transition-all">
+        <a href="student.html" class="nav-btn">
           <i class="fa-solid fa-arrow-left"></i>
         </a>
-        <a href="student.html" class="flex items-center gap-2 group">
-          <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-md">
-            <span class="text-white font-bold text-sm" style="font-family: 'Amiri', serif;">م</span>
+        <a href="student.html" class="nav-logo">
+          <div class="nav-logo-icon">
+            <span class="arabic">م</span>
           </div>
-          <span class="font-bold text-lg text-dark-800 hidden sm:block">MBBA</span>
+          <span class="nav-logo-text">MBBA</span>
         </a>
       </div>
-      <div class="flex items-center gap-2">
-        <a id="adminLinkMateri" href="admin.html" class="p-2.5 rounded-xl hover:bg-amber-50 text-amber-500 hidden transition-all" title="Admin Panel">
-          <i class="fa-solid fa-gear text-sm"></i>
+      <div class="nav-actions">
+        <a id="adminLinkMateri" href="admin.html" class="nav-btn hidden" title="Admin Panel">
+          <i class="fa-solid fa-gear"></i>
         </a>
-        <button onclick="handleLogout()" class="p-2.5 rounded-xl hover:bg-red-50 text-slate-400 hover:text-red-500 transition-all" title="Logout">
-          <i class="fa-solid fa-right-from-bracket text-sm"></i>
+        <button onclick="handleLogout()" class="nav-btn" title="Logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
     </div>
-  </header>
+  </nav>
 
   <!-- Breadcrumb -->
-  <div class="bg-white border-b border-slate-100">
-    <div class="max-w-4xl mx-auto px-4 md:px-6 py-4">
-      <div class="flex items-center gap-2 text-sm text-slate-500 flex-wrap">
-        <a href="student.html" class="hover:text-primary-600 flex items-center gap-1 font-medium">
+  <div class="breadcrumb">
+    <div class="breadcrumb-inner">
+      <div class="breadcrumb-list">
+        <a href="student.html" class="breadcrumb-link">
           <i class="fa-solid fa-home text-xs"></i>
-          <span>Dashboard</span>
         </a>
-        <i class="fa-solid fa-chevron-right text-xs text-slate-300"></i>
-        <span id="breadcrumbKitab" class="text-primary-700 font-semibold">Kitab Mukhtarat</span>
-      </div>
-      <div class="flex items-center gap-2 text-sm text-slate-400 mt-1 ml-6 flex-wrap">
-        <i class="fa-solid fa-chevron-right text-xs"></i>
-        <span id="breadcrumbBagian">Bagian 1</span>
-        <i class="fa-solid fa-chevron-right text-xs"></i>
-        <span id="breadcrumbBab">Bab 1</span>
-        <i class="fa-solid fa-chevron-right text-xs"></i>
-        <span id="breadcrumbFasal" class="text-slate-700 font-medium">Muqoddimah</span>
+        <i class="fa-solid fa-chevron-right text-xs breadcrumb-sep"></i>
+        <span id="breadcrumbKitab" class="breadcrumb-current">Kitab Mukhtarat</span>
+        <i class="fa-solid fa-chevron-right text-xs breadcrumb-sep"></i>
+        <span id="breadcrumbBagian" class="breadcrumb-link">Bagian 1</span>
+        <i class="fa-solid fa-chevron-right text-xs breadcrumb-sep"></i>
+        <span id="breadcrumbBab" class="breadcrumb-link">Bab 1</span>
+        <i class="fa-solid fa-chevron-right text-xs breadcrumb-sep"></i>
+        <span id="breadcrumbFasal" class="breadcrumb-link">Fasal</span>
       </div>
     </div>
   </div>
 
   <!-- Main Content -->
-  <main class="max-w-4xl mx-auto px-4 md:px-6 py-8">
+  <main class="main-container">
 
     <!-- Header Card -->
-    <div class="bg-white rounded-2xl md:rounded-3xl shadow-card overflow-hidden mb-4 md:mb-6 animate-fade-in-up">
-      <div class="bg-gradient-to-r from-primary-50 via-white to-primary-50/50 px-4 sm:px-6 py-4 sm:py-6 border-b border-primary-100">
-        <div class="flex flex-col gap-3">
-          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-            <div class="text-center sm:text-left w-full">
-              <div class="flex items-center justify-center sm:justify-start gap-2 mb-2 sm:mb-3 flex-wrap">
-                <span id="fasalNumber" class="text-xs bg-primary-100 text-primary-700 px-2 sm:px-3 py-1 rounded-full font-semibold">1.1</span>
-                <span id="fasalType" class="text-xs bg-amber-100 text-amber-700 px-2 sm:px-3 py-1 rounded-full font-semibold">Muqoddimah</span>
-              </div>
-              <h1 id="fasalTitle" class="text-xl sm:text-2xl md:text-3xl font-bold text-dark-800 mb-1">Memuat...</h1>
-              <p id="fasalBab" class="text-xs sm:text-sm text-slate-500">Memuat...</p>
+    <div class="header-card animate-fade-up">
+      <div class="header-card-inner">
+        <div class="header-top">
+          <div>
+            <div class="header-badges">
+              <span id="fasalNumber" class="badge badge-green">1.1</span>
+              <span id="fasalType" class="badge badge-amber">MUQODDIMAH</span>
             </div>
-            <div id="fasalStatus" class="badge px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-600 self-center sm:self-auto">
-              -
-            </div>
+            <h1 id="fasalTitle" class="header-title">Memuat...</h1>
+            <p id="fasalBab" class="header-subtitle">Bab 1 dari Bagian 1</p>
+          </div>
+          <div id="fasalStatus" class="header-status">
+            <i class="fa-regular fa-circle"></i>
+            <span>Belum Dimulai</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Content Card -->
-    <div class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 animate-fade-in-up">
-      <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-        <h2 class="text-lg font-semibold text-dark-800 flex items-center gap-3">
-          <div class="w-9 h-9 bg-primary-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-book-open text-primary-600"></i>
+    <!-- Content Grid -->
+    <div class="bento-grid">
+
+      <!-- Arabic Content Card -->
+      <div class="bento-card bento-span-3 animate-fade-up">
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-green">
+            <i class="fa-solid fa-book-open"></i>
           </div>
-          Konten Materi
-        </h2>
-      </div>
-      <div id="fasalContent" class="p-6">
-        <div class="arabic-text min-h-[200px] text-slate-700">
-          <div class="text-center py-12">
-            <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <div class="spinner"></div>
-            </div>
-            <p class="text-slate-500">Memuat konten...</p>
+          <h2 class="bento-title">Konten Materi</h2>
+        </div>
+        <div id="fasalContent" class="content-box arabic-content">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Memuat konten...</p>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Translation Card -->
-    <div id="translationSection" class="card bg-white rounded-3xl shadow-card overflow-hidden mb-6 hidden animate-fade-in-up">
-      <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-info-50/30 to-white">
-        <h2 class="text-lg font-semibold text-dark-800 flex items-center gap-3">
-          <div class="w-9 h-9 bg-info-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-language text-info-500"></i>
+      <!-- Translation Card -->
+      <div id="translationSection" class="bento-card bento-span-3 hidden animate-fade-up">
+        <div class="bento-header">
+          <div class="bento-icon bento-icon-blue">
+            <i class="fa-solid fa-language"></i>
           </div>
-          Terjemahan
-        </h2>
+          <h2 class="bento-title">Terjemahan</h2>
+        </div>
+        <div id="fasalTranslation" class="content-box translation-content">
+        </div>
       </div>
-      <div id="fasalTranslation" class="p-6 text-slate-600 leading-relaxed">
-      </div>
+
     </div>
 
     <!-- Quiz Action Card -->
-    <div class="bg-white rounded-2xl md:rounded-3xl shadow-card overflow-hidden animate-fade-in-up">
-      <div class="px-4 sm:px-6 py-4 sm:py-5">
-        <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div class="text-center sm:text-left w-full">
-            <h3 class="text-base sm:text-lg font-bold text-dark-800 flex items-center justify-center sm:justify-start gap-2 sm:gap-3">
-              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg sm:rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-clipboard-check text-primary-600 text-sm sm:text-base"></i>
-              </div>
-              Tes Verifikasi
-            </h3>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Jawab pertanyaan untuk menyelesaikan</p>
+    <div class="quiz-action-card animate-fade-up">
+      <div class="quiz-action-inner">
+        <div class="quiz-action-content">
+          <div class="quiz-action-icon">
+            <i class="fa-solid fa-clipboard-check"></i>
           </div>
-          <div class="flex gap-2 w-full sm:w-auto justify-center">
-            <a href="student.html" class="btn bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 px-3 sm:px-4 text-xs sm:text-sm">
-              <i class="fa-solid fa-list mr-1 sm:mr-2"></i>
-              <span class="hidden sm:inline">Daftar</span>
-            </a>
-            <button onclick="startQuiz()" id="startQuizBtn"
-              class="btn bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg shadow-primary-500/30 py-2 px-3 sm:px-5 text-xs sm:text-sm">
-              <i class="fa-solid fa-play mr-1 sm:mr-2"></i>
-              <span>Mulai Tes</span>
-            </button>
+          <div>
+            <h3 class="quiz-action-title">Tes Verifikasi</h3>
+            <p class="quiz-action-desc">Jawab pertanyaan untuk menyelesaikan fasal</p>
           </div>
+        </div>
+        <div class="quiz-action-btns">
+          <a href="student.html" class="btn btn-secondary">
+            <i class="fa-solid fa-list"></i>
+            <span>Daftar</span>
+          </a>
+          <button onclick="startQuiz()" id="startQuizBtn" class="btn btn-primary">
+            <i class="fa-solid fa-play"></i>
+            <span>Mulai Tes</span>
+          </button>
         </div>
       </div>
     </div>
@@ -193,49 +819,36 @@
   </main>
 
   <!-- Quiz Modal -->
-  <div id="quizModal" class="fixed inset-0 bg-dark-900/60 backdrop-blur-sm z-50 hidden overflow-y-auto py-4 sm:py-8">
-    <div class="max-w-lg sm:max-w-2xl mx-auto px-4 animate-fade-in-up">
-      <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
-
-        <!-- Quiz Header -->
-        <div class="bg-gradient-to-r from-primary-50 to-white px-6 py-4 border-b border-primary-100">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-clipboard-check text-primary-600"></i>
-              </div>
-              <div>
-                <h2 class="font-bold text-dark-800" id="quizModalTitle">Tes Verifikasi</h2>
-                <p class="text-sm text-slate-500" id="quizFasalName"></p>
-              </div>
-            </div>
-            <button onclick="closeQuiz()" class="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all">
-              <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
+  <div id="quizModal" class="modal-backdrop hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">
+          <div class="modal-title-icon">
+            <i class="fa-solid fa-clipboard-check"></i>
           </div>
-
-          <!-- Progress Bar -->
-          <div class="mt-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-sm text-slate-500">Soal <span id="currentQ">1</span> dari <span id="totalQ">10</span></span>
-              <span class="text-sm font-semibold text-primary-600" id="progressPercent">0%</span>
-            </div>
-            <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div id="progressBar" class="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500" style="width: 10%"></div>
-            </div>
-
-            <!-- Question dots -->
-            <div id="questionDots" class="flex justify-center gap-2 mt-3 flex-wrap">
-              <!-- Dots will be rendered here -->
-            </div>
+          <div class="modal-title-text">
+            <h3>Tes Verifikasi</h3>
+            <p id="quizFasalName"></p>
           </div>
         </div>
+        <button onclick="closeQuiz()" class="modal-close">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
 
-        <!-- Quiz Content -->
-        <div id="quizContent" class="p-6">
-          <!-- Question content will be rendered here -->
+      <div class="quiz-progress">
+        <div class="quiz-progress-header">
+          <span class="quiz-progress-text">Soal <span id="currentQ">1</span> dari <span id="totalQ">10</span></span>
+          <span class="quiz-progress-percent" id="progressPercent">0%</span>
         </div>
+        <div class="quiz-progress-bar">
+          <div id="progressBar" class="quiz-progress-fill" style="width: 10%"></div>
+        </div>
+        <div id="questionDots" class="quiz-progress-dots">
+        </div>
+      </div>
 
+      <div id="quizContent" class="quiz-body">
       </div>
     </div>
   </div>
@@ -266,7 +879,6 @@
       } else if (fasalId) {
         await loadFasal(fasalId);
       } else {
-        alert('ID tidak ditemukan');
         window.location.href = 'student.html';
       }
     })();
@@ -280,7 +892,6 @@
         var bab = data[0];
 
         if (!bab) {
-          alert('Bab tidak ditemukan');
           window.location.href = 'student.html';
           return;
         }
@@ -295,9 +906,9 @@
         document.getElementById('fasalTitle').textContent = bab.title || 'Muqoddimah';
         document.getElementById('fasalNumber').textContent = (bab.bagian ? bab.bagian.order_index : 1) + '.' + bab.order_index;
         document.getElementById('fasalType').textContent = 'MUQODDIMAH';
-        document.getElementById('fasalType').className = 'text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-semibold';
+        document.getElementById('fasalType').className = 'badge badge-amber';
         document.getElementById('fasalBab').textContent = 'Bab ' + bab.order_index + ' dari Bagian ' + (bab.bagian ? bab.bagian.order_index : 1);
-        document.getElementById('quizModalTitle').textContent = 'Tes Muqoddimah';
+        document.getElementById('quizFasalName').textContent = 'Tes Muqoddimah';
 
         var content = bab.content_arab || '<p class="text-center text-slate-400 py-8">Konten belum tersedia</p>';
         document.getElementById('fasalContent').innerHTML = content;
@@ -327,7 +938,7 @@
         if (quizBank.length === 0) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
-          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock mr-2"></i>Belum Ada Quiz';
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Quiz';
         }
 
       } catch (err) {
@@ -339,7 +950,6 @@
       try {
         var fasal = await fetchFasal(fasalId);
         if (!fasal) {
-          alert('Fasal tidak ditemukan');
           window.location.href = 'student.html';
           return;
         }
@@ -367,9 +977,9 @@
         document.getElementById('fasalTitle').textContent = fasal.title || 'Fasal';
         document.getElementById('fasalNumber').textContent = bagianOrder + '.' + babOrder + '.' + fasal.order_index;
         document.getElementById('fasalType').textContent = 'FASAL';
-        document.getElementById('fasalType').className = 'text-xs bg-info-100 text-info-600 px-3 py-1 rounded-full font-semibold';
+        document.getElementById('fasalType').className = 'badge badge-blue';
         document.getElementById('fasalBab').textContent = babTitle + ' dari Bagian ' + bagianOrder;
-        document.getElementById('quizModalTitle').textContent = 'Tes ' + (fasal.title || 'Fasal');
+        document.getElementById('quizFasalName').textContent = 'Tes ' + (fasal.title || 'Fasal');
 
         var content = fasal.content_arab || '<p class="text-center text-slate-400 py-8">Konten belum tersedia</p>';
         document.getElementById('fasalContent').innerHTML = content;
@@ -389,7 +999,7 @@
         if (quizBank.length === 0) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
-          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock mr-2"></i>Belum Ada Quiz';
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Quiz';
         }
 
       } catch (err) {
@@ -400,17 +1010,17 @@
     function updateStatus(progress) {
       var statusEl = document.getElementById('fasalStatus');
       if (!progress) {
-        statusEl.className = 'badge px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600';
-        statusEl.innerHTML = '<i class="fa-regular fa-circle mr-1"></i> Belum Dimulai';
+        statusEl.className = 'header-status';
+        statusEl.innerHTML = '<i class="fa-regular fa-circle"></i><span>Belum Dimulai</span>';
       } else if (progress.status === 'completed') {
-        statusEl.className = 'badge px-4 py-2 rounded-xl text-sm font-semibold bg-success-100 text-success-600';
-        statusEl.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Lulus (' + progress.quiz_score + '%)';
+        statusEl.className = 'header-status badge badge-success';
+        statusEl.innerHTML = '<i class="fa-solid fa-check"></i><span>Lulus (' + progress.quiz_score + '%)</span>';
       } else if (progress.status === 'unlocked') {
-        statusEl.className = 'badge px-4 py-2 rounded-xl text-sm font-semibold bg-warning-100 text-warning-600';
-        statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Sedang Dikerjakan';
+        statusEl.className = 'header-status badge badge-amber';
+        statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Sedang Dikerjakan</span>';
       } else {
-        statusEl.className = 'badge px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600';
-        statusEl.innerHTML = '<i class="fa-regular fa-circle mr-1"></i> Belum Dimulai';
+        statusEl.className = 'header-status';
+        statusEl.innerHTML = '<i class="fa-regular fa-circle"></i><span>Belum Dimulai</span>';
       }
     }
 
@@ -421,10 +1031,7 @@
     var answeredQuestions = {};
 
     function startQuiz() {
-      if (quizBank.length === 0) {
-        alert('Belum ada quiz');
-        return;
-      }
+      if (quizBank.length === 0) return;
       document.getElementById('quizModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
 
@@ -458,55 +1065,37 @@
       var container = document.getElementById('quizContent');
       var answers = state.selectedAnswers || {};
 
-      // Update progress
       document.getElementById('currentQ').textContent = currentQuestionIndex + 1;
       var percent = Math.round(((currentQuestionIndex + 1) / state.questions.length) * 100);
       document.getElementById('progressPercent').textContent = percent + '%';
       document.getElementById('progressBar').style.width = percent + '%';
 
-      // Render dots
       var dotsHtml = '';
       state.questions.forEach(function(qi, i) {
         var isAnswered = answers[qi.id] ? true : false;
         var isCurrent = i === currentQuestionIndex;
         var isCorrect = answeredQuestions[qi.id] === true;
         var isWrong = answeredQuestions[qi.id] === false;
-
-        var dotClass = 'w-3 h-3 rounded-full transition-all ';
-        if (isCurrent) {
-          dotClass += 'bg-primary-500 scale-125';
-        } else if (isCorrect) {
-          dotClass += 'bg-success-500';
-        } else if (isWrong) {
-          dotClass += 'bg-red-400';
-        } else if (isAnswered) {
-          dotClass += 'bg-info-400';
-        } else {
-          dotClass += 'bg-slate-300';
-        }
-
-        dotsHtml += '<button onclick="goToQuestion(' + i + ')" class="progress-dot ' + dotClass + '" title="Soal ' + (i + 1) + '"></button>';
+        var dotClass = 'progress-dot';
+        if (isCurrent) dotClass += ' current';
+        else if (isCorrect) dotClass += ' correct';
+        else if (isWrong) dotClass += ' wrong';
+        else if (isAnswered) dotClass += ' answered';
+        dotsHtml += '<button onclick="goToQuestion(' + i + ')" class="' + dotClass + '" title="Soal ' + (i + 1) + '"></button>';
       });
       document.getElementById('questionDots').innerHTML = dotsHtml;
 
-      // Question content
       var qText = q.question;
-      container.innerHTML = '<div class="mb-6">';
+      container.innerHTML = '';
 
-      // Question type badge
       var typeBadge = '';
-      if (q.type === 'mc') typeBadge = '<span class="inline-block px-3 py-1 bg-info-100 text-info-600 text-xs font-semibold rounded-full mb-3"><i class="fa-solid fa-list-check mr-1"></i>Pilihan Ganda</span>';
-      else if (q.type === 'fill-arab') typeBadge = '<span class="inline-block px-3 py-1 bg-primary-100 text-primary-600 text-xs font-semibold rounded-full mb-3"><i class="fa-solid fa-pen mr-1"></i>Isi Arab</span>';
-      else typeBadge = '<span class="inline-block px-3 py-1 bg-warning-100 text-warning-600 text-xs font-semibold rounded-full mb-3"><i class="fa-solid fa-pen mr-1"></i>Isi Latin</span>';
+      if (q.type === 'mc') typeBadge = '<span class="quiz-question-type mc"><i class="fa-solid fa-list-check"></i>Pilihan Ganda</span>';
+      else if (q.type === 'fill-arab') typeBadge = '<span class="quiz-question-type arab"><i class="fa-solid fa-pen"></i>Isi Arab</span>';
+      else typeBadge = '<span class="quiz-question-type latin"><i class="fa-solid fa-pen"></i>Isi Latin</span>';
 
       container.innerHTML += typeBadge;
+      container.innerHTML += '<div class="quiz-question-box"><p class="quiz-question-text">' + qText + '</p></div>';
 
-      // Question text
-      container.innerHTML += '<div class="p-5 bg-gradient-to-r from-slate-50 to-white rounded-2xl border border-slate-200 mb-6">';
-      container.innerHTML += '<p class="text-lg font-medium text-dark-800 leading-relaxed">' + qText + '</p>';
-      container.innerHTML += '</div>';
-
-      // Options
       if (q.type === 'mc' && q.options) {
         var opts = {};
         try {
@@ -518,42 +1107,33 @@
           }
         } catch (e) { opts = {}; }
 
-        container.innerHTML += '<div class="space-y-3">';
+        container.innerHTML += '<div class="quiz-options">';
         for (var key in opts) {
           var isSelected = answers[q.id] === key;
-          container.innerHTML += '<button onclick="selectAnswer(\'' + q.id + '\', \'' + key + '\')" class="option-card w-full text-left p-4 rounded-xl border-2 border-slate-200 bg-white ' + (isSelected ? 'selected' : '') + '">';
-          container.innerHTML += '<div class="flex items-center gap-4">';
-          container.innerHTML += '<div class="w-10 h-10 rounded-lg flex items-center justify-center ' + (isSelected ? 'bg-primary-500 text-white' : 'bg-slate-100 text-slate-500') + ' font-bold text-sm option-indicator-' + key + '">' + key + '</div>';
-          container.innerHTML += '<div class="flex-1"><span class="font-semibold text-slate-700">' + opts[key] + '</span></div>';
-          container.innerHTML += '<div class="w-6 h-6 rounded-full border-2 ' + (isSelected ? 'border-primary-500 bg-primary-500' : 'border-slate-300') + ' flex items-center justify-center option-check-' + key + '">';
-          if (isSelected) container.innerHTML += '<i class="fa-solid fa-check text-white text-xs"></i>';
-          container.innerHTML += '</div></div></button>';
+          container.innerHTML += '<div onclick="selectAnswer(\'' + q.id + '\', \'' + key + '\')" class="quiz-option ' + (isSelected ? 'selected' : '') + '">';
+          container.innerHTML += '<div class="quiz-option-key">' + key + '</div>';
+          container.innerHTML += '<div class="quiz-option-text">' + opts[key] + '</div>';
+          container.innerHTML += '<div class="quiz-option-check"><i class="fa-solid fa-check text-xs"></i></div>';
+          container.innerHTML += '</div>';
         }
         container.innerHTML += '</div>';
       } else {
-        // Fill in the blank
-        container.innerHTML += '<div class="mb-6">';
-        container.innerHTML += '<label class="block text-sm font-medium text-slate-600 mb-2">Jawaban Anda:</label>';
-        container.innerHTML += '<input type="text" id="answerInput" value="' + (answers[q.id] || '') + '" oninput="setAnswer(\'' + q.id + '\', this.value)" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all" placeholder="Ketik jawaban...">';
-        container.innerHTML += '</div>';
+        container.innerHTML += '<input type="text" id="answerInput" value="' + (answers[q.id] || '') + '" oninput="setAnswer(\'' + q.id + '\', this.value)" class="quiz-fill-input" placeholder="Ketik jawaban...">';
       }
 
-      container.innerHTML += '</div>';
-
-      // Navigation buttons
       var prevDisabled = currentQuestionIndex === 0;
       var backBtn = prevDisabled
-        ? '<button disabled class="flex-1 sm:flex-none px-4 py-3 rounded-xl font-medium text-sm text-center bg-slate-100 text-slate-400 cursor-not-allowed">Kembali</button>'
-        : '<button onclick="prevQuestion()" class="flex-1 sm:flex-none px-4 py-3 rounded-xl font-medium text-sm text-center bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all">Kembali</button>';
-      var nextBtn = '<button onclick="nextQuestion()" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-semibold text-sm text-center bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg shadow-primary-500/30 transition-all">Lanjut</button>';
-      var submitBtn = '<button onclick="submitQuiz()" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-semibold text-sm text-center bg-gradient-to-r from-success-500 to-emerald-600 hover:from-success-600 hover:to-emerald-700 text-white shadow-lg shadow-success-500/30 transition-all">Kirim</button>';
+        ? '<button disabled class="btn btn-secondary opacity-50"><i class="fa-solid fa-arrow-left"></i> Kembali</button>'
+        : '<button onclick="prevQuestion()" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Kembali</button>';
+      var nextBtn = '<button onclick="nextQuestion()" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>';
+      var submitBtn = '<button onclick="submitQuiz()" class="btn btn-primary"><i class="fa-solid fa-check"></i> Kirim</button>';
 
-      container.innerHTML += '<div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 mt-6 pt-4 border-t border-slate-100">' + backBtn + (currentQuestionIndex < state.questions.length - 1 ? nextBtn : submitBtn) + '</div>';
+      container.innerHTML += '<div class="quiz-nav">' + backBtn + (currentQuestionIndex < state.questions.length - 1 ? nextBtn : submitBtn) + '</div>';
     }
 
     function selectAnswer(qid, ans) {
       setAnswer(qid, ans);
-      answeredQuestions[qid] = null; // Mark as answered but not evaluated yet
+      answeredQuestions[qid] = null;
       renderQuestion();
     }
 
@@ -585,7 +1165,6 @@
         return;
       }
 
-      // Mark all as answered
       var state = window._quizState;
       state.questions.forEach(function(q) {
         if (result.results) {
@@ -599,53 +1178,34 @@
       var container = document.getElementById('quizContent');
 
       var icon = result.passed ? 'fa-check-circle' : 'fa-times-circle';
-      var iconClass = result.passed ? 'text-success-500' : 'text-red-500';
-      var bgClass = result.passed ? 'from-success-50 to-emerald-50' : 'from-red-50 to-orange-50';
+      var iconClass = result.passed ? 'text-green-500' : 'text-red-500';
+      var bgClass = result.passed ? 'from-green-50 to-emerald-50' : 'from-red-50 to-orange-50';
       var title = result.passed ? 'Alhamdulillah!' : 'Belum Lulus';
-      var titleClass = result.passed ? 'text-success-600' : 'text-red-600';
+      var titleClass = result.passed ? 'text-green-600' : 'text-red-600';
       var msg = result.passed
-        ? 'Semua jawabanmu benar! Kamu layak mendapatkan nilai sempurna.'
-        : 'Skor: ' + result.score + '%. Syarat kelulusan: 100%.';
+        ? 'Semua jawabanmu benar!'
+        : 'Skor: ' + result.score + '%. Syarat: 100%.';
 
-      container.innerHTML = '<div class="text-center py-12 bg-gradient-to-b ' + bgClass + ' rounded-3xl animate-bounce-in">';
-
-      // Icon with animation
-      container.innerHTML += '<div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl ' + (result.passed ? 'shadow-success-500/20' : 'shadow-red-500/20') + '">';
+      container.innerHTML = '<div class="text-center py-12 bg-gradient-to-b ' + bgClass + ' rounded-2xl">';
+      container.innerHTML += '<div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">';
       container.innerHTML += '<i class="fa-solid ' + icon + ' ' + iconClass + ' text-5xl"></i>';
       container.innerHTML += '</div>';
-
       container.innerHTML += '<h3 class="text-3xl font-bold ' + titleClass + ' mb-3">' + title + '</h3>';
-      container.innerHTML += '<p class="text-slate-600 mb-4 max-w-sm mx-auto">' + msg + '</p>';
-
-      // Score display
-      container.innerHTML += '<div class="inline-flex items-center gap-4 bg-white px-6 py-3 rounded-2xl shadow-lg mb-8">';
-      container.innerHTML += '<div class="text-center">';
-      container.innerHTML += '<div class="text-3xl font-bold ' + (result.passed ? 'text-success-500' : 'text-red-500') + '">' + result.score + '%</div>';
-      container.innerHTML += '<div class="text-xs text-slate-500">Skor</div>';
-      container.innerHTML += '</div>';
+      container.innerHTML += '<p class="text-slate-600 mb-6">' + msg + '</p>';
+      container.innerHTML += '<div class="inline-flex items-center gap-4 bg-white px-6 py-3 rounded-2xl shadow-lg mb-6">';
+      container.innerHTML += '<div class="text-center"><div class="text-3xl font-bold ' + (result.passed ? 'text-green-500' : 'text-red-500') + '">' + result.score + '%</div><div class="text-xs text-slate-500">Skor</div></div>';
       container.innerHTML += '<div class="w-px h-10 bg-slate-200"></div>';
-      container.innerHTML += '<div class="text-center">';
-      container.innerHTML += '<div class="text-3xl font-bold text-dark-800">' + result.correct + '/' + result.total + '</div>';
-      container.innerHTML += '<div class="text-xs text-slate-500">Benar</div>';
-      container.innerHTML += '</div>';
+      container.innerHTML += '<div class="text-center"><div class="text-3xl font-bold text-dark-800">' + result.correct + '/' + result.total + '</div><div class="text-xs text-slate-500">Benar</div></div>';
       container.innerHTML += '</div>';
 
-      // Action buttons
-      container.innerHTML += '<div class="flex flex-col sm:flex-row items-center justify-center gap-3">';
       if (result.passed) {
-        container.innerHTML += '<a href="student.html" class="px-8 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-semibold shadow-lg shadow-primary-500/30 transition-all inline-flex items-center gap-2">';
-        container.innerHTML += '<i class="fa-solid fa-home"></i> Kembali ke Dashboard';
-        container.innerHTML += '</a>';
+        container.innerHTML += '<a href="student.html" class="btn btn-primary"><i class="fa-solid fa-home"></i> Kembali ke Dashboard</a>';
       } else {
-        container.innerHTML += '<button onclick="retryQuiz()" class="px-6 py-3 bg-gradient-to-r from-warning-500 to-amber-500 hover:from-warning-600 hover:to-amber-600 text-white rounded-xl font-semibold shadow-lg shadow-warning-500/30 transition-all inline-flex items-center gap-2">';
-        container.innerHTML += '<i class="fa-solid fa-redo"></i> Coba Lagi';
-        container.innerHTML += '</button>';
-        container.innerHTML += '<button onclick="closeQuiz()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-all inline-flex items-center gap-2">';
-        container.innerHTML += '<i class="fa-solid fa-arrow-left"></i> Kembali';
-        container.innerHTML += '</button>';
+        container.innerHTML += '<div class="flex flex-wrap justify-center gap-3">';
+        container.innerHTML += '<button onclick="retryQuiz()" class="btn btn-primary"><i class="fa-solid fa-redo"></i> Coba Lagi</button>';
+        container.innerHTML += '<button onclick="closeQuiz()" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Kembali</button>';
+        container.innerHTML += '</div>';
       }
-      container.innerHTML += '</div>';
-
       container.innerHTML += '</div>';
     }
 
