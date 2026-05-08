@@ -486,20 +486,35 @@
 
     .footer-link a {
       color: #64748b;
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      transition: color 0.2s ease;
+      justify-content: center;
+      gap: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .footer-link a:hover {
       color: #047857;
+      background: rgba(5, 150, 105, 0.1);
     }
 
     .dark .footer-link a:hover {
       color: #34d399;
+      background: rgba(52, 211, 153, 0.1);
+    }
+
+    .footer-link i {
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .footer-link span {
+      white-space: nowrap;
     }
 
     .hidden {
@@ -670,7 +685,7 @@
           <p class="footer-link">
             <a href="index.html">
               <i class="fa-solid fa-arrow-left"></i>
-              Kembali ke Beranda
+              <span>Kembali ke Beranda</span>
             </a>
           </p>
         </div>
