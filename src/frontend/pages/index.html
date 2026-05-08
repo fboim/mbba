@@ -26,6 +26,14 @@
       0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
       50% { box-shadow: 0 0 40px 10px rgba(34, 197, 94, 0.2); }
     }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .float-animation {
       animation: float 4s ease-in-out infinite;
     }
@@ -38,24 +46,76 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    .fade-in {
+      opacity: 0;
+      animation: slideUp 0.6s ease-out forwards;
+    }
+    .fade-in-scale {
+      opacity: 0;
+      animation: scaleIn 0.5s ease-out forwards;
+    }
+    /* Theme toggle animation */
+    .theme-toggle svg {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .dark .icon-sun { opacity: 0; transform: rotate(-90deg) scale(0); }
+    .dark .icon-moon { opacity: 1; transform: rotate(0) scale(1); }
+    .icon-sun { opacity: 1; transform: rotate(0) scale(1); }
+    .icon-moon { opacity: 0; transform: rotate(90deg) scale(0); }
+    /* Card hover effect */
+    .feature-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+    }
+    /* Quote styling */
+    .quote-mark {
+      font-family: Georgia, serif;
+      font-size: 4rem;
+      line-height: 1;
+      color: var(--primary-200, #bbf7d0);
+    }
+    .dark .quote-mark {
+      color: var(--primary-900, #14532d);
+    }
+    /* Testimonial image ring */
+    .testimonial-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid var(--primary-500);
+      object-fit: cover;
+    }
   </style>
 </head>
-<body class="bg-white font-sans antialiased">
+<body class="font-sans antialiased page-transition pb-20 md:pb-0">
 
   <!-- NAVBAR -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/50">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <a href="index.html" class="flex items-center gap-3 group">
         <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/25 group-hover:shadow-xl group-hover:shadow-primary-500/30 transition-all">
           <span class="text-white font-bold text-lg" style="font-family: 'Amiri', serif;">م</span>
         </div>
-        <span class="font-bold text-xl text-dark-800 tracking-tight">MBBA</span>
+        <span class="font-bold text-xl text-dark-800 dark:text-white tracking-tight">MBBA</span>
       </a>
-      <a href="/pages/auth.html"
-        class="px-4 sm:px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 flex items-center gap-2">
-        <span>Mulai Belajar</span>
-        <i class="fa-solid fa-arrow-right text-xs"></i>
-      </a>
+      <div class="flex items-center gap-3">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          </svg>
+        </button>
+        <a href="/pages/auth.html"
+          class="px-4 sm:px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 flex items-center gap-2 ripple">
+          <span>Mulai Belajar</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
     </div>
   </nav>
 
@@ -75,8 +135,8 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
       <!-- Logo Badge -->
       <div class="animate-fade-in-up mb-6">
-        <div class="w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto shadow-2xl border-4 border-white/30">
-          <span class="text-emerald-600 font-bold text-4xl sm:text-5xl drop-shadow-md" style="font-family: 'Amiri', serif;">م</span>
+        <div class="w-20 h-20 sm:w-28 sm:h-28 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/50 border-4 border-emerald-300/50">
+          <span class="text-white font-bold text-4xl sm:text-5xl" style="font-family: 'Amiri', serif; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">م</span>
         </div>
       </div>
 
@@ -109,12 +169,12 @@
       <!-- CTA Buttons -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8 animate-fade-in-up" style="animation-delay: 0.4s">
         <a href="/pages/auth.html"
-          class="w-full sm:w-auto px-8 sm:px-10 py-4 bg-white hover:bg-emerald-50 text-emerald-700 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 border-2 border-emerald-200">
+          class="w-full sm:w-auto px-8 sm:px-10 py-4 bg-white hover:bg-emerald-50 dark:bg-emerald-100 dark:hover:bg-emerald-200 text-emerald-700 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 border-2 border-emerald-200 ripple">
           <i class="fa-solid fa-rocket"></i>
           <span>Mulai Sekarang</span>
         </a>
         <a href="#fitur"
-          class="w-full sm:w-auto px-8 sm:px-10 py-4 bg-emerald-800 hover:bg-emerald-900 text-white text-lg font-semibold rounded-xl transition-all flex items-center justify-center gap-3 border-2 border-emerald-600">
+          class="w-full sm:w-auto px-8 sm:px-10 py-4 bg-emerald-800 hover:bg-emerald-900 text-white text-lg font-semibold rounded-xl transition-all flex items-center justify-center gap-3 border-2 border-emerald-600 ripple">
           <span>Pelajari Lebih</span>
           <i class="fa-solid fa-chevron-down"></i>
         </a>
@@ -122,8 +182,8 @@
 
       <!-- Trust Badge -->
       <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.5s">
-        <div class="inline-flex items-center gap-3 bg-white rounded-full px-5 py-2.5 shadow-lg border border-slate-200 text-emerald-700 text-sm font-semibold">
-          <i class="fa-solid fa-shield-check text-emerald-600"></i>
+        <div class="inline-flex items-center gap-3 bg-white/95 dark:bg-slate-800/95 rounded-full px-5 py-2.5 shadow-lg border border-slate-200/50 dark:border-slate-700/50 text-emerald-700 dark:text-emerald-400 text-sm font-semibold backdrop-blur-sm">
+          <i class="fa-solid fa-shield-check text-emerald-600 dark:text-emerald-400"></i>
           <span>Tidak perlu kartu kredit • Gratis selamanya</span>
         </div>
       </div>
@@ -151,16 +211,16 @@
   </section>
 
   <!-- FEATURES -->
-  <section id="fitur" class="py-16 sm:py-20 md:py-28 bg-slate-50/50">
+  <section id="fitur" class="py-16 sm:py-20 md:py-28 bg-slate-50/50 dark:bg-slate-800/50">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <div class="text-center mb-10 sm:mb-14">
-        <span class="inline-block px-4 py-1.5 bg-primary-100 text-primary-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+        <span class="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
           Fitur Unggulan
         </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 mb-3">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 dark:text-white mb-3">
           Mengapa Pilih MBBA?
         </h2>
-        <p class="text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
+        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
           Platform pembelajaran Bahasa Arab modern dengan metode terstruktur untuk pemula
         </p>
       </div>
@@ -168,45 +228,45 @@
       <div class="grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
 
         <!-- Feature 1 -->
-        <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in-up group">
-          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-book-open text-emerald-600 text-xl sm:text-2xl"></i>
+        <div class="feature-card bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 animate-fade-in-up group">
+          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900/50 dark:to-emerald-800/50 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-book-open text-emerald-600 dark:text-emerald-400 text-xl sm:text-2xl"></i>
           </div>
-          <h3 class="text-lg sm:text-xl font-bold text-dark-800 mb-2 sm:mb-3">Kitab Mukhtarat</h3>
-          <p class="text-slate-500 text-sm sm:text-base leading-relaxed">
-            Materi berdasarkan kitab klasik nahwu yang sudah teruji dan дисиusun secara sistematis untuk pemula
+          <h3 class="text-lg sm:text-xl font-bold text-dark-800 dark:text-white mb-2 sm:mb-3">Kitab Mukhtarat</h3>
+          <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
+            Materi berdasarkan kitab klasik nahwu yang sudah teruji dan disusun secara sistematis untuk pemula
           </p>
-          <div class="mt-4 flex items-center gap-2 text-primary-600 text-sm font-medium">
+          <div class="mt-4 flex items-center gap-2 text-primary-600 dark:text-primary-400 text-sm font-medium">
             <i class="fa-solid fa-check-circle"></i>
             <span>12+ tahun metode belajar</span>
           </div>
         </div>
 
         <!-- Feature 2 -->
-        <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in-up group" style="animation-delay: 0.1s">
-          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-brain text-amber-600 text-xl sm:text-2xl"></i>
+        <div class="feature-card bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 animate-fade-in-up group" style="animation-delay: 0.1s">
+          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900/50 dark:to-amber-800/50 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-brain text-amber-600 dark:text-amber-400 text-xl sm:text-2xl"></i>
           </div>
-          <h3 class="text-lg sm:text-xl font-bold text-dark-800 mb-2 sm:mb-3">Kuis Interaktif</h3>
-          <p class="text-slate-500 text-sm sm:text-base leading-relaxed">
+          <h3 class="text-lg sm:text-xl font-bold text-dark-800 dark:text-white mb-2 sm:mb-3">Kuis Interaktif</h3>
+          <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
             Bank 100+ soal dengan quiz acak. Wajib 100% benar untuk bisa lanjut ke materi berikutnya
           </p>
-          <div class="mt-4 flex items-center gap-2 text-amber-600 text-sm font-medium">
+          <div class="mt-4 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-sm font-medium">
             <i class="fa-solid fa-check-circle"></i>
             <span>Quiz dengan AI grading</span>
           </div>
         </div>
 
         <!-- Feature 3 -->
-        <div class="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in-up group" style="animation-delay: 0.2s">
-          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-chart-line text-blue-600 text-xl sm:text-2xl"></i>
+        <div class="feature-card bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 animate-fade-in-up group" style="animation-delay: 0.2s">
+          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-chart-line text-blue-600 dark:text-blue-400 text-xl sm:text-2xl"></i>
           </div>
-          <h3 class="text-lg sm:text-xl font-bold text-dark-800 mb-2 sm:mb-3">Progres Terukur</h3>
-          <p class="text-slate-500 text-sm sm:text-base leading-relaxed">
+          <h3 class="text-lg sm:text-xl font-bold text-dark-800 dark:text-white mb-2 sm:mb-3">Progres Terukur</h3>
+          <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
             Linear progression memastikan pelajar memahami setiap fasal sebelum melangkah ke berikutnya
           </p>
-          <div class="mt-4 flex items-center gap-2 text-blue-600 text-sm font-medium">
+          <div class="mt-4 flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm font-medium">
             <i class="fa-solid fa-check-circle"></i>
             <span>Track progress real-time</span>
           </div>
@@ -216,17 +276,120 @@
     </div>
   </section>
 
+  <!-- TESTIMONIALS -->
+  <section class="py-16 sm:py-20 md:py-28 bg-white dark:bg-slate-900 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10 sm:mb-14">
+        <span class="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+          Testimoni
+        </span>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 dark:text-white mb-3">
+          Apa Kata Mereka?
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
+          Ribuan pelajar telah merasakan manfaat belajar Bahasa Arab dengan MBBA
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
+
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card fade-in">
+          <div class="flex items-center gap-1 text-amber-400 mb-4">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            "Alhamdulillah, dengan MBBA saya bisa belajar nahwu dari nol. Materinya terstruktur dan mudah dipahami. Kuisnya juga membantu saya menguji pemahaman."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-lg" style="font-family: 'Amiri', serif;">ح</div>
+            <div>
+              <p class="font-semibold text-dark-800 dark:text-white">Hafizh Ahmad</p>
+              <p class="text-slate-500 dark:text-slate-400 text-xs">Santri Pondok Al-Munawwir</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card fade-in" style="animation-delay: 0.1s">
+          <div class="flex items-center gap-1 text-amber-400 mb-4">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            "Sebagai ustadzah, MBBA sangat membantu saya mengajarkan shorof ke murid-murid saya. Desainnya menarik dan fiturnya lengkap. Sangat direkomendasikan!"
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg" style="font-family: 'Amiri', serif;">ف</div>
+            <div>
+              <p class="font-semibold text-dark-800 dark:text-white">Ustadzah Fatimah</p>
+              <p class="text-slate-500 dark:text-slate-400 text-xs">Guru Bahasa Arab MTsN 1</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card fade-in" style="animation-delay: 0.2s">
+          <div class="flex items-center gap-1 text-amber-400 mb-4">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star-half-stroke"></i>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            "Seru banget! Awalnya saya kira belajar Arab itu susah, ternyata dengan MBBA jadi menyenangkan. Progress saya terlihat jelas setiap hari."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg" style="font-family: 'Amiri', serif;">م</div>
+            <div>
+              <p class="font-semibold text-dark-800 dark:text-white">Muhammad Rizki</p>
+              <p class="text-slate-500 dark:text-slate-400 text-xs">Mahasiswa Ushuluddin</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Trust Indicators -->
+      <div class="mt-12 flex flex-wrap justify-center items-center gap-6 sm:gap-8">
+        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+          <i class="fa-solid fa-users text-xl text-primary-500"></i>
+          <span class="font-semibold">2,500+</span>
+          <span class="text-sm">Pelajar Aktif</span>
+        </div>
+        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+          <i class="fa-solid fa-face-smile text-xl text-amber-500"></i>
+          <span class="font-semibold">4.9/5</span>
+          <span class="text-sm">Rating</span>
+        </div>
+        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+          <i class="fa-solid fa-award text-xl text-blue-500"></i>
+          <span class="font-semibold">100%</span>
+          <span class="text-sm">Gratis</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- KURIKULUM PREVIEW -->
-  <section class="py-16 sm:py-20 md:py-28 bg-white">
+  <section id="kurikulum" class="py-16 sm:py-20 md:py-28 bg-white dark:bg-slate-900">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
       <div class="text-center mb-10 sm:mb-14">
-        <span class="inline-block px-4 py-1.5 bg-primary-100 text-primary-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+        <span class="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
           Kurikulum
         </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 mb-3">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 dark:text-white mb-3">
           Kitab Mukhtarat
         </h2>
-        <p class="text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
+        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
           3 bagian utama dengan 3 bab dan 10+ fasal untuk pembelajaran sistematis
         </p>
       </div>
@@ -234,7 +397,7 @@
       <div class="space-y-4 sm:space-y-6 max-w-2xl mx-auto">
 
         <!-- Section 1 - Active -->
-        <div class="bg-gradient-to-r from-emerald-50 to-white p-5 sm:p-6 rounded-2xl border-2 border-emerald-200 shadow-lg shadow-emerald-100/50 animate-fade-in-up">
+        <div class="bg-gradient-to-r from-emerald-50 to-white dark:from-emerald-950/30 dark:to-slate-800 p-5 sm:p-6 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 shadow-lg shadow-emerald-100/50 dark:shadow-emerald-900/20 animate-fade-in-up">
           <div class="flex items-start gap-4 sm:gap-5">
             <div class="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 flex-shrink-0">
               <span class="text-white font-bold text-lg sm:text-xl">1</span>
@@ -262,7 +425,7 @@
         </div>
 
         <!-- Section 2 - Coming Soon -->
-        <div class="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 opacity-70 animate-fade-in-up" style="animation-delay: 0.1s">
+        <div class="bg-slate-100 dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 opacity-70 animate-fade-in-up" style="animation-delay: 0.1s">
           <div class="flex items-start gap-4 sm:gap-5">
             <div class="w-12 sm:w-14 h-12 sm:h-14 bg-slate-200 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
               <span class="text-slate-400 font-bold text-lg sm:text-xl">2</span>
@@ -284,7 +447,7 @@
         </div>
 
         <!-- Section 3 - Coming Soon -->
-        <div class="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 opacity-70 animate-fade-in-up" style="animation-delay: 0.2s">
+        <div class="bg-slate-100 dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 opacity-70 animate-fade-in-up" style="animation-delay: 0.2s">
           <div class="flex items-start gap-4 sm:gap-5">
             <div class="w-12 sm:w-14 h-12 sm:h-14 bg-slate-200 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
               <span class="text-slate-400 font-bold text-lg sm:text-xl">3</span>
@@ -327,14 +490,14 @@
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4" style="text-shadow: 0 4px 20px rgba(0,0,0,0.4);">
           Siap Memulai Perjalananmu?
         </h2>
-        <p class="text-white/90 text-lg sm:text-xl mb-8 max-w-md mx-auto font-medium" style="text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+        <p class="text-white/90 text-lg sm:text-xl mb-8 max-w-md mx-auto font-medium dark:text-white/80" style="text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
           Daftar gratis dan mulai belajar nahwu & shorof sekarang juga
         </p>
       </div>
 
       <div class="animate-fade-in-up" style="animation-delay: 0.2s">
         <a href="/pages/auth.html"
-          class="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3.5 sm:py-4 bg-white hover:bg-emerald-50 text-emerald-700 text-base sm:text-lg font-bold rounded-xl shadow-2xl shadow-black/20 hover:shadow-black/30 transition-all">
+          class="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3.5 sm:py-4 bg-white hover:bg-emerald-50 text-emerald-700 text-base sm:text-lg font-bold rounded-xl shadow-2xl shadow-black/20 hover:shadow-black/30 transition-all ripple">
           <span>Daftar Gratis Sekarang</span>
           <i class="fa-solid fa-arrow-right text-sm"></i>
         </a>
@@ -343,7 +506,7 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="bg-dark-900 py-8 sm:py-12">
+  <footer class="bg-dark-900 dark:bg-slate-950 py-8 sm:py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="flex items-center gap-3">
@@ -374,6 +537,110 @@
       </div>
     </div>
   </footer>
+
+  <!-- BOTTOM NAVIGATION (Mobile Only) -->
+  <nav class="bottom-nav md:hidden">
+    <a href="#fitur" class="bottom-nav-item active">
+      <i class="fa-solid fa-star"></i>
+      <span>Fitur</span>
+    </a>
+    <a href="#kurikulum" class="bottom-nav-item">
+      <i class="fa-solid fa-book-open"></i>
+      <span>Kurikulum</span>
+    </a>
+    <a href="/pages/auth.html" class="bottom-nav-item">
+      <i class="fa-solid fa-rocket"></i>
+      <span>Mulai</span>
+    </a>
+  </nav>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    // Check for saved theme preference or default to light
+    const savedTheme = localStorage.getItem('mbba-theme');
+    if (savedTheme === 'dark') {
+      html.classList.add('dark');
+    }
+
+    // Listen for system preference changes
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (!savedTheme) {
+        html.classList.add('dark');
+      }
+    }
+
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+      localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
+    });
+
+    // Ripple effect
+    document.querySelectorAll('.ripple').forEach(button => {
+      button.addEventListener('click', function(e) {
+        const rect = button.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const ripple = document.createElement('span');
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.4);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          pointer-events: none;
+          left: ${x}px;
+          top: ${y}px;
+          width: height = 100px;
+          height: 100px;
+          margin-left: -50px;
+          margin-top: -50px;
+        `;
+        button.style.position = 'relative';
+        button.style.overflow = 'hidden';
+        button.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+
+    // Add ripple animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Scroll-triggered animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
 
 </body>
 </html>
