@@ -9,638 +9,1291 @@
   <link rel="stylesheet" href="../css/output.css">
   <link rel="stylesheet" href="../css/modern.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .arabic-hero {
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --accent: #f59e0b;
+      --bg-light: #f8fafc;
+      --bg-card: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .dark body {
+      background: #0f172a;
+      color: #f1f5f9;
+    }
+
+    /* Arabic Text */
+    .arabic-text {
       font-family: 'Amiri', serif;
       direction: rtl;
-      text-align: center;
-      line-height: 2.8;
+      line-height: 2.2;
     }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 60%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .hero-logo {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #34d399, #059669);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.5);
+      border: 4px solid rgba(255,255,255,0.3);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .hero-logo span {
+      font-family: 'Amiri', serif;
+      font-size: 4rem;
+      color: white;
+    }
+
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
-      50% { box-shadow: 0 0 40px 10px rgba(34, 197, 94, 0.2); }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.3);
     }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
+
+    .hero-subtitle {
+      font-size: clamp(1.125rem, 3vw, 1.5rem);
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+      margin-bottom: 2rem;
     }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .hero-arabic {
+      background: white;
+      padding: 1.5rem 3rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2);
+      display: inline-block;
     }
-    .float-animation {
-      animation: float 4s ease-in-out infinite;
+
+    .hero-arabic-text {
+      font-family: 'Amiri', serif;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: #047857;
+      direction: rtl;
     }
-    .glow-animation {
-      animation: pulse-glow 3s ease-in-out infinite;
+
+    .hero-description {
+      color: rgba(255,255,255,0.95);
+      font-size: 1.125rem;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
     }
-    .gradient-text {
-      background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
     }
-    .fade-in {
-      opacity: 0;
-      animation: slideUp 0.6s ease-out forwards;
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
     }
-    .fade-in-scale {
-      opacity: 0;
-      animation: scaleIn 0.5s ease-out forwards;
+
+    .btn-primary {
+      background: white;
+      color: #047857;
+      box-shadow: 0 10px 30px -5px rgba(0,0,0,0.2);
     }
-    /* Theme toggle animation */
-    .theme-toggle svg {
-      transition: transform 0.3s ease, opacity 0.3s ease;
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px -5px rgba(0,0,0,0.3);
     }
-    .dark .icon-sun { opacity: 0; transform: rotate(-90deg) scale(0); }
-    .dark .icon-moon { opacity: 1; transform: rotate(0) scale(1); }
-    .icon-sun { opacity: 1; transform: rotate(0) scale(1); }
-    .icon-moon { opacity: 0; transform: rotate(90deg) scale(0); }
-    /* Card hover effect */
-    .feature-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
     }
-    .feature-card:hover {
-      transform: translateY(-8px);
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
     }
-    /* Quote styling */
-    .quote-mark {
-      font-family: Georgia, serif;
-      font-size: 4rem;
+
+    .hero-trust {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.875rem;
+    }
+
+    .trust-item i {
+      color: #34d399;
+    }
+
+    /* Stats Section */
+    .stats {
+      background: white;
+      padding: 3rem 2rem;
+      margin-top: -60px;
+      position: relative;
+      z-index: 20;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .dark .stats {
+      background: #1e293b;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #047857;
       line-height: 1;
-      color: var(--primary-200, #bbf7d0);
     }
-    .dark .quote-mark {
-      color: var(--primary-900, #14532d);
+
+    .dark .stat-number {
+      color: #34d399;
     }
-    /* Testimonial image ring */
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+
+    .dark .stat-label {
+      color: #94a3b8;
+    }
+
+    /* Section Styling */
+    .section {
+      padding: 5rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #047857;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .dark .section-badge {
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      color: #6ee7b7;
+    }
+
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .dark .section-title {
+      color: #f1f5f9;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.125rem;
+    }
+
+    .dark .section-desc {
+      color: #94a3b8;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 24px;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), #34d399);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.15);
+    }
+
+    .dark .feature-card {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .dark .feature-card:hover {
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4);
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .feature-icon.green {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #047857;
+    }
+
+    .feature-icon.amber {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #d97706;
+    }
+
+    .feature-icon.blue {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: #2563eb;
+    }
+
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .dark .feature-title {
+      color: #f1f5f9;
+    }
+
+    .feature-desc {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .dark .feature-desc {
+      color: #94a3b8;
+    }
+
+    .feature-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .feature-tag.green { color: #047857; }
+    .feature-tag.amber { color: #d97706; }
+    .feature-tag.blue { color: #2563eb; }
+
+    .dark .feature-tag.green { color: #6ee7b7; }
+    .dark .feature-tag.amber { color: #fcd34d; }
+    .dark .feature-tag.blue { color: #60a5fa; }
+
+    /* Testimonials */
+    .testimonials-section {
+      background: linear-gradient(180deg, var(--bg-light) 0%, white 100%);
+    }
+
+    .dark .testimonials-section {
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .testimonial-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1);
+    }
+
+    .dark .testimonial-card {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .dark .testimonial-card:hover {
+      box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3);
+    }
+
+    .testimonial-stars {
+      color: #fbbf24;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .testimonial-text {
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+
+    .dark .testimonial-text {
+      color: #cbd5e1;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
     .testimonial-avatar {
-      width: 56px;
-      height: 56px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      border: 3px solid var(--primary-500);
-      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .testimonial-avatar.green { background: linear-gradient(135deg, #34d399, #059669); }
+    .testimonial-avatar.purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .testimonial-avatar.blue { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+
+    .testimonial-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .dark .testimonial-name {
+      color: #f1f5f9;
+    }
+
+    .testimonial-role {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .dark .testimonial-role {
+      color: #94a3b8;
+    }
+
+    /* Trust Stats */
+    .trust-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 4rem;
+      flex-wrap: wrap;
+    }
+
+    .trust-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .trust-stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .trust-stat-icon.green { background: #d1fae5; color: #047857; }
+    .trust-stat-icon.amber { background: #fef3c7; color: #d97706; }
+    .trust-stat-icon.blue { background: #dbeafe; color: #2563eb; }
+
+    .dark .trust-stat-icon.green { background: #064e3b; color: #6ee7b7; }
+    .dark .trust-stat-icon.amber { background: #78350f; color: #fcd34d; }
+    .dark .trust-stat-icon.blue { background: #1e3a8a; color: #60a5fa; }
+
+    .trust-stat-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .trust-stat-number {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--text-primary);
+    }
+
+    .dark .trust-stat-number {
+      color: #f1f5f9;
+    }
+
+    .trust-stat-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .dark .trust-stat-label {
+      color: #94a3b8;
+    }
+
+    /* Curriculum */
+    .curriculum-section {
+      background: white;
+    }
+
+    .dark .curriculum-section {
+      background: #1e293b;
+    }
+
+    .curriculum-list {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .curriculum-item {
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 16px;
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .curriculum-item:hover {
+      transform: translateX(5px);
+    }
+
+    .curriculum-item.active {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border-color: #6ee7b7;
+    }
+
+    .dark .curriculum-item {
+      background: #0f172a;
+      border-color: #334155;
+    }
+
+    .dark .curriculum-item.active {
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      border-color: #059669;
+    }
+
+    .curriculum-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .curriculum-item.active .curriculum-number {
+      background: linear-gradient(135deg, #34d399, #059669);
+      color: white;
+    }
+
+    .curriculum-number.pending {
+      background: #e2e8f0;
+      color: #94a3b8;
+    }
+
+    .dark .curriculum-number.pending {
+      background: #334155;
+      color: #64748b;
+    }
+
+    .curriculum-content {
+      flex: 1;
+    }
+
+    .curriculum-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .curriculum-status.active {
+      background: #059669;
+      color: white;
+    }
+
+    .curriculum-status.soon {
+      background: #fbbf24;
+      color: #78350f;
+    }
+
+    .curriculum-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .dark .curriculum-title {
+      color: #f1f5f9;
+    }
+
+    .curriculum-item:not(.active) .curriculum-title {
+      color: #94a3b8;
+    }
+
+    .curriculum-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .dark .curriculum-desc {
+      color: #64748b;
+    }
+
+    .curriculum-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .curriculum-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: white;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .dark .curriculum-tag {
+      background: #1e293b;
+      border-color: #475569;
+    }
+
+    .curriculum-item.active .curriculum-tag {
+      background: white;
+      color: #047857;
+      border-color: #a7f3d0;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+      padding: 6rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(255,255,255,0.08) 0%, transparent 40%);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 10;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cta-icon {
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      font-size: 2rem;
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+
+    .cta-title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .cta-desc {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: white;
+      color: #047857;
+      padding: 1rem 2.5rem;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1.125rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px -5px rgba(0,0,0,0.2);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px -5px rgba(0,0,0,0.3);
+    }
+
+    /* Footer */
+    footer {
+      background: #0f172a;
+      padding: 3rem 2rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #34d399, #059669);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-logo span {
+      font-family: 'Amiri', serif;
+      font-size: 1.25rem;
+      color: white;
+    }
+
+    .footer-text {
+      color: #94a3b8;
+    }
+
+    .footer-text strong {
+      color: white;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .footer-link:hover {
+      background: #059669;
+      color: white;
+    }
+
+    .footer-copyright {
+      color: #64748b;
+      font-size: 0.875rem;
+      width: 100%;
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+    }
+
+    /* Dark Mode Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: white;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #64748b;
+      box-shadow: 0 4px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      background: #f8fafc;
+    }
+
+    .dark .theme-toggle {
+      background: #1e293b;
+      border-color: #334155;
+      color: #fbbf24;
+    }
+
+    /* Dark Mode Styles */
+    .dark {
+      --bg-light: #0f172a;
+      --bg-card: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-align: left;
+        padding: 1rem;
+        background: var(--bg-light);
+        border-radius: 12px;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+
+      .features-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .curriculum-item {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .curriculum-number {
+        width: 40px;
+        height: 40px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .trust-stats {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
-<body class="font-sans antialiased page-transition pb-20 md:pb-0">
+<body>
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <i class="fa-solid fa-moon"></i>
+  </button>
 
-  <!-- NAVBAR -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/25 group-hover:shadow-xl group-hover:shadow-primary-500/30 transition-all">
-          <span class="text-white font-bold text-lg" style="font-family: 'Amiri', serif;">م</span>
-        </div>
-        <span class="font-bold text-xl text-dark-800 dark:text-white tracking-tight">MBBA</span>
-      </a>
-      <div class="flex items-center gap-3">
-        <!-- Theme Toggle -->
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-          </svg>
-          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-          </svg>
-        </button>
-        <a href="/pages/auth.html"
-          class="px-4 sm:px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 flex items-center gap-2 ripple">
-          <span>Mulai Belajar</span>
-          <i class="fa-solid fa-arrow-right text-xs"></i>
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <section class="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 pt-20 pb-16 sm:pt-28 sm:pb-24 md:pt-36 md:pb-32">
-    <!-- Decorative Elements -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute -top-20 -right-20 w-60 sm:w-80 h-60 sm:h-80 bg-white/5 rounded-full blur-3xl"></div>
-      <div class="absolute -bottom-20 -left-20 w-60 sm:w-96 h-60 sm:h-96 bg-primary-400/10 rounded-full blur-3xl"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[900px] h-[600px] sm:h-[900px] bg-white/5 rounded-full blur-3xl"></div>
-      <!-- Floating shapes -->
-      <div class="absolute top-20 left-10 w-4 h-4 bg-white/20 rounded-full animate-float"></div>
-      <div class="absolute top-40 right-20 w-3 h-3 bg-primary-300/30 rounded-full animate-float" style="animation-delay: 0.5s"></div>
-      <div class="absolute bottom-32 left-1/4 w-2 h-2 bg-white/30 rounded-full animate-float" style="animation-delay: 1s"></div>
-    </div>
-
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-      <!-- Logo Badge -->
-      <div class="animate-fade-in-up mb-6">
-        <div class="w-20 h-20 sm:w-28 sm:h-28 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/50 border-4 border-emerald-300/50">
-          <span class="text-white font-bold text-4xl sm:text-5xl" style="font-family: 'Amiri', serif; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">م</span>
-        </div>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fa-solid fa-sparkles"></i>
+        Belajar Bahasa Arab Modern
       </div>
 
-      <!-- Title -->
-      <div class="animate-fade-in-up" style="animation-delay: 0.1s">
-        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-2 tracking-tight" style="text-shadow: 0 4px 30px rgba(0,0,0,0.5);">
-          MBBA
-        </h1>
-        <p class="text-white text-xl sm:text-2xl md:text-3xl font-semibold" style="text-shadow: 0 2px 15px rgba(0,0,0,0.5);">
-          Madrasah Belajar Bahasa Arab
-        </p>
+      <div class="hero-logo">
+        <span>م</span>
       </div>
 
-      <!-- Arabic Text -->
-      <div class="animate-fade-in-up" style="animation-delay: 0.2s">
-        <div class="inline-block bg-white rounded-2xl px-6 sm:px-10 py-4 mb-6 shadow-xl border-2 border-white/50">
-          <div class="arabic-hero text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-emerald-700 font-bold" style="color: #15803d;">
-            اَلدَّرْسُ الْأَوَّلُ فِي النَّحْوِ وَالصَّرْفِ
-          </div>
-        </div>
+      <h1 class="hero-title">MBBA</h1>
+      <p class="hero-subtitle">Madrasah Belajar Bahasa Arab</p>
+
+      <div class="hero-arabic">
+        <p class="hero-arabic-text">اَلدَّرْسُ الْأَوَّلُ فِي النَّحْوِ وَالصَّرْفِ</p>
       </div>
 
-      <!-- Description -->
-      <div class="animate-fade-in-up" style="animation-delay: 0.3s">
-        <div class="bg-white/95 backdrop-blur-sm text-dark-800 text-base sm:text-lg max-w-xl mx-auto leading-relaxed px-6 py-4 rounded-2xl shadow-lg border border-slate-200/50" style="text-shadow: none;">
-          Belajar nahwu dan shorof menggunakan Kitab Mukhtarat dengan metode terstruktur dan kuis interaktif
-        </div>
-      </div>
+      <p class="hero-description">
+        Platform pembelajaran nahwu dan shorof menggunakan Kitab Mukhtarat dengan metode terstruktur dan kuis interaktif
+      </p>
 
-      <!-- CTA Buttons -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8 animate-fade-in-up" style="animation-delay: 0.4s">
-        <a href="/pages/auth.html"
-          class="w-full sm:w-auto px-8 sm:px-10 py-4 bg-white hover:bg-emerald-50 dark:bg-emerald-100 dark:hover:bg-emerald-200 text-emerald-700 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 border-2 border-emerald-200 ripple">
+      <div class="hero-buttons">
+        <a href="/pages/auth.html" class="btn btn-primary">
           <i class="fa-solid fa-rocket"></i>
-          <span>Mulai Sekarang</span>
+          Mulai Sekarang
         </a>
-        <a href="#fitur"
-          class="w-full sm:w-auto px-8 sm:px-10 py-4 bg-emerald-800 hover:bg-emerald-900 text-white text-lg font-semibold rounded-xl transition-all flex items-center justify-center gap-3 border-2 border-emerald-600 ripple">
-          <span>Pelajari Lebih</span>
-          <i class="fa-solid fa-chevron-down"></i>
+        <a href="#fitur" class="btn btn-secondary">
+          <i class="fa-solid fa-play"></i>
+          Pelajari Lebih
         </a>
       </div>
 
-      <!-- Trust Badge -->
-      <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.5s">
-        <div class="inline-flex items-center gap-3 bg-white/95 dark:bg-slate-800/95 rounded-full px-5 py-2.5 shadow-lg border border-slate-200/50 dark:border-slate-700/50 text-emerald-700 dark:text-emerald-400 text-sm font-semibold backdrop-blur-sm">
-          <i class="fa-solid fa-shield-check text-emerald-600 dark:text-emerald-400"></i>
-          <span>Tidak perlu kartu kredit • Gratis selamanya</span>
+      <div class="hero-trust">
+        <div class="trust-item">
+          <i class="fa-solid fa-check-circle"></i>
+          <span>Gratis Selamanya</span>
+        </div>
+        <div class="trust-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Tanpa Kartu Kredit</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- STATS BANNER -->
-  <section class="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 py-6 sm:py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6">
-      <div class="grid grid-cols-3 gap-4 sm:gap-8 text-center text-white">
-        <div class="animate-fade-in-up">
-          <div class="text-2xl sm:text-3xl md:text-4xl font-bold">10+</div>
-          <div class="text-primary-200/80 text-xs sm:text-sm mt-1">Fasal Materi</div>
-        </div>
-        <div class="animate-fade-in-up" style="animation-delay: 0.1s">
-          <div class="text-2xl sm:text-3xl md:text-4xl font-bold">100+</div>
-          <div class="text-primary-200/80 text-xs sm:text-sm mt-1">Soal Kuis</div>
-        </div>
-        <div class="animate-fade-in-up" style="animation-delay: 0.2s">
-          <div class="text-2xl sm:text-3xl md:text-4xl font-bold">100%</div>
-          <div class="text-primary-200/80 text-xs sm:text-sm mt-1">Gratis</div>
-        </div>
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Fasal Materi</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">100+</div>
+        <div class="stat-label">Soal Kuis</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Gratis</div>
       </div>
     </div>
   </section>
 
-  <!-- FEATURES -->
-  <section id="fitur" class="py-16 sm:py-20 md:py-28 bg-slate-50/50 dark:bg-slate-800/50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="text-center mb-10 sm:mb-14">
-        <span class="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-          Fitur Unggulan
+  <!-- Features -->
+  <section id="fitur" class="section" style="background: var(--bg-light);">
+    <div class="section-header">
+      <span class="section-badge">Fitur Unggulan</span>
+      <h2 class="section-title">Mengapa MBBA?</h2>
+      <p class="section-desc">Platform pembelajaran Bahasa Arab modern dengan metode terstruktur untuk pemula</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <h3 class="feature-title">Kitab Mukhtarat</h3>
+        <p class="feature-desc">Materi berdasarkan kitab klasik nahwu yang sudah teruji dan disusun secara sistematis untuk pemula</p>
+        <span class="feature-tag green">
+          <i class="fa-solid fa-check-circle"></i>
+          12+ tahun metode belajar
         </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 dark:text-white mb-3">
-          Mengapa Pilih MBBA?
-        </h2>
-        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
-          Platform pembelajaran Bahasa Arab modern dengan metode terstruktur untuk pemula
-        </p>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
-
-        <!-- Feature 1 -->
-        <div class="feature-card bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 animate-fade-in-up group">
-          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900/50 dark:to-emerald-800/50 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-book-open text-emerald-600 dark:text-emerald-400 text-xl sm:text-2xl"></i>
-          </div>
-          <h3 class="text-lg sm:text-xl font-bold text-dark-800 dark:text-white mb-2 sm:mb-3">Kitab Mukhtarat</h3>
-          <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
-            Materi berdasarkan kitab klasik nahwu yang sudah teruji dan disusun secara sistematis untuk pemula
-          </p>
-          <div class="mt-4 flex items-center gap-2 text-primary-600 dark:text-primary-400 text-sm font-medium">
-            <i class="fa-solid fa-check-circle"></i>
-            <span>12+ tahun metode belajar</span>
-          </div>
+      <div class="feature-card">
+        <div class="feature-icon amber">
+          <i class="fa-solid fa-brain"></i>
         </div>
+        <h3 class="feature-title">Kuis Interaktif</h3>
+        <p class="feature-desc">Bank 100+ soal dengan quiz acak. Wajib 100% benar untuk bisa lanjut ke materi berikutnya</p>
+        <span class="feature-tag amber">
+          <i class="fa-solid fa-check-circle"></i>
+          Quiz dengan AI grading
+        </span>
+      </div>
 
-        <!-- Feature 2 -->
-        <div class="feature-card bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 animate-fade-in-up group" style="animation-delay: 0.1s">
-          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900/50 dark:to-amber-800/50 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-brain text-amber-600 dark:text-amber-400 text-xl sm:text-2xl"></i>
-          </div>
-          <h3 class="text-lg sm:text-xl font-bold text-dark-800 dark:text-white mb-2 sm:mb-3">Kuis Interaktif</h3>
-          <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
-            Bank 100+ soal dengan quiz acak. Wajib 100% benar untuk bisa lanjut ke materi berikutnya
-          </p>
-          <div class="mt-4 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-sm font-medium">
-            <i class="fa-solid fa-check-circle"></i>
-            <span>Quiz dengan AI grading</span>
-          </div>
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <i class="fa-solid fa-chart-line"></i>
         </div>
-
-        <!-- Feature 3 -->
-        <div class="feature-card bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 animate-fade-in-up group" style="animation-delay: 0.2s">
-          <div class="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 rounded-2xl flex items-center justify-center mb-5 sm:mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-chart-line text-blue-600 dark:text-blue-400 text-xl sm:text-2xl"></i>
-          </div>
-          <h3 class="text-lg sm:text-xl font-bold text-dark-800 dark:text-white mb-2 sm:mb-3">Progres Terukur</h3>
-          <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
-            Linear progression memastikan pelajar memahami setiap fasal sebelum melangkah ke berikutnya
-          </p>
-          <div class="mt-4 flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm font-medium">
-            <i class="fa-solid fa-check-circle"></i>
-            <span>Track progress real-time</span>
-          </div>
-        </div>
-
+        <h3 class="feature-title">Progres Terukur</h3>
+        <p class="feature-desc">Linear progression memastikan pelajar memahami setiap fasal sebelum melangkah ke berikutnya</p>
+        <span class="feature-tag blue">
+          <i class="fa-solid fa-check-circle"></i>
+          Track progress real-time
+        </span>
       </div>
     </div>
   </section>
 
-  <!-- TESTIMONIALS -->
-  <section class="py-16 sm:py-20 md:py-28 bg-white dark:bg-slate-900 overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="text-center mb-10 sm:mb-14">
-        <span class="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-          Testimoni
-        </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 dark:text-white mb-3">
-          Apa Kata Mereka?
-        </h2>
-        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
-          Ribuan pelajar telah merasakan manfaat belajar Bahasa Arab dengan MBBA
-        </p>
+  <!-- Testimonials -->
+  <section class="section testimonials-section">
+    <div class="section-header">
+      <span class="section-badge">Testimoni</span>
+      <h2 class="section-title">Apa Kata Mereka?</h2>
+      <p class="section-desc">Ribuan pelajar telah merasakan manfaat belajar Bahasa Arab dengan MBBA</p>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <p class="testimonial-text">"Alhamdulillah, dengan MBBA saya bisa belajar nahwu dari nol. Materinya terstruktur dan mudah dipahami. Kuisnya juga membantu saya menguji pemahaman."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar green">ح</div>
+          <div>
+            <p class="testimonial-name">Hafizh Ahmad</p>
+            <p class="testimonial-role">Santri Pondok Al-Munawwir</p>
+          </div>
+        </div>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
-
-        <!-- Testimonial 1 -->
-        <div class="testimonial-card fade-in">
-          <div class="flex items-center gap-1 text-amber-400 mb-4">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-          </div>
-          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
-            "Alhamdulillah, dengan MBBA saya bisa belajar nahwu dari nol. Materinya terstruktur dan mudah dipahami. Kuisnya juga membantu saya menguji pemahaman."
-          </p>
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-lg" style="font-family: 'Amiri', serif;">ح</div>
-            <div>
-              <p class="font-semibold text-dark-800 dark:text-white">Hafizh Ahmad</p>
-              <p class="text-slate-500 dark:text-slate-400 text-xs">Santri Pondok Al-Munawwir</p>
-            </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <p class="testimonial-text">"Sebagai ustadzah, MBBA sangat membantu saya mengajarkan shorof ke murid-murid saya. Desainnya menarik dan fiturnya lengkap."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar purple">ف</div>
+          <div>
+            <p class="testimonial-name">Ustadzah Fatimah</p>
+            <p class="testimonial-role">Guru Bahasa Arab MTsN 1</p>
           </div>
         </div>
-
-        <!-- Testimonial 2 -->
-        <div class="testimonial-card fade-in" style="animation-delay: 0.1s">
-          <div class="flex items-center gap-1 text-amber-400 mb-4">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-          </div>
-          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
-            "Sebagai ustadzah, MBBA sangat membantu saya mengajarkan shorof ke murid-murid saya. Desainnya menarik dan fiturnya lengkap. Sangat direkomendasikan!"
-          </p>
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg" style="font-family: 'Amiri', serif;">ف</div>
-            <div>
-              <p class="font-semibold text-dark-800 dark:text-white">Ustadzah Fatimah</p>
-              <p class="text-slate-500 dark:text-slate-400 text-xs">Guru Bahasa Arab MTsN 1</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Testimonial 3 -->
-        <div class="testimonial-card fade-in" style="animation-delay: 0.2s">
-          <div class="flex items-center gap-1 text-amber-400 mb-4">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star-half-stroke"></i>
-          </div>
-          <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
-            "Seru banget! Awalnya saya kira belajar Arab itu susah, ternyata dengan MBBA jadi menyenangkan. Progress saya terlihat jelas setiap hari."
-          </p>
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg" style="font-family: 'Amiri', serif;">م</div>
-            <div>
-              <p class="font-semibold text-dark-800 dark:text-white">Muhammad Rizki</p>
-              <p class="text-slate-500 dark:text-slate-400 text-xs">Mahasiswa Ushuluddin</p>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Trust Indicators -->
-      <div class="mt-12 flex flex-wrap justify-center items-center gap-6 sm:gap-8">
-        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-          <i class="fa-solid fa-users text-xl text-primary-500"></i>
-          <span class="font-semibold">2,500+</span>
-          <span class="text-sm">Pelajar Aktif</span>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star-half-stroke"></i>
         </div>
-        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-          <i class="fa-solid fa-face-smile text-xl text-amber-500"></i>
-          <span class="font-semibold">4.9/5</span>
-          <span class="text-sm">Rating</span>
+        <p class="testimonial-text">"Seru banget! Awalnya saya kira belajar Arab itu susah, ternyata dengan MBBA jadi menyenangkan. Progress saya terlihat jelas setiap hari."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar blue">م</div>
+          <div>
+            <p class="testimonial-name">Muhammad Rizki</p>
+            <p class="testimonial-role">Mahasiswa Ushuluddin</p>
+          </div>
         </div>
-        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-          <i class="fa-solid fa-award text-xl text-blue-500"></i>
-          <span class="font-semibold">100%</span>
-          <span class="text-sm">Gratis</span>
+      </div>
+    </div>
+
+    <div class="trust-stats">
+      <div class="trust-stat">
+        <div class="trust-stat-icon green">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="trust-stat-content">
+          <span class="trust-stat-number">2,500+</span>
+          <span class="trust-stat-label">Pelajar Aktif</span>
+        </div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-stat-icon amber">
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="trust-stat-content">
+          <span class="trust-stat-number">4.9/5</span>
+          <span class="trust-stat-label">Rating</span>
+        </div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-stat-icon blue">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <div class="trust-stat-content">
+          <span class="trust-stat-number">100%</span>
+          <span class="trust-stat-label">Gratis</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- KURIKULUM PREVIEW -->
-  <section id="kurikulum" class="py-16 sm:py-20 md:py-28 bg-white dark:bg-slate-900">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6">
-      <div class="text-center mb-10 sm:mb-14">
-        <span class="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-          Kurikulum
-        </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark-800 dark:text-white mb-3">
-          Kitab Mukhtarat
-        </h2>
-        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
-          3 bagian utama dengan 3 bab dan 10+ fasal untuk pembelajaran sistematis
-        </p>
+  <!-- Curriculum -->
+  <section id="kurikulum" class="section curriculum-section">
+    <div class="section-header">
+      <span class="section-badge">Kurikulum</span>
+      <h2 class="section-title">Kitab Mukhtarat</h2>
+      <p class="section-desc">3 bagian utama dengan 3 bab dan 10+ fasal untuk pembelajaran sistematis</p>
+    </div>
+
+    <div class="curriculum-list">
+      <div class="curriculum-item active">
+        <div class="curriculum-number">1</div>
+        <div class="curriculum-content">
+          <span class="curriculum-status active">AKTIF</span>
+          <h3 class="curriculum-title">Al-Qawa'id al-Muta'alliqah bi al-Jumlah</h3>
+          <p class="curriculum-desc">Qaidah-qaidah nahwu yang berkaitan dengan kalimat</p>
+          <div class="curriculum-tags">
+            <span class="curriculum-tag"><i class="fa-solid fa-book"></i> 3 Bab</span>
+            <span class="curriculum-tag"><i class="fa-solid fa-file-lines"></i> 10+ Fasal</span>
+          </div>
+        </div>
       </div>
 
-      <div class="space-y-4 sm:space-y-6 max-w-2xl mx-auto">
-
-        <!-- Section 1 - Active -->
-        <div class="bg-gradient-to-r from-emerald-50 to-white dark:from-emerald-950/30 dark:to-slate-800 p-5 sm:p-6 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 shadow-lg shadow-emerald-100/50 dark:shadow-emerald-900/20 animate-fade-in-up">
-          <div class="flex items-start gap-4 sm:gap-5">
-            <div class="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 flex-shrink-0">
-              <span class="text-white font-bold text-lg sm:text-xl">1</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="px-2 sm:px-3 py-0.5 bg-emerald-500 text-white text-xs font-bold rounded-full">AKTIF</span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold text-dark-800 mb-1">
-                Al-Qawa'id al-Muta'alliqah bi al-Jumlah
-              </h3>
-              <p class="text-slate-500 text-xs sm:text-sm mb-3">
-                Qaidah-qaidah nahwu yang berkaitan dengan kalimat
-              </p>
-              <div class="flex flex-wrap gap-2">
-                <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full flex items-center gap-1">
-                  <i class="fa-solid fa-book"></i> 3 Bab
-                </span>
-                <span class="px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
-                  <i class="fa-solid fa-file-lines"></i> 10+ Fasal
-                </span>
-              </div>
-            </div>
+      <div class="curriculum-item">
+        <div class="curriculum-number pending">2</div>
+        <div class="curriculum-content">
+          <span class="curriculum-status soon"><i class="fa-solid fa-clock"></i> SEGERA</span>
+          <h3 class="curriculum-title">Ash-Sharf al-Mukhtasar</h3>
+          <p class="curriculum-desc">Shorof dasar yang berkaitan dengan fi'il</p>
+          <div class="curriculum-tags">
+            <span class="curriculum-tag"><i class="fa-solid fa-clock"></i> Coming Soon</span>
           </div>
         </div>
+      </div>
 
-        <!-- Section 2 - Coming Soon -->
-        <div class="bg-slate-100 dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 opacity-70 animate-fade-in-up" style="animation-delay: 0.1s">
-          <div class="flex items-start gap-4 sm:gap-5">
-            <div class="w-12 sm:w-14 h-12 sm:h-14 bg-slate-200 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
-              <span class="text-slate-400 font-bold text-lg sm:text-xl">2</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="px-2 sm:px-3 py-0.5 bg-amber-400 text-amber-900 text-xs font-bold rounded-full flex items-center gap-1">
-                  <i class="fa-solid fa-clock"></i> SEGERA
-                </span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold text-slate-400 mb-1">
-                Ash-Sharf al-Mukhtasar
-              </h3>
-              <p class="text-slate-400 text-xs sm:text-sm mb-3">
-                Shorof dasar yang berkaitan dengan fi'il
-              </p>
-            </div>
+      <div class="curriculum-item">
+        <div class="curriculum-number pending">3</div>
+        <div class="curriculum-content">
+          <span class="curriculum-status soon"><i class="fa-solid fa-clock"></i> SEGERA</span>
+          <h3 class="curriculum-title">Al-I'rab al-Musharrar</h3>
+          <p class="curriculum-desc">Penjabaran i'rab secara terperinci</p>
+          <div class="curriculum-tags">
+            <span class="curriculum-tag"><i class="fa-solid fa-clock"></i> Coming Soon</span>
           </div>
         </div>
-
-        <!-- Section 3 - Coming Soon -->
-        <div class="bg-slate-100 dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 opacity-70 animate-fade-in-up" style="animation-delay: 0.2s">
-          <div class="flex items-start gap-4 sm:gap-5">
-            <div class="w-12 sm:w-14 h-12 sm:h-14 bg-slate-200 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
-              <span class="text-slate-400 font-bold text-lg sm:text-xl">3</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="px-2 sm:px-3 py-0.5 bg-amber-400 text-amber-900 text-xs font-bold rounded-full flex items-center gap-1">
-                  <i class="fa-solid fa-clock"></i> SEGERA
-                </span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold text-slate-400 mb-1">
-                Al-I'rab al-Musharrar
-              </h3>
-              <p class="text-slate-400 text-xs sm:text-sm mb-3">
-                Penjabaran i'rab secara terperinci
-              </p>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="py-16 sm:py-20 md:py-28 bg-gradient-to-br from-emerald-600 via-primary-600 to-emerald-700 relative overflow-hidden">
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute top-0 right-0 w-60 sm:w-96 h-60 sm:h-96 bg-white/5 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-60 sm:w-96 h-60 sm:h-96 bg-emerald-400/10 rounded-full blur-3xl"></div>
-    </div>
-
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center relative z-10">
-      <div class="animate-fade-in-up mb-6 sm:mb-8">
-        <div class="w-16 sm:w-20 h-16 sm:h-20 bg-white/15 backdrop-blur-sm rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto shadow-2xl">
-          <i class="fa-solid fa-graduation-cap text-white text-3xl sm:text-4xl"></i>
-        </div>
+  <section class="cta-section">
+    <div class="cta-content">
+      <div class="cta-icon">
+        <i class="fa-solid fa-graduation-cap"></i>
       </div>
-
-      <div class="animate-fade-in-up" style="animation-delay: 0.1s">
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4" style="text-shadow: 0 4px 20px rgba(0,0,0,0.4);">
-          Siap Memulai Perjalananmu?
-        </h2>
-        <p class="text-white/90 text-lg sm:text-xl mb-8 max-w-md mx-auto font-medium dark:text-white/80" style="text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-          Daftar gratis dan mulai belajar nahwu & shorof sekarang juga
-        </p>
-      </div>
-
-      <div class="animate-fade-in-up" style="animation-delay: 0.2s">
-        <a href="/pages/auth.html"
-          class="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3.5 sm:py-4 bg-white hover:bg-emerald-50 text-emerald-700 text-base sm:text-lg font-bold rounded-xl shadow-2xl shadow-black/20 hover:shadow-black/30 transition-all ripple">
-          <span>Daftar Gratis Sekarang</span>
-          <i class="fa-solid fa-arrow-right text-sm"></i>
-        </a>
-      </div>
+      <h2 class="cta-title">Siap Memulai Perjalananmu?</h2>
+      <p class="cta-desc">Daftar gratis dan mulai belajar nahwu & shorof sekarang juga</p>
+      <a href="/pages/auth.html" class="cta-btn">
+        <span>Daftar Gratis Sekarang</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </a>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="bg-dark-900 dark:bg-slate-950 py-8 sm:py-12">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
-            <span class="text-white font-bold" style="font-family: 'Amiri', serif;">م</span>
-          </div>
-          <div>
-            <span class="font-bold text-white">MBBA</span>
-            <p class="text-slate-400 text-xs">Madrasah Belajar Bahasa Arab</p>
-          </div>
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span>م</span>
         </div>
-
-        <div class="flex items-center gap-4 sm:gap-6">
-          <a href="/pages/auth.html" class="text-slate-400 hover:text-primary-400 transition-colors p-2">
-            <i class="fa-solid fa-book text-lg"></i>
-          </a>
-          <a href="/pages/auth.html" class="text-slate-400 hover:text-primary-400 transition-colors p-2">
-            <i class="fa-solid fa-graduation-cap text-lg"></i>
-          </a>
-          <a href="/pages/auth.html" class="text-slate-400 hover:text-primary-400 transition-colors p-2">
-            <i class="fa-solid fa-question text-lg"></i>
-          </a>
+        <div class="footer-text">
+          <strong>MBBA</strong>
+          <p>Madrasah Belajar Bahasa Arab</p>
         </div>
-
-        <p class="text-slate-500 text-xs sm:text-sm">
-          &copy; 2024 MBBA
-        </p>
       </div>
+
+      <div class="footer-links">
+        <a href="#" class="footer-link"><i class="fa-solid fa-book"></i></a>
+        <a href="#" class="footer-link"><i class="fa-solid fa-graduation-cap"></i></a>
+        <a href="#" class="footer-link"><i class="fa-solid fa-circle-question"></i></a>
+      </div>
+
+      <p class="footer-copyright">&copy; 2024 MBBA. Hak Cipta Dilindungi.</p>
     </div>
   </footer>
 
-  <!-- BOTTOM NAVIGATION (Mobile Only) -->
-  <nav class="bottom-nav md:hidden">
-    <a href="#fitur" class="bottom-nav-item active">
-      <i class="fa-solid fa-star"></i>
-      <span>Fitur</span>
-    </a>
-    <a href="#kurikulum" class="bottom-nav-item">
-      <i class="fa-solid fa-book-open"></i>
-      <span>Kurikulum</span>
-    </a>
-    <a href="/pages/auth.html" class="bottom-nav-item">
-      <i class="fa-solid fa-rocket"></i>
-      <span>Mulai</span>
-    </a>
-  </nav>
-
-  <!-- Theme Toggle Script -->
   <script>
-    // Theme toggle functionality
+    // Theme Toggle
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
 
-    // Check for saved theme preference or default to light
-    const savedTheme = localStorage.getItem('mbba-theme');
-    if (savedTheme === 'dark') {
+    // Check saved theme
+    if (localStorage.getItem('mbba-theme') === 'dark' ||
+        (!localStorage.getItem('mbba-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       html.classList.add('dark');
-    }
-
-    // Listen for system preference changes
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      if (!savedTheme) {
-        html.classList.add('dark');
-      }
+      themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
     }
 
     themeToggle.addEventListener('click', () => {
       html.classList.toggle('dark');
       const isDark = html.classList.contains('dark');
       localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
-    });
-
-    // Ripple effect
-    document.querySelectorAll('.ripple').forEach(button => {
-      button.addEventListener('click', function(e) {
-        const rect = button.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const ripple = document.createElement('span');
-        ripple.style.cssText = `
-          position: absolute;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.4);
-          transform: scale(0);
-          animation: ripple 0.6s linear;
-          pointer-events: none;
-          left: ${x}px;
-          top: ${y}px;
-          width: height = 100px;
-          height: 100px;
-          margin-left: -50px;
-          margin-top: -50px;
-        `;
-        button.style.position = 'relative';
-        button.style.overflow = 'hidden';
-        button.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-      });
-    });
-
-    // Add ripple animation keyframes
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes ripple {
-        to {
-          transform: scale(4);
-          opacity: 0;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-
-    // Scroll-triggered animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.fade-in').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(el);
+      themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
     });
   </script>
-
 </body>
 </html>
