@@ -510,11 +510,11 @@
       border-radius: var(--radius-md);
     }
     .demo-card-green {
-      background: linear-gradient(145deg, var(--accent-soft), #D1FAE5);
+      background: linear-gradient(145deg, var(--accent-soft), var(--bg-card));
       border: 1px solid rgba(5, 150, 105, 0.2);
     }
     .demo-card-red {
-      background: linear-gradient(145deg, var(--red-soft), #FEE2E2);
+      background: linear-gradient(145deg, var(--red-soft), var(--bg-card));
       border: 1px solid rgba(239, 68, 68, 0.2);
     }
     .demo-title {
@@ -534,6 +534,18 @@
     }
     .demo-card-green .demo-desc { color: var(--accent); }
     .demo-card-red .demo-desc { color: var(--red); }
+
+    /* Dark mode for demo cards */
+    .dark .demo-card-green {
+      background: rgba(5, 150, 105, 0.1);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+    .dark .demo-card-red {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .dark .demo-card-green .demo-desc { color: var(--accent); }
+    .dark .demo-card-red .demo-desc { color: var(--red); }
 
     /* Section Hide/Show */
     .tab-content { display: none; }
