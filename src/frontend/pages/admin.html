@@ -1874,23 +1874,43 @@
 
     async function loadStudentList() {
       const container = document.getElementById('studentList');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat daftar siswa...</p></div>';
+
       try {
-        // Fetch all users from auth
-        const usersRes = await fetch(`${SUPABASE_URL}auth/v1/users`, {
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
-        });
-        const users = await usersRes.json().catch(() => []);
+        const token = getToken();
+        if (!token) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Silakan login terlebih dahulu</p></div>`;
+          return;
+        }
+
+        // Fetch all users from auth - handle possible error
+        let users = [];
+        try {
+          const usersRes = await fetch(`${SUPABASE_URL}auth/v1/users`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
+          });
+          if (usersRes.ok) {
+            users = await usersRes.json();
+          }
+        } catch (e) {
+          console.warn('Could not fetch users from auth API:', e);
+        }
 
         // Fetch all progress
-        const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, {
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+        const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*&order=completed_at.desc`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
         });
         const progressData = await progressRes.json().catch(() => []);
 
-        if (users.length === 0) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-users"></i></div><p class="empty-text">Belum ada siswa terdaftar</p></div>`;
-          return;
-        }
+        // Create user map for quick lookup
+        const userMap = {};
+        users.forEach(u => {
+          const meta = u.user_metadata || {};
+          userMap[u.id] = {
+            name: meta.full_name || u.email || 'User',
+            email: (u.email || '').toLowerCase()
+          };
+        });
 
         // Group progress by user
         const userProgressMap = {};
@@ -1907,15 +1927,29 @@
           }
         });
 
+        // If no users from auth API, create entries from progress data
+        if (users.length === 0 && progressData.length > 0) {
+          const uniqueUserIds = [...new Set(progressData.map(p => p.user_id))];
+          uniqueUserIds.forEach(uid => {
+            if (!userMap[uid]) {
+              userMap[uid] = { name: 'Siswa ' + uid.substring(0, 6), email: '-' };
+            }
+          });
+        }
+
+        const allUsers = Object.keys(userMap);
+        if (allUsers.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-users"></i></div><p class="empty-text">Belum ada siswa terdaftar</p></div>`;
+          return;
+        }
+
         // Build student list HTML
-        let html = '<div class="student-list-grid">';
-        users.forEach((user, idx) => {
-          const meta = user.user_metadata || {};
-          const fullName = meta.full_name || user.email || 'User';
-          const email = (user.email || '').toLowerCase();
-          const progress = userProgressMap[user.id] || { completed: 0, total: 0, lastActive: null };
+        let html = '<div style="display: grid; gap: 16px;">';
+        allUsers.forEach(userId => {
+          const userInfo = userMap[userId];
+          const progress = userProgressMap[userId] || { completed: 0, total: 0, lastActive: null };
           const completedCount = progress.completed;
-          const totalCount = progress.total;
+          const quizCount = progress.total - progress.completed;
           const lastActive = progress.lastActive ? new Date(progress.lastActive).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Belum aktif';
 
           // Badge color based on activity
@@ -1929,12 +1963,12 @@
           }
 
           html += `
-          <div class="student-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px; transition: all 0.3s;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px; transition: all 0.3s;">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(145deg, var(--accent), var(--accent-light)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; flex-shrink: 0;">${fullName.charAt(0).toUpperCase()}</div>
+              <div style="width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(145deg, var(--accent), var(--accent-light)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; flex-shrink: 0;">${(userInfo.name || 'U').charAt(0).toUpperCase()}</div>
               <div style="flex: 1; min-width: 0;">
-                <div style="font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 2px;">${fullName}</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">${email}</div>
+                <div style="font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 2px;">${userInfo.name}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">${userInfo.email}</div>
               </div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px;">
@@ -1943,11 +1977,11 @@
                 <div style="font-size: 0.7rem; color: var(--text-muted);">Materi</div>
               </div>
               <div style="text-align: center; padding: 12px; background: var(--bg-base); border-radius: 12px;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: var(--blue);">${totalCount - completedCount}</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--blue);">${quizCount}</div>
                 <div style="font-size: 0.7rem; color: var(--text-muted);">Quiz</div>
               </div>
               <div style="text-align: center; padding: 12px; background: var(--bg-base); border-radius: 12px;">
-                <span class="badge ${activityBadge}" style="display: inline-block; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 600;">${activityText}</span>
+                <span class="${activityBadge}" style="display: inline-block; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 600;">${activityText}</span>
                 <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 4px;">${lastActive}</div>
               </div>
             </div>
@@ -1956,6 +1990,7 @@
         html += '</div>';
         container.innerHTML = html;
       } catch (err) {
+        console.error('Error loading student list:', err);
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Error: ${err.message}</p></div>`;
       }
     }
