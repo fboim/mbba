@@ -518,7 +518,6 @@
           <div id="avatarInitial" class="profile-avatar">P</div>
           <div class="profile-details">
             <h1 id="profileName" class="profile-name">Memuat...</h1>
-            <p id="profileDisplayName" class="profile-email">email@example.com</p>
             <span id="profileRole" class="profile-role">
               <i class="fa-solid fa-graduation-cap"></i>
               Pelajar
@@ -709,7 +708,6 @@
       var role = user.user_metadata?.role || 'student';
 
       document.getElementById('profileName').textContent = name;
-      document.getElementById('profileDisplayName').textContent = name; // Show name instead of email
       document.getElementById('avatarInitial').textContent = name.charAt(0).toUpperCase();
 
       var roleLabel = role === 'admin' ? 'Admin' : role === 'teacher' ? 'Guru' : 'Pelajar';
