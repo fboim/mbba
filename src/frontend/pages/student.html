@@ -466,6 +466,9 @@
 
       <div class="nav-right">
         <span id="userName" class="user-name">Hai, Pelajar</span>
+        <button id="theme-toggle" class="nav-btn" title="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
         <a href="profile.html" class="nav-btn" title="Profil">
           <i class="fa-solid fa-user"></i>
         </a>
@@ -617,6 +620,21 @@
       var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
       document.getElementById('userName').textContent = 'Hai, ' + name;
       await loadDashboard();
+
+      // Dark Mode
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      if (localStorage.getItem('mbba-theme') === 'dark' ||
+          (!localStorage.getItem('mbba-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+      }
+      themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        const isDark = html.classList.contains('dark');
+        localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
+        themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      });
     })();
 
     async function loadDashboard() {

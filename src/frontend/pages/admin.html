@@ -769,6 +769,9 @@
           <i class="fa-solid fa-arrow-left"></i>
           <span class="hidden sm:inline">Kembali</span>
         </a>
+        <button id="theme-toggle" class="nav-btn" title="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
         <button onclick="handleLogout()" class="nav-btn" title="Logout">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
@@ -1312,6 +1315,21 @@
       loadStats();
       loadFasalsForSelect();
       loadQuizList();
+
+      // Dark Mode
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      if (localStorage.getItem('mbba-theme') === 'dark' ||
+          (!localStorage.getItem('mbba-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+      }
+      themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        const isDark = html.classList.contains('dark');
+        localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
+        themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      });
     })();
 
     // Tab Switching
