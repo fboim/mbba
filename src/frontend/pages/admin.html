@@ -1769,25 +1769,38 @@
 
       if (!targetId || !question || !answer) { errorEl.textContent = 'Lengkapi semua field.'; errorEl.classList.remove('hidden'); return; }
 
+      // Input sanitization - prevent XSS
+      const sanitizedQuestion = question.replace(/[<>]/g, '').substring(0, 2000);
+      const sanitizedAnswer = answer.replace(/[<>]/g, '').substring(0, 500);
+
       const [quizLevel, quizId] = targetId.split(':');
-      const body = { type, question, correct_answer: answer, order_index: allQuizzes.filter(q => quizLevel === 'fasal' ? q.fasal_id === quizId : q.bab_id === quizId).length + 1 };
+      const body = { type, question: sanitizedQuestion, correct_answer: sanitizedAnswer, order_index: allQuizzes.filter(q => quizLevel === 'fasal' ? q.fasal_id === quizId : q.bab_id === quizId).length + 1 };
       if (quizLevel === 'fasal') body.fasal_id = quizId; else body.bab_id = quizId;
 
       if (type === 'mc') {
-        const a = document.getElementById('mcA').value.trim();
-        const b = document.getElementById('mcB').value.trim();
-        const c = document.getElementById('mcC').value.trim();
-        const d = document.getElementById('mcD').value.trim();
+        const a = document.getElementById('mcA').value.trim().replace(/[<>]/g, '').substring(0, 200);
+        const b = document.getElementById('mcB').value.trim().replace(/[<>]/g, '').substring(0, 200);
+        const c = document.getElementById('mcC').value.trim().replace(/[<>]/g, '').substring(0, 200);
+        const d = document.getElementById('mcD').value.trim().replace(/[<>]/g, '').substring(0, 200);
         if (!a || !b || !c || !d) { errorEl.textContent = 'Lengkapi semua opsi MC.'; errorEl.classList.remove('hidden'); return; }
         body.options = JSON.stringify({ A: a, B: b, C: c, D: d });
       }
 
       try {
-        await fetch(`${SUPABASE_URL}rest/v1/quiz`, {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/quiz`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' },
           body: JSON.stringify(body)
         });
+
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            throw new Error('Anda tidak memiliki izin untuk menambah soal. Pastikan Anda login sebagai admin/guru.');
+          }
+          const err = await res.json();
+          throw new Error(err.message || 'Gagal menambah soal');
+        }
+
         document.getElementById('newQuizQuestion').value = '';
         document.getElementById('newQuizAnswer').value = '';
         document.getElementById('mcA').value = '';
