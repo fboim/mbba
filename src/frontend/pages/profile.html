@@ -502,6 +502,9 @@
           <span class="nav-logo-text">MBBA</span>
         </a>
       </div>
+      <button id="theme-toggle" class="nav-btn" title="Toggle theme">
+        <i class="fa-solid fa-moon"></i>
+      </button>
     </div>
   </nav>
 
@@ -661,17 +664,34 @@
   <script>
     var userProgress = [];
 
-    // Dark mode toggle
-    const darkModeToggle = document.getElementById('darkModeToggle');
+    // Dark mode toggle - navbar button
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
     if (localStorage.getItem('mbba-theme') === 'dark' ||
         (!localStorage.getItem('mbba-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-      darkModeToggle.checked = true;
+      html.classList.add('dark');
+      themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
     }
-    darkModeToggle.addEventListener('change', () => {
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('mbba-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+      localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
+      themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      // Sync with settings toggle
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      if (darkModeToggle) darkModeToggle.checked = isDark;
     });
+
+    // Settings dark mode toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+      darkModeToggle.addEventListener('change', () => {
+        const isDark = darkModeToggle.checked;
+        html.classList.toggle('dark', isDark);
+        localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
+        themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      });
+    }
 
     (async function() {
       var user = await getCurrentUser();
