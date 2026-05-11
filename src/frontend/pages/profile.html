@@ -663,7 +663,7 @@
   <script>
     var userProgress = [];
 
-    // Dark mode toggle - navbar button
+    // Dark mode toggle - navbar button with smooth transition
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
     if (localStorage.getItem('mbba-theme') === 'dark' ||
@@ -672,10 +672,12 @@
       themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
     }
     themeToggle.addEventListener('click', () => {
+      html.classList.add('transitioning');
       html.classList.toggle('dark');
       const isDark = html.classList.contains('dark');
       localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
       themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      setTimeout(() => html.classList.remove('transitioning'), 400);
       // Sync with settings toggle
       const darkModeToggle = document.getElementById('darkModeToggle');
       if (darkModeToggle) darkModeToggle.checked = isDark;
@@ -685,10 +687,12 @@
     const darkModeToggle = document.getElementById('darkModeToggle');
     if (darkModeToggle) {
       darkModeToggle.addEventListener('change', () => {
+        html.classList.add('transitioning');
         const isDark = darkModeToggle.checked;
         html.classList.toggle('dark', isDark);
         localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
         themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        setTimeout(() => html.classList.remove('transitioning'), 400);
       });
     }
 

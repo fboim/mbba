@@ -1321,10 +1321,12 @@
         themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
       }
       themeToggle.addEventListener('click', () => {
+        html.classList.add('transitioning');
         html.classList.toggle('dark');
         const isDark = html.classList.contains('dark');
         localStorage.setItem('mbba-theme', isDark ? 'dark' : 'light');
         themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        setTimeout(() => html.classList.remove('transitioning'), 400);
       });
     })();
 
