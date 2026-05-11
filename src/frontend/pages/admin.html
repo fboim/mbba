@@ -1636,13 +1636,19 @@
         pageHTML += '<p style="margin-top:30px;"><a href="admin.html">← Back to Admin</a></p>';
         pageHTML += '</body></html>';
 
-        // Insert as position:fixed overlay to bypass ALL CSS
-        var materiOverlay = document.createElement('div');
-        materiOverlay.style.cssText = 'position:fixed;top:50px;left:10px;right:10px;bottom:10px;background:#fff;border:5px solid #000;padding:20px;overflow:auto;z-index:99998;font-family:Arial,sans-serif;font-size:16px;';
-        materiOverlay.innerHTML = '<h2 style="margin:0 0 20px 0;padding:10px;background:#0f0;">DAFTAR MATERI (OVERLAY)</h2>';
-        materiOverlay.innerHTML += html;
-        document.body.appendChild(materiOverlay);
-        console.log('loadMateri: Created overlay, html length:', html.length);
+        // Replace the entire contentMateri with proper styled content
+        var contentMateri = document.getElementById('contentMateri');
+        if (contentMateri) {
+          var newHTML = '<div class="bento-grid" style="display:block !important;">';
+          newHTML += '<div class="bento-card" style="display:block !important;min-height:400px !important;">';
+          newHTML += '<div class="bento-inner" style="display:block !important;padding:24px !important;">';
+          newHTML += '<div style="padding:20px !important;background:#fff !important;border:2px solid #000 !important;">';
+          newHTML += '<h3 style="margin:0 0 15px 0 !important;color:#059669 !important;font-size:20px !important;">DAFTAR MATERI</h3>';
+          newHTML += html;
+          newHTML += '</div></div></div></div>';
+          contentMateri.innerHTML = newHTML;
+          console.log('loadMateri: Replaced contentMateri with styled content');
+        }
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
