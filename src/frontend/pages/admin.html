@@ -1309,8 +1309,11 @@
       }
 
       loadStats();
+      loadMateri();
       loadFasalsForSelect();
       loadQuizList();
+      loadStudentList();
+      initAudioTab();
 
       // Dark Mode
       const themeToggle = document.getElementById('theme-toggle');
@@ -1534,17 +1537,25 @@
     async function loadMateri() {
       const container = document.getElementById('materiList');
       if (!container) { console.error('materiList container not found'); return; }
-      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat...</p></div>';
+      console.log('loadMateri: Starting fetch...');
       const token = getToken();
       const headers = { 'apikey': SUPABASE_ANON_KEY };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
+        console.log('loadMateri: Fetching from API...');
         const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
           fetch(`${SUPABASE_URL}rest/v1/bagian?order=order_index`, { headers }),
           fetch(`${SUPABASE_URL}rest/v1/bab?order=order_index`, { headers }),
           fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, { headers })
         ]);
+
+        console.log('loadMateri: Responses received', {
+          bagians: bagiansRes.status,
+          babs: babsRes.status,
+          fasals: fasalsRes.status
+        });
 
         const bagians = await bagiansRes.json().catch(e => { console.warn('bagian parse error:', e); return []; });
         const babs = await babsRes.json().catch(e => { console.warn('bab parse error:', e); return []; });
