@@ -1609,12 +1609,15 @@
           materiList.innerHTML = html;
           materiList.classList.remove('loading');
           materiList.style.display = 'block';
+          materiList.style.minHeight = '200px';
           // Force layout recalc
           void materiList.offsetHeight;
           console.log('loadMateri: Updated materiList with', bagians.length, 'bagians');
           console.log('materiList offsetHeight:', materiList.offsetHeight);
-          console.log('materiList HTML length:', materiList.innerHTML.length);
-          console.log('materiList computed style:', window.getComputedStyle(materiList).display);
+          console.log('materiList parent:', materiList.parentElement.className);
+          console.log('materiList parent offsetHeight:', materiList.parentElement.offsetHeight);
+          console.log('materiList grandparent:', materiList.parentElement.parentElement.className);
+          console.log('materiList grandparent offsetHeight:', materiList.parentElement.parentElement.offsetHeight);
         } else {
           console.error('loadMateri: materiList not found!');
         }
