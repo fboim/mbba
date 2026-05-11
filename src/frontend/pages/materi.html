@@ -1054,13 +1054,15 @@
 
     async function loadBab(babId) {
       try {
-        var res = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + babId + '&select=*,bagian(*),audio_url', {
+        var res = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + babId + '&select=*,bagian(*)', {
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
         });
         var data = await res.json();
+        console.log('loadBab: response status', res.status, 'data:', data);
         var bab = data[0];
 
         if (!bab) {
+          console.log('loadBab: bab not found in response');
           window.location.href = 'student.html';
           return;
         }
