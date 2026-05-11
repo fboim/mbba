@@ -1808,80 +1808,44 @@
       const container = document.getElementById('studentList');
       container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat daftar siswa...</p></div>';
 
-      // Use setTimeout to ensure UI updates before heavy operations
-      setTimeout(async () => {
-        try {
-          const token = getToken();
-          const headers = { 'apikey': SUPABASE_ANON_KEY };
-          if (token) headers['Authorization'] = `Bearer ${token}`;
+      try {
+        const token = getToken();
+        const headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
 
-          let progressData = [];
-          try {
-            const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers });
-            if (progressRes.ok) progressData = await progressRes.json().catch(() => []);
-          } catch (e) {
-            console.warn('Progress fetch failed:', e.message);
-          }
+        const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers });
+        const progressData = progressRes.ok ? await progressRes.json().catch(() => []) : [];
 
-          let userMap = {};
-          let userProgressMap = {};
-
-          // Build from progress data
-          progressData.forEach(p => {
-            if (!userProgressMap[p.user_id]) {
-              userProgressMap[p.user_id] = { completed: 0, total: 0, lastActive: null };
-            }
-            userProgressMap[p.user_id].total++;
-            if (p.status === 'completed') userProgressMap[p.user_id].completed++;
-            if (p.completed_at && (!userProgressMap[p.user_id].lastActive || new Date(p.completed_at) > new Date(userProgressMap[p.user_id].lastActive))) {
-              userProgressMap[p.user_id].lastActive = p.completed_at;
-            }
-            if (!userMap[p.user_id]) {
-              userMap[p.user_id] = { name: 'Siswa ' + p.user_id.substring(0, 8), email: '-' };
-            }
-          });
-
-          // Jika tidak ada data progress, tampilkan pesan
-          if (Object.keys(userMap).length === 0) {
-            container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-users"></i></div><p class="empty-text">Belum ada siswa yang belajar</p></div>`;
-            return;
-          }
-          }
-
-          const allUsers = Object.keys(userMap);
-          if (allUsers.length === 0) {
-            container.innerHTML = `<div class="empty-state">
-              <div class="empty-icon"><i class="fa-solid fa-users"></i></div>
-              <p class="empty-text">Belum ada siswa terdaftar</p>
-              <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">Siswa akan muncul setelah mereka mulai belajar</p>
-            </div>`;
-          } else {
-            buildStudentList(container, userMap, userProgressMap);
-          }
-        } catch (err) {
-          console.error('Error loading student list:', err);
-          container.innerHTML = `<div class="empty-state">
-            <div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div>
-            <p class="empty-text" style="color: var(--red);">Error: ${err.message}</p>
-            <button onclick="loadStudentList()" style="margin-top: 12px; padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer;">Coba Lagi</button>
-          </div>`;
+        if (progressData.length === 0) {
+          container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-users"></i></div><p class="empty-text">Belum ada aktivitas siswa</p></div>';
+          return;
         }
-      }, 50);
-    }
 
-    function buildStudentList(container, userMap, userProgressMap) {
-      const allUsers = Object.keys(userMap);
-      if (allUsers.length === 0) {
-        container.innerHTML = `<div class="empty-state">
-          <div class="empty-icon"><i class="fa-solid fa-users"></i></div>
-          <p class="empty-text">Belum ada siswa terdaftar</p>
-        </div>`;
-        return;
+        // Build student data from progress
+        const studentData = {};
+        progressData.forEach(p => {
+          if (!studentData[p.user_id]) {
+            studentData[p.user_id] = { id: p.user_id, completed: 0, total: 0, lastActive: null };
+          }
+          studentData[p.user_id].total++;
+          if (p.status === 'completed') studentData[p.user_id].completed++;
+          if (p.completed_at) studentData[p.user_id].lastActive = p.completed_at;
+        });
+
+        // Build HTML table
+        const students = Object.values(studentData);
+        let html = '<div class="table-container"><table class="data-table"><thead><tr><th>#</th><th>ID</th><th>Progress</th><th>Terakhir Aktif</th></tr></thead><tbody>';
+        students.forEach((s, i) => {
+          const percent = s.total > 0 ? Math.round((s.completed / s.total) * 100) : 0;
+          const lastActive = s.lastActive ? new Date(s.lastActive).toLocaleDateString('id-ID') : '-';
+          html += `<tr><td>${i + 1}</td><td><code style="font-size: 0.8rem;">${s.id.substring(0, 8)}...</code></td><td>${s.completed}/${s.total} (${percent}%)</td><td>${lastActive}</td></tr>`;
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ${err.message}</p></div>`;
       }
-
-      // Simple table layout
-      let html = `
-      <div style="overflow-x: auto;">
+    }
         <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
           <thead>
             <tr style="border-bottom: 2px solid var(--border-subtle);">
