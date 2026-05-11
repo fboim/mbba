@@ -1616,15 +1616,31 @@
           materiList.innerHTML = html;
           materiList.classList.remove('loading');
 
-          // Force the content to be visible with inline styles
-          materiList.style.cssText = 'display: block !important; min-height: 300px !important; visibility: visible !important; opacity: 1 !important;';
+          // Use requestAnimationFrame to wait for browser to paint
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              console.log('After 2 frames - materiList offsetHeight:', materiList.offsetHeight);
+              console.log('After 2 frames - materiList scrollHeight:', materiList.scrollHeight);
+              console.log('After 2 frames - materiList clientHeight:', materiList.clientHeight);
 
-          console.log('After update - materiList style:', materiList.style.cssText);
-          console.log('After update - materiList offsetHeight:', materiList.offsetHeight);
+              // Force a reflow by accessing offsetHeight of multiple elements
+              var mainH = document.querySelector('main').offsetHeight;
+              var contentH = contentMateri.offsetHeight;
+              var gridH = bentoGrid ? bentoGrid.offsetHeight : 'N/A';
+              console.log('main offsetHeight:', mainH);
+              console.log('contentMateri offsetHeight after frames:', contentH);
+              console.log('bentoGrid offsetHeight after frames:', gridH);
 
-          // Check if it has any content
-          console.log('materiList children:', materiList.children.length);
-          console.log('materiList firstChild:', materiList.firstChild ? materiList.firstChild.tagName : 'none');
+              // If still 0, force it to work
+              if (materiList.offsetHeight === 0) {
+                console.log('FORCING VISIBLE - creating temporary element');
+                var temp = document.createElement('div');
+                temp.style.cssText = 'position:fixed;top:100px;left:10px;background:red;padding:20px;z-index:99999;color:white;font-size:20px;';
+                temp.innerHTML = 'DAFTAR MATERI<br>' + bagians.length + ' bagian<br>' + babs.length + ' bab<br>' + fasals.length + ' fasal';
+                document.body.appendChild(temp);
+              }
+            });
+          });
         } else {
           console.error('loadMateri: materiList not found!');
         }
