@@ -1602,10 +1602,16 @@
         }
         html += '</div>';
 
-        // Insert BIG visible box at top of body
-        var debugHTML = '<div id="materi-debug" style="position:fixed;top:0;left:0;width:100%;height:300px;background:#00ff00;z-index:999999;color:#000;font-size:30px;font-weight:bold;padding:30px;box-sizing:border-box;border:15px solid #000;">BIG DEBUG BOX<br>Baggian: ' + bagians.length + '<br>Babs: ' + babs.length + '<br>Fasals: ' + fasals.length + '<br><br>This should be VERY VISIBLE!</div>';
-        document.body.insertAdjacentHTML('afterbegin', debugHTML);
-        console.log('loadMateri: Inserted BIG debug into body');
+        // Insert into contentMateri div instead of body
+        var contentMateri = document.getElementById('contentMateri');
+        if (contentMateri) {
+          var debugHTML = '<div id="materi-debug" style="background:#00ff00;padding:40px;border:10px solid #000;margin:20px;font-size:24px;color:#000;font-weight:bold;">DEBUG in contentMateri!<br>Bagians: ' + bagians.length + '<br>Babs: ' + babs.length + '<br>Fasals: ' + fasals.length + '</div>';
+          contentMateri.insertAdjacentHTML('afterbegin', debugHTML);
+          console.log('loadMateri: Inserted debug into contentMateri');
+        } else {
+          document.body.insertAdjacentHTML('afterbegin', '<div style="position:fixed;top:0;left:0;background:#ff0000;padding:20px;font-size:20px;z-index:999999;">contentMateri NOT FOUND!</div>');
+          console.log('loadMateri: contentMateri not found');
+        }
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
