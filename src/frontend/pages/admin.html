@@ -1332,6 +1332,7 @@
 
     // Tab Switching
     function showTab(tab) {
+      console.log('showTab called:', tab);
       const allTabs = ['Stats', 'Materi', 'Quiz', 'Siswa', 'Audio'];
       allTabs.forEach(c => {
         const contentEl = document.getElementById('content' + c);
@@ -1343,14 +1344,15 @@
       const tabCapitalized = tab.charAt(0).toUpperCase() + tab.slice(1);
       const contentEl = document.getElementById('content' + tabCapitalized);
       const tabEl = document.getElementById('tab' + tabCapitalized);
+      console.log('Activating:', 'content' + tabCapitalized, 'tab' + tabCapitalized, { contentEl: !!contentEl, tabEl: !!tabEl });
       if (contentEl) contentEl.classList.add('active');
       if (tabEl) tabEl.classList.add('active');
 
-      if (tab === 'materi') loadMateri();
-      if (tab === 'quiz') loadQuizList();
-      if (tab === 'siswa') loadStudentList();
-      if (tab === 'audio') initAudioTab();
-      if (tab === 'stats') loadStats();
+      if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); }
+      if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
+      if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
+      if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
+      if (tab === 'stats') { console.log('Calling loadStats'); loadStats(); }
     }
 
     // Load Stats
@@ -1531,6 +1533,7 @@
     // Load Materi
     async function loadMateri() {
       const container = document.getElementById('materiList');
+      if (!container) { console.error('materiList container not found'); return; }
       container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
       const token = getToken();
       const headers = { 'apikey': SUPABASE_ANON_KEY };
@@ -1543,11 +1546,13 @@
           fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, { headers })
         ]);
 
-        const bagians = await bagiansRes.json().catch(() => []);
-        const babs = await babsRes.json().catch(() => []);
-        const fasals = await fasalsRes.json().catch(() => []);
+        const bagians = await bagiansRes.json().catch(e => { console.warn('bagian parse error:', e); return []; });
+        const babs = await babsRes.json().catch(e => { console.warn('bab parse error:', e); return []; });
+        const fasals = await fasalsRes.json().catch(e => { console.warn('fasal parse error:', e); return []; });
 
-        if (bagians.length === 0) {
+        console.log('Materi loaded:', { bagians: bagians.length, babs: babs.length, fasals: fasals.length });
+
+        if (!bagians || bagians.length === 0) {
           container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div><p class="empty-text">Belum ada materi</p></div>`;
           return;
         }
