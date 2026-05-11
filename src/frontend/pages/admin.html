@@ -1533,9 +1533,9 @@
       select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
     }
 
-    // Load Materi - TEST v5
+    // Load Materi - FIX v6: Write to materiList not contentMateri
     async function loadMateri() {
-      console.log('=== loadMateri v5 called at', new Date().toISOString(), '===');
+      console.log('=== loadMateri v6 called at', new Date().toISOString(), '===');
       var container = document.getElementById('materiList');
       console.log('loadMateri: container found?', !!container, '| bento-inner:', !!document.querySelector('#contentMateri .bento-inner'));
 
@@ -1561,13 +1561,13 @@
           return;
         }
 
-        var html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+        var html = '<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #fff;">';
         for (var i = 0; i < bagians.length; i++) {
           var bagian = bagians[i];
           var bagianBabs = babs.filter(function(b) { return b.bagian_id === bagian.id; });
-          html += '<div style="padding: 16px; background: linear-gradient(135deg, #eff6ff, #e0e7ff); border-radius: 16px; border: 1px solid #bfdbfe;">';
+          html += '<div style="padding: 16px; background: linear-gradient(135deg, #eff6ff, #e0e7ff); border-radius: 16px; border: 1px solid #bfdbfe; margin-bottom: 16px;">';
           html += '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;">';
-          html += '<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-blue">BAGIAN</span><span style="font-weight: 700;">' + bagian.order_index + '. ' + escapeHtml(bagian.title) + '</span></div>';
+          html += '<div style="display: flex; align-items: center; gap: 8px;"><span style="padding: 4px 10px; background: #3b82f6; color: white; border-radius: 6px; font-size: 11px; font-weight: 700;">BAGIAN</span><span style="font-weight: 700;">' + bagian.order_index + '. ' + escapeHtml(bagian.title) + '</span></div>';
           html += '<div style="display: flex; gap: 8px;">';
           html += '<button onclick="editMateri(\'bagian\', \'' + bagian.id + '\', \'' + escapeHtml(bagian.title) + '\')" style="padding: 8px; background: white; border: none; border-radius: 10px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-edit"></i></button>';
           html += '<button onclick="deleteMateri(\'bagian\', \'' + bagian.id + '\')" style="padding: 8px; background: white; border: none; border-radius: 10px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>';
@@ -1577,9 +1577,9 @@
           for (var j = 0; j < bagianBabs.length; j++) {
             var bab = bagianBabs[j];
             var babFasals = fasals.filter(function(f) { return f.bab_id === bab.id; });
-            html += '<div style="padding: 14px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">';
+            html += '<div style="padding: 14px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 8px;">';
             html += '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;">';
-            html += '<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-green">BAB</span><span style="font-weight: 600; color: #166534;">' + bab.order_index + '. ' + escapeHtml(bab.title) + '</span></div>';
+            html += '<div style="display: flex; align-items: center; gap: 8px;"><span style="padding: 3px 8px; background: #059669; color: white; border-radius: 5px; font-size: 10px; font-weight: 700;">BAB</span><span style="font-weight: 600; color: #166534;">' + bab.order_index + '. ' + escapeHtml(bab.title) + '</span></div>';
             html += '<div style="display: flex; gap: 6px;">';
             html += '<button onclick="editMateri(\'bab\', \'' + bab.id + '\', \'' + escapeHtml(bab.title) + '\')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-font"></i></button>';
             html += '<button onclick="openContentModal(\'bab\', \'' + bab.id + '\')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #059669; cursor: pointer;"><i class="fa-solid fa-file-lines"></i></button>';
@@ -1590,7 +1590,7 @@
             for (var k = 0; k < babFasals.length; k++) {
               var fasal = babFasals[k];
               html += '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px; gap: 8px;">';
-              html += '<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-amber">FASAL</span><span style="color: #475569;">' + fasal.order_index + '. ' + escapeHtml(fasal.title) + '</span></div>';
+              html += '<div style="display: flex; align-items: center; gap: 8px;"><span style="padding: 3px 8px; background: #f59e0b; color: white; border-radius: 5px; font-size: 10px; font-weight: 700;">FASAL</span><span style="color: #475569;">' + fasal.order_index + '. ' + escapeHtml(fasal.title) + '</span></div>';
               html += '<div style="display: flex; gap: 6px;">';
               html += '<button onclick="editMateri(\'fasal\', \'' + fasal.id + '\', \'' + escapeHtml(fasal.title) + '\')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-font"></i></button>';
               html += '<button onclick="openContentModal(\'fasal\', \'' + fasal.id + '\')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #059669; cursor: pointer;"><i class="fa-solid fa-file-lines"></i></button>';
@@ -1603,51 +1603,15 @@
         }
         html += '</div>';
 
-        // DATA IS CONFIRMED - Replace entire page body to bypass ALL CSS
-        var pageHTML = '<html><head><title>MATERI LIST</title>';
-        pageHTML += '<style>body{margin:0;padding:20px;background:#fff;font-family:Arial}</style>';
-        pageHTML += '</head><body>';
-        pageHTML += '<h1 style="background:#0f0;padding:20px;">DAFTAR MATERI</h1>';
-        pageHTML += '<p><b>Total:</b> ' + bagians.length + ' bagian, ' + babs.length + ' bab, ' + fasals.length + ' fasal</p>';
-
-        for (var i = 0; i < bagians.length; i++) {
-          var bagian = bagians[i];
-          pageHTML += '<div style="background:#ddeeff;padding:15px;margin:10px 0;border-radius:8px;">';
-          pageHTML += '<h2 style="color:#006;">' + bagian.order_index + '. ' + bagian.title + '</h2>';
-
-          var bagianBabs = babs.filter(function(b) { return b.bagian_id === bagian.id; });
-          for (var j = 0; j < bagianBabs.length; j++) {
-            var bab = bagianBabs[j];
-            pageHTML += '<div style="background:#eef;padding:10px;margin:10px 0 10px 20px;border-radius:5px;">';
-            pageHTML += '<h3>' + bab.order_index + '. ' + bab.title + '</h3>';
-
-            var babFasals = fasals.filter(function(f) { return f.bab_id === bab.id; });
-            for (var k = 0; k < babFasals.length; k++) {
-              var fasal = babFasals[k];
-              pageHTML += '<div style="background:#fff;padding:8px;margin:5px 0 5px 20px;border-left:3px solid #090;">';
-              pageHTML += '<b>Fasal ' + fasal.order_index + ':</b> ' + fasal.title;
-              pageHTML += '</div>';
-            }
-            pageHTML += '</div>';
-          }
-          pageHTML += '</div>';
-        }
-
-        pageHTML += '<p style="margin-top:30px;"><a href="admin.html">← Back to Admin</a></p>';
-        pageHTML += '</body></html>';
-
-        // Replace the entire contentMateri with proper styled content
-        var contentMateri = document.getElementById('contentMateri');
-        if (contentMateri) {
-          var newHTML = '<div class="bento-grid" style="display:block !important;">';
-          newHTML += '<div class="bento-card" style="display:block !important;min-height:400px !important;">';
-          newHTML += '<div class="bento-inner" style="display:block !important;padding:24px !important;">';
-          newHTML += '<div style="padding:20px !important;background:#fff !important;border:2px solid #000 !important;">';
-          newHTML += '<h3 style="margin:0 0 15px 0 !important;color:#059669 !important;font-size:20px !important;">DAFTAR MATERI</h3>';
-          newHTML += html;
-          newHTML += '</div></div></div></div>';
-          contentMateri.innerHTML = newHTML;
-          console.log('loadMateri: Replaced contentMateri with styled content');
+        // Replace materiList (inside the Daftar Materi card) - THIS IS THE FIX
+        var materiList = document.getElementById('materiList');
+        if (materiList) {
+          materiList.innerHTML = html;
+          materiList.classList.remove('loading');
+          materiList.style.display = 'block';
+          console.log('loadMateri: Updated materiList with', bagians.length, 'bagians');
+        } else {
+          console.error('loadMateri: materiList not found!');
         }
       } catch (err) {
         console.error('loadMateri error:', err);
