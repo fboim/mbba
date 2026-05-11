@@ -1535,9 +1535,8 @@
 
     // Load Materi
     async function loadMateri() {
-      const container = document.getElementById('materiList');
-      if (!container) { console.error('materiList not found'); return; }
-      container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat...</p></div>';
+      var container = document.getElementById('materiList');
+      console.log('loadMateri: container found?', !!container);
 
       const token = getToken();
       const headers = { 'apikey': SUPABASE_ANON_KEY };
@@ -1557,7 +1556,7 @@
         console.log('Materi:', bagians.length, 'bagians,', babs.length, 'babs,', fasals.length, 'fasals');
 
         if (!bagians || bagians.length === 0) {
-          container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div><p class="empty-text">Belum ada materi</p></div>';
+          if (container) container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div><p class="empty-text">Belum ada materi</p></div>';
           return;
         }
 
@@ -1603,22 +1602,16 @@
         }
         html += '</div>';
 
-        // Force ALL parent elements to have height
-        var parent = container.parentElement;
-        var parentDebug = [];
-        while (parent && parent.tagName !== 'BODY') {
-          parent.style.minHeight = '200px';
-          parent.style.border = '3px solid ' + ['blue', 'green', 'red', 'orange', 'purple'][parentDebug.length % 5];
-          parentDebug.push(parent.tagName + '=' + parent.className + ' h=' + parent.offsetHeight);
-          parent = parent.parentElement;
+        // Try inserting AFTER the entire contentMateri div
+        var contentMateri = document.getElementById('contentMateri');
+        if (contentMateri) {
+          contentMateri.insertAdjacentHTML('beforeend', '<div id="materi-debug" style="background:lime;padding:40px;border:10px dashed red;margin:20px;font-size:20px;">DEBUG: Materi loaded! ' + bagians.length + ' bagians</div>');
+          console.log('loadMateri: Inserted debug div');
+        } else {
+          // Fallback: insert into body
+          document.body.insertAdjacentHTML('beforeend', '<div id="materi-debug" style="background:lime;padding:40px;border:10px dashed red;margin:20px;font-size:20px;position:fixed;top:0;left:0;z-index:99999;">DEBUG: Materi loaded! ' + bagians.length + ' bagians</div>');
+          console.log('loadMateri: Inserted debug into body');
         }
-        console.log('loadMateri: Parents before:', parentDebug);
-
-        // Replace content
-        container.outerHTML = '<div id="materiContainer"><div style="background:yellow;padding:30px;border:5px dashed red;">' + html + '</div></div>';
-        var newContainer = document.getElementById('materiContainer');
-        console.log('loadMateri: Done. offsetHeight:', newContainer.offsetHeight);
-        console.log('loadMateri: newContainer scrollHeight:', newContainer.scrollHeight);
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
