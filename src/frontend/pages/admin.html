@@ -1609,7 +1609,12 @@
           materiList.innerHTML = html;
           materiList.classList.remove('loading');
           materiList.style.display = 'block';
+          // Force layout recalc
+          void materiList.offsetHeight;
           console.log('loadMateri: Updated materiList with', bagians.length, 'bagians');
+          console.log('materiList offsetHeight:', materiList.offsetHeight);
+          console.log('materiList HTML length:', materiList.innerHTML.length);
+          console.log('materiList computed style:', window.getComputedStyle(materiList).display);
         } else {
           console.error('loadMateri: materiList not found!');
         }
