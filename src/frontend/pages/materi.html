@@ -1017,6 +1017,14 @@
   <script src="../js/api.js"></script>
   <script src="../js/quiz.js"></script>
   <script>
+    // XSS protection - escape HTML special characters
+    function escapeHtml(text) {
+      if (!text) return '';
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     var currentFasal = null;
     var currentBab = null;
     var quizBank = [];
@@ -1284,7 +1292,7 @@
           var isSelected = answers[q.id] === key;
           container.innerHTML += '<div onclick="selectAnswer(\'' + q.id + '\', \'' + key + '\')" class="quiz-option ' + (isSelected ? 'selected' : '') + '">';
           container.innerHTML += '<div class="quiz-option-key">' + key + '</div>';
-          container.innerHTML += '<div class="quiz-option-text">' + opts[key] + '</div>';
+          container.innerHTML += '<div class="quiz-option-text">' + escapeHtml(opts[key]) + '</div>';
           container.innerHTML += '<div class="quiz-option-check"><i class="fa-solid fa-check text-xs"></i></div>';
           container.innerHTML += '</div>';
         }

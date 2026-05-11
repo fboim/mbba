@@ -499,57 +499,6 @@
       border: 1px solid rgba(239, 68, 68, 0.2);
     }
 
-    /* Demo Tools */
-    .demo-tools {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    @media (min-width: 640px) {
-      .demo-tools { grid-template-columns: repeat(2, 1fr); }
-    }
-    .demo-card {
-      padding: 20px;
-      border-radius: var(--radius-md);
-    }
-    .demo-card-green {
-      background: linear-gradient(145deg, var(--accent-soft), var(--bg-card));
-      border: 1px solid rgba(5, 150, 105, 0.2);
-    }
-    .demo-card-red {
-      background: linear-gradient(145deg, var(--red-soft), var(--bg-card));
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-    .demo-title {
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .demo-card-green .demo-title { color: var(--accent); }
-    .demo-card-red .demo-title { color: var(--red); }
-    .demo-desc {
-      font-size: 0.8rem;
-      margin-bottom: 14px;
-      opacity: 0.8;
-    }
-    .demo-card-green .demo-desc { color: var(--accent); }
-    .demo-card-red .demo-desc { color: var(--red); }
-
-    /* Dark mode for demo cards */
-    .dark .demo-card-green {
-      background: rgba(5, 150, 105, 0.1);
-      border: 1px solid rgba(5, 150, 105, 0.2);
-    }
-    .dark .demo-card-red {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-    .dark .demo-card-green .demo-desc { color: var(--accent); }
-    .dark .demo-card-red .demo-desc { color: var(--red); }
-
     /* Section Hide/Show */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -912,43 +861,7 @@
           </div>
         </div>
 
-        <div class="bento-card bento-span-2">
-          <div class="bento-inner">
-            <div class="bento-header">
-              <div class="bento-icon bento-icon-amber">
-                <i class="fa-solid fa-flask"></i>
-              </div>
-              <div>
-                <h3 class="bento-title">Demo Tools</h3>
-                <p class="bento-subtitle">Hanya untuk testing</p>
-              </div>
-            </div>
-            <div class="demo-tools">
-              <div class="demo-card demo-card-green">
-                <div class="demo-title">
-                  <i class="fa-solid fa-check-double"></i>
-                  Cheat Mode
-                </div>
-                <p class="demo-desc">Jawab semua soal dengan benar secara otomatis</p>
-                <button onclick="enableCheatMode()" class="btn btn-sm" style="background: var(--accent); color: white;">
-                  <i class="fa-solid fa-play"></i> Aktifkan
-                </button>
-              </div>
-              <div class="demo-card demo-card-red">
-                <div class="demo-title">
-                  <i class="fa-solid fa-trash"></i>
-                  Reset Progress
-                </div>
-                <p class="demo-desc">Hapus semua progress siswa (testing only)</p>
-                <button onclick="resetAllProgress()" class="btn btn-sm" style="background: var(--red); color: white;">
-                  <i class="fa-solid fa-rotate-left"></i> Reset
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <!-- Demo tools removed for production -->
 
     <!-- Materi Tab -->
     <div id="contentMateri" class="tab-content">
@@ -1369,6 +1282,14 @@
 
   <script src="../js/api.js"></script>
   <script>
+    // XSS protection - escape HTML special characters
+    function escapeHtml(text) {
+      if (!text) return '';
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     let allFasals = [];
     let allBabs = [];
     let allQuizzes = [];
@@ -1541,7 +1462,7 @@
                     <td>${i + 1}</td>
                     <td><span class="badge ${q.bab_id ? 'badge-purple' : 'badge-blue'}">${q.bab_id ? 'BAB' : 'FASAL'}</span></td>
                     <td><span class="badge ${q.type === 'mc' ? 'badge-green' : 'badge-amber'}">${q.type.toUpperCase()}</span></td>
-                    <td class="max-w-xs truncate">${q.question}</td>
+                    <td class="max-w-xs truncate">${escapeHtml(q.question)}</td>
                     <td class="text-center">
                       <button onclick="deleteQuiz('${q.id}')" class="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors">
                         <i class="fa-solid fa-trash"></i>
@@ -1612,9 +1533,9 @@
           const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
           html += `<div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">`;
           html += `<div class="flex flex-wrap justify-between items-center gap-3 mb-3">`;
-          html += `<div class="flex items-center gap-2"><span class="badge badge-blue">BAGIAN</span><span class="font-bold text-dark-800">${bagian.order_index}. ${bagian.title}</span></div>`;
+          html += `<div class="flex items-center gap-2"><span class="badge badge-blue">BAGIAN</span><span class="font-bold text-dark-800">${bagian.order_index}. ${escapeHtml(bagian.title)}</span></div>`;
           html += `<div class="flex gap-2">`;
-          html += `<button onclick="editMateri('bagian', '${bagian.id}', '${bagian.title}')" class="p-2 hover:bg-white rounded-xl text-blue-600 transition-colors"><i class="fa-solid fa-edit"></i></button>`;
+          html += `<button onclick="editMateri('bagian', '${bagian.id}', '${escapeHtml(bagian.title)}')" class="p-2 hover:bg-white rounded-xl text-blue-600 transition-colors"><i class="fa-solid fa-edit"></i></button>`;
           html += `<button onclick="deleteMateri('bagian', '${bagian.id}')" class="p-2 hover:bg-white rounded-xl text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>`;
           html += `</div></div>`;
           html += `<div class="ml-4 space-y-3">`;
@@ -1623,9 +1544,9 @@
             const babFasals = fasals.filter(f => f.bab_id === bab.id);
             html += `<div class="p-4 bg-white rounded-xl border border-slate-200">`;
             html += `<div class="flex flex-wrap justify-between items-center gap-3 mb-3">`;
-            html += `<div class="flex items-center gap-2"><span class="badge badge-green">BAB</span><span class="font-semibold text-green-800">${bab.order_index}. ${bab.title}</span></div>`;
+            html += `<div class="flex items-center gap-2"><span class="badge badge-green">BAB</span><span class="font-semibold text-green-800">${bab.order_index}. ${escapeHtml(bab.title)}</span></div>`;
             html += `<div class="flex gap-2">`;
-            html += `<button onclick="editMateri('bab', '${bab.id}', '${bab.title}')" class="p-2 hover:bg-slate-50 rounded-xl text-blue-600 transition-colors"><i class="fa-solid fa-font"></i></button>`;
+            html += `<button onclick="editMateri('bab', '${bab.id}', '${escapeHtml(bab.title)}')" class="p-2 hover:bg-slate-50 rounded-xl text-blue-600 transition-colors"><i class="fa-solid fa-font"></i></button>`;
             html += `<button onclick="openContentModal('bab', '${bab.id}')" class="p-2 hover:bg-slate-50 rounded-xl text-green-600 transition-colors"><i class="fa-solid fa-file-lines"></i></button>`;
             html += `<button onclick="deleteMateri('bab', '${bab.id}')" class="p-2 hover:bg-slate-50 rounded-xl text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>`;
             html += `</div></div>`;
@@ -1633,9 +1554,9 @@
 
             babFasals.forEach(fasal => {
               html += `<div class="flex flex-wrap justify-between items-center p-3 bg-slate-50 rounded-xl gap-2">`;
-              html += `<div class="flex items-center gap-2"><span class="badge badge-amber">FASAL</span><span class="text-slate-700">${fasal.order_index}. ${fasal.title}</span></div>`;
+              html += `<div class="flex items-center gap-2"><span class="badge badge-amber">FASAL</span><span class="text-slate-700">${fasal.order_index}. ${escapeHtml(fasal.title)}</span></div>`;
               html += `<div class="flex gap-2">`;
-              html += `<button onclick="editMateri('fasal', '${fasal.id}', '${fasal.title}')" class="p-2 hover:bg-white rounded-xl text-blue-600 transition-colors"><i class="fa-solid fa-font"></i></button>`;
+              html += `<button onclick="editMateri('fasal', '${fasal.id}', '${escapeHtml(fasal.title)}')" class="p-2 hover:bg-white rounded-xl text-blue-600 transition-colors"><i class="fa-solid fa-font"></i></button>`;
               html += `<button onclick="openContentModal('fasal', '${fasal.id}')" class="p-2 hover:bg-white rounded-xl text-green-600 transition-colors"><i class="fa-solid fa-file-lines"></i></button>`;
               html += `<button onclick="deleteMateri('fasal', '${fasal.id}')" class="p-2 hover:bg-white rounded-xl text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>`;
               html += `</div></div>`;
@@ -1864,24 +1785,6 @@
       } catch (err) {
         alert('Gagal import: ' + err.message);
         input.value = '';
-      }
-    }
-
-    function enableCheatMode() {
-      localStorage.setItem('mbba_cheat_mode', 'true');
-      alert('Cheat mode aktif!');
-    }
-
-    async function resetAllProgress() {
-      if (!confirm('Yakin reset semua progress?')) return;
-      const token = getToken();
-      if (!token) return;
-      try {
-        await fetch(`${SUPABASE_URL}rest/v1/user_progress`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-        alert('Semua progress berhasil di-reset!');
-        loadStats();
-      } catch (err) {
-        alert('Gagal reset: ' + err.message);
       }
     }
 
