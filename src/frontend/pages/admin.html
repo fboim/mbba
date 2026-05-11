@@ -1612,11 +1612,23 @@
         // Remove loading class and set content
         container.classList.remove('loading');
         container.innerHTML = html;
-        // Force reflow
-        container.style.minHeight = '100px';
-        container.style.border = '1px dashed red';
-        console.log('loadMateri: innerHTML set, container className:', container.className);
-        console.log('loadMateri: container.offsetHeight after reflow:', container.offsetHeight, 'offsetWidth:', container.offsetWidth);
+        // Debug parent chain
+        let parent = container.parentElement;
+        let parentDebug = [];
+        while (parent && parentDebug.length < 5) {
+          parentDebug.push(`${parent.tagName} class="${parent.className}" display=${getComputedStyle(parent).display} visibility=${getComputedStyle(parent).visibility} height=${parent.offsetHeight}`);
+          parent = parent.parentElement;
+        }
+        console.log('loadMateri: parent chain:', parentDebug);
+        console.log('loadMateri: firstChild tagName:', container.firstChild?.tagName, 'innerHTML len:', container.innerHTML.length);
+        // Force styles
+        container.style.display = 'block';
+        container.style.visibility = 'visible';
+        container.style.minHeight = '200px';
+        container.style.border = '3px dashed red';
+        container.style.padding = '20px';
+        container.style.background = 'yellow';
+        console.log('loadMateri: after force styles, offsetHeight:', container.offsetHeight);
       } catch (err) {
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Error: ${err.message}</p></div>`;
       }
