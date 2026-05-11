@@ -1621,23 +1621,23 @@
             requestAnimationFrame(function() {
               console.log('After 2 frames - materiList offsetHeight:', materiList.offsetHeight);
               console.log('After 2 frames - materiList scrollHeight:', materiList.scrollHeight);
-              console.log('After 2 frames - materiList clientHeight:', materiList.clientHeight);
 
-              // Force a reflow by accessing offsetHeight of multiple elements
-              var mainH = document.querySelector('main').offsetHeight;
-              var contentH = contentMateri.offsetHeight;
-              var gridH = bentoGrid ? bentoGrid.offsetHeight : 'N/A';
-              console.log('main offsetHeight:', mainH);
-              console.log('contentMateri offsetHeight after frames:', contentH);
-              console.log('bentoGrid offsetHeight after frames:', gridH);
+              // Force explicit height using scrollHeight
+              if (materiList.scrollHeight > 0) {
+                materiList.style.height = materiList.scrollHeight + 'px';
+                materiList.style.minHeight = 'auto';
+                console.log('Set materiList height to:', materiList.style.height);
+              }
 
-              // If still 0, force it to work
-              if (materiList.offsetHeight === 0) {
-                console.log('FORCING VISIBLE - creating temporary element');
-                var temp = document.createElement('div');
-                temp.style.cssText = 'position:fixed;top:100px;left:10px;background:red;padding:20px;z-index:99999;color:white;font-size:20px;';
-                temp.innerHTML = 'DAFTAR MATERI<br>' + bagians.length + ' bagian<br>' + babs.length + ' bab<br>' + fasals.length + ' fasal';
-                document.body.appendChild(temp);
+              // If still 0, use overlay approach
+              if (materiList.offsetHeight === 0 || materiList.scrollHeight === 0) {
+                console.log('Using overlay approach');
+                // Find the bento-card parent and inject into it directly
+                var card = materiList.closest('.bento-card');
+                if (card) {
+                  card.innerHTML = '<div style="padding:20px;background:#fff;">' + html + '</div>';
+                  console.log('Injected directly into bento-card');
+                }
               }
             });
           });
