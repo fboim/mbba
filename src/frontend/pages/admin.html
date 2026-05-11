@@ -1332,37 +1332,47 @@
 
     // Tab Switching
     function showTab(tab) {
-      const contents = ['Stats', 'Materi', 'Quiz', 'Siswa'];
-      contents.forEach(c => {
-        document.getElementById('content' + c).classList.remove('active');
-        document.getElementById('tab' + c).classList.remove('active');
+      const allTabs = ['Stats', 'Materi', 'Quiz', 'Siswa', 'Audio'];
+      allTabs.forEach(c => {
+        const contentEl = document.getElementById('content' + c);
+        const tabEl = document.getElementById('tab' + c);
+        if (contentEl) contentEl.classList.remove('active');
+        if (tabEl) tabEl.classList.remove('active');
       });
-      document.getElementById('content' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-      document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+
+      const tabCapitalized = tab.charAt(0).toUpperCase() + tab.slice(1);
+      const contentEl = document.getElementById('content' + tabCapitalized);
+      const tabEl = document.getElementById('tab' + tabCapitalized);
+      if (contentEl) contentEl.classList.add('active');
+      if (tabEl) tabEl.classList.add('active');
 
       if (tab === 'materi') loadMateri();
+      if (tab === 'quiz') loadQuizList();
       if (tab === 'siswa') loadStudentList();
+      if (tab === 'audio') initAudioTab();
+      if (tab === 'stats') loadStats();
     }
 
     // Load Stats
     async function loadStats() {
       const token = getToken();
-      if (!token) return;
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
-        const [progressRes, usersRes, quizRes, fasalRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
-          fetch(`${SUPABASE_URL}auth/v1/users`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
-          fetch(`${SUPABASE_URL}rest/v1/quiz?select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } })
+        const [progressRes, quizRes, fasalsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/quiz?select=id`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id`, { headers })
         ]);
 
         const progress = await progressRes.json().catch(() => []);
-        const users = await usersRes.json().catch(() => []);
         const quizzes = await quizRes.json().catch(() => []);
-        const fasals = await fasalRes.json().catch(() => []);
+        const fasals = await fasalsRes.json().catch(() => []);
 
-        const totalStudents = users.length || 0;
+        // Count unique students from progress
+        const uniqueUsers = [...new Set(progress.map(p => p.user_id).filter(Boolean))];
+        const totalStudents = uniqueUsers.length;
         const totalProgress = progress.length;
         const completedProgress = progress.filter(p => p.status === 'completed').length;
         const avgScore = progress.length > 0 ? Math.round(progress.reduce((sum, p) => sum + (p.quiz_score || 0), 0) / progress.length) : 0;
@@ -1374,7 +1384,7 @@
         document.getElementById('statFasals').textContent = fasals.length;
         document.getElementById('statQuizzes').textContent = quizzes.length;
       } catch (err) {
-        console.error('Error loading stats:', err);
+        console.warn('Error loading stats:', err.message);
       }
     }
 
@@ -1439,9 +1449,13 @@
         else if (level === 'bab' && babFilter) url += `&bab_id=eq.${babFilter.replace('bab:', '')}`;
 
         const res = await fetch(url, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } });
-        allQuizzes = await res.json();
+        if (!res.ok) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Gagal memuat data. Pastikan Anda login sebagai admin.</p></div>`;
+          return;
+        }
+        allQuizzes = await res.json().catch(() => []);
 
-        if (allQuizzes.length === 0) {
+        if (!allQuizzes || allQuizzes.length === 0) {
           container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-question"></i></div><p class="empty-text">Belum ada soal kuis</p></div>`;
           return;
         }
@@ -1521,9 +1535,9 @@
           fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, { headers })
         ]);
 
-        const bagians = await bagiansRes.json();
-        const babs = await babsRes.json();
-        const fasals = await fasalsRes.json();
+        const bagians = await bagiansRes.json().catch(() => []);
+        const babs = await babsRes.json().catch(() => []);
+        const fasals = await fasalsRes.json().catch(() => []);
 
         if (bagians.length === 0) {
           container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div><p class="empty-text">Belum ada materi</p></div>`;
@@ -1804,7 +1818,7 @@
           let progressData = [];
           try {
             const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers });
-            if (progressRes.ok) progressData = await progressRes.json();
+            if (progressRes.ok) progressData = await progressRes.json().catch(() => []);
           } catch (e) {
             console.warn('Progress fetch failed:', e.message);
           }
@@ -1827,42 +1841,11 @@
             }
           });
 
-          // Try profiles table
-          try {
-            const profilesRes = await fetch(`${SUPABASE_URL}rest/v1/profiles?select=id,email,full_name`, { headers });
-            if (profilesRes.ok) {
-              const profiles = await profilesRes.json();
-              if (Array.isArray(profiles) && profiles.length > 0) {
-                profiles.forEach(u => {
-                  if (userMap[u.id]) {
-                    userMap[u.id].name = u.full_name || u.email || userMap[u.id].name;
-                    userMap[u.id].email = (u.email || '').toLowerCase();
-                  } else {
-                    userMap[u.id] = { name: u.full_name || u.email || 'User', email: (u.email || '').toLowerCase() };
-                    userProgressMap[u.id] = { completed: 0, total: 0, lastActive: null };
-                  }
-                });
-              }
-            }
-          } catch (e) {}
-
-          // Auth API fallback
-          if (Object.keys(userMap).length === 0 && token) {
-            try {
-              const usersRes = await fetch(`${SUPABASE_URL}auth/v1/admin/users`, {
-                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` }
-              });
-              if (usersRes.ok) {
-                const users = await usersRes.json();
-                if (Array.isArray(users)) {
-                  users.forEach(u => {
-                    const meta = u.user_metadata || {};
-                    userMap[u.id] = { name: meta.full_name || u.email || 'User', email: (u.email || '').toLowerCase() };
-                    userProgressMap[u.id] = userProgressMap[u.id] || { completed: 0, total: 0, lastActive: null };
-                  });
-                }
-              }
-            } catch (e) {}
+          // Jika tidak ada data progress, tampilkan pesan
+          if (Object.keys(userMap).length === 0) {
+            container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-users"></i></div><p class="empty-text">Belum ada siswa yang belajar</p></div>`;
+            return;
+          }
           }
 
           const allUsers = Object.keys(userMap);
@@ -2473,16 +2456,16 @@
 
       try {
         const [babsRes, fasalsRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title)&audio_url=not.is.null`, {
+          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title)`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
-          }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title)&audio_url=not.is.null`, {
+          }).catch(e => { console.warn('Bab audio fetch failed:', e); return { ok: true, json: () => [] }; }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title)`, {
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
-          })
+          }).catch(e => { console.warn('Fasal audio fetch failed:', e); return { ok: true, json: () => [] }; })
         ]);
 
-        const babs = await babsRes.json().catch(() => []);
-        const fasals = await fasalsRes.json().catch(() => []);
+        const babs = (await babsRes.json().catch(() => [])).filter(b => b.audio_url);
+        const fasals = (await fasalsRes.json().catch(() => [])).filter(f => f.audio_url);
 
         const allAudio = [
           ...babs.map(b => ({ ...b, type: 'bab', label: b.title, parent: b.bagian?.title || 'Tanpa Bagian' })),
@@ -2568,26 +2551,6 @@
       }
     }
 
-    // Update Tab Switching to include Audio
-    const originalShowTab = showTab;
-    showTab = function(tab) {
-      const contents = ['Stats', 'Materi', 'Quiz', 'Siswa', 'Audio'];
-      contents.forEach(c => {
-        const contentEl = document.getElementById('content' + c);
-        const tabEl = document.getElementById('tab' + c);
-        if (contentEl) contentEl.classList.remove('active');
-        if (tabEl) tabEl.classList.remove('active');
-      });
-
-      const contentEl = document.getElementById('content' + tab.charAt(0).toUpperCase() + tab.slice(1));
-      const tabEl = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-      if (contentEl) contentEl.classList.add('active');
-      if (tabEl) tabEl.classList.add('active');
-
-      if (tab === 'materi') loadMateri();
-      if (tab === 'siswa') loadStudentList();
-      if (tab === 'audio') initAudioTab();
-    };
-  </script>
+    </script>
 </body>
 </html>
