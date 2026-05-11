@@ -1309,11 +1309,8 @@
       }
 
       loadStats();
-      loadMateri();
       loadFasalsForSelect();
       loadQuizList();
-      loadStudentList();
-      initAudioTab();
 
       // Dark Mode
       const themeToggle = document.getElementById('theme-toggle');
@@ -1354,14 +1351,11 @@
       }
       if (tabEl) tabEl.classList.add('active');
 
-      // Small delay to ensure tab content is visible before loading data
-      setTimeout(() => {
-        if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); }
-        if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
-        if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
-        if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
-        if (tab === 'stats') { console.log('Calling loadStats'); loadStats(); }
-      }, 50);
+      if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); }
+      if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
+      if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
+      if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
+      if (tab === 'stats') { console.log('Calling loadStats'); loadStats(); }
     }
 
     // Load Stats
@@ -1618,8 +1612,11 @@
         // Remove loading class and set content
         container.classList.remove('loading');
         container.innerHTML = html;
+        // Force reflow
+        container.style.minHeight = '100px';
+        container.style.border = '1px dashed red';
         console.log('loadMateri: innerHTML set, container className:', container.className);
-        console.log('loadMateri: container.offsetHeight:', container.offsetHeight, 'offsetWidth:', container.offsetWidth);
+        console.log('loadMateri: container.offsetHeight after reflow:', container.offsetHeight, 'offsetWidth:', container.offsetWidth);
       } catch (err) {
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Error: ${err.message}</p></div>`;
       }
