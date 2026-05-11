@@ -1536,101 +1536,79 @@
     // Load Materi
     async function loadMateri() {
       const container = document.getElementById('materiList');
-      console.log('loadMateri: container found?', !!container, 'container classes:', container?.className);
-      if (!container) { console.error('materiList container not found'); return; }
+      if (!container) { console.error('materiList not found'); return; }
       container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat...</p></div>';
-      console.log('loadMateri: Starting fetch...');
+
       const token = getToken();
       const headers = { 'apikey': SUPABASE_ANON_KEY };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
+      if (token) headers['Authorization'] = 'Bearer ' + token;
 
       try {
-        console.log('loadMateri: Fetching from API...');
         const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bagian?order=order_index`, { headers }),
-          fetch(`${SUPABASE_URL}rest/v1/bab?order=order_index`, { headers }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, { headers })
+          fetch(SUPABASE_URL + 'rest/v1/bagian?order=order_index', { headers: headers }),
+          fetch(SUPABASE_URL + 'rest/v1/bab?order=order_index', { headers: headers }),
+          fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers: headers })
         ]);
 
-        console.log('loadMateri: Responses received', {
-          bagians: bagiansRes.status,
-          babs: babsRes.status,
-          fasals: fasalsRes.status
-        });
+        const bagians = await bagiansRes.json().catch(function() { return []; });
+        const babs = await babsRes.json().catch(function() { return []; });
+        const fasals = await fasalsRes.json().catch(function() { return []; });
 
-        const bagians = await bagiansRes.json().catch(e => { console.warn('bagian parse error:', e); return []; });
-        const babs = await babsRes.json().catch(e => { console.warn('bab parse error:', e); return []; });
-        const fasals = await fasalsRes.json().catch(e => { console.warn('fasal parse error:', e); return []; });
-
-        console.log('Materi loaded:', { bagians: bagians.length, babs: babs.length, fasals: fasals.length });
+        console.log('Materi:', bagians.length, 'bagians,', babs.length, 'babs,', fasals.length, 'fasals');
 
         if (!bagians || bagians.length === 0) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div><p class="empty-text">Belum ada materi</p></div>`;
+          container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div><p class="empty-text">Belum ada materi</p></div>';
           return;
         }
 
-        let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
-        bagians.forEach(bagian => {
-          const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
-          html += `<div style="padding: 16px; background: linear-gradient(135deg, #eff6ff, #e0e7ff); border-radius: 16px; border: 1px solid #bfdbfe;">`;
-          html += `<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;">`;
-          html += `<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-blue">BAGIAN</span><span style="font-weight: 700;">${bagian.order_index}. ${escapeHtml(bagian.title)}</span></div>`;
-          html += `<div style="display: flex; gap: 8px;">`;
-          html += `<button onclick="editMateri('bagian', '${bagian.id}', '${escapeHtml(bagian.title)}')" style="padding: 8px; background: white; border: none; border-radius: 10px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-edit"></i></button>`;
-          html += `<button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding: 8px; background: white; border: none; border-radius: 10px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>`;
-          html += `</div></div>`;
-          html += `<div style="margin-left: 16px; display: flex; flex-direction: column; gap: 8px;">`;
+        var html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+        for (var i = 0; i < bagians.length; i++) {
+          var bagian = bagians[i];
+          var bagianBabs = babs.filter(function(b) { return b.bagian_id === bagian.id; });
+          html += '<div style="padding: 16px; background: linear-gradient(135deg, #eff6ff, #e0e7ff); border-radius: 16px; border: 1px solid #bfdbfe;">';
+          html += '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;">';
+          html += '<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-blue">BAGIAN</span><span style="font-weight: 700;">' + bagian.order_index + '. ' + escapeHtml(bagian.title) + '</span></div>';
+          html += '<div style="display: flex; gap: 8px;">';
+          html += '<button onclick="editMateri(\'bagian\', \'' + bagian.id + '\', \'' + escapeHtml(bagian.title) + '\')" style="padding: 8px; background: white; border: none; border-radius: 10px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-edit"></i></button>';
+          html += '<button onclick="deleteMateri(\'bagian\', \'' + bagian.id + '\')" style="padding: 8px; background: white; border: none; border-radius: 10px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>';
+          html += '</div></div>';
+          html += '<div style="margin-left: 16px; display: flex; flex-direction: column; gap: 8px;">';
 
-          bagianBabs.forEach(bab => {
-            const babFasals = fasals.filter(f => f.bab_id === bab.id);
-            html += `<div style="padding: 14px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">`;
-            html += `<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;">`;
-            html += `<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-green">BAB</span><span style="font-weight: 600; color: #166534;">${bab.order_index}. ${escapeHtml(bab.title)}</span></div>`;
-            html += `<div style="display: flex; gap: 6px;">`;
-            html += `<button onclick="editMateri('bab', '${bab.id}', '${escapeHtml(bab.title)}')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-font"></i></button>`;
-            html += `<button onclick="openContentModal('bab', '${bab.id}')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #059669; cursor: pointer;"><i class="fa-solid fa-file-lines"></i></button>`;
-            html += `<button onclick="deleteMateri('bab', '${bab.id}')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>`;
-            html += `</div></div>`;
-            html += `<div style="margin-left: 12px; display: flex; flex-direction: column; gap: 6px;">`;
+          for (var j = 0; j < bagianBabs.length; j++) {
+            var bab = bagianBabs[j];
+            var babFasals = fasals.filter(function(f) { return f.bab_id === bab.id; });
+            html += '<div style="padding: 14px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">';
+            html += '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;">';
+            html += '<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-green">BAB</span><span style="font-weight: 600; color: #166534;">' + bab.order_index + '. ' + escapeHtml(bab.title) + '</span></div>';
+            html += '<div style="display: flex; gap: 6px;">';
+            html += '<button onclick="editMateri(\'bab\', \'' + bab.id + '\', \'' + escapeHtml(bab.title) + '\')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-font"></i></button>';
+            html += '<button onclick="openContentModal(\'bab\', \'' + bab.id + '\')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #059669; cursor: pointer;"><i class="fa-solid fa-file-lines"></i></button>';
+            html += '<button onclick="deleteMateri(\'bab\', \'' + bab.id + '\')" style="padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>';
+            html += '</div></div>';
+            html += '<div style="margin-left: 12px; display: flex; flex-direction: column; gap: 6px;">';
 
-            babFasals.forEach(fasal => {
-              html += `<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px; gap: 8px;">`;
-              html += `<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-amber">FASAL</span><span style="color: #475569;">${fasal.order_index}. ${escapeHtml(fasal.title)}</span></div>`;
-              html += `<div style="display: flex; gap: 6px;">`;
-              html += `<button onclick="editMateri('fasal', '${fasal.id}', '${escapeHtml(fasal.title)}')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-font"></i></button>`;
-              html += `<button onclick="openContentModal('fasal', '${fasal.id}')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #059669; cursor: pointer;"><i class="fa-solid fa-file-lines"></i></button>`;
-              html += `<button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>`;
-              html += `</div></div>`;
-            });
-
-            html += `</div></div>`;
-          });
-          html += `</div></div>`;
-        });
+            for (var k = 0; k < babFasals.length; k++) {
+              var fasal = babFasals[k];
+              html += '<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px; gap: 8px;">';
+              html += '<div style="display: flex; align-items: center; gap: 8px;"><span class="badge badge-amber">FASAL</span><span style="color: #475569;">' + fasal.order_index + '. ' + escapeHtml(fasal.title) + '</span></div>';
+              html += '<div style="display: flex; gap: 6px;">';
+              html += '<button onclick="editMateri(\'fasal\', \'' + fasal.id + '\', \'' + escapeHtml(fasal.title) + '\')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;"><i class="fa-solid fa-font"></i></button>';
+              html += '<button onclick="openContentModal(\'fasal\', \'' + fasal.id + '\')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #059669; cursor: pointer;"><i class="fa-solid fa-file-lines"></i></button>';
+              html += '<button onclick="deleteMateri(\'fasal\', \'' + fasal.id + '\')" style="padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>';
+              html += '</div></div>';
+            }
+            html += '</div></div>';
+          }
+          html += '</div></div>';
+        }
         html += '</div>';
 
-        // Remove loading class and set content
-        container.classList.remove('loading');
-        container.innerHTML = html;
-        // Debug parent chain
-        let parent = container.parentElement;
-        let parentDebug = [];
-        while (parent && parentDebug.length < 5) {
-          parentDebug.push(`${parent.tagName} class="${parent.className}" display=${getComputedStyle(parent).display} visibility=${getComputedStyle(parent).visibility} height=${parent.offsetHeight}`);
-          parent = parent.parentElement;
-        }
-        console.log('loadMateri: parent chain:', parentDebug);
-        console.log('loadMateri: firstChild tagName:', container.firstChild?.tagName, 'innerHTML len:', container.innerHTML.length);
-        // Force styles
-        container.style.display = 'block';
-        container.style.visibility = 'visible';
-        container.style.minHeight = '200px';
-        container.style.border = '3px dashed red';
-        container.style.padding = '20px';
-        container.style.background = 'yellow';
-        console.log('loadMateri: after force styles, offsetHeight:', container.offsetHeight);
+        // Replace container content
+        container.outerHTML = html;
+        console.log('loadMateri: Done. HTML length:', html.length);
       } catch (err) {
-        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Error: ${err.message}</p></div>`;
+        console.error('loadMateri error:', err);
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
       }
     }
 
