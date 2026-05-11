@@ -1615,9 +1615,11 @@
         });
         html += '</div>';
 
-        console.log('loadMateri: Setting innerHTML, html length:', html.length);
+        // Remove loading class and set content
+        container.classList.remove('loading');
         container.innerHTML = html;
-        console.log('loadMateri: innerHTML set, container children:', container.children.length);
+        console.log('loadMateri: innerHTML set, container className:', container.className);
+        console.log('loadMateri: container.offsetHeight:', container.offsetHeight, 'offsetWidth:', container.offsetWidth);
       } catch (err) {
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Error: ${err.message}</p></div>`;
       }
