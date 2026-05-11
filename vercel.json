@@ -1,9 +1,20 @@
 {
   "version": 2,
-  "builds": [],
+  "builds": [
+    { "src": "src/frontend/**/*", "use": "@vercel/static" }
+  ],
   "routes": [
-    { "handle": "filesystem" },
-    { "src": "/", "dest": "/pages/index.html" },
-    { "src": "/(.*)", "dest": "/src/frontend/$1" }
+    { "src": "/", "dest": "src/frontend/pages/index.html" },
+    { "src": "/auth", "dest": "src/frontend/pages/auth.html" },
+    { "src": "/student", "dest": "src/frontend/pages/student.html" },
+    { "src": "/materi", "dest": "src/frontend/pages/materi.html" },
+    { "src": "/fasal", "dest": "src/frontend/pages/fasal.html" },
+    { "src": "/profile", "dest": "src/frontend/pages/profile.html" },
+    { "src": "/admin", "dest": "src/frontend/pages/admin.html" },
+    { "src": "/js/(.*)", "dest": "src/frontend/js/$1" },
+    { "src": "/css/(.*)", "dest": "src/frontend/css/$1" },
+    { "src": "/img/(.*)", "dest": "src/frontend/img/$1" },
+    { "src": "/(.*).html", "dest": "src/frontend/pages/$1.html" },
+    { "src": "/(.*)", "dest": "src/frontend/pages/$1.html" }
   ]
 }
