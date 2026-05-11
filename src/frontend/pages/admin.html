@@ -1606,22 +1606,25 @@
         // Replace materiList (inside the Daftar Materi card) - THIS IS THE FIX
         var materiList = document.getElementById('materiList');
         var contentMateri = document.getElementById('contentMateri');
-        var bentoCard = document.querySelector('#contentMateri .bento-span-2');
-        console.log('contentMateri classes:', contentMateri ? contentMateri.className : 'NOT FOUND');
+        var bentoGrid = contentMateri ? contentMateri.querySelector('.bento-grid') : null;
+
         console.log('contentMateri offsetHeight:', contentMateri ? contentMateri.offsetHeight : 'N/A');
-        console.log('contentMateri computed display:', contentMateri ? window.getComputedStyle(contentMateri).display : 'N/A');
-        console.log('bento-card offsetHeight:', bentoCard ? bentoCard.offsetHeight : 'N/A');
-        console.log('bento-card computed height:', bentoCard ? window.getComputedStyle(bentoCard).height : 'N/A');
+        console.log('bentoGrid offsetHeight:', bentoGrid ? bentoGrid.offsetHeight : 'N/A');
+        console.log('main-container:', document.querySelector('main') ? document.querySelector('main').offsetHeight : 'N/A');
 
         if (materiList) {
           materiList.innerHTML = html;
           materiList.classList.remove('loading');
-          materiList.style.display = 'block';
-          materiList.style.minHeight = '200px';
-          // Force layout recalc
-          void materiList.offsetHeight;
-          console.log('loadMateri: Updated materiList with', bagians.length, 'bagians');
-          console.log('materiList offsetHeight:', materiList.offsetHeight);
+
+          // Force the content to be visible with inline styles
+          materiList.style.cssText = 'display: block !important; min-height: 300px !important; visibility: visible !important; opacity: 1 !important;';
+
+          console.log('After update - materiList style:', materiList.style.cssText);
+          console.log('After update - materiList offsetHeight:', materiList.offsetHeight);
+
+          // Check if it has any content
+          console.log('materiList children:', materiList.children.length);
+          console.log('materiList firstChild:', materiList.firstChild ? materiList.firstChild.tagName : 'none');
         } else {
           console.error('loadMateri: materiList not found!');
         }
