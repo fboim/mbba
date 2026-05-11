@@ -1636,10 +1636,18 @@
         pageHTML += '<p style="margin-top:30px;"><a href="admin.html">← Back to Admin</a></p>';
         pageHTML += '</body></html>';
 
-        document.open();
-        document.write(pageHTML);
-        document.close();
-        console.log('Page replaced with simple HTML');
+        // Insert into bento-inner content area
+        var materiList = document.getElementById('materiList');
+        if (materiList) {
+          materiList.innerHTML = html;
+          console.log('loadMateri: Inserted into materiList innerHTML');
+        } else {
+          console.log('loadMateri: materiList not found, inserting into bento-inner');
+          var bentoInner = document.querySelector('#contentMateri .bento-inner');
+          if (bentoInner) {
+            bentoInner.insertAdjacentHTML('beforeend', html);
+          }
+        }
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
