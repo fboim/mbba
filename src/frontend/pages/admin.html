@@ -1604,17 +1604,22 @@
         html += '</div>';
 
         // SIMPLE TEST with alert and appendChild
-        var info = 'Data loaded!\nBagians: ' + bagians.length + '\nBabs: ' + babs.length + '\nFasals: ' + fasals.length;
-        console.log(info);
-        alert(info);
+        console.log('=== INSERTING CONTENT NOW ===');
+        console.log('bagians:', bagians.length);
 
         // Use createElement and appendChild
         var testDiv = document.createElement('div');
         testDiv.id = 'materi-test';
-        testDiv.style.cssText = 'position:fixed;top:100px;left:10px;width:300px;background:#00ff00;padding:20px;border:5px solid #000;font-size:16px;z-index:99999;';
-        testDiv.innerHTML = '<b>TEST appendChild</b><br>Bagians: ' + bagians.length;
+        testDiv.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100%!important;height:200px!important;background:#ff0000!important;padding:20px!important;border:10px solid #000!important;font-size:30px!important;font-weight:bold!important;z-index:999999!important;color:#fff!important;box-sizing:border-box!important;';
+        testDiv.innerHTML = '<b style="color:#fff;">BIG RED TEST</b><br>Bagians: ' + bagians.length + '<br>Check if this appears!';
         document.body.appendChild(testDiv);
-        console.log('appendChild done');
+
+        // Verify element exists
+        var inserted = document.getElementById('materi-test');
+        console.log('Element exists:', !!inserted);
+        console.log('Element offsetHeight:', inserted ? inserted.offsetHeight : 'N/A');
+        console.log('Element display:', inserted ? window.getComputedStyle(inserted).display : 'N/A');
+        console.log('Element visibility:', inserted ? window.getComputedStyle(inserted).visibility : 'N/A');
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
