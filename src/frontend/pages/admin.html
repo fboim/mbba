@@ -1603,14 +1603,12 @@
         }
         html += '</div>';
 
-        // Replace container content
-        container.outerHTML = '<div id="materiContainer" style="background: yellow; padding: 20px; min-height: 200px; border: 5px dashed red;">' + html + '</div>';
+        // Replace container content with VERY aggressive styles
+        var wrapperStyle = 'display: block !important; visibility: visible !important; opacity: 1 !important; background: #ffff00 !important; padding: 30px !important; min-height: 400px !important; border: 8px dashed #ff0000 !important; position: relative !important; z-index: 9999 !important; overflow: visible !important;';
+        container.outerHTML = '<div id="materiContainer" style="' + wrapperStyle + '">' + html + '</div>';
         var newContainer = document.getElementById('materiContainer');
-        console.log('loadMateri: Done. newContainer found?', !!newContainer, 'childCount:', newContainer ? newContainer.children.length : 0);
-        if (newContainer) {
-          console.log('loadMateri: newContainer.innerHTML snippet:', newContainer.innerHTML.substring(0, 200));
-          console.log('loadMateri: newContainer offsetHeight:', newContainer.offsetHeight);
-        }
+        console.log('loadMateri: Done. offsetHeight:', newContainer.offsetHeight);
+        console.log('loadMateri: computed:', window.getComputedStyle(newContainer).display);
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
