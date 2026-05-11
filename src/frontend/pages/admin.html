@@ -1439,6 +1439,7 @@
     // Load Quiz List
     async function loadQuizList() {
       const container = document.getElementById('quizList');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
       const level = document.getElementById('quizLevelFilter').value;
       const fasalFilter = document.getElementById('filterFasal').value;
       const babFilter = document.getElementById('filterBab').value;
@@ -1448,9 +1449,13 @@
         if (level === 'fasal' && fasalFilter) url += `&fasal_id=eq.${fasalFilter.replace('fasal:', '')}`;
         else if (level === 'bab' && babFilter) url += `&bab_id=eq.${babFilter.replace('bab:', '')}`;
 
-        const res = await fetch(url, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } });
+        const token = getToken();
+        const headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch(url, { headers });
         if (!res.ok) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Gagal memuat data. Pastikan Anda login sebagai admin.</p></div>`;
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Gagal memuat data.</p></div>`;
           return;
         }
         allQuizzes = await res.json().catch(() => []);
@@ -1526,7 +1531,10 @@
     // Load Materi
     async function loadMateri() {
       const container = document.getElementById('materiList');
-      const headers = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Cache-Control': 'no-cache' };
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
         const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
@@ -1972,15 +1980,17 @@
     // Initialize Audio Tab
     async function initAudioTab() {
       const select = document.getElementById('audioMateriSelect');
+      const container = document.getElementById('audioList');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
       select.innerHTML = '<option value="">Pilih Bab atau Fasal...</option>';
 
       // Add Bab options
-      const babOptionGroup = allBabs.filter(b => b.is_muqoddimah).map(b =>
+      const babOptionGroup = (allBabs || []).filter(b => b.is_muqoddimah).map(b =>
         `<option value="bab:${b.id}">Bab - ${b.label}</option>`
       ).join('');
 
       // Add Fasal options
-      const fasalOptionGroup = allFasals.map(f =>
+      const fasalOptionGroup = (allFasals || []).map(f =>
         `<option value="fasal:${f.id}">Fasal - ${f.label}</option>`
       ).join('');
 
@@ -2364,15 +2374,15 @@
     // Load Audio List
     async function loadAudioList() {
       const container = document.getElementById('audioList');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
         const [babsRes, fasalsRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title)`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
-          }).catch(e => { console.warn('Bab audio fetch failed:', e); return { ok: true, json: () => [] }; }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title)`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
-          }).catch(e => { console.warn('Fasal audio fetch failed:', e); return { ok: true, json: () => [] }; })
+          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title)`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title)`, { headers }).catch(e => { return { ok: true, json: () => [] }; })
         ]);
 
         const babs = (await babsRes.json().catch(() => [])).filter(b => b.audio_url);
