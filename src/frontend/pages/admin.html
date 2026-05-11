@@ -1603,23 +1603,31 @@
         }
         html += '</div>';
 
-        // SIMPLE TEST with alert and appendChild
-        console.log('=== INSERTING CONTENT NOW ===');
-        console.log('bagians:', bagians.length);
+        // CHECK DATA FIRST - show raw API response
+        console.log('=== CHECKING RAW API DATA ===');
+        console.log('bagians:', JSON.stringify(bagians, null, 2));
+        console.log('babs:', JSON.stringify(babs, null, 2));
+        console.log('fasals:', JSON.stringify(fasals, null, 2));
 
-        // Use createElement and appendChild
-        var testDiv = document.createElement('div');
-        testDiv.id = 'materi-test';
-        testDiv.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100%!important;height:200px!important;background:#ff0000!important;padding:20px!important;border:10px solid #000!important;font-size:30px!important;font-weight:bold!important;z-index:999999!important;color:#fff!important;box-sizing:border-box!important;';
-        testDiv.innerHTML = '<b style="color:#fff;">BIG RED TEST</b><br>Bagians: ' + bagians.length + '<br>Check if this appears!';
-        document.body.appendChild(testDiv);
+        // Show alert with data summary
+        alert('Data Check:\n\nBagians: ' + bagians.length + '\nBabs: ' + babs.length + '\nFasals: ' + fasals.length + '\n\nFirst bagian: ' + (bagians[0] ? bagians[0].title : 'NONE'));
 
-        // Verify element exists
-        var inserted = document.getElementById('materi-test');
-        console.log('Element exists:', !!inserted);
-        console.log('Element offsetHeight:', inserted ? inserted.offsetHeight : 'N/A');
-        console.log('Element display:', inserted ? window.getComputedStyle(inserted).display : 'N/A');
-        console.log('Element visibility:', inserted ? window.getComputedStyle(inserted).visibility : 'N/A');
+        // Now replace the entire contentMateri with fresh content
+        var contentMateri = document.getElementById('contentMateri');
+        if (contentMateri) {
+          var newHTML = '<div class="bento-grid"><div class="bento-card"><div class="bento-inner" style="background:#ffff00;padding:40px;">';
+          newHTML += '<h2 style="color:#000;">DAFTAR MATERI (FIXED)</h2>';
+          newHTML += '<p style="color:#000;">Bagians: ' + bagians.length + '</p>';
+          newHTML += '<p style="color:#000;">Babs: ' + babs.length + '</p>';
+          newHTML += '<p style="color:#000;">Fasals: ' + fasals.length + '</p>';
+          if (bagians.length > 0) {
+            newHTML += '<hr style="margin:20px 0;border:1px solid #000;">';
+            newHTML += '<h3 style="color:#000;">' + bagians[0].order_index + '. ' + bagians[0].title + '</h3>';
+          }
+          newHTML += '</div></div></div>';
+          contentMateri.innerHTML = newHTML;
+          console.log('Replaced contentMateri.innerHTML');
+        }
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
