@@ -1636,26 +1636,13 @@
         pageHTML += '<p style="margin-top:30px;"><a href="admin.html">← Back to Admin</a></p>';
         pageHTML += '</body></html>';
 
-        // Insert into bento-inner content area
-        var materiList = document.getElementById('materiList');
-        if (materiList) {
-          // First add a test marker
-          var testMarker = document.createElement('div');
-          testMarker.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100px;background:#ff00ff;z-index:99999;font-size:24px;padding:20px;';
-          testMarker.innerHTML = '<b>TEST MARKER - Materi Loaded!</b><br>Bagians: ' + bagians.length + '<br>Babs: ' + babs.length + '<br>Fasals: ' + fasals.length;
-          document.body.insertBefore(testMarker, document.body.firstChild);
-
-          materiList.innerHTML = html;
-          console.log('loadMateri: Inserted into materiList innerHTML, length:', html.length);
-          console.log('loadMateri: materiList.children:', materiList.children.length);
-          console.log('loadMateri: materiList.innerHTML snippet:', materiList.innerHTML.substring(0, 200));
-        } else {
-          console.log('loadMateri: materiList not found, inserting into bento-inner');
-          var bentoInner = document.querySelector('#contentMateri .bento-inner');
-          if (bentoInner) {
-            bentoInner.insertAdjacentHTML('beforeend', html);
-          }
-        }
+        // Insert as position:fixed overlay to bypass ALL CSS
+        var materiOverlay = document.createElement('div');
+        materiOverlay.style.cssText = 'position:fixed;top:50px;left:10px;right:10px;bottom:10px;background:#fff;border:5px solid #000;padding:20px;overflow:auto;z-index:99998;font-family:Arial,sans-serif;font-size:16px;';
+        materiOverlay.innerHTML = '<h2 style="margin:0 0 20px 0;padding:10px;background:#0f0;">DAFTAR MATERI (OVERLAY)</h2>';
+        materiOverlay.innerHTML += html;
+        document.body.appendChild(materiOverlay);
+        console.log('loadMateri: Created overlay, html length:', html.length);
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
