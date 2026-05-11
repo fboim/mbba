@@ -1533,10 +1533,11 @@
       select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
     }
 
-    // Load Materi
+    // Load Materi - TEST v5
     async function loadMateri() {
+      console.log('=== loadMateri v5 called at', new Date().toISOString(), '===');
       var container = document.getElementById('materiList');
-      console.log('loadMateri: container found?', !!container);
+      console.log('loadMateri: container found?', !!container, '| bento-inner:', !!document.querySelector('#contentMateri .bento-inner'));
 
       const token = getToken();
       const headers = { 'apikey': SUPABASE_ANON_KEY };
