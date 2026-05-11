@@ -1603,19 +1603,22 @@
         }
         html += '</div>';
 
-        // Find bento-inner parent and set its min-height
-        var bentoInner = container.parentElement;
-        console.log('loadMateri: bentoInner found?', bentoInner ? bentoInner.className : 'null');
-        if (bentoInner) {
-          bentoInner.style.minHeight = '500px';
-          bentoInner.style.border = '5px solid green';
-          console.log('loadMateri: bentoInner offsetHeight after style:', bentoInner.offsetHeight);
+        // Force ALL parent elements to have height
+        var parent = container.parentElement;
+        var parentDebug = [];
+        while (parent && parent.tagName !== 'BODY') {
+          parent.style.minHeight = '200px';
+          parent.style.border = '3px solid ' + ['blue', 'green', 'red', 'orange', 'purple'][parentDebug.length % 5];
+          parentDebug.push(parent.tagName + '=' + parent.className + ' h=' + parent.offsetHeight);
+          parent = parent.parentElement;
         }
+        console.log('loadMateri: Parents before:', parentDebug);
 
-        // Now replace content
-        container.outerHTML = '<div id="materiContainer">' + html + '</div>';
+        // Replace content
+        container.outerHTML = '<div id="materiContainer"><div style="background:yellow;padding:30px;border:5px dashed red;">' + html + '</div></div>';
         var newContainer = document.getElementById('materiContainer');
         console.log('loadMateri: Done. offsetHeight:', newContainer.offsetHeight);
+        console.log('loadMateri: newContainer scrollHeight:', newContainer.scrollHeight);
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
