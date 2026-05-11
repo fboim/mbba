@@ -1602,15 +1602,24 @@
         }
         html += '</div>';
 
-        // Insert into contentMateri div instead of body
-        var contentMateri = document.getElementById('contentMateri');
-        if (contentMateri) {
-          var debugHTML = '<div id="materi-debug" style="background:#00ff00;padding:40px;border:10px solid #000;margin:20px;font-size:24px;color:#000;font-weight:bold;">DEBUG in contentMateri!<br>Bagians: ' + bagians.length + '<br>Babs: ' + babs.length + '<br>Fasals: ' + fasals.length + '</div>';
-          contentMateri.insertAdjacentHTML('afterbegin', debugHTML);
-          console.log('loadMateri: Inserted debug into contentMateri');
+        // Find bento-inner and insert AFTER the header, BEFORE the materiList container
+        var bentoInner = document.querySelector('#contentMateri .bento-inner');
+        var materiListContainer = document.getElementById('materiList');
+        if (bentoInner && materiListContainer) {
+          // Remove materiListContainer first
+          materiListContainer.remove();
+          // Insert new content
+          var newContent = '<div id="materiList" style="padding:20px;background:#00ff00;">';
+          newContent += '<h2 style="color:#000;">DAFTAR MATERI</h2>';
+          newContent += '<p style="color:#000;">Bagians: ' + bagians.length + ' | Babs: ' + babs.length + ' | Fasals: ' + fasals.length + '</p>';
+          newContent += html;
+          newContent += '</div>';
+          bentoInner.insertAdjacentHTML('beforeend', newContent);
+          console.log('loadMateri: Inserted into bento-inner');
         } else {
-          document.body.insertAdjacentHTML('afterbegin', '<div style="position:fixed;top:0;left:0;background:#ff0000;padding:20px;font-size:20px;z-index:999999;">contentMateri NOT FOUND!</div>');
-          console.log('loadMateri: contentMateri not found');
+          console.log('loadMateri: bentoInner:', !!bentoInner, 'materiListContainer:', !!materiListContainer);
+          // Fallback
+          document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#ff00ff;padding:50px;font-size:30px;z-index:999999;border:10px solid #000;">FALLBACK DEBUG<br>Bagians: ' + bagians.length + '</div>');
         }
       } catch (err) {
         console.error('loadMateri error:', err);
