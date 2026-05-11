@@ -1348,14 +1348,20 @@
       const contentEl = document.getElementById('content' + tabCapitalized);
       const tabEl = document.getElementById('tab' + tabCapitalized);
       console.log('Activating:', 'content' + tabCapitalized, 'tab' + tabCapitalized, { contentEl: !!contentEl, tabEl: !!tabEl });
-      if (contentEl) contentEl.classList.add('active');
+      if (contentEl) {
+        contentEl.classList.add('active');
+        console.log('contentEl classes after add:', contentEl.className);
+      }
       if (tabEl) tabEl.classList.add('active');
 
-      if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); }
-      if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
-      if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
-      if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
-      if (tab === 'stats') { console.log('Calling loadStats'); loadStats(); }
+      // Small delay to ensure tab content is visible before loading data
+      setTimeout(() => {
+        if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); }
+        if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
+        if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
+        if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
+        if (tab === 'stats') { console.log('Calling loadStats'); loadStats(); }
+      }, 50);
     }
 
     // Load Stats
@@ -1536,6 +1542,7 @@
     // Load Materi
     async function loadMateri() {
       const container = document.getElementById('materiList');
+      console.log('loadMateri: container found?', !!container, 'container classes:', container?.className);
       if (!container) { console.error('materiList container not found'); return; }
       container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat...</p></div>';
       console.log('loadMateri: Starting fetch...');
@@ -1608,7 +1615,9 @@
         });
         html += '</div>';
 
+        console.log('loadMateri: Setting innerHTML, html length:', html.length);
         container.innerHTML = html;
+        console.log('loadMateri: innerHTML set, container children:', container.children.length);
       } catch (err) {
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Error: ${err.message}</p></div>`;
       }
