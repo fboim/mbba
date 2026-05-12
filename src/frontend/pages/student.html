@@ -658,7 +658,7 @@
     </div>
   </main>
 
-  <script src="../js/api.js"></script>
+  <script src="/js/api.js"></script>
   <script>
     var allFasals = [];
     var allBabs = [];
@@ -680,7 +680,7 @@
       var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
       document.getElementById('userName').textContent = 'Hai, ' + name;
       await loadDashboard();
-      loadKitabCards();
+      loadKitabCards().catch(function(e) { console.error('loadKitabCards error:', e); });
 
       // Dark Mode with smooth transition
       const themeToggle = document.getElementById('theme-toggle');
@@ -702,13 +702,14 @@
 
     async function loadDashboard() {
       try {
-        var kurikulum = await fetchKurikulum();
+        var kurikulum = await fetchKurikulum().catch(function(e) { console.error('fetchKurikulum error:', e); return []; });
+        if (!kurikulum) kurikulum = [];
         allFasals = [];
         allBabs = [];
         items = [];
 
         if (!kurikulum || kurikulum.length === 0) {
-          document.getElementById('fasalList').innerHTML = '<div class="activity-empty"><div class="activity-empty-icon"><i class="fa-solid fa-book-open"></i></div><p class="activity-empty-text">Tidak ada data materi</p></div>';
+          document.getElementById('fasalList').innerHTML = '<div class="activity-empty"><div class="activity-empty-icon"><i class="fa-solid fa-database"></i></div><p class="activity-empty-text">Tidak ada data materi di database.<br><small>Hubungi admin untuk menambahkan data.</small></p></div>';
           updateStats();
           return;
         }
@@ -784,6 +785,7 @@
         renderRecentActivity();
         updateContinueSection();
       } catch (err) {
+        console.error('loadDashboard error:', err);
         document.getElementById('fasalList').innerHTML = '<div class="activity-empty"><div class="activity-empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="activity-empty-text">Gagal memuat data: ' + err.message + '</p></div>';
       }
     }
