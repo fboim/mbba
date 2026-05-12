@@ -1816,7 +1816,16 @@
         container.setAttribute('style', 'display:block !important; visibility:visible !important; min-height:200px; padding:0; overflow:visible !important;');
         container.innerHTML = html;
         const rect = container.getBoundingClientRect();
-        console.log('loadJenjangList: rect:', rect.width + 'x' + rect.height + ' top:' + rect.top + ' left:' + rect.left + ' visible:' + (rect.height > 0 && rect.width > 0));
+        const parentRect = container.parentElement.getBoundingClientRect();
+        const grandParentRect = container.parentElement.parentElement.getBoundingClientRect();
+        console.log('loadJenjangList: container rect:', rect.width + 'x' + rect.height + ' top:' + rect.top);
+        console.log('loadJenjangList: parent (bento-inner) rect:', parentRect.width + 'x' + parentRect.height + ' top:' + parentRect.top);
+        console.log('loadJenjangList: grandParent (bento-card) rect:', grandParentRect.width + 'x' + grandParentRect.height + ' top:' + grandParentRect.top);
+        console.log('loadJenjangList: parent display:', getComputedStyle(container.parentElement).display, 'overflow:', getComputedStyle(container.parentElement).overflow);
+        // Force reflow and check again
+        void container.offsetHeight;
+        const rect2 = container.getBoundingClientRect();
+        console.log('loadJenjangList: after reflow rect:', rect2.width + 'x' + rect2.height + ' top:' + rect2.top);
       } catch (err) {
         console.error('loadJenjangList error:', err);
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">Error: ${err.message}</p></div>`;
