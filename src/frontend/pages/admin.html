@@ -1320,6 +1320,13 @@
               <label class="form-label">Penulis (opsional)</label>
               <input type="text" id="newKitabPenulis" class="form-input" placeholder="Contoh: Ibnu Malik">
             </div>
+            <div class="form-group">
+              <label class="form-label">URL Cover / Gambar (opsional)</label>
+              <input type="url" id="newKitabImage" class="form-input" placeholder="https://example.com/cover.jpg" oninput="previewKitabImage(this.value)">
+              <div id="kitabImagePreview" class="kitab-thumb-preview hidden" style="margin-top:8px;">
+                <img id="kitabThumbImg" src="" alt="Preview" style="height:60px; border-radius:8px; object-fit:cover; border:1px solid #e2e8f0;">
+              </div>
+            </div>
             <div id="addKitabError" class="alert alert-error hidden"></div>
             <button onclick="addNewKitab()" class="btn btn-primary btn-block">
               <i class="fa-solid fa-plus"></i> Tambah Kitab
@@ -1737,14 +1744,16 @@
             html += `<div style="margin-top:12px; margin-left:8px; display:flex; flex-direction:column; gap:10px;">`;
             for (const kitab of jenjangKitabs) {
               const kitabBagians = bagians.filter(b => b.kitab_id === kitab.id);
+              const kitabThumb = kitab.image_url ? `<img src="${escapeHtml(kitab.image_url)}" alt="cover" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0; flex-shrink:0;" onerror="this.style.display='none'">` : '';
               html += `<div style="padding:12px; background:white; border-radius:10px; border:1px solid #bfdbfe;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                  ${kitabThumb}
+                  <div style="flex:1; min-width:0;">
                     <span style="font-weight:600; color:#1e40af;">${kitab.order_index}. ${escapeHtml(kitab.nama || kitab.title)}</span>
                     ${kitab.penulis ? `<span style="display:block; font-size:0.75rem; color:#6b7280; margin-top:1px;">${escapeHtml(kitab.penulis)}</span>` : ''}
                   </div>
                   <div style="display:flex; gap:4px;">
-                    <button onclick="editKitab('${kitab.id}', this.dataset.title)" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                    <button onclick="editKitab('${kitab.id}', this.dataset.title)" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" data-image="${escapeHtml(kitab.image_url || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                     <button onclick="deleteKitab('${kitab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                   </div>
                 </div>`;
@@ -1861,6 +1870,7 @@
       const jenjangId = document.getElementById('newKitabJenjang').value;
       const nama = document.getElementById('newKitabNama').value.trim();
       const penulis = document.getElementById('newKitabPenulis').value.trim();
+      const imageUrl = document.getElementById('newKitabImage').value.trim();
       const errorEl = document.getElementById('addKitabError');
       errorEl.classList.add('hidden');
 
@@ -1868,14 +1878,28 @@
 
       const existingKitabs = allKitab.filter(k => k.jenjang_id === jenjangId);
       try {
-        await createKitab({ jenjang_id: jenjangId, nama, penulis: penulis || null, order_index: existingKitabs.length + 1 });
+        await createKitab({ jenjang_id: jenjangId, nama, penulis: penulis || null, order_index: existingKitabs.length + 1, image_url: imageUrl || null });
         document.getElementById('newKitabNama').value = '';
         document.getElementById('newKitabPenulis').value = '';
+        document.getElementById('newKitabImage').value = '';
+        document.getElementById('kitabImagePreview').classList.add('hidden');
         alert('Kitab berhasil ditambahkan!');
         loadJenjangList();
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
+      }
+    }
+
+    function previewKitabImage(url) {
+      const preview = document.getElementById('kitabImagePreview');
+      const img = document.getElementById('kitabThumbImg');
+      if (url && url.trim()) {
+        img.src = url;
+        preview.classList.remove('hidden');
+        img.onerror = () => preview.classList.add('hidden');
+      } else {
+        preview.classList.add('hidden');
       }
     }
 
@@ -1899,14 +1923,18 @@
         currentTitle = this && this.dataset && this.dataset.title ? this.dataset.title : '';
       }
       const currentPenulis = this && this.dataset && this.dataset.penulis ? this.dataset.penulis : '';
+      const currentImage = this && this.dataset && this.dataset.image ? this.dataset.image : '';
       const newTitle = prompt('Edit nama kitab:', currentTitle);
       if (!newTitle || newTitle === currentTitle) return;
-      const newPenulis = prompt('Edit penulis:', currentPenulis);
-      if (newPenulis === null) return;
+      const newPenulis = prompt('Edit penulis (kosongkan = hapus):', currentPenulis);
+      const newImage = prompt('Edit URL gambar/cover (kosongkan = hapus):', currentImage);
+      const patchData = { nama: newTitle };
+      if (newPenulis !== null) patchData.penulis = newPenulis || null;
+      if (newImage !== null) patchData.image_url = newImage || null;
       fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
-        body: JSON.stringify({ nama: newTitle, penulis: newPenulis })
+        body: JSON.stringify(patchData)
       }).then(res => { if (res.ok) { alert('Berhasil diupdate!'); loadJenjangList(); } else { res.json().then(err => alert('Gagal: ' + err.message)); } });
     }
 
@@ -2028,14 +2056,16 @@
             listHTML += `<div style="margin-top:12px; margin-left:8px; display:flex; flex-direction:column; gap:10px;">`;
             for (const kitab of jenjangKitabs) {
               const kitabBagians = bagians.filter(b => b.kitab_id === kitab.id);
+              const kitabThumb = kitab.image_url ? `<img src="${escapeHtml(kitab.image_url)}" alt="cover" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0; flex-shrink:0;" onerror="this.style.display='none'">` : '';
               listHTML += `<div style="padding:12px; background:white; border-radius:10px; border:1px solid #bfdbfe;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                  ${kitabThumb}
+                  <div style="flex:1; min-width:0;">
                     <span style="font-weight:600; color:#1e40af;">${kitab.order_index}. ${escapeHtml(kitab.nama || kitab.title)}</span>
                     ${kitab.penulis ? `<span style="display:block; font-size:0.75rem; color:#6b7280; margin-top:1px;">${escapeHtml(kitab.penulis)}</span>` : ''}
                   </div>
                   <div style="display:flex; gap:4px;">
-                    <button onclick="editKitab('${kitab.id}', this.dataset.title)" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                    <button onclick="editKitab('${kitab.id}', this.dataset.title)" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" data-image="${escapeHtml(kitab.image_url || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                     <button onclick="deleteKitab('${kitab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                   </div>
                 </div>`;
