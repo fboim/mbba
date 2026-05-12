@@ -1659,6 +1659,24 @@
           var parent = materiList.parentElement;
           parent.innerHTML = html;
           console.log('loadMateri: Injected directly into parent (bento-inner)');
+          console.log('parent offsetHeight:', parent.offsetHeight);
+
+          // Check if bento-card needs height fix
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              var card = parent.closest('.bento-card');
+              console.log('card offsetHeight after 2 frames:', card ? card.offsetHeight : 'N/A');
+              console.log('parent offsetHeight after 2 frames:', parent.offsetHeight);
+
+              if (card && card.offsetHeight === 0) {
+                // Force card to expand
+                card.style.minHeight = '200px';
+                card.style.overflow = 'visible';
+                parent.style.overflow = 'visible';
+                console.log('Forced card/parent overflow visible');
+              }
+            });
+          });
         } else {
           console.error('loadMateri: materiList not found!');
         }
