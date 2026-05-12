@@ -1801,6 +1801,7 @@
         html += '</div>';
         console.log('about to set innerHTML, html length:', html.length, 'container:', !!container, 'container.parent:', container && container.parentElement ? container.parentElement.className : 'N/A');
         container.innerHTML = html;
+        container.classList.remove('loading');
         console.log('after set innerHTML, container.innerHTML length:', container.innerHTML.length, 'container children:', container.children.length);
       } catch (err) {
         console.error('loadJenjangList error:', err);
