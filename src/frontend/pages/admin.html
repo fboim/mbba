@@ -1590,19 +1590,38 @@
           const bagian = bagians[i];
           const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
           listHTML += `<div style="padding:14px; background:linear-gradient(135deg,#eff6ff,#e0e7ff); border-radius:12px; border:1px solid #bfdbfe;">`;
-          listHTML += `<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:700; color:#1e40af;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span><span style="padding:3px 8px; background:#3b82f6; color:white; border-radius:4px; font-size:10px; font-weight:700;">BAGIAN</span></div>`;
+          listHTML += `<div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; color:#1e40af;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <span style="padding:3px 8px; background:#3b82f6; color:white; border-radius:4px; font-size:10px; font-weight:700;">BAGIAN</span>
+              <button onclick="editMateri('bagian', '${bagian.id}', '${escapeHtml(bagian.title || bagian.nama)}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px; color:#374151;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+              <button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px; color:#374151;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+            </div>
+          </div>`;
           listHTML += `<div style="margin-top:10px; margin-left:10px; display:flex; flex-direction:column; gap:8px;">`;
           for (let j = 0; j < bagianBabs.length; j++) {
             const bab = bagianBabs[j];
             const babFasals = fasals.filter(f => f.bab_id === bab.id);
-            listHTML += `<div style="padding:10px; background:white; border-radius:8px; border:1px solid #e2e8f0;">`;
-            listHTML += `<span style="font-weight:600; color:#166534;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>`;
+            listHTML += `<div style="padding:10px; background:white; border-radius:8px; border:1px solid #e2e8f0;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:600; color:#166534;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>
+                <div style="display:flex; gap:4px;">
+                  <button onclick="openContentModal('bab', '${bab.id}')" style="padding:4px 8px; background:#f0fdf4; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Konten"><i class="fa-solid fa-pen" style="color:#059669;"></i></button>
+                  <button onclick="editMateri('bab', '${bab.id}', '${escapeHtml(bab.title || bab.nama)}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Nama"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                  <button onclick="deleteMateri('bab', '${bab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                </div>
+              </div>`;
             listHTML += `<div style="margin-top:8px; margin-left:10px; display:flex; flex-direction:column; gap:6px;">`;
             for (let k = 0; k < babFasals.length; k++) {
               const fasal = babFasals[k];
-              listHTML += `<div style="padding:8px; background:#f8fafc; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">`;
-              listHTML += `<span style="color:#475569;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>`;
-              listHTML += `<span style="padding:2px 6px; background:#f59e0b; color:white; border-radius:4px; font-size:9px; font-weight:700;">FASAL</span></div>`;
+              listHTML += `<div style="padding:8px; background:#f8fafc; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#475569;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>
+                <div style="display:flex; gap:4px;">
+                  <button onclick="openContentModal('fasal', '${fasal.id}')" style="padding:4px 8px; background:#f0fdf4; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Konten"><i class="fa-solid fa-pen" style="color:#059669;"></i></button>
+                  <button onclick="editMateri('fasal', '${fasal.id}', '${escapeHtml(fasal.title || fasal.nama)}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Nama"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                  <button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                </div>
+              </div>`;
             }
             listHTML += '</div></div>';
           }
