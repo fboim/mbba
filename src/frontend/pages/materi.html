@@ -1030,6 +1030,9 @@
   <script src="/js/api.js"></script>
   <script src="/js/quiz.js"></script>
   <script>
+    // MARKER: inline script running - DEPLOYED 2026-05-12-QUIZ
+    console.log('[MBBA] inline script executing. typeof startQuiz:', typeof startQuiz);
+
     // XSS protection - escape HTML special characters
     function escapeHtml(text) {
       if (!text) return '';
