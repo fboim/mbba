@@ -1613,27 +1613,159 @@
         console.log('main-container:', document.querySelector('main') ? document.querySelector('main').offsetHeight : 'N/A');
 
         if (materiList) {
-          materiList.innerHTML = html;
+          // Create content with INLINE STYLES - no CSS dependencies
+          var content = document.createElement('div');
+          content.style.cssText = 'display: block; width: 100;';
+
+          var header = document.createElement('h3');
+          header.style.cssText = 'margin: 0 0 20px 0; color: #059669; font-size: 20px; font-weight: 700; padding-bottom: 15px; border-bottom: 2px solid #e2e8f0;';
+          header.textContent = 'DAFTAR MATERI';
+          content.appendChild(header);
+
+          var container = document.createElement('div');
+          container.style.cssText = 'display: flex; flex-direction: column; gap: 16px;';
+
+          for (var i = 0; i < bagians.length; i++) {
+            var bagian = bagians[i];
+            var bagianBabs = babs.filter(function(b) { return b.bagian_id === bagian.id; });
+
+            var bagianDiv = document.createElement('div');
+            bagianDiv.style.cssText = 'padding: 16px; background: linear-gradient(135deg, #eff6ff, #e0e7ff); border-radius: 16px; border: 1px solid #bfdbfe;';
+
+            var bagianHeader = document.createElement('div');
+            bagianHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;';
+
+            var bagianTitle = document.createElement('div');
+            bagianTitle.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+            var bagianBadge = document.createElement('span');
+            bagianBadge.style.cssText = 'padding: 4px 10px; background: #3b82f6; color: white; border-radius: 6px; font-size: 11px; font-weight: 700;';
+            bagianBadge.textContent = 'BAGIAN';
+            var bagianName = document.createElement('span');
+            bagianName.style.cssText = 'font-weight: 700;';
+            bagianName.textContent = bagian.order_index + '. ' + bagian.title;
+            bagianTitle.appendChild(bagianBadge);
+            bagianTitle.appendChild(bagianName);
+
+            var bagianActions = document.createElement('div');
+            bagianActions.style.cssText = 'display: flex; gap: 8px;';
+            var editBtn = document.createElement('button');
+            editBtn.style.cssText = 'padding: 8px; background: white; border: none; border-radius: 10px; color: #3b82f6; cursor: pointer;';
+            editBtn.innerHTML = '<i class="fa-solid fa-edit"></i>';
+            editBtn.onclick = function() { editMateri('bagian', bagian.id, bagian.title); };
+            var deleteBtn = document.createElement('button');
+            deleteBtn.style.cssText = 'padding: 8px; background: white; border: none; border-radius: 10px; color: #ef4444; cursor: pointer;';
+            deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            deleteBtn.onclick = function() { deleteMateri('bagian', bagian.id); };
+            bagianActions.appendChild(editBtn);
+            bagianActions.appendChild(deleteBtn);
+            bagianHeader.appendChild(bagianTitle);
+            bagianHeader.appendChild(bagianActions);
+            bagianDiv.appendChild(bagianHeader);
+
+            var babsContainer = document.createElement('div');
+            babsContainer.style.cssText = 'margin-left: 16px; display: flex; flex-direction: column; gap: 8px;';
+
+            for (var j = 0; j < bagianBabs.length; j++) {
+              var bab = bagianBabs[j];
+              var babFasals = fasals.filter(function(f) { return f.bab_id === bab.id; });
+
+              var babDiv = document.createElement('div');
+              babDiv.style.cssText = 'padding: 14px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;';
+
+              var babHeader = document.createElement('div');
+              babHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;';
+
+              var babTitle = document.createElement('div');
+              babTitle.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+              var babBadge = document.createElement('span');
+              babBadge.style.cssText = 'padding: 3px 8px; background: #059669; color: white; border-radius: 5px; font-size: 10px; font-weight: 700;';
+              babBadge.textContent = 'BAB';
+              var babName = document.createElement('span');
+              babName.style.cssText = 'font-weight: 600; color: #166534;';
+              babName.textContent = bab.order_index + '. ' + bab.title;
+              babTitle.appendChild(babBadge);
+              babTitle.appendChild(babName);
+
+              var babActions = document.createElement('div');
+              babActions.style.cssText = 'display: flex; gap: 6px;';
+              var babEditBtn = document.createElement('button');
+              babEditBtn.style.cssText = 'padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;';
+              babEditBtn.innerHTML = '<i class="fa-solid fa-font"></i>';
+              babEditBtn.onclick = function() { editMateri('bab', bab.id, bab.title); };
+              var babContentBtn = document.createElement('button');
+              babContentBtn.style.cssText = 'padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #059669; cursor: pointer;';
+              babContentBtn.innerHTML = '<i class="fa-solid fa-file-lines"></i>';
+              babContentBtn.onclick = function() { openContentModal('bab', bab.id); };
+              var babDeleteBtn = document.createElement('button');
+              babDeleteBtn.style.cssText = 'padding: 6px 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #ef4444; cursor: pointer;';
+              babDeleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+              babDeleteBtn.onclick = function() { deleteMateri('bab', bab.id); };
+              babActions.appendChild(babEditBtn);
+              babActions.appendChild(babContentBtn);
+              babActions.appendChild(babDeleteBtn);
+              babHeader.appendChild(babTitle);
+              babHeader.appendChild(babActions);
+              babDiv.appendChild(babHeader);
+
+              var fasalsContainer = document.createElement('div');
+              fasalsContainer.style.cssText = 'margin-left: 12px; display: flex; flex-direction: column; gap: 6px;';
+
+              for (var k = 0; k < babFasals.length; k++) {
+                var fasal = babFasals[k];
+
+                var fasalDiv = document.createElement('div');
+                fasalDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px; gap: 8px;';
+
+                var fasalTitle = document.createElement('div');
+                fasalTitle.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+                var fasalBadge = document.createElement('span');
+                fasalBadge.style.cssText = 'padding: 3px 8px; background: #f59e0b; color: white; border-radius: 5px; font-size: 10px; font-weight: 700;';
+                fasalBadge.textContent = 'FASAL';
+                var fasalName = document.createElement('span');
+                fasalName.style.cssText = 'color: #475569;';
+                fasalName.textContent = fasal.order_index + '. ' + fasal.title;
+                fasalTitle.appendChild(fasalBadge);
+                fasalTitle.appendChild(fasalName);
+
+                var fasalActions = document.createElement('div');
+                fasalActions.style.cssText = 'display: flex; gap: 6px;';
+                var fasalEditBtn = document.createElement('button');
+                fasalEditBtn.style.cssText = 'padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #3b82f6; cursor: pointer;';
+                fasalEditBtn.innerHTML = '<i class="fa-solid fa-font"></i>';
+                fasalEditBtn.onclick = function() { editMateri('fasal', fasal.id, fasal.title); };
+                var fasalContentBtn = document.createElement('button');
+                fasalContentBtn.style.cssText = 'padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #059669; cursor: pointer;';
+                fasalContentBtn.innerHTML = '<i class="fa-solid fa-file-lines"></i>';
+                fasalContentBtn.onclick = function() { openContentModal('fasal', fasal.id); };
+                var fasalDeleteBtn = document.createElement('button');
+                fasalDeleteBtn.style.cssText = 'padding: 6px 10px; background: white; border: none; border-radius: 8px; color: #ef4444; cursor: pointer;';
+                fasalDeleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                fasalDeleteBtn.onclick = function() { deleteMateri('fasal', fasal.id); };
+                fasalActions.appendChild(fasalEditBtn);
+                fasalActions.appendChild(fasalContentBtn);
+                fasalActions.appendChild(fasalDeleteBtn);
+                fasalDiv.appendChild(fasalTitle);
+                fasalDiv.appendChild(fasalActions);
+                fasalsContainer.appendChild(fasalDiv);
+              }
+
+              babDiv.appendChild(fasalsContainer);
+              babsContainer.appendChild(babDiv);
+            }
+
+            bagianDiv.appendChild(babsContainer);
+            container.appendChild(bagianDiv);
+          }
+
+          content.appendChild(container);
+
+          // Replace materiList content
+          materiList.innerHTML = '';
+          materiList.appendChild(content);
+          materiList.style.cssText = 'display: block !important; min-height: 100px !important; padding: 0 !important;';
           materiList.classList.remove('loading');
 
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-              // If normal display doesn't work, use position:fixed overlay - bypass ALL CSS issues
-              if (materiList.offsetHeight === 0 || materiList.scrollHeight === 0) {
-                console.log('Using position:fixed overlay - content visible at:', new Date().toISOString());
-
-                var existing = document.getElementById('materiOverlay');
-                if (existing) existing.remove();
-
-                var overlay = document.createElement('div');
-                overlay.id = 'materiOverlay';
-                overlay.style.cssText = 'position:fixed !important; top:100px !important; left:20px !important; right:20px !important; z-index:9999 !important; background:#fff !important; border:3px solid #000 !important; border-radius:20px !important; padding:24px !important; box-shadow:0 20px 60px rgba(0,0,0,0.3) !important; max-height:70vh !important; overflow-y:auto !important;';
-                overlay.innerHTML = '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;"><h3 style="margin:0; color:#059669; font-size:22px; font-weight:700;">DAFTAR MATERI</h3><button onclick="document.getElementById(\'materiOverlay\').remove()" style="width:32px; height:32px; border-radius:50%; border:none; background:#ef4444; color:#fff; font-weight:700; cursor:pointer; font-size:16px;">X</button></div>' + html;
-
-                document.body.appendChild(overlay);
-              }
-            });
-          });
+          console.log('loadMateri: Created content with inline styles, children:', content.children.length);
         } else {
           console.error('loadMateri: materiList not found!');
         }
