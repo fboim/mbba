@@ -1799,9 +1799,10 @@
           html += '</div>';
         }
         html += '</div>';
+        console.log('about to set innerHTML, html length:', html.length);
         container.innerHTML = html;
       } catch (err) {
-        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">Error: ${err.message}</p></div>`;
+        console.error('loadJenjangList error:', err);
       }
     }
 
