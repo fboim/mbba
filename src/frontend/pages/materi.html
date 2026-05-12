@@ -1229,7 +1229,10 @@
     var answeredQuestions = {};
 
     function startQuiz() {
-      if (quizBank.length === 0) return;
+      if (quizBank.length === 0) {
+        alert('Quiz bank kosong! Pastikan bab ini punya quiz di database. (quizBank.length = ' + quizBank.length + ')');
+        return;
+      }
       document.getElementById('quizModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
 
@@ -1237,7 +1240,8 @@
       var quizTitle = currentFasal ? currentFasal.title : currentBab.title;
       document.getElementById('quizFasalName').textContent = quizTitle;
 
-      initQuiz(quizBank, quizId, 10, {
+      console.log('startQuiz: quizBank.length =', quizBank.length, 'quizBank[0] =', quizBank[0]);
+      var shuffled = initQuiz(quizBank, quizId, 10, {
         onPass: function(score, correct, total, results) { handleQuizComplete(true, score, correct, total); },
         onFail: function(score, correct, total, results) { handleQuizComplete(false, score, correct, total); }
       });
@@ -1254,8 +1258,9 @@
 
     function renderQuestion() {
       var state = window._quizState;
+      console.log('renderQuestion: state =', state, 'questions =', state && state.questions, 'length =', state && state.questions && state.questions.length);
       if (!state || !state.questions || state.questions.length === 0) {
-        document.getElementById('quizContent').innerHTML = '<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle mr-2"></i> Quiz tidak tersedia</div>';
+        document.getElementById('quizContent').innerHTML = '<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle mr-2"></i> Quiz tidak tersedia (state=' + (state ? 'ok' : 'null') + ', len=' + (state && state.questions ? state.questions.length : '?') + ')</div>';
         return;
       }
 
