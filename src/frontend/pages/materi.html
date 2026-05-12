@@ -539,6 +539,18 @@
     /* Quiz Body */
     .quiz-body {
       padding: 24px;
+      min-height: 200px;
+    }
+    .quiz-no-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      background: var(--bg-base);
+      border-radius: var(--radius-md);
+      border: 2px dashed var(--border-soft);
     }
     .quiz-question-type {
       display: inline-flex;
@@ -1081,7 +1093,9 @@
         document.getElementById('fasalBab').textContent = 'Bab ' + bab.order_index + ' dari Bagian ' + (bab.bagian ? bab.bagian.order_index : 1);
         document.getElementById('quizFasalName').textContent = 'Tes Muqoddimah';
 
-        var content = bab.content_arab || '<p class="text-center text-slate-400 py-8">Konten belum tersedia</p>';
+        var content = bab.content_arab && bab.content_arab.trim()
+          ? bab.content_arab
+          : '<div style="text-align:center; padding:48px 24px; background:#fef3c7; border-radius:16px; border:1px solid #fcd34d; margin:8px 0;"><i class="fa-solid fa-file-import" style="font-size:2rem; color:#d97706; margin-bottom:12px; display:block;"></i><p style="font-size:1rem; font-weight:600; color:#92400e; margin-bottom:4px;">Konten belum tersedia</p><p style="font-size:0.8rem; color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
         document.getElementById('fasalContent').innerHTML = content;
 
         if (bab.content_id) {
@@ -1163,7 +1177,9 @@
         document.getElementById('fasalBab').textContent = babTitle + ' dari Bagian ' + bagianOrder;
         document.getElementById('quizFasalName').textContent = 'Tes ' + (fasal.title || 'Fasal');
 
-        var content = fasal.content_arab || '<p class="text-center text-slate-400 py-8">Konten belum tersedia</p>';
+        var content = fasal.content_arab && fasal.content_arab.trim()
+          ? fasal.content_arab
+          : '<div style="text-align:center; padding:48px 24px; background:#fef3c7; border-radius:16px; border:1px solid #fcd34d; margin:8px 0;"><i class="fa-solid fa-file-import" style="font-size:2rem; color:#d97706; margin-bottom:12px; display:block;"></i><p style="font-size:1rem; font-weight:600; color:#92400e; margin-bottom:4px;">Konten belum tersedia</p><p style="font-size:0.8rem; color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
         document.getElementById('fasalContent').innerHTML = content;
 
         if (fasal.content_id) {
@@ -1244,13 +1260,18 @@
       }
 
       var q = state.questions[currentQuestionIndex];
+      if (!q || !q.id) {
+        document.getElementById('quizContent').innerHTML = '<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-circle-exclamation mr-2"></i> Data soal tidak valid</div>';
+        return;
+      }
+
       var container = document.getElementById('quizContent');
       var answers = state.selectedAnswers || {};
 
       document.getElementById('currentQ').textContent = currentQuestionIndex + 1;
-      var percent = Math.round(((currentQuestionIndex + 1) / state.questions.length) * 100);
+      var percent = state.questions.length > 0 ? Math.round(((currentQuestionIndex + 1) / state.questions.length) * 100) : 0;
       document.getElementById('progressPercent').textContent = percent + '%';
-      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressBar').style.width = Math.max(percent, 2) + '%';
 
       var dotsHtml = '';
       state.questions.forEach(function(qi, i) {
@@ -1267,7 +1288,7 @@
       });
       document.getElementById('questionDots').innerHTML = dotsHtml;
 
-      var qText = q.question;
+      var qText = q.question || '';
       container.innerHTML = '';
 
       var typeBadge = '';
@@ -1276,7 +1297,12 @@
       else typeBadge = '<span class="quiz-question-type latin"><i class="fa-solid fa-pen"></i>Isi Latin</span>';
 
       container.innerHTML += typeBadge;
-      container.innerHTML += '<div class="quiz-question-box"><p class="quiz-question-text">' + qText + '</p></div>';
+
+      if (!qText || !qText.trim()) {
+        container.innerHTML += '<div class="quiz-question-box quiz-no-content"><i class="fa-solid fa-circle-info" style="color:var(--text-muted); font-size:1.5rem; margin-bottom:8px; display:block;"></i><p style="color:var(--text-muted); font-size:0.9rem;">Pertanyaan ini belum memiliki teks.</p></div>';
+      } else {
+        container.innerHTML += '<div class="quiz-question-box"><p class="quiz-question-text">' + escapeHtml(qText) + '</p></div>';
+      }
 
       if (q.type === 'mc' && q.options) {
         var opts = {};
@@ -1292,7 +1318,7 @@
         container.innerHTML += '<div class="quiz-options">';
         for (var key in opts) {
           var isSelected = answers[q.id] === key;
-          container.innerHTML += '<div onclick="selectAnswer(\'' + q.id + '\', \'' + key + '\')" class="quiz-option ' + (isSelected ? 'selected' : '') + '">';
+          container.innerHTML += '<div onclick="selectAnswer(\'' + q.id + '\', \'' + String(key).replace(/'/g, "\\'") + '\')" class="quiz-option ' + (isSelected ? 'selected' : '') + '">';
           container.innerHTML += '<div class="quiz-option-key">' + key + '</div>';
           container.innerHTML += '<div class="quiz-option-text">' + escapeHtml(opts[key]) + '</div>';
           container.innerHTML += '<div class="quiz-option-check"><i class="fa-solid fa-check text-xs"></i></div>';
@@ -1300,7 +1326,7 @@
         }
         container.innerHTML += '</div>';
       } else {
-        container.innerHTML += '<input type="text" id="answerInput" value="' + (answers[q.id] || '') + '" oninput="setAnswer(\'' + q.id + '\', this.value)" class="quiz-fill-input" placeholder="Ketik jawaban...">';
+        container.innerHTML += '<input type="text" id="answerInput" value="' + escapeHtml(answers[q.id] || '') + '" oninput="setAnswer(\'' + q.id + '\', this.value)" class="quiz-fill-input" placeholder="Ketik jawaban...">';
       }
 
       var prevDisabled = currentQuestionIndex === 0;
