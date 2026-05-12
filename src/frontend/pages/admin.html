@@ -1634,9 +1634,17 @@
                 console.log('Using overlay approach');
                 // Find the bento-card parent and inject into it directly
                 var card = materiList.closest('.bento-card');
+                console.log('Found card:', !!card, card ? card.className : '');
                 if (card) {
-                  card.innerHTML = '<div style="padding:20px;background:#fff;">' + html + '</div>';
-                  console.log('Injected directly into bento-card');
+                  var injectedHTML = '<div class="bento-inner" style="padding: 24px; background: #fff;"><div style="padding: 20px; background: #fff; border: 2px solid #000;"><h3 style="margin:0 0 15px 0; color:#059669; font-size:20px;">DAFTAR MATERI</h3>' + html + '</div></div>';
+                  card.innerHTML = injectedHTML;
+                  console.log('Injected directly into bento-card, length:', injectedHTML.length);
+
+                  // Check after injection
+                  requestAnimationFrame(function() {
+                    console.log('After injection - card offsetHeight:', card.offsetHeight);
+                    console.log('After injection - card innerHTML length:', card.innerHTML.length);
+                  });
                 }
               }
             });
