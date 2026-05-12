@@ -862,6 +862,10 @@
         </div>
 
         <!-- Demo tools removed for production -->
+      </div> <!-- Close Sub Stats Bento Grid -->
+    </div> <!-- Close contentStats -->
+
+    <!-- Demo tools removed for production -->
 
     <!-- Materi Tab -->
     <div id="contentMateri" class="tab-content">
@@ -1533,6 +1537,55 @@
       select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
     }
 
+    // Update form visibility for overlay
+    function updateMateriFormOverlay() {
+      var type = document.getElementById('overlayMateriType').value;
+      document.getElementById('overlayBagianFields').style.display = type === 'bagian' ? 'block' : 'none';
+      document.getElementById('overlayBabFields').style.display = type === 'bab' ? 'block' : 'none';
+      document.getElementById('overlayFasalFields').style.display = type === 'fasal' ? 'block' : 'none';
+    }
+
+    // Add materi from overlay
+    async function addNewMateriOverlay() {
+      var type = document.getElementById('overlayMateriType').value;
+      var errorMsg = '';
+
+      try {
+        var body = {};
+        if (type === 'bagian') {
+          var title = document.getElementById('overlayBagianNama').value.trim();
+          if (!title) { alert('Nama bagian diperlukan'); return; }
+          body = { title: title, order_index: allBagians.length + 1 };
+        } else if (type === 'bab') {
+          var title = document.getElementById('overlayBabNama').value.trim();
+          var bagianId = document.getElementById('overlayBabBagian').value;
+          if (!title || !bagianId) { alert('Nama bab dan bagian diperlukan'); return; }
+          body = { title: title, bagian_id: bagianId, order_index: allBabs.filter(function(b) { return b.bagian_id === bagianId; }).length + 1 };
+        } else if (type === 'fasal') {
+          var title = document.getElementById('overlayFasalNama').value.trim();
+          var babId = document.getElementById('overlayFasalBab').value;
+          if (!title || !babId) { alert('Nama fasal dan bab diperlukan'); return; }
+          body = { title: title, bab_id: babId, order_index: 1 };
+        }
+
+        var res = await fetch(SUPABASE_URL + 'rest/v1/' + (type === 'bagian' ? 'bagian' : type === 'bab' ? 'bab' : 'fasal'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() },
+          body: JSON.stringify(body)
+        });
+
+        if (res.ok) {
+          alert('Berhasil menambah ' + type + '!');
+          // Reload materi
+          loadMateri();
+        } else {
+          alert('Gagal menambah materi');
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
     // Load Materi - FIX v6: Write to materiList not contentMateri
     async function loadMateri() {
       console.log('=== loadMateri v6 called at', new Date().toISOString(), '===');
@@ -1548,6 +1601,9 @@
           fetch(SUPABASE_URL + 'rest/v1/bagian?order=order_index', { headers: headers }),
           fetch(SUPABASE_URL + 'rest/v1/bab?order=order_index', { headers: headers }),
           fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers: headers })
+          fetch(`${SUPABASE_URL}rest/v1/bagian?order=order_index`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/bab?order=order_index`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?order=order_index`, { headers })
         ]);
 
         const bagians = await bagiansRes.json().catch(function() { return []; });
@@ -1616,25 +1672,32 @@
           // Simple HTML injection
           var html = '<h3 style="margin:0 0 20px 0; color:#059669; font-size:20px; font-weight:700; border-bottom:2px solid #e2e8f0; padding-bottom:15px;">DAFTAR MATERI</h3>';
           html += '<div style="display:flex; flex-direction:column; gap:16px;">';
+        let html = '<div style="display:flex; flex-direction:column; gap:16px;">';
           for (var i = 0; i < bagians.length; i++) {
             var bagian = bagians[i];
             var bagianBabs = babs.filter(function(b) { return b.bagian_id === bagian.id; });
+            var bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
             html += '<div style="padding:16px; background:linear-gradient(135deg,#eff6ff,#e0e7ff); border-radius:16px; border:1px solid #bfdbfe;">';
             html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">';
             html += '<div style="display:flex; align-items:center; gap:8px;"><span style="padding:4px 10px; background:#3b82f6; color:white; border-radius:6px; font-size:11px; font-weight:700;">BAGIAN</span><span style="font-weight:700;">' + bagian.order_index + '. ' + escapeHtml(bagian.title) + '</span></div>';
+            html += '<div style="display:flex; align-items:center; gap:8px;"><span style="padding:4px 10px; background:#3b82f6; color:white; border-radius:6px; font-size:11px; font-weight:700;">BAGIAN</span><span style="font-weight:700;">' + bagian.order_index + '. ' + escapeHtml(bagian.title || bagian.nama) + '</span></div>';
             html += '<div style="display:flex; gap:8px;">';
             html += '<button onclick="editMateri(\'bagian\',\'' + bagian.id + '\',\'' + escapeHtml(bagian.title) + '\')" style="padding:8px; background:white; border:none; border-radius:10px; color:#3b82f6; cursor:pointer;"><i class="fa-solid fa-edit"></i></button>';
+            html += '<button onclick="editMateri(\'bagian\',\'' + bagian.id + '\',\'' + escapeHtml(bagian.title || bagian.nama) + '\')" style="padding:8px; background:white; border:none; border-radius:10px; color:#3b82f6; cursor:pointer;"><i class="fa-solid fa-edit"></i></button>';
             html += '<button onclick="deleteMateri(\'bagian\',\'' + bagian.id + '\')" style="padding:8px; background:white; border:none; border-radius:10px; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>';
             html += '</div></div>';
             html += '<div style="margin-left:16px; display:flex; flex-direction:column; gap:8px;">';
             for (var j = 0; j < bagianBabs.length; j++) {
               var bab = bagianBabs[j];
               var babFasals = fasals.filter(function(f) { return f.bab_id === bab.id; });
+              var babFasals = fasals.filter(f => f.bab_id === bab.id);
               html += '<div style="padding:14px; background:white; border-radius:12px; border:1px solid #e2e8f0;">';
               html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">';
               html += '<div style="display:flex; align-items:center; gap:8px;"><span style="padding:3px 8px; background:#059669; color:white; border-radius:5px; font-size:10px; font-weight:700;">BAB</span><span style="font-weight:600; color:#166534;">' + bab.order_index + '. ' + escapeHtml(bab.title) + '</span></div>';
+              html += '<div style="display:flex; align-items:center; gap:8px;"><span style="padding:3px 8px; background:#059669; color:white; border-radius:5px; font-size:10px; font-weight:700;">BAB</span><span style="font-weight:600; color:#166534;">' + bab.order_index + '. ' + escapeHtml(bab.title || bab.nama) + '</span></div>';
               html += '<div style="display:flex; gap:6px;">';
               html += '<button onclick="editMateri(\'bab\',\'' + bab.id + '\',\'' + escapeHtml(bab.title) + '\')" style="padding:6px 10px; background:#f1f5f9; border:none; border-radius:8px; color:#3b82f6; cursor:pointer;"><i class="fa-solid fa-font"></i></button>';
+              html += '<button onclick="editMateri(\'bab\',\'' + bab.id + '\',\'' + escapeHtml(bab.title || bab.nama) + '\')" style="padding:6px 10px; background:#f1f5f9; border:none; border-radius:8px; color:#3b82f6; cursor:pointer;"><i class="fa-solid fa-font"></i></button>';
               html += '<button onclick="openContentModal(\'bab\',\'' + bab.id + '\')" style="padding:6px 10px; background:#f1f5f9; border:none; border-radius:8px; color:#059669; cursor:pointer;"><i class="fa-solid fa-file-lines"></i></button>';
               html += '<button onclick="deleteMateri(\'bab\',\'' + bab.id + '\')" style="padding:6px 10px; background:#f1f5f9; border:none; border-radius:8px; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>';
               html += '</div></div>';
@@ -1643,8 +1706,10 @@
                 var fasal = babFasals[k];
                 html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f8fafc; border-radius:10px; gap:8px;">';
                 html += '<div style="display:flex; align-items:center; gap:8px;"><span style="padding:3px 8px; background:#f59e0b; color:white; border-radius:5px; font-size:10px; font-weight:700;">FASAL</span><span style="color:#475569;">' + fasal.order_index + '. ' + escapeHtml(fasal.title) + '</span></div>';
+                html += '<div style="display:flex; align-items:center; gap:8px;"><span style="padding:3px 8px; background:#f59e0b; color:white; border-radius:5px; font-size:10px; font-weight:700;">FASAL</span><span style="color:#475569;">' + fasal.order_index + '. ' + escapeHtml(fasal.title || fasal.nama) + '</span></div>';
                 html += '<div style="display:flex; gap:6px;">';
                 html += '<button onclick="editMateri(\'fasal\',\'' + fasal.id + '\',\'' + escapeHtml(fasal.title) + '\')" style="padding:6px 10px; background:white; border:none; border-radius:8px; color:#3b82f6; cursor:pointer;"><i class="fa-solid fa-font"></i></button>';
+                html += '<button onclick="editMateri(\'fasal\',\'' + fasal.id + '\',\'' + escapeHtml(fasal.title || fasal.nama) + '\')" style="padding:6px 10px; background:white; border:none; border-radius:8px; color:#3b82f6; cursor:pointer;"><i class="fa-solid fa-font"></i></button>';
                 html += '<button onclick="openContentModal(\'fasal\',\'' + fasal.id + '\')" style="padding:6px 10px; background:white; border:none; border-radius:8px; color:#059669; cursor:pointer;"><i class="fa-solid fa-file-lines"></i></button>';
                 html += '<button onclick="deleteMateri(\'fasal\',\'' + fasal.id + '\')" style="padding:6px 10px; background:white; border:none; border-radius:8px; color:#ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>';
                 html += '</div></div>';
@@ -1656,30 +1721,89 @@
           html += '</div>';
 
           // Replace materiList and FORCE layout to work
-          var card = materiList.closest('.bento-card');
-          var bentoGrid = card ? card.parentElement : null;
-          var contentMateriEl = bentoGrid ? bentoGrid.parentElement : null;
-
-          console.log('card:', !!card, 'bentoGrid:', !!bentoGrid, 'contentMateri:', !!contentMateriEl);
-
           // Remove any existing overlay
           var existingOverlay = document.getElementById('materiOverlay');
           if (existingOverlay) existingOverlay.remove();
 
-          // Use position:fixed overlay (bypasses all parent CSS issues)
+          // Build add form HTML
+          var addFormHTML = '<div style="background:#f0fdf4; padding:20px; border-radius:16px; border:2px solid #059669; margin-bottom:20px;">' +
+            '<h3 style="margin:0 0 15px 0; color:#059669; font-size:18px; font-weight:700;"><i class="fa-solid fa-plus"></i> Tambah Materi Baru</h3>' +
+            '<div style="margin-bottom:15px;">' +
+            '<label style="display:block; margin-bottom:5px; font-weight:600; color:#374151;">Tipe Materi</label>' +
+            '<select id="overlayMateriType" onchange="updateMateriFormOverlay()" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; font-size:14px;">' +
+            '<option value="bagian">Bagian</option><option value="bab">Bab</option><option value="fasal">Fasal</option></select></div>' +
+            '<div id="overlayBagianFields">' +
+            '<label style="display:block; margin-bottom:5px; font-weight:600; color:#374151;">Nama Bagian</label>' +
+            '<input type="text" id="overlayBagianNama" placeholder="Contoh: Al-Qawa\'id" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; font-size:14px; box-sizing:border-box;"></div>' +
+            '<div id="overlayBabFields" style="display:none;">' +
+            '<label style="display:block; margin-bottom:5px; font-weight:600; color:#374151;">Nama Bab</label>' +
+            '<input type="text" id="overlayBabNama" placeholder="Contoh: Muqoddimah" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; font-size:14px; box-sizing:border-box; margin-bottom:10px;">' +
+            '<label style="display:block; margin-bottom:5px; font-weight:600; color:#374151;">Bagian Induk</label>' +
+            '<select id="overlayBabBagian" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; font-size:14px;"></select></div>' +
+            '<div id="overlayFasalFields" style="display:none;">' +
+            '<label style="display:block; margin-bottom:5px; font-weight:600; color:#374151;">Nama Fasal</label>' +
+            '<input type="text" id="overlayFasalNama" placeholder="Contoh: Isim" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; font-size:14px; box-sizing:border-box; margin-bottom:10px;">' +
+            '<label style="display:block; margin-bottom:5px; font-weight:600; color:#374151;">Bab Induk</label>' +
+            '<select id="overlayFasalBab" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; font-size:14px;"></select></div>' +
+            '<button onclick="addNewMateriOverlay()" style="width:100%; padding:12px; background:#059669; color:white; border:none; border-radius:10px; font-weight:600; cursor:pointer; font-size:14px; margin-top:15px;"><i class="fa-solid fa-plus"></i> Tambah</button></div>';
+
+          // Build list HTML
+          var listHTML = '<div style="padding:20px; background:#fff; border-radius:16px; border:2px solid #3b82f6;">' +
+            '<h3 style="margin:0 0 15px 0; color:#3b82f6; font-size:18px; font-weight:700;"><i class="fa-solid fa-list"></i> Daftar Materi</h3>' +
+            '<div style="display:flex; flex-direction:column; gap:12px;">';
+          for (var i = 0; i < bagians.length; i++) {
+            var bagian = bagians[i];
+            var bagianBabs = babs.filter(function(b) { return b.bagian_id === bagian.id; });
+            listHTML += '<div style="padding:14px; background:linear-gradient(135deg,#eff6ff,#e0e7ff); border-radius:12px; border:1px solid #bfdbfe;">';
+            listHTML += '<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:700; color:#1e40af;">' + bagian.order_index + '. ' + escapeHtml(bagian.title) + '</span>';
+            listHTML += '<span style="padding:3px 8px; background:#3b82f6; color:white; border-radius:4px; font-size:10px; font-weight:700;">BAGIAN</span></div>';
+            listHTML += '<div style="margin-top:10px; margin-left:10px; display:flex; flex-direction:column; gap:8px;">';
+            for (var j = 0; j < bagianBabs.length; j++) {
+              var bab = bagianBabs[j];
+              var babFasals = fasals.filter(function(f) { return f.bab_id === bab.id; });
+              listHTML += '<div style="padding:10px; background:white; border-radius:8px; border:1px solid #e2e8f0;">';
+              listHTML += '<span style="font-weight:600; color:#166534;">' + bab.order_index + '. ' + escapeHtml(bab.title) + '</span>';
+              listHTML += '<div style="margin-top:8px; margin-left:10px; display:flex; flex-direction:column; gap:6px;">';
+              for (var k = 0; k < babFasals.length; k++) {
+                var fasal = babFasals[k];
+                listHTML += '<div style="padding:8px; background:#f8fafc; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">';
+                listHTML += '<span style="color:#475569;">' + fasal.order_index + '. ' + escapeHtml(fasal.title) + '</span>';
+                listHTML += '<span style="padding:2px 6px; background:#f59e0b; color:white; border-radius:4px; font-size:9px; font-weight:700;">FASAL</span></div>';
+              }
+              listHTML += '</div></div>';
+            }
+            listHTML += '</div></div>';
+          }
+          listHTML += '</div></div>';
+
+          // Use position:fixed overlay with both Add and List
           var overlay = document.createElement('div');
           overlay.id = 'materiOverlay';
-          overlay.innerHTML = '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:15px; border-bottom:2px solid #e2e8f0;">' +
-            '<h3 style="margin:0; color:#059669; font-size:22px; font-weight:700;">DAFTAR MATERI</h3>' +
-            '<button onclick="document.getElementById(\'materiOverlay\').remove()" style="width:32px; height:32px; border-radius:50%; border:none; background:#ef4444; color:#fff; font-weight:700; cursor:pointer; font-size:16px;">X</button>' +
-            '</div>' + html;
-          overlay.style.cssText = 'position: fixed !important; top: 100px !important; left: 20px !important; right: 20px !important; z-index: 99999 !important; background: white !important; padding: 24px !important; border: 2px solid #059669 !important; border-radius: 20px !important; box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important; max-height: 70vh !important; overflow-y: auto !important; font-family: Montserrat, sans-serif !important;';
+          overlay.style.cssText = 'position: fixed !important; top: 80px !important; left: 20px !important; right: 20px !important; bottom: 20px !important; z-index: 99999 !important; background: #f8fafc !important; padding: 24px !important; border-radius: 20px !important; box-shadow: 0 25px 80px rgba(0,0,0,0.3) !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; font-family: Montserrat, sans-serif !important;';
 
+          var headerHTML = '<div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:15px; border-bottom:2px solid #e2e8f0; margin-bottom:20px; flex-shrink:0;">' +
+            '<h2 style="margin:0; color:#059669; font-size:24px; font-weight:700;">KELOLA MATERI</h2>' +
+            '<button onclick="document.getElementById(\'materiOverlay\').remove()" style="width:36px; height:36px; border-radius:50%; border:none; background:#ef4444; color:#fff; font-weight:700; cursor:pointer; font-size:18px;">X</button></div>';
+
+          var contentHTML = '<div style="display:flex; gap:20px; flex:1; overflow:hidden;">' +
+            '<div style="width:35%; overflow-y:auto;">' + addFormHTML + '</div>' +
+            '<div style="width:65%; overflow-y:auto;">' + listHTML + '</div></div>';
+
+          overlay.innerHTML = headerHTML + contentHTML;
           document.body.appendChild(overlay);
-          console.log('Created materi overlay');
+          console.log('Created materi overlay with Add + List');
+
+          // Populate dropdowns in overlay
+          var babSelect = document.getElementById('overlayBabBagian');
+          if (babSelect) babSelect.innerHTML = '<option value="">Pilih Bagian...</option>' + allBagians.map(function(b) { return '<option value="' + b.id + '">' + b.title + '</option>'; }).join('');
+
+          var fasalBabSelect = document.getElementById('overlayFasalBab');
+          if (fasalBabSelect) fasalBabSelect.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(function(b) { return '<option value="' + b.id + '">' + b.title + '</option>'; }).join('');
         } else {
           console.error('loadMateri: materiList not found!');
         }
+          
+          container.innerHTML = html;
       } catch (err) {
         console.error('loadMateri error:', err);
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ' + err.message + '</p></div>';
