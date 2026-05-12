@@ -1656,49 +1656,30 @@
           html += '</div>';
 
           // Replace materiList and FORCE layout to work
-          // First, let's check if the issue is with parents
           var card = materiList.closest('.bento-card');
           var bentoGrid = card ? card.parentElement : null;
           var contentMateriEl = bentoGrid ? bentoGrid.parentElement : null;
 
           console.log('card:', !!card, 'bentoGrid:', !!bentoGrid, 'contentMateri:', !!contentMateriEl);
-          console.log('contentMateri classes:', contentMateriEl ? contentMateriEl.className : 'N/A');
 
-          // Create completely standalone element
-          var standalone = document.createElement('div');
-          standalone.style.cssText = 'position: relative !important; width: 100% !important; min-height: 300px !important; padding: 24px !important; background: white !important; border: 3px solid red !important; margin: 20px 0 !important; border-radius: 20px !important; box-sizing: border-box !important;';
-          standalone.innerHTML = '<h2 style="color:red; margin:0 0 20px 0;">TEST - Standalone Element</h2>' + html;
+          // Try position:fixed which bypasses all parent constraints
+          var overlay = document.createElement('div');
+          overlay.innerHTML = '<div style="background:red; color:white; padding:30px; font-size:24px; font-weight:bold;">TEST BOX - SHOULD BE VISIBLE</div>' + html;
+          overlay.style.cssText = 'position: fixed !important; top: 100px !important; left: 20px !important; right: 20px !important; z-index: 99999 !important; background: white !important; padding: 24px !important; border: 5px solid blue !important; border-radius: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important; max-height: 70vh !important; overflow-y: auto !important;';
 
-          // Replace the entire bento-grid content
-          if (bentoGrid) {
-            bentoGrid.innerHTML = '';
-            bentoGrid.style.cssText = 'display: block !important; position: relative !important;';
-            bentoGrid.appendChild(standalone);
-            console.log('Replaced bentoGrid with standalone element');
+          document.body.appendChild(overlay);
+          console.log('Appended position:fixed overlay to body');
 
+          requestAnimationFrame(function() {
             requestAnimationFrame(function() {
-              requestAnimationFrame(function() {
-                console.log('standalone offsetHeight:', standalone.offsetHeight);
-                console.log('bentoGrid offsetHeight:', bentoGrid.offsetHeight);
-                console.log('contentMateriEl offsetHeight:', contentMateriEl ? contentMateriEl.offsetHeight : 'N/A');
-
-                if (standalone.offsetHeight > 0) {
-                  console.log('SUCCESS: Standalone element has height!');
-                } else {
-                  console.log('FAILURE: Even standalone element has 0 height - check contentMateriEl');
-                  // Check if contentMateriEl has display:none
-                  if (contentMateriEl) {
-                    var computed = window.getComputedStyle(contentMateriEl);
-                    console.log('contentMateri computed display:', computed.display);
-                    console.log('contentMateri computed visibility:', computed.visibility);
-                    console.log('contentMateri computed opacity:', computed.opacity);
-                  }
-                }
-              });
+              console.log('overlay offsetHeight:', overlay.offsetHeight);
+              if (overlay.offsetHeight > 0) {
+                console.log('SUCCESS: position:fixed overlay works!');
+              } else {
+                console.log('FAILURE: Even position:fixed has 0 height');
+              }
             });
-          } else {
-            console.error('loadMateri: bentoGrid not found');
-          }
+          });
         } else {
           console.error('loadMateri: materiList not found!');
         }
