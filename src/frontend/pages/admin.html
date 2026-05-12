@@ -1474,7 +1474,7 @@
       }
       if (tabEl) tabEl.classList.add('active');
 
-      if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); loadFasalsForSelect(); }
+      if (tab === 'materi') { loadMateri(); loadFasalsForSelect(); }
       if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
       if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
       if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
@@ -1798,8 +1798,6 @@
         }
         html += '</div>';
         container.classList.remove('loading');
-        container.style.display = 'block';
-        container.parentElement.style.alignItems = 'stretch';
         container.innerHTML = html;
       } catch (err) {
         console.error('loadJenjangList error:', err);
