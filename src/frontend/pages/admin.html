@@ -523,8 +523,8 @@
     }
 
     /* Section Hide/Show */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; min-height: 400px; }
+    .tab-content { display: none !important; visibility: hidden; }
+    .tab-content.active { display: block !important; visibility: visible !important; min-height: 400px; }
 
     /* Loading */
     .loading {
@@ -1316,18 +1316,18 @@
       </div>
     </div>
     <!-- Jenjang Tab -->
-    <div id="contentJenjang" class="tab-content">
-      <div class="bento-grid" style="display:grid;">
-        <!-- Add New Jenjang -->
-        <div class="bento-card" style="display:block;">
-          <div class="bento-inner" style="display:block;">
+    <div id="contentJenjang" class="tab-content" style="display:none;">
+      <div class="bento-grid">
+        <!-- Tambah Jenjang & Kitab -->
+        <div class="bento-card">
+          <div class="bento-inner">
             <div class="bento-header">
               <div class="bento-icon bento-icon-amber">
-                <i class="fa-solid fa-plus"></i>
+                <i class="fa-solid fa-layer-group"></i>
               </div>
               <div>
                 <h3 class="bento-title">Tambah Jenjang</h3>
-                <p class="bento-subtitle">Contoh: Tingkat 1, Pra-Sadayati</p>
+                <p class="bento-subtitle">Tingkat pendidikan</p>
               </div>
             </div>
             <div class="form-group">
@@ -1345,9 +1345,42 @@
           </div>
         </div>
 
-        <!-- Jenjang + Kitab List -->
-        <div class="bento-card bento-span-2" style="display:block;">
-          <div class="bento-inner" style="display:block;">
+        <!-- Tambah Kitab -->
+        <div class="bento-card">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-blue">
+                <i class="fa-solid fa-book"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Tambah Kitab</h3>
+                <p class="bento-subtitle">Buku dalam jenjang</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pilih Jenjang</label>
+              <select id="newKitabJenjang" class="form-input">
+                <option value="">Pilih Jenjang...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nama Kitab</label>
+              <input type="text" id="newKitabNama" class="form-input" placeholder="Contoh: Alfiyah">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Penulis (opsional)</label>
+              <input type="text" id="newKitabPenulis" class="form-input" placeholder="Contoh: Ibnu Malik">
+            </div>
+            <div id="addKitabError" class="alert alert-error hidden"></div>
+            <button onclick="addNewKitab()" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-plus"></i> Tambah Kitab
+            </button>
+          </div>
+        </div>
+
+        <!-- Jenjang List -->
+        <div class="bento-card bento-span-2">
+          <div class="bento-inner">
             <div class="bento-header">
               <div class="bento-icon bento-icon-purple">
                 <i class="fa-solid fa-layer-group"></i>
@@ -1357,7 +1390,9 @@
                 <p class="bento-subtitle">Struktur kurikulum lengkap</p>
               </div>
             </div>
-            <div id="jenjangList"></div>
+            <div id="jenjangList" class="loading">
+              <div class="spinner"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1418,31 +1453,29 @@
 
     // Tab Switching
     function showTab(tab) {
-      console.log('showTab called:', tab);
-      const allTabs = ['Stats', 'Materi', 'Quiz', 'Siswa', 'Audio', 'Jenjang'];
-      allTabs.forEach(c => {
-        const contentEl = document.getElementById('content' + c);
-        const tabEl = document.getElementById('tab' + c);
-        if (contentEl) contentEl.classList.remove('active');
-        if (tabEl) tabEl.classList.remove('active');
-      });
-
       const tabCapitalized = tab.charAt(0).toUpperCase() + tab.slice(1);
       const contentEl = document.getElementById('content' + tabCapitalized);
       const tabEl = document.getElementById('tab' + tabCapitalized);
-      console.log('Activating:', 'content' + tabCapitalized, 'tab' + tabCapitalized, { contentEl: !!contentEl, tabEl: !!tabEl });
-      if (contentEl) {
-        contentEl.classList.add('active');
-        console.log('contentEl classes after add:', contentEl.className);
-      }
-      if (tabEl) tabEl.classList.add('active');
+      if (!contentEl) { console.error('content' + tabCapitalized + ' NOT FOUND'); return; }
+      if (!tabEl) { console.error('tab' + tabCapitalized + ' NOT FOUND'); return; }
+
+      const allTabNames = ['contentStats', 'contentMateri', 'contentQuiz', 'contentSiswa', 'contentAudio', 'contentJenjang'];
+      allTabNames.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+      contentEl.classList.add('active');
+      tabEl.classList.add('active');
+      console.log('showTab:', tab, '→ content display:', getComputedStyle(contentEl).display, 'classes:', contentEl.className);
 
       if (tab === 'materi') { loadMateri(); loadFasalsForSelect(); }
-      if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
-      if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
-      if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
-      if (tab === 'stats') { console.log('Calling loadStats'); loadStats(); }
-      if (tab === 'jenjang') { console.log('Calling loadJenjangList'); loadJenjangList(); }
+      if (tab === 'quiz') { loadQuizList(); }
+      if (tab === 'siswa') { loadStudentList(); }
+      if (tab === 'audio') { initAudioTab(); }
+      if (tab === 'stats') { loadStats(); }
+      if (tab === 'jenjang') { loadJenjangList(); }
     }
 
     // Load Stats
@@ -1641,6 +1674,8 @@
     // Load Jenjang List
     async function loadJenjangList() {
       const container = document.getElementById('jenjangList');
+      if (!container) { console.error('jenjangList container NOT FOUND'); return; }
+      console.log('loadJenjangList: container found, classes:', container.className, 'display:', getComputedStyle(container).display, 'visibility:', getComputedStyle(container).visibility, 'opacity:', getComputedStyle(container).opacity);
       container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
       const token = getToken();
