@@ -1683,6 +1683,7 @@
       if (token) headers['Authorization'] = 'Bearer ' + token;
 
       try {
+        console.log('loadJenjangList: starting fetch...');
         const [jenjangRes, kitabRes, bagiansRes, babsRes, fasalsRes] = await Promise.all([
           fetch(SUPABASE_URL + 'rest/v1/jenjang?order=order_index', { headers }),
           fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers }),
@@ -1691,16 +1692,22 @@
           fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers })
         ]);
 
-        console.log('loadJenjangList: jenjangRes status:', jenjangRes.status, jenjangRes.statusText);
-        console.log('loadJenjangList: kitabRes status:', kitabRes.status, kitabRes.statusText);
+        console.log('loadJenjangList: all fetches done, status:', jenjangRes.status, kitabRes.status);
+
+        if (!jenjangRes.ok) {
+          const errText = await jenjangRes.text();
+          console.error('loadJenjangList: jenjangRes NOT OK:', jenjangRes.status, errText);
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">API Error: ${jenjangRes.status} - ${errText}</p></div>`;
+          return;
+        }
 
         const jenjangs = await jenjangRes.json().catch(e => { console.error('jenjangs parse error:', e); return []; });
-        const kitabs = await kitabRes.json().catch(e => { console.error('kitabs parse error:', e); return []; });
-        const bagians = await bagiansRes.json().catch(e => { console.error('bagians parse error:', e); return []; });
-        const babs = await babsRes.json().catch(e => { console.error('babs parse error:', e); return []; });
-        const fasals = await fasalsRes.json().catch(e => { console.error('fasals parse error:', e); return []; });
+        const kitabs = await kitabRes.json().catch(() => []);
+        const bagians = await bagiansRes.json().catch(() => []);
+        const babs = await babsRes.json().catch(() => []);
+        const fasals = await fasalsRes.json().catch(() => []);
 
-        console.log('loadJenjangList: jenjangs count:', jenjangs.length, 'kitabs count:', kitabs.length, 'bagians count:', bagians.length);
+        console.log('loadJenjangList: jenjangs count:', jenjangs.length, 'kitabs count:', kitabs.length);
         console.log('loadJenjangList: jenjangs data:', JSON.stringify(jenjangs));
         console.log('loadJenjangList: kitabs data:', JSON.stringify(kitabs));
 
@@ -1713,7 +1720,7 @@
 
         if (!jenjangs || jenjangs.length === 0) {
           console.log('loadJenjangList: no jenjangs found');
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-layer-group"></i></div><p class="empty-text">Belum ada jenjang</p></div>`;
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-layer-group"></i></div><p class="empty-text">Belum ada jenjang. Tambahkan jenjang di atas!</p></div>`;
           return;
         }
 
