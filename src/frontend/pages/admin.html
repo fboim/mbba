@@ -1693,11 +1693,13 @@
           fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers })
         ]);
 
-        const jenjangs = await jenjangRes.json().catch(() => []);
-        const kitabs = await kitabRes.json().catch(() => []);
+        console.log('loadJenjangList response:', { jenjangStatus: jenjangRes.status, kitabStatus: kitabRes.status });
+        const jenjangs = await jenjangRes.json().catch((e) => { console.error('jenjang parse error', e); return []; });
+        const kitabs = await kitabRes.json().catch((e) => { console.error('kitab parse error', e); return []; });
         const bagians = await bagiansRes.json().catch(() => []);
         const babs = await babsRes.json().catch(() => []);
         const fasals = await fasalsRes.json().catch(() => []);
+        console.log('parsed:', { jenjangs, kitabs });
 
         allJenjang = jenjangs;
         allKitab = kitabs;
@@ -1707,7 +1709,7 @@
         loadKitabDropdown();
 
         if (!jenjangs || jenjangs.length === 0) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-layer-group"></i></div><p class="empty-text">Belum ada jenjang</p></div>`;
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-layer-group"></i></div><p class="empty-text">Belum ada jenjang</p><p class="empty-text" style="font-size:0.75rem; margin-top:8px;">Debug: jenjangRes=${jenjangRes.status}, kitabRes=${kitabRes.status}</p></div>`;
           return;
         }
 
@@ -1717,12 +1719,12 @@
           html += `<div style="padding:16px; background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:14px; border:1px solid #f59e0b;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div>
-                <span style="font-weight:700; color:#92400e; font-size:1rem;">${jenjang.order_index}. ${escapeHtml(jenjang.nama || jenjang.title)}</span>
+                <span style="font-weight:700; color:#92400e; font-size:1rem;">${jenjang.order_index}. ${escapeHtml(jenjang.nama || jenjang.title || '')}</span>
                 ${jenjang.deskripsi ? `<span style="display:block; font-size:0.8rem; color:#b45309; margin-top:2px;">${escapeHtml(jenjang.deskripsi)}</span>` : ''}
               </div>
               <div style="display:flex; gap:6px; align-items:center;">
                 <span style="padding:3px 10px; background:#f59e0b; color:white; border-radius:4px; font-size:10px; font-weight:700;">JENJANG</span>
-                <button onclick="editJenjang('${jenjang.id}', this.dataset.title)" data-title="${escapeHtml(jenjang.nama || jenjang.title)}" data-desc="${escapeHtml(jenjang.deskripsi || '')}" style="padding:5px 9px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#f59e0b;"></i></button>
+                <button onclick="editJenjang('${jenjang.id}', this.dataset.title)" data-title="${escapeHtml(jenjang.nama || jenjang.title || '')}" data-desc="${escapeHtml(jenjang.deskripsi || '')}" style="padding:5px 9px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#f59e0b;"></i></button>
                 <button onclick="deleteJenjang('${jenjang.id}')" style="padding:5px 9px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
               </div>
             </div>`;
