@@ -417,7 +417,11 @@ function closeQuiz() {
 }
 
 function startQuiz() {
-  alert('QUIZ: window.startQuiz() called! bank=' + (window.quizBank ? window.quizBank.length : 'EMPTY'));
+  // Visual proof that startQuiz() is running
+  document.body.style.background = '#ff0000';
+  document.body.style.transition = 'background 0.5s';
+  setTimeout(function() { document.body.style.background = ''; }, 3000);
+  alert('WINDOW.STARTQUIZ DIPANGGIL!');
   console.log('[QUIZ] window.startQuiz called, window.quizBank.length=' + (window.quizBank ? window.quizBank.length : 'N/A'));
 
   var bank = window.quizBank || [];
