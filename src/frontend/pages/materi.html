@@ -982,7 +982,7 @@
             <i class="fa-solid fa-list"></i>
             <span>Daftar</span>
           </a>
-          <button onclick="window.quizStart()" id="startQuizBtn" class="btn btn-primary">
+          <button id="startQuizBtn" class="btn btn-primary">
             <i class="fa-solid fa-play"></i>
             <span>Mulai Tes</span>
           </button>
@@ -1038,6 +1038,16 @@
       document.body.appendChild(e);
       return true;
     };
+
+    // Attach button click AFTER all functions are defined
+    document.getElementById('startQuizBtn').addEventListener('click', function() {
+      console.log('[BTN] startQuizBtn clicked! typeof window.quizStart =', typeof window.quizStart);
+      if (typeof window.quizStart === 'function') {
+        window.quizStart();
+      } else {
+        alert('window.quizStart is not a function! type=' + typeof window.quizStart);
+      }
+    });
 
     // ================================================================
     // QUIZ STATE (module-level variables)
@@ -1364,6 +1374,8 @@
     // ================================================================
 
     window.quizStart = function() {
+      console.log('[quizStart] CALLED! window.quizBank.length=' + (window.quizBank ? window.quizBank.length : 'N/A'));
+      alert('window.quizStart() is running!');
       var bank = window.quizBank || [];
       if (bank.length === 0) {
         alert('Quiz bank kosong!');
