@@ -1023,6 +1023,7 @@
       </div>
 
       <div id="quizContent" class="quiz-body">
+        <div id="quizDebug" style="display:none; background:#1a1a2e; color:#0f0; font-family:monospace; font-size:0.75rem; padding:12px; border-radius:8px; white-space:pre-wrap; max-height:200px; overflow-y:auto; margin-bottom:12px;"></div>
       </div>
     </div>
   </div>
@@ -1235,10 +1236,22 @@
     var quizBankLoaded = [];
     var answeredQuestions = {};
 
-    function startQuiz() {
-      console.log('startQuiz: quizBank.length =', quizBank.length, 'quizBank[0] =', JSON.stringify(quizBank[0]));
+    function showDebug(msg) {
+      var el = document.getElementById('quizDebug');
+      if (el) { el.style.display = 'block'; el.textContent += msg + '\n'; el.scrollTop = el.scrollHeight; }
+    }
+    function clearDebug() {
+      var el = document.getElementById('quizDebug');
+      if (el) { el.textContent = ''; }
+    }
+
+    window.startQuiz = function startQuiz() {
+      clearDebug();
+      showDebug('startQuiz() called');
+      showDebug('quizBank.length = ' + quizBank.length);
+      showDebug('quizBank[0] = ' + JSON.stringify(quizBank[0]));
       if (quizBank.length === 0) {
-        alert('Quiz bank kosong! Pastikan bab ini punya quiz di database.\n\nBuka DevTools (F12) &rarr; Console untuk info debug.');
+        alert('Quiz bank kosong!');
         return;
       }
       document.getElementById('quizModal').classList.remove('hidden');
@@ -1253,6 +1266,7 @@
         onFail: function(score, correct, total, results) { handleQuizComplete(false, score, correct, total); }
       });
 
+      showDebug('_quizState = ' + JSON.stringify(window._quizState));
       quizBankLoaded = quizBank;
       quizQuestions = window._quizState.questions;
       currentQuestionIndex = 0;
@@ -1260,22 +1274,32 @@
       answeredQuestions = {};
       document.getElementById('totalQ').textContent = quizQuestions.length;
 
-      console.log('startQuiz: _quizState.questions.length =', window._quizState.questions.length, 'currentQuestionIndex =', currentQuestionIndex);
-      renderQuestion();
+      showDebug('questions.length = ' + window._quizState.questions.length);
+      try {
+        renderQuestion();
+        showDebug('renderQuestion OK');
+      } catch(e) {
+        showDebug('renderQuestion ERROR: ' + e.message);
+      }
     }
 
     function renderQuestion() {
+      var dbg = document.getElementById('quizDebug');
+      function log(msg) {
+        if (dbg) { dbg.style.display = 'block'; dbg.textContent += '[RQ] ' + msg + '\n'; dbg.scrollTop = dbg.scrollHeight; }
+      }
+      log('--- renderQuestion() ---');
       var state = window._quizState;
+      log('state: ' + (state ? 'EXISTS' : 'null/undefined'));
+      log('state.questions: ' + (state ? (state.questions ? state.questions.length + ' items' : 'undefined') : 'N/A'));
+      log('currentQuestionIndex: ' + currentQuestionIndex);
+
       var container = document.getElementById('quizContent');
-      console.log('--- renderQuestion() ---');
-      console.log('window._quizState:', state);
-      console.log('currentQuestionIndex:', currentQuestionIndex);
-      console.log('quizContent element:', container);
-      console.log('quizContent.innerHTML BEFORE:', container.innerHTML);
       var answers = state ? (state.selectedAnswers || {}) : {};
       var total = state ? state.questions.length : 0;
       var idx = total > 0 ? Math.min(currentQuestionIndex, total - 1) : 0;
-      console.log('total questions:', total, '| idx used:', idx);
+      log('total=' + total + ' idx=' + idx);
+
       document.getElementById('currentQ').textContent = total > 0 ? (idx + 1) : 1;
       document.getElementById('totalQ').textContent = total > 0 ? total : 10;
       var pct = total > 0 ? Math.round(((idx + 1) / total) * 100) : 0;
@@ -1305,25 +1329,31 @@
         });
       }
 
-      // --- Clear container ---
+      // --- Clear container (keep debug div) ---
+      var debugDiv = document.getElementById('quizDebug');
       container.innerHTML = '';
+      if (debugDiv) container.appendChild(debugDiv);
 
       // --- Guard: no state ---
       if (!state || !state.questions || state.questions.length === 0) {
-        console.log('renderQuestion: GUARD triggered - no state or no questions');
-        container.style.cssText = 'display:flex;align-items:center;justify-content:center;min-height:200px;';
-        container.innerHTML = '<div class="text-center" style="color:#ef4444;">' +
-          '<i class="fa-solid fa-exclamation-triangle" style="font-size:2rem;margin-bottom:8px;display:block;"></i>' +
-          '<p>Quiz tidak tersedia.</p>' +
-          '<p style="font-size:0.8rem;color:#888;margin-top:4px;">Buka DevTools &rarr; Console untuk detail.</p></div>';
-        console.log('quizContent.innerHTML AFTER guard:', container.innerHTML);
+        log('GUARD: no state or no questions');
+        var guardDiv = document.createElement('div');
+        guardDiv.className = 'text-center';
+        guardDiv.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;color:#ef4444;';
+        guardDiv.innerHTML = '<i class="fa-solid fa-exclamation-triangle" style="font-size:2rem;margin-bottom:8px;"></i><p>Quiz tidak tersedia.</p>';
+        container.appendChild(guardDiv);
         return;
       }
 
       var q = state.questions[idx];
-      console.log('renderQuestion: q =', q);
+      log('q = ' + JSON.stringify(q));
       if (!q || !q.id) {
-        container.innerHTML = '<div class="text-center py-8" style="color:#94a3b8;"><i class="fa-solid fa-circle-exclamation" style="font-size:2rem;margin-bottom:8px;display:block;"></i><p>Data soal tidak valid.</p></div>';
+        log('q invalid');
+        var invalidDiv = document.createElement('div');
+        invalidDiv.className = 'text-center py-8';
+        invalidDiv.style.cssText = 'color:#94a3b8;';
+        invalidDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="font-size:2rem;margin-bottom:8px;display:block;"></i><p>Data soal tidak valid.</p>';
+        container.appendChild(invalidDiv);
         return;
       }
 
@@ -1365,8 +1395,9 @@
           } else {
             optsObj = parsed;
           }
-        } catch (e) {}
+        } catch (e) { log('JSON.parse error: ' + e.message); }
 
+        log('optsObj keys: ' + Object.keys(optsObj).join(', '));
         var optsDiv = document.createElement('div');
         optsDiv.className = 'quiz-options';
         Object.keys(optsObj).forEach(function(key) {
@@ -1434,9 +1465,7 @@
       navDiv.appendChild(actionBtn);
 
       container.appendChild(navDiv);
-
-      console.log('renderQuestion: DONE. quizContent.innerHTML AFTER:', container.innerHTML);
-      console.log('quizContent childElementCount:', container.childElementCount);
+      log('DONE. childElementCount=' + container.childElementCount);
     }
 
     function selectAnswer(qid, ans) {
@@ -1527,6 +1556,13 @@
       updateStatus({ status: passed ? 'completed' : 'unlocked', quiz_score: score });
     }
 
+    function closeQuiz() {
+      document.getElementById('quizModal').classList.add('hidden');
+      document.body.style.overflow = '';
+      window.location.href = 'student.html';
+    }
+    window.closeQuiz = closeQuiz;
+
     function retryQuiz() {
       if (quizBankLoaded.length === 0) quizBankLoaded = quizBank;
       resetQuiz(quizBankLoaded);
@@ -1536,12 +1572,7 @@
       answeredQuestions = {};
       renderQuestion();
     }
-
-    function closeQuiz() {
-      document.getElementById('quizModal').classList.add('hidden');
-      document.body.style.overflow = '';
-      window.location.href = 'student.html';
-    }
+    window.retryQuiz = retryQuiz;
 
     function handleLogout() {
       logout();
