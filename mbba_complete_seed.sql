@@ -32,43 +32,43 @@ DELETE FROM public.jenjang;
 
 -- 3a. JENJANG
 INSERT INTO public.jenjang (id, nama, deskripsi, order_index) VALUES
-  ('jj-001-tngkt-1', 'Tingkat 1', 'Dasar-dasar Nahwu dan Sharaf', 1),
-  ('jj-002-tngkt-2', 'Tingkat 2', 'Nahwu Menengah - Am Maudhu''at', 2),
-  ('jj-003-tngkt-3', 'Tingkat 3', 'Nahwu Lanjutan - Alfiyah Ibnu Malik', 3);
+  ('11111111-1111-1111-1111-111111111101', 'Tingkat 1', 'Dasar-dasar Nahwu dan Sharaf', 1),
+  ('11111111-1111-1111-1111-111111111102', 'Tingkat 2', 'Nahwu Menengah - Am Maudhu''at', 2),
+  ('11111111-1111-1111-1111-111111111103', 'Tingkat 3', 'Nahwu Lanjutan - Alfiyah Ibnu Malik', 3);
 
 -- 3b. KITAB
 INSERT INTO public.kitab (id, jenjang_id, nama, penulis, image_url, order_index) VALUES
-  ('kb-001-muqoddimah', 'jj-001-tngkt-1', 'Muqoddimah', 'Syeikh Muhammad Ali al-Shabuniy', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Cross-Section.jpg/220px-Banana-Cross-Section.jpg', 1),
-  ('kb-002-alfiyah', 'jj-001-tngkt-1', 'Alfiyah Ibnu Malik', 'Ibnu Malik', NULL, 2),
-  ('kb-003-am-maudhu', 'jj-002-tngkt-2', 'Am Maudhu''at al-Kubra', 'Syeikh Hasan al-Mishri', NULL, 1);
+  ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 'Muqoddimah', 'Syeikh Muhammad Ali al-Shabuniy', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Cross-Section.jpg/220px-Banana-Cross-Section.jpg', 1),
+  ('22222222-2222-2222-2222-222222222202', '11111111-1111-1111-1111-111111111101', 'Alfiyah Ibnu Malik', 'Ibnu Malik', NULL, 2),
+  ('22222222-2222-2222-2222-222222222203', '11111111-1111-1111-1111-111111111102', 'Am Maudhu''at al-Kubra', 'Syeikh Hasan al-Mishri', NULL, 1);
 
 -- 3c. BAGIAN (pakai kitab_id FK)
 INSERT INTO public.bagian (id, kitab_id, order_index, title, description, is_active) VALUES
-  ('bg-001-qawaid', 'kb-001-muqoddimah', 1, 'Al-Qawa''id al-Muta''alliqah bi al-Jumlah', 'Qaidah-qaidah nahwu yang berkaitan dengan kalimat.', true),
-  ('bg-002-sharf', 'kb-001-muqoddimah', 2, 'Ash-Sharf al-Mukhtasar', 'Shorof dasar yang berkaitan dengan fi''il.', true),
-  ('bg-003-irab', 'kb-001-muqoddimah', 3, 'Al-I''rab al-Musharrar', 'Penjabaran i''rab secara terperinci.', true);
+  ('33333333-3333-3333-3333-333333333301', '22222222-2222-2222-2222-222222222201', 1, 'Al-Qawa''id al-Muta''alliqah bi al-Jumlah', 'Qaidah-qaidah nahwu yang berkaitan dengan kalimat.', true),
+  ('33333333-3333-3333-3333-333333333302', '22222222-2222-2222-2222-222222222201', 2, 'Ash-Sharf al-Mukhtasar', 'Shorof dasar yang berkaitan dengan fi''il.', true),
+  ('33333333-3333-3333-3333-333333333303', '22222222-2222-2222-2222-222222222201', 3, 'Al-I''rab al-Musharrar', 'Penjabaran i''rab secara terperinci.', true);
 
 -- 3d. BAB
 INSERT INTO public.bab (id, bagian_id, order_index, title, is_muqoddimah, is_locked) VALUES
-  ('bb-001-muqod', 'bg-001-qawaid', 1, 'Muqoddimah', true, false),
-  ('bb-002-dafrid', 'bg-001-qawaid', 2, 'Ad-Dafridu wa Ats-Tsauliy', false, true),
-  ('bb-003-kalimat', 'bg-001-qawaid', 3, 'Al-Ismu wal-Kalimatu wal-''Alfadhu', false, true);
+  ('44444444-4444-4444-4444-444444444401', '33333333-3333-3333-3333-333333333301', 1, 'Muqoddimah', true, false),
+  ('44444444-4444-4444-4444-444444444402', '33333333-3333-3333-3333-333333333301', 2, 'Ad-Dafridu wa Ats-Tsauliy', false, true),
+  ('44444444-4444-4444-4444-444444444403', '33333333-3333-3333-3333-333333333301', 3, 'Al-Ismu wal-Kalimatu wal-''Alfadhu', false, true);
 
 -- 3e. FASAL
 INSERT INTO public.fasal (id, bab_id, order_index, title, content_arab, content_id, audio_url, is_locked) VALUES
-  ('fs-001-dfrd-jumlah', 'bb-001-muqod', 1, 'Ad-Dafridu fi al-Jumlah',
+  ('55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 1, 'Ad-Dafridu fi al-Jumlah',
 'هَذَا الضَّبْعُ مُسْتَقِيمٌ. هَذِهِ الْبَقَرَةُ مُسْتَقِيمَةٌ. هَذَا الْجِلْدُ وَاسِعٌ. هَذِهِ النَّخْلَةُ طَوِيلَةٌ.',
 'Ini (binatang buas) singa berjalan tegak. Ini (binatang) sapi berjalan tegak. Kulit ini luas. Pohon kurma itu tinggi.',
 NULL, false),
-  ('fs-002-isym-klimat', 'bb-001-muqod', 2, 'Al-Ismu wal-Kalimatu',
+  ('55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 2, 'Al-Ismu wal-Kalimatu',
 'الْجِلْدُ وَاسِعٌ. الْبَقَرَةُ مُسْتَقِيمَةٌ. النَّخْلَةُ طَوِيلَةٌ. الضَّبْعُ مُسْتَقِيمٌ.',
 'Kulit itu luas. Sapi itu berjalan tegak. Pohon kurma itu tinggi. Singa itu berjalan tegak.',
 NULL, true),
-  ('fs-003-isym-fal', 'bb-002-dafrid', 1, 'Al-Ismu wal-Fa''lu',
+  ('55555555-5555-5555-5555-555555555503', '44444444-4444-4444-4444-444444444402', 1, 'Al-Ismu wal-Fa''lu',
 'الْغُرْبَالُ نَظِيفٌ. الْبَقَرَةُ كَبِيرَةٌ. الْكَلْبُ صَغِيرٌ. الْعِلْجُ قَوِيٌّ.',
 'Pengayak itu bersih. Sapi itu besar. Anjing itu kecil. Orang itu kuat.',
 NULL, true),
-  ('fs-004-falwal', 'bb-003-kalimat', 1, 'Al-Fa''luwal',
+  ('55555555-5555-5555-5555-555555555504', '44444444-4444-4444-4444-444444444403', 1, 'Al-Fa''luwal',
 'الضَّرْبُ قَوِيٌّ. الْكِتَابَةُ نَافِعَةٌ. الدَّرْسُ مُهِّمٌ.',
 'Memukul itu kuat. Menulis itu bermanfaat. Belajar itu penting.',
 NULL, true);
@@ -83,103 +83,103 @@ WHERE q.fasal_id = f.id AND q.bab_id IS NULL;
 INSERT INTO public.quiz (id, fasal_id, bab_id, type, order_index, question, options, correct_answer, passing_threshold) VALUES
 
 -- SOAL 1-10: Fasal 1
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 1,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 1,
 'Apa arti مُسْتَقِيمٌ?',
 '[{"key":"A","value":"Luas"},{"key":"B","value":"Berjalan tegak"},{"key":"C","value":"Tinggi"},{"key":"D","value":"Baik"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 2,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 2,
 'Manakah kata yang menunjukkan kata benda feminin (muannats)?',
 '[{"key":"A","value":"الْبَقَرَةُ"},{"key":"B","value":"الْجِلْدُ"},{"key":"C","value":"الضَّبْعُ"},{"key":"D","value":"النَّخْلَةُ"}]',
 'D', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 3,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 3,
 'Kalimat "هَذَا الْجِلْدُ وَاسِعٌ" terdiri dari berapa kata?',
 '[{"key":"A","value":"3 kata"},{"key":"B","value":"4 kata"},{"key":"C","value":"5 kata"},{"key":"D","value":"2 kata"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 4,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 4,
 'Apa fungsi isim isyaroh "هَذَا"?',
 '[{"key":"A","value":"Menunjuk kata kerja"},{"key":"B","value":"Menunjuk kata benda mudzakkar"},{"key":"C","value":"Menunjuk kata sifat"},{"key":"D","value":"Menunjuk huruf"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 5,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 5,
 '"طَوِيلَةٌ" adalah kata sifat (shifah) untuk kata...',
 '[{"key":"A","value":"الْجِلْدُ"},{"key":"B","value":"النَّخْلَةُ"},{"key":"C","value":"الْبَقَرَةُ"},{"key":"D","value":"الضَّبْعُ"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 6,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 6,
 'Bentuk feminin dari "وَاسِعٌ" adalah...',
 '[{"key":"A","value":"وَاسِعَةٌ"},{"key":"B","value":"مُوسِعٌ"},{"key":"C","value":"إِسْعَةٌ"},{"key":"D","value":"وَسِيعٌ"}]',
 'A', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 7,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 7,
 'Mengapa "الْجِلْدُ" mendapat tanwin?',
 '[{"key":"A","value":"Karena الْجِلْدُ adalah mubtada"},{"key":"B","value":"Karena الْجِلْدُ adalah khobar"},{"key":"C","value":"Karena الْجِلْدُ adalah isim isyaroh"},{"key":"D","value":"Karena الْجِلْدُ adalah na''t"}]',
 'A', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 8,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 8,
 'Isim Isyaroh untuk mudzakkar terdekat adalah...',
 '[{"key":"A","value":"هَذِهِ"},{"key":"B","value":"ذَلِكَ"},{"key":"C","value":"هَذَا"},{"key":"D","value":"أُولَئِكَ"}]',
 'C', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 9,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 9,
 'Isim Isyaroh untuk muannats jauh adalah...',
 '[{"key":"A","value":"هَذَا"},{"key":"B","value":"تِلْكَ"},{"key":"C","value":"ذَاكَ"},{"key":"D","value":"هَذِهِ"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-001-dfrd-jumlah', 'bb-001-muqod', 'mc', 10,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555501', '44444444-4444-4444-4444-444444444401', 'mc', 10,
 'Apa perbedaan antara الضَّبْعُ dan الضَّبْعَةُ?',
 '[{"key":"A","value":"Tidak ada perbedaan"},{"key":"B","value":"ضبع adalah mudzakkar, ضبعة adalah muannats"},{"key":"C","value":"ضبع adalah muannats, ضبعة adalah mudzakkar"},{"key":"D","value":"Keduanya adalah اسم yang berbeda"}]',
 'B', 100),
 
 -- SOAL 11-20: Fasal 2
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 11,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 11,
 'Dalam kalimat "الْبَقَرَةُ مُسْتَقِيمَةٌ", apa fungsi الْبَقَرَةُ?',
 '[{"key":"A","value":"Khobar"},{"key":"B","value":"Mubtada"},{"key":"C","value":"Maf''ul bih"},{"key":"D","value":"Na''t"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 12,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 12,
 'Kata "هَذَا" termasuk dalam kategori...',
 '[{"key":"A","value":"Isim Ma''rifat"},{"key":"B","value":"Isim Isyaroh"},{"key":"C","value":"Isim Nakirah"},{"key":"D","value":"Isim Alam"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 13,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 13,
 'Huruf apa yang membuat "النَّخْلَةُ" menjadi muannats?',
 '[{"key":"A","value":"Alif"},{"key":"B","value":"Ta marbuthah (ة)"},{"key":"C","value":"Ya"},{"key":"D","value":"Waw"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 14,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 14,
 'Apa arti وَاسِعٌ?',
 '[{"key":"A","value":"Tinggi"},{"key":"B","value":"Luas"},{"key":"C","value":"Baik"},{"key":"D","value":"Berjalan tegak"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 15,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 15,
 'Dalam kalimat nominal (jumlah ismiyah), yang berfungsi sebagai subjek disebut...',
 '[{"key":"A","value":"Khobar"},{"key":"B","value":"Mubtada"},{"key":"C","value":"Fa''il"},{"key":"D","value":"Na''ib Fa''il"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 16,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 16,
 'مُسْتَقِيمٌ adalah...',
 '[{"key":"A","value":"Isim (kata benda)"},{"key":"B","value":"Khobar (predicate)"},{"key":"C","value":"Fi''il (kata kerja)"},{"key":"D","value":"Harf (huruf)"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 17,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 17,
 'Isim Isyaroh untuk mudzakkar jauh adalah...',
 '[{"key":"A","value":"هَذَا"},{"key":"B","value":"ذَاكَ"},{"key":"C","value":"تِلْكَ"},{"key":"D","value":"أُولَئِكَ"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 18,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 18,
 'Dalam kalimat "الْبَقَرَةُ مُسْتَقِيمَةٌ", الْبَقَرَةُ adalah...',
 '[{"key":"A","value":"Khobar"},{"key":"B","value":"Mubtada"},{"key":"C","value":"Maf''ul bih"},{"key":"D","value":"Na''t"}]',
 'B', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 19,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 19,
 'Kata "النَّخْلَةُ" mendapat tanwin karena berfungsi sebagai...',
 '[{"key":"A","value":"Khobar"},{"key":"B","value":"Mubtada"},{"key":"C","value":"Isim isyaroh"},{"key":"D","value":"Na''t"}]',
 'A', 100),
 
-(gen_random_uuid(), 'fs-002-isym-klimat', 'bb-001-muqod', 'mc', 20,
+(gen_random_uuid(), '55555555-5555-5555-5555-555555555502', '44444444-4444-4444-4444-444444444401', 'mc', 20,
 'Dalam jumlah ismiyah, mubtada dan khobar membentuk kalimat yang bernilai...',
 '[{"key":"A","value":"Perintah (Amr)"},{"key":"B","value":"Pertanyaan (Istifham)"},{"key":"C","value":"Keterangan (Khabariyah)"},{"key":"D","value":"Penafian (Nafi)"}]',
 'C', 100);
