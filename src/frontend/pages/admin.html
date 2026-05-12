@@ -1811,9 +1811,12 @@
         }
         html += '</div>';
         container.classList.remove('loading');
+        console.log('loadJenjangList: html built, length:', html.length, 'chars');
+        // Force visibility by setting inline style
+        container.setAttribute('style', 'display:block !important; visibility:visible !important; min-height:200px;');
         container.innerHTML = html;
-        container.style.display = 'block';
-        container.style.minHeight = 'auto';
+        console.log('loadJenjangList: innerHTML set, container children:', container.children.length);
+        console.log('loadJenjangList: DONE - final classes:', container.className, 'innerHTML snippet:', container.innerHTML.substring(0, 300));
       } catch (err) {
         console.error('loadJenjangList error:', err);
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">Error: ${err.message}</p></div>`;
