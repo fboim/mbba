@@ -1699,7 +1699,7 @@
         const bagians = await bagiansRes.json().catch(() => []);
         const babs = await babsRes.json().catch(() => []);
         const fasals = await fasalsRes.json().catch(() => []);
-        console.log('parsed:', { jenjangs, kitabs });
+        console.log('parsed:', { jenjangs, kitabs, jenjangs_len: jenjangs.length, jenjangs_type: typeof jenjangs, jenjangs_isArray: Array.isArray(jenjangs), first_jenjang: jenjangs[0] });
 
         allJenjang = jenjangs;
         allKitab = kitabs;
