@@ -1656,27 +1656,37 @@
           html += '</div>';
 
           // Replace materiList and FORCE layout to work
-          var parent = materiList.parentElement;
-          parent.innerHTML = html;
-          console.log('loadMateri: Injected directly into parent (bento-inner)');
-          console.log('parent offsetHeight:', parent.offsetHeight);
+          // Find the bento-card that contains materiList and inject directly
+          var card = materiList.closest('.bento-card');
+          var bentoGrid = card ? card.parentElement : null;
 
-          // Check if bento-card needs height fix
-          requestAnimationFrame(function() {
+          if (card && bentoGrid) {
+            // Create a new card with the materi list
+            var newCard = document.createElement('div');
+            newCard.className = 'bento-card bento-span-2';
+            newCard.style.cssText = 'display: block !important; position: relative !important;';
+
+            var newInner = document.createElement('div');
+            newInner.className = 'bento-inner';
+            newInner.style.cssText = 'display: block !important; padding: 24px !important; overflow: visible !important;';
+
+            newInner.innerHTML = html;
+            newCard.appendChild(newInner);
+
+            // Replace the old card
+            bentoGrid.replaceChild(newCard, card);
+            console.log('loadMateri: Replaced bento-card with new one');
+
             requestAnimationFrame(function() {
-              var card = parent.closest('.bento-card');
-              console.log('card offsetHeight after 2 frames:', card ? card.offsetHeight : 'N/A');
-              console.log('parent offsetHeight after 2 frames:', parent.offsetHeight);
-
-              if (card && card.offsetHeight === 0) {
-                // Force card to expand
-                card.style.minHeight = '200px';
-                card.style.overflow = 'visible';
-                parent.style.overflow = 'visible';
-                console.log('Forced card/parent overflow visible');
+              console.log('newCard offsetHeight:', newCard.offsetHeight);
+              if (newCard.offsetHeight === 0) {
+                newCard.style.cssText = 'display: block !important; position: relative !important; min-height: 300px !important;';
+                console.log('Forced min-height on newCard');
               }
             });
-          });
+          } else {
+            console.error('loadMateri: card or bentoGrid not found');
+          }
         } else {
           console.error('loadMateri: materiList not found!');
         }
