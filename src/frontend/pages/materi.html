@@ -540,6 +540,7 @@
     .quiz-body {
       padding: 24px;
       min-height: 200px;
+      background: #fef9c3;
     }
     .quiz-no-content {
       display: flex;
@@ -1110,15 +1111,18 @@
         quizBank = [];
         try {
           quizBank = await fetchQuizBankBab(babId);
+          console.log('loadBab: fetchQuizBankBab returned', quizBank.length, 'quizzes', quizBank);
           if (quizBank.length === 0 && currentBab) {
             var fasalRes = await fetch(SUPABASE_URL + 'rest/v1/fasal?bab_id=eq.' + babId + '&select=id', { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() } });
             var fasals = await fasalRes.json();
+            console.log('loadBab: fasals under bab:', fasals);
             for (var f of fasals) {
               var fQuizzes = await fetchQuizBank(f.id);
+              console.log('loadBab: fetchQuizBank for fasal', f.id, 'returned', fQuizzes.length, 'quizzes');
               quizBank = quizBank.concat(fQuizzes);
             }
           }
-        } catch (e) {}
+        } catch (e) { console.error('loadBab: quiz fetch error', e); }
 
         if (quizBank.length === 0) {
           document.getElementById('startQuizBtn').disabled = true;
@@ -1229,8 +1233,9 @@
     var answeredQuestions = {};
 
     function startQuiz() {
+      console.log('startQuiz: quizBank.length =', quizBank.length, 'quizBank[0] =', JSON.stringify(quizBank[0]));
       if (quizBank.length === 0) {
-        alert('Quiz bank kosong! Pastikan bab ini punya quiz di database. (quizBank.length = ' + quizBank.length + ')');
+        alert('Quiz bank kosong! Pastikan bab ini punya quiz di database.\n\nBuka DevTools (F12) &rarr; Console untuk info debug.');
         return;
       }
       document.getElementById('quizModal').classList.remove('hidden');
@@ -1240,7 +1245,6 @@
       var quizTitle = currentFasal ? currentFasal.title : currentBab.title;
       document.getElementById('quizFasalName').textContent = quizTitle;
 
-      console.log('startQuiz: quizBank.length =', quizBank.length, 'quizBank[0] =', quizBank[0]);
       var shuffled = initQuiz(quizBank, quizId, 10, {
         onPass: function(score, correct, total, results) { handleQuizComplete(true, score, correct, total); },
         onFail: function(score, correct, total, results) { handleQuizComplete(false, score, correct, total); }
@@ -1253,95 +1257,183 @@
       answeredQuestions = {};
       document.getElementById('totalQ').textContent = quizQuestions.length;
 
+      console.log('startQuiz: _quizState.questions.length =', window._quizState.questions.length, 'currentQuestionIndex =', currentQuestionIndex);
       renderQuestion();
     }
 
     function renderQuestion() {
       var state = window._quizState;
-      console.log('renderQuestion: state =', state, 'questions =', state && state.questions, 'length =', state && state.questions && state.questions.length);
-      if (!state || !state.questions || state.questions.length === 0) {
-        document.getElementById('quizContent').innerHTML = '<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle mr-2"></i> Quiz tidak tersedia (state=' + (state ? 'ok' : 'null') + ', len=' + (state && state.questions ? state.questions.length : '?') + ')</div>';
-        return;
-      }
-
-      var q = state.questions[currentQuestionIndex];
-      if (!q || !q.id) {
-        document.getElementById('quizContent').innerHTML = '<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-circle-exclamation mr-2"></i> Data soal tidak valid</div>';
-        return;
-      }
-
       var container = document.getElementById('quizContent');
-      var answers = state.selectedAnswers || {};
+      console.log('--- renderQuestion() ---');
+      console.log('window._quizState:', state);
+      console.log('currentQuestionIndex:', currentQuestionIndex);
+      console.log('quizContent element:', container);
+      console.log('quizContent.innerHTML BEFORE:', container.innerHTML);
+      var answers = state ? (state.selectedAnswers || {}) : {};
+      var total = state ? state.questions.length : 0;
+      var idx = total > 0 ? Math.min(currentQuestionIndex, total - 1) : 0;
+      console.log('total questions:', total, '| idx used:', idx);
+      document.getElementById('currentQ').textContent = total > 0 ? (idx + 1) : 1;
+      document.getElementById('totalQ').textContent = total > 0 ? total : 10;
+      var pct = total > 0 ? Math.round(((idx + 1) / total) * 100) : 0;
+      document.getElementById('progressPercent').textContent = pct + '%';
+      document.getElementById('progressBar').style.width = (total > 0 ? Math.max(pct, 2) : 2) + '%';
 
-      document.getElementById('currentQ').textContent = currentQuestionIndex + 1;
-      var percent = state.questions.length > 0 ? Math.round(((currentQuestionIndex + 1) / state.questions.length) * 100) : 0;
-      document.getElementById('progressPercent').textContent = percent + '%';
-      document.getElementById('progressBar').style.width = Math.max(percent, 2) + '%';
+      // --- Update dots ---
+      var dotsEl = document.getElementById('questionDots');
+      dotsEl.innerHTML = '';
+      if (state && state.questions) {
+        state.questions.forEach(function(qi, i) {
+          var isAnswered = !!answers[qi.id];
+          var isCurrent = i === idx;
+          var isCorrect = answeredQuestions[qi.id] === true;
+          var isWrong = answeredQuestions[qi.id] === false;
+          var dotClass = 'progress-dot';
+          if (isCurrent) dotClass += ' current';
+          else if (isCorrect) dotClass += ' correct';
+          else if (isWrong) dotClass += ' wrong';
+          else if (isAnswered) dotClass += ' answered';
+          var btn = document.createElement('button');
+          btn.className = dotClass;
+          btn.title = 'Soal ' + (i + 1);
+          btn.style.cssText = 'background:none;border:none;cursor:pointer;padding:0;';
+          btn.onclick = (function(ii) { return function() { goToQuestion(ii); }; })(i);
+          dotsEl.appendChild(btn);
+        });
+      }
 
-      var dotsHtml = '';
-      state.questions.forEach(function(qi, i) {
-        var isAnswered = answers[qi.id] ? true : false;
-        var isCurrent = i === currentQuestionIndex;
-        var isCorrect = answeredQuestions[qi.id] === true;
-        var isWrong = answeredQuestions[qi.id] === false;
-        var dotClass = 'progress-dot';
-        if (isCurrent) dotClass += ' current';
-        else if (isCorrect) dotClass += ' correct';
-        else if (isWrong) dotClass += ' wrong';
-        else if (isAnswered) dotClass += ' answered';
-        dotsHtml += '<button onclick="goToQuestion(' + i + ')" class="' + dotClass + '" title="Soal ' + (i + 1) + '"></button>';
-      });
-      document.getElementById('questionDots').innerHTML = dotsHtml;
-
-      var qText = q.question || '';
+      // --- Clear container ---
       container.innerHTML = '';
 
-      var typeBadge = '';
-      if (q.type === 'mc') typeBadge = '<span class="quiz-question-type mc"><i class="fa-solid fa-list-check"></i>Pilihan Ganda</span>';
-      else if (q.type === 'fill-arab') typeBadge = '<span class="quiz-question-type arab"><i class="fa-solid fa-pen"></i>Isi Arab</span>';
-      else typeBadge = '<span class="quiz-question-type latin"><i class="fa-solid fa-pen"></i>Isi Latin</span>';
-
-      container.innerHTML += typeBadge;
-
-      if (!qText || !qText.trim()) {
-        container.innerHTML += '<div class="quiz-question-box quiz-no-content"><i class="fa-solid fa-circle-info" style="color:var(--text-muted); font-size:1.5rem; margin-bottom:8px; display:block;"></i><p style="color:var(--text-muted); font-size:0.9rem;">Pertanyaan ini belum memiliki teks.</p></div>';
-      } else {
-        container.innerHTML += '<div class="quiz-question-box"><p class="quiz-question-text">' + escapeHtml(qText) + '</p></div>';
+      // --- Guard: no state ---
+      if (!state || !state.questions || state.questions.length === 0) {
+        console.log('renderQuestion: GUARD triggered - no state or no questions');
+        container.style.cssText = 'display:flex;align-items:center;justify-content:center;min-height:200px;';
+        container.innerHTML = '<div class="text-center" style="color:#ef4444;">' +
+          '<i class="fa-solid fa-exclamation-triangle" style="font-size:2rem;margin-bottom:8px;display:block;"></i>' +
+          '<p>Quiz tidak tersedia.</p>' +
+          '<p style="font-size:0.8rem;color:#888;margin-top:4px;">Buka DevTools &rarr; Console untuk detail.</p></div>';
+        console.log('quizContent.innerHTML AFTER guard:', container.innerHTML);
+        return;
       }
 
+      var q = state.questions[idx];
+      console.log('renderQuestion: q =', q);
+      if (!q || !q.id) {
+        container.innerHTML = '<div class="text-center py-8" style="color:#94a3b8;"><i class="fa-solid fa-circle-exclamation" style="font-size:2rem;margin-bottom:8px;display:block;"></i><p>Data soal tidak valid.</p></div>';
+        return;
+      }
+
+      // --- Type badge ---
+      var badge = document.createElement('span');
+      badge.className = 'quiz-question-type' + (q.type === 'mc' ? ' mc' : q.type === 'fill-arab' ? ' arab' : ' latin');
+      if (q.type === 'mc') {
+        badge.innerHTML = '<i class="fa-solid fa-list-check"></i> Pilihan Ganda';
+      } else if (q.type === 'fill-arab') {
+        badge.innerHTML = '<i class="fa-solid fa-pen"></i> Isi Arab';
+      } else {
+        badge.innerHTML = '<i class="fa-solid fa-pen"></i> Isi Latin';
+      }
+      container.appendChild(badge);
+
+      // --- Question box ---
+      var qBox = document.createElement('div');
+      qBox.className = 'quiz-question-box';
+      var qText = q.question || '';
+      if (!qText.trim()) {
+        qBox.classList.add('quiz-no-content');
+        qBox.innerHTML = '<i class="fa-solid fa-circle-info" style="color:#94a3b8;font-size:1.5rem;margin-bottom:8px;display:block;"></i>' +
+          '<p style="color:#94a3b8;font-size:0.9rem;">Pertanyaan ini belum memiliki teks.</p>';
+      } else {
+        var qP = document.createElement('p');
+        qP.className = 'quiz-question-text';
+        qP.textContent = qText;
+        qBox.appendChild(qP);
+      }
+      container.appendChild(qBox);
+
+      // --- Options / Fill input ---
       if (q.type === 'mc' && q.options) {
-        var opts = {};
+        var optsObj = {};
         try {
           var parsed = JSON.parse(q.options);
           if (Array.isArray(parsed)) {
-            parsed.forEach(function(item) { opts[item.key] = item.value; });
+            parsed.forEach(function(item) { optsObj[item.key] = item.value; });
           } else {
-            opts = parsed;
+            optsObj = parsed;
           }
-        } catch (e) { opts = {}; }
+        } catch (e) {}
 
-        container.innerHTML += '<div class="quiz-options">';
-        for (var key in opts) {
+        var optsDiv = document.createElement('div');
+        optsDiv.className = 'quiz-options';
+        Object.keys(optsObj).forEach(function(key) {
           var isSelected = answers[q.id] === key;
-          container.innerHTML += '<div onclick="selectAnswer(\'' + q.id + '\', \'' + String(key).replace(/'/g, "\\'") + '\')" class="quiz-option ' + (isSelected ? 'selected' : '') + '">';
-          container.innerHTML += '<div class="quiz-option-key">' + key + '</div>';
-          container.innerHTML += '<div class="quiz-option-text">' + escapeHtml(opts[key]) + '</div>';
-          container.innerHTML += '<div class="quiz-option-check"><i class="fa-solid fa-check text-xs"></i></div>';
-          container.innerHTML += '</div>';
-        }
-        container.innerHTML += '</div>';
+          var optDiv = document.createElement('div');
+          optDiv.className = 'quiz-option' + (isSelected ? ' selected' : '');
+          optDiv.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:8px;border-radius:12px;border:2px solid #e2e8f0;cursor:pointer;transition:all 0.2s;background:#fff;';
+          optDiv.onmouseover = function() { if (!isSelected) optDiv.style.borderColor = '#10b981'; };
+          optDiv.onmouseout = function() { if (!isSelected) optDiv.style.borderColor = '#e2e8f0'; };
+          optDiv.onclick = (function(qid, k) { return function() { selectAnswer(qid, k); }; })(q.id, key);
+
+          var keyDiv = document.createElement('div');
+          keyDiv.className = 'quiz-option-key';
+          keyDiv.style.cssText = 'width:28px;height:28px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:#475569;flex-shrink:0;';
+          keyDiv.textContent = key;
+
+          var txtDiv = document.createElement('div');
+          txtDiv.className = 'quiz-option-text';
+          txtDiv.style.cssText = 'flex:1;font-size:0.95rem;color:#334155;';
+          txtDiv.textContent = optsObj[key];
+
+          var chkDiv = document.createElement('div');
+          chkDiv.className = 'quiz-option-check';
+          chkDiv.style.cssText = 'color:#10b981;opacity:' + (isSelected ? '1' : '0') + ';transition:opacity 0.2s;';
+          chkDiv.innerHTML = '<i class="fa-solid fa-check text-xs"></i>';
+
+          optDiv.appendChild(keyDiv);
+          optDiv.appendChild(txtDiv);
+          optDiv.appendChild(chkDiv);
+          optsDiv.appendChild(optDiv);
+        });
+        container.appendChild(optsDiv);
       } else {
-        container.innerHTML += '<input type="text" id="answerInput" value="' + escapeHtml(answers[q.id] || '') + '" oninput="setAnswer(\'' + q.id + '\', this.value)" class="quiz-fill-input" placeholder="Ketik jawaban...">';
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.id = 'answerInput';
+        inp.value = answers[q.id] || '';
+        inp.placeholder = 'Ketik jawaban...';
+        inp.className = 'quiz-fill-input';
+        inp.style.cssText = 'width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:0.95rem;outline:none;box-sizing:border-box;';
+        inp.oninput = (function(qid) { return function() { setAnswer(qid, inp.value); }; })(q.id);
+        container.appendChild(inp);
       }
 
-      var prevDisabled = currentQuestionIndex === 0;
-      var backBtn = prevDisabled
-        ? '<button disabled class="btn btn-secondary opacity-50"><i class="fa-solid fa-arrow-left"></i> Kembali</button>'
-        : '<button onclick="prevQuestion()" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Kembali</button>';
-      var nextBtn = '<button onclick="nextQuestion()" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>';
-      var submitBtn = '<button onclick="submitQuiz()" class="btn btn-primary"><i class="fa-solid fa-check"></i> Kirim</button>';
+      // --- Navigation buttons ---
+      var navDiv = document.createElement('div');
+      navDiv.className = 'quiz-nav';
 
-      container.innerHTML += '<div class="quiz-nav">' + backBtn + (currentQuestionIndex < state.questions.length - 1 ? nextBtn : submitBtn) + '</div>';
+      var backBtn = document.createElement('button');
+      backBtn.className = 'btn btn-secondary' + (currentQuestionIndex === 0 ? ' opacity-50' : '');
+      backBtn.disabled = currentQuestionIndex === 0;
+      backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Kembali';
+      if (currentQuestionIndex > 0) backBtn.onclick = prevQuestion;
+      navDiv.appendChild(backBtn);
+
+      var actionBtn = document.createElement('button');
+      actionBtn.className = 'btn btn-primary';
+      if (currentQuestionIndex < total - 1) {
+        actionBtn.innerHTML = 'Lanjut <i class="fa-solid fa-arrow-right"></i>';
+        actionBtn.onclick = nextQuestion;
+      } else {
+        actionBtn.innerHTML = '<i class="fa-solid fa-check"></i> Kirim';
+        actionBtn.onclick = submitQuiz;
+      }
+      navDiv.appendChild(actionBtn);
+
+      container.appendChild(navDiv);
+
+      console.log('renderQuestion: DONE. quizContent.innerHTML AFTER:', container.innerHTML);
+      console.log('quizContent childElementCount:', container.childElementCount);
     }
 
     function selectAnswer(qid, ans) {
