@@ -1656,36 +1656,48 @@
           html += '</div>';
 
           // Replace materiList and FORCE layout to work
-          // Find the bento-card that contains materiList and inject directly
+          // First, let's check if the issue is with parents
           var card = materiList.closest('.bento-card');
           var bentoGrid = card ? card.parentElement : null;
+          var contentMateriEl = bentoGrid ? bentoGrid.parentElement : null;
 
-          if (card && bentoGrid) {
-            // Create a new card with the materi list
-            var newCard = document.createElement('div');
-            newCard.className = 'bento-card bento-span-2';
-            newCard.style.cssText = 'display: block !important; position: relative !important;';
+          console.log('card:', !!card, 'bentoGrid:', !!bentoGrid, 'contentMateri:', !!contentMateriEl);
+          console.log('contentMateri classes:', contentMateriEl ? contentMateriEl.className : 'N/A');
 
-            var newInner = document.createElement('div');
-            newInner.className = 'bento-inner';
-            newInner.style.cssText = 'display: block !important; padding: 24px !important; overflow: visible !important;';
+          // Create completely standalone element
+          var standalone = document.createElement('div');
+          standalone.style.cssText = 'position: relative !important; width: 100% !important; min-height: 300px !important; padding: 24px !important; background: white !important; border: 3px solid red !important; margin: 20px 0 !important; border-radius: 20px !important; box-sizing: border-box !important;';
+          standalone.innerHTML = '<h2 style="color:red; margin:0 0 20px 0;">TEST - Standalone Element</h2>' + html;
 
-            newInner.innerHTML = html;
-            newCard.appendChild(newInner);
-
-            // Replace the old card
-            bentoGrid.replaceChild(newCard, card);
-            console.log('loadMateri: Replaced bento-card with new one');
+          // Replace the entire bento-grid content
+          if (bentoGrid) {
+            bentoGrid.innerHTML = '';
+            bentoGrid.style.cssText = 'display: block !important; position: relative !important;';
+            bentoGrid.appendChild(standalone);
+            console.log('Replaced bentoGrid with standalone element');
 
             requestAnimationFrame(function() {
-              console.log('newCard offsetHeight:', newCard.offsetHeight);
-              if (newCard.offsetHeight === 0) {
-                newCard.style.cssText = 'display: block !important; position: relative !important; min-height: 300px !important;';
-                console.log('Forced min-height on newCard');
-              }
+              requestAnimationFrame(function() {
+                console.log('standalone offsetHeight:', standalone.offsetHeight);
+                console.log('bentoGrid offsetHeight:', bentoGrid.offsetHeight);
+                console.log('contentMateriEl offsetHeight:', contentMateriEl ? contentMateriEl.offsetHeight : 'N/A');
+
+                if (standalone.offsetHeight > 0) {
+                  console.log('SUCCESS: Standalone element has height!');
+                } else {
+                  console.log('FAILURE: Even standalone element has 0 height - check contentMateriEl');
+                  // Check if contentMateriEl has display:none
+                  if (contentMateriEl) {
+                    var computed = window.getComputedStyle(contentMateriEl);
+                    console.log('contentMateri computed display:', computed.display);
+                    console.log('contentMateri computed visibility:', computed.visibility);
+                    console.log('contentMateri computed opacity:', computed.opacity);
+                  }
+                }
+              });
             });
           } else {
-            console.error('loadMateri: card or bentoGrid not found');
+            console.error('loadMateri: bentoGrid not found');
           }
         } else {
           console.error('loadMateri: materiList not found!');
