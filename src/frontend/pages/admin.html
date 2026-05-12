@@ -1326,11 +1326,10 @@
                 <i class="fa-solid fa-plus"></i>
               </div>
               <div>
-                <h3 class="bento-title">Tambah Jenjang Baru</h3>
+                <h3 class="bento-title">Tambah Jenjang</h3>
                 <p class="bento-subtitle">Contoh: Tingkat 1, Pra-Sadayati</p>
               </div>
             </div>
-
             <div class="form-group">
               <label class="form-label">Nama Jenjang</label>
               <input type="text" id="newJenjangNama" class="form-input" placeholder="Contoh: Tingkat 1">
@@ -1342,40 +1341,6 @@
             <div id="addJenjangError" class="alert alert-error hidden"></div>
             <button onclick="addNewJenjang()" class="btn btn-primary btn-block">
               <i class="fa-solid fa-plus"></i> Tambah Jenjang
-            </button>
-          </div>
-        </div>
-
-        <!-- Add New Kitab -->
-        <div class="bento-card">
-          <div class="bento-inner">
-            <div class="bento-header">
-              <div class="bento-icon bento-icon-blue">
-                <i class="fa-solid fa-book"></i>
-              </div>
-              <div>
-                <h3 class="bento-title">Tambah Kitab Baru</h3>
-                <p class="bento-subtitle">Di dalam satu Jenjang</p>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Jenjang Induk</label>
-              <select id="newKitabJenjang" class="form-select">
-                <option value="">Pilih Jenjang...</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nama Kitab</label>
-              <input type="text" id="newKitabNama" class="form-input" placeholder="Contoh: Al-Miftah">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Penulis / Sumber</label>
-              <input type="text" id="newKitabPenulis" class="form-input" placeholder="Contoh: Syeikh Ali Mahdi">
-            </div>
-            <div id="addKitabError" class="alert alert-error hidden"></div>
-            <button onclick="addNewKitab()" class="btn btn-primary btn-block">
-              <i class="fa-solid fa-plus"></i> Tambah Kitab
             </button>
           </div>
         </div>
@@ -1392,9 +1357,7 @@
                 <p class="bento-subtitle">Struktur kurikulum lengkap</p>
               </div>
             </div>
-            <div id="jenjangList" class="loading" style="min-height:400px; overflow:visible;">
-              <div class="spinner"></div>
-            </div>
+            <div id="jenjangList"></div>
           </div>
         </div>
       </div>
