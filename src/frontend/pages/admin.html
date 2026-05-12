@@ -1616,42 +1616,21 @@
           materiList.innerHTML = html;
           materiList.classList.remove('loading');
 
-          // Use requestAnimationFrame to wait for browser to paint
           requestAnimationFrame(function() {
             requestAnimationFrame(function() {
-              console.log('After 2 frames - materiList offsetHeight:', materiList.offsetHeight);
-              console.log('After 2 frames - materiList scrollHeight:', materiList.scrollHeight);
-
-              // Force explicit height using scrollHeight
-              if (materiList.scrollHeight > 0) {
-                materiList.style.height = materiList.scrollHeight + 'px';
-                materiList.style.minHeight = 'auto';
-                console.log('Set materiList height to:', materiList.style.height);
-              }
-
-              // If still 0, use position:fixed overlay approach - bypass ALL CSS issues
+              // If normal display doesn't work, use position:fixed overlay - bypass ALL CSS issues
               if (materiList.offsetHeight === 0 || materiList.scrollHeight === 0) {
-                console.log('Using position:fixed overlay approach');
-                // Remove any existing overlay
+                console.log('Using position:fixed overlay - content visible at:', new Date().toISOString());
+
                 var existing = document.getElementById('materiOverlay');
                 if (existing) existing.remove();
 
                 var overlay = document.createElement('div');
                 overlay.id = 'materiOverlay';
                 overlay.style.cssText = 'position:fixed !important; top:100px !important; left:20px !important; right:20px !important; z-index:9999 !important; background:#fff !important; border:3px solid #000 !important; border-radius:20px !important; padding:24px !important; box-shadow:0 20px 60px rgba(0,0,0,0.3) !important; max-height:70vh !important; overflow-y:auto !important;';
-                overlay.innerHTML = '<h3 style="margin:0 0 20px 0; color:#059669; font-size:22px; font-weight:700;">DAFTAR MATERI</h3>' + html;
-
-                var closeBtn = document.createElement('button');
-                closeBtn.textContent = 'X';
-                closeBtn.style.cssText = 'position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; border:none; background:#ef4444; color:#fff; font-weight:700; cursor:pointer;';
-                closeBtn.onclick = function() { overlay.remove(); };
-                overlay.style.position = 'relative';
-                overlay.insertBefore(closeBtn, overlay.firstChild);
-                overlay.style.position = 'fixed';
-                overlay.style.top = '100px';
+                overlay.innerHTML = '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;"><h3 style="margin:0; color:#059669; font-size:22px; font-weight:700;">DAFTAR MATERI</h3><button onclick="document.getElementById(\'materiOverlay\').remove()" style="width:32px; height:32px; border-radius:50%; border:none; background:#ef4444; color:#fff; font-weight:700; cursor:pointer; font-size:16px;">X</button></div>' + html;
 
                 document.body.appendChild(overlay);
-                console.log('Created fixed overlay');
               }
             });
           });
