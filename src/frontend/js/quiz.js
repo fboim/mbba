@@ -127,7 +127,26 @@ function renderQuestion() {
     console.log('[RQ]', msg);
   }
 
-  log('renderQuestion called, _quizState: ' + (window._quizState ? 'EXISTS' : 'NULL'));
+  // Also show in a visible banner for debugging
+  var banner = document.getElementById('quizDebugBanner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'quizDebugBanner';
+    banner.style = 'position:fixed;top:0;left:0;right:0;background:#1a1a2e;color:#0f0;padding:8px 16px;font-family:monospace;font-size:12px;z-index:999999;white-space:pre-wrap;max-height:120px;overflow:auto;';
+    document.body.insertBefore(banner, document.body.firstChild);
+  }
+  banner.textContent = '';
+
+  function show(msg) {
+    log(msg);
+    banner.textContent += msg + '\n';
+  }
+
+  show('renderQuestion() called');
+  show('_quizState: ' + (window._quizState ? 'EXISTS' : 'NULL'));
+  show('quizBank.length (local): ' + quizBank.length);
+  show('window.quizBank.length: ' + (window.quizBank ? window.quizBank.length : 'N/A'));
+  show('window._quizState.questions: ' + (window._quizState && window._quizState.questions ? window._quizState.questions.length : 'N/A'));
 
   const state = window._quizState;
   const container = document.getElementById('quizContent');
@@ -383,7 +402,7 @@ function submitQuestion() {
 // ================================================================
 
 function retryQuiz() {
-  if (quizBankLoaded.length === 0) quizBankLoaded = quizBank;
+  if (quizBankLoaded.length === 0) quizBankLoaded = (window.quizBank || []);
   resetQuiz(quizBankLoaded);
   quizQuestions = window._quizState.questions;
   currentQuestionIndex = 0;
@@ -398,10 +417,11 @@ function closeQuiz() {
 }
 
 function startQuiz() {
-  console.log('[QUIZ] startQuiz called, quizBank.length=' + quizBank.length);
+  console.log('[QUIZ] startQuiz called, window.quizBank.length=' + (window.quizBank ? window.quizBank.length : 'N/A'));
 
-  if (quizBank.length === 0) {
-    alert('Quiz bank kosong!');
+  var bank = window.quizBank || [];
+  if (bank.length === 0) {
+    alert('Quiz bank kosong! window.quizBank=' + JSON.stringify(window.quizBank));
     return;
   }
 
@@ -412,7 +432,7 @@ function startQuiz() {
   const quizTitle = currentFasal ? currentFasal.title : currentBab.title;
   document.getElementById('quizFasalName').textContent = quizTitle;
 
-  initQuiz(quizBank, quizId, 10, {
+  initQuiz(bank, quizId, 10, {
     onPass: function(score, correct, total, results) {
       handleQuizComplete(true, score, correct, total);
     },
@@ -421,7 +441,7 @@ function startQuiz() {
     }
   });
 
-  quizBankLoaded = quizBank;
+  quizBankLoaded = bank;
   quizQuestions = window._quizState.questions;
   currentQuestionIndex = 0;
   answeredQuestions = {};
