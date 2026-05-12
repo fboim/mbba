@@ -524,7 +524,7 @@
 
     /* Section Hide/Show */
     .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .tab-content.active { display: block; min-height: 400px; }
 
     /* Loading */
     .loading {
@@ -1693,13 +1693,11 @@
           fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers })
         ]);
 
-        console.log('loadJenjangList response:', { jenjangStatus: jenjangRes.status, kitabStatus: kitabRes.status });
-        const jenjangs = await jenjangRes.json().catch((e) => { console.error('jenjang parse error', e); return []; });
-        const kitabs = await kitabRes.json().catch((e) => { console.error('kitab parse error', e); return []; });
+        const jenjangs = await jenjangRes.json().catch(() => []);
+        const kitabs = await kitabRes.json().catch(() => []);
         const bagians = await bagiansRes.json().catch(() => []);
         const babs = await babsRes.json().catch(() => []);
         const fasals = await fasalsRes.json().catch(() => []);
-        console.log('parsed:', { jenjangs, kitabs, jenjangs_len: jenjangs.length, jenjangs_type: typeof jenjangs, jenjangs_isArray: Array.isArray(jenjangs), first_jenjang: jenjangs[0] });
 
         allJenjang = jenjangs;
         allKitab = kitabs;
@@ -1709,7 +1707,7 @@
         loadKitabDropdown();
 
         if (!jenjangs || jenjangs.length === 0) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-layer-group"></i></div><p class="empty-text">Belum ada jenjang</p><p class="empty-text" style="font-size:0.75rem; margin-top:8px;">Debug: jenjangRes=${jenjangRes.status}, kitabRes=${kitabRes.status}</p></div>`;
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-layer-group"></i></div><p class="empty-text">Belum ada jenjang</p></div>`;
           return;
         }
 
@@ -1799,13 +1797,13 @@
           html += '</div>';
         }
         html += '</div>';
-        console.log('about to set innerHTML, html length:', html.length, 'container:', !!container, 'container.parent:', container && container.parentElement ? container.parentElement.className : 'N/A');
         container.classList.remove('loading');
         container.style.display = 'block';
+        container.parentElement.style.alignItems = 'stretch';
         container.innerHTML = html;
-        console.log('after set innerHTML, container.innerHTML length:', container.innerHTML.length, 'container children:', container.children.length);
       } catch (err) {
         console.error('loadJenjangList error:', err);
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">Error: ${err.message}</p></div>`;
       }
     }
 
