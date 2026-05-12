@@ -834,6 +834,10 @@
         <i class="fa-solid fa-microphone"></i>
         <span>Audio</span>
       </button>
+      <button type="button" onclick="showTab('jenjang')" id="tabJenjang" class="tab-btn">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Jenjang</span>
+      </button>
     </div>
 
     <!-- Stats Tab -->
@@ -916,6 +920,12 @@
             </div>
 
             <div id="bagianFields">
+              <div class="form-group">
+                <label class="form-label">Kitab Induk</label>
+                <select id="newBagianKitab" class="form-select" onchange="loadBagiansForDropdown()">
+                  <option value="">Pilih Kitab...</option>
+                </select>
+              </div>
               <div class="form-group">
                 <label class="form-label">Nama Bagian</label>
                 <input type="text" id="newBagianNama" class="form-input" placeholder="Contoh: Al-Qawa'id">
@@ -1305,6 +1315,90 @@
         </div>
       </div>
     </div>
+    <!-- Jenjang Tab -->
+    <div id="contentJenjang" class="tab-content">
+      <div class="bento-grid">
+        <!-- Add New Jenjang -->
+        <div class="bento-card">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-amber">
+                <i class="fa-solid fa-plus"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Tambah Jenjang Baru</h3>
+                <p class="bento-subtitle">Contoh: Tingkat 1, Pra-Sadayati</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nama Jenjang</label>
+              <input type="text" id="newJenjangNama" class="form-input" placeholder="Contoh: Tingkat 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Deskripsi Singkat</label>
+              <input type="text" id="newJenjangDesc" class="form-input" placeholder="Contoh: Dasar nahwu dan sharaf">
+            </div>
+            <div id="addJenjangError" class="alert alert-error hidden"></div>
+            <button onclick="addNewJenjang()" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-plus"></i> Tambah Jenjang
+            </button>
+          </div>
+        </div>
+
+        <!-- Add New Kitab -->
+        <div class="bento-card">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-blue">
+                <i class="fa-solid fa-book"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Tambah Kitab Baru</h3>
+                <p class="bento-subtitle">Di dalam satu Jenjang</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Jenjang Induk</label>
+              <select id="newKitabJenjang" class="form-select">
+                <option value="">Pilih Jenjang...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nama Kitab</label>
+              <input type="text" id="newKitabNama" class="form-input" placeholder="Contoh: Al-Miftah">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Penulis / Sumber</label>
+              <input type="text" id="newKitabPenulis" class="form-input" placeholder="Contoh: Syeikh Ali Mahdi">
+            </div>
+            <div id="addKitabError" class="alert alert-error hidden"></div>
+            <button onclick="addNewKitab()" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-plus"></i> Tambah Kitab
+            </button>
+          </div>
+        </div>
+
+        <!-- Jenjang + Kitab List -->
+        <div class="bento-card bento-span-2">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-purple">
+                <i class="fa-solid fa-layer-group"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Daftar Jenjang & Kitab</h3>
+                <p class="bento-subtitle">Struktur kurikulum lengkap</p>
+              </div>
+            </div>
+            <div id="jenjangList" class="loading">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="../js/api.js"></script>
@@ -1321,6 +1415,8 @@
     let allBabs = [];
     let allQuizzes = [];
     let allBagians = [];
+    let allJenjang = [];
+    let allKitab = [];
 
     (async function() {
       const user = await getCurrentUser();
@@ -1360,7 +1456,7 @@
     // Tab Switching
     function showTab(tab) {
       console.log('showTab called:', tab);
-      const allTabs = ['Stats', 'Materi', 'Quiz', 'Siswa', 'Audio'];
+      const allTabs = ['Stats', 'Materi', 'Quiz', 'Siswa', 'Audio', 'Jenjang'];
       allTabs.forEach(c => {
         const contentEl = document.getElementById('content' + c);
         const tabEl = document.getElementById('tab' + c);
@@ -1378,11 +1474,12 @@
       }
       if (tabEl) tabEl.classList.add('active');
 
-      if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); }
+      if (tab === 'materi') { console.log('Calling loadMateri'); loadMateri(); loadFasalsForSelect(); }
       if (tab === 'quiz') { console.log('Calling loadQuizList'); loadQuizList(); }
       if (tab === 'siswa') { console.log('Calling loadStudentList'); loadStudentList(); }
       if (tab === 'audio') { console.log('Calling initAudioTab'); initAudioTab(); }
       if (tab === 'stats') { console.log('Calling loadStats'); loadStats(); }
+      if (tab === 'jenjang') { console.log('Calling loadJenjangList'); loadJenjangList(); }
     }
 
     // Load Stats
@@ -1423,32 +1520,50 @@
     // Load Fasals for Dropdowns
     async function loadFasalsForSelect() {
       try {
-        const data = await fetchKurikulum();
-        allFasals = [];
-        allBabs = [];
-        allBagians = data;
+        const token = getToken();
+        const headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
 
-        data.forEach(bagian => {
-          (bagian.bab || []).forEach(bab => {
-            allBabs.push({ id: bab.id, label: `${bagian.order_index}.${bab.order_index} ${bab.title || bab.nama}`, bagian_id: bagian.id, is_muqoddimah: bab.is_muqoddimah });
-            (bab.fasal || []).forEach(fasal => {
-              allFasals.push({ id: fasal.id, label: `${bagian.order_index}.${bab.order_index}.${fasal.order_index} ${fasal.title || fasal.nama}`, bab_id: bab.id });
-            });
-          });
-        });
+        const [bagiansRes, babsRes, fasalsRes, kitabsRes] = await Promise.all([
+          fetch(SUPABASE_URL + 'rest/v1/bagian?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/bab?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers })
+        ]);
+
+        allBagians = await bagiansRes.json().catch(() => []);
+        allBabs = await babsRes.json().catch(() => []);
+        allFasals = await fasalsRes.json().catch(() => []);
+        allKitab = await kitabsRes.json().catch(() => []);
 
         const selectFasalNew = document.getElementById('newQuizFasal');
-        selectFasalNew.innerHTML = '<option value="">Pilih Fasal...</option>' + allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
+        if (selectFasalNew) {
+          selectFasalNew.innerHTML = '<option value="">Pilih Fasal...</option>' + allFasals.map(f => {
+            const bab = allBabs.find(b => b.id === f.bab_id);
+            const bagian = bab ? allBagians.find(b => b.id === bab.bagian_id) : null;
+            return `<option value="fasal:${f.id}">${bagian ? bagian.order_index + '.' : ''}${bab ? bab.order_index + '.' : ''}${f.order_index} ${f.title || f.nama || ''}</option>`;
+          }).join('');
+        }
 
         const selectBabNew = document.getElementById('newQuizBab');
-        selectBabNew.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.filter(b => b.is_muqoddimah).map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+        if (selectBabNew) {
+          selectBabNew.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.filter(b => b.is_muqoddimah).map(b => {
+            const bagian = allBagians.find(bg => bg.id === b.bagian_id);
+            return `<option value="bab:${b.id}">${bagian ? bagian.order_index + '.' : ''}${b.order_index} ${b.title || b.nama || ''}</option>`;
+          }).join('');
+        }
 
         const selectFilter = document.getElementById('filterFasal');
-        selectFilter.innerHTML = '<option value="">Semua Fasal</option>' + allFasals.map(f => `<option value="fasal:${f.id}">${f.label}</option>`).join('');
+        if (selectFilter) {
+          selectFilter.innerHTML = '<option value="">Semua Fasal</option>' + allFasals.map(f => `<option value="fasal:${f.id}">${f.title || f.nama || f.id}</option>`).join('');
+        }
 
         const selectBabFilter = document.getElementById('filterBab');
-        selectBabFilter.innerHTML = '<option value="">Semua Bab</option>' + allBabs.map(b => `<option value="bab:${b.id}">${b.label}</option>`).join('');
+        if (selectBabFilter) {
+          selectBabFilter.innerHTML = '<option value="">Semua Bab</option>' + allBabs.map(b => `<option value="bab:${b.id}">${b.title || b.nama || b.id}</option>`).join('');
+        }
 
+        loadKitabDropdown();
         updateQuizLevelForm();
       } catch (err) {
         console.error('Error loading fasals:', err);
@@ -1540,7 +1655,7 @@
       document.getElementById('babFields').classList.add('hidden');
       document.getElementById('fasalFields').classList.add('hidden');
 
-      if (type === 'bagian') document.getElementById('bagianFields').classList.remove('hidden');
+      if (type === 'bagian') { document.getElementById('bagianFields').classList.remove('hidden'); loadKitabDropdown(); }
       else if (type === 'bab') {
         document.getElementById('babFields').classList.remove('hidden');
         loadBagiansForDropdown();
@@ -1560,7 +1675,289 @@
       select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
     }
 
-    // Load Materi
+    // Load Jenjang List
+    async function loadJenjangList() {
+      const container = document.getElementById('jenjangList');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const [jenjangRes, kitabRes, bagiansRes, babsRes, fasalsRes] = await Promise.all([
+          fetch(SUPABASE_URL + 'rest/v1/jenjang?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/bagian?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/bab?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers })
+        ]);
+
+        const jenjangs = await jenjangRes.json().catch(() => []);
+        const kitabs = await kitabRes.json().catch(() => []);
+        const bagians = await bagiansRes.json().catch(() => []);
+        const babs = await babsRes.json().catch(() => []);
+        const fasals = await fasalsRes.json().catch(() => []);
+
+        allJenjang = jenjangs;
+        allKitab = kitabs;
+
+        // Load dropdowns
+        loadJenjangDropdown();
+        loadKitabDropdown();
+
+        if (!jenjangs || jenjangs.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-layer-group"></i></div><p class="empty-text">Belum ada jenjang</p></div>`;
+          return;
+        }
+
+        let html = '<div style="display:flex; flex-direction:column; gap:16px;">';
+        for (const jenjang of jenjangs) {
+          const jenjangKitabs = kitabs.filter(k => k.jenjang_id === jenjang.id);
+          html += `<div style="padding:16px; background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:14px; border:1px solid #f59e0b;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-weight:700; color:#92400e; font-size:1rem;">${jenjang.order_index}. ${escapeHtml(jenjang.nama || jenjang.title)}</span>
+                ${jenjang.deskripsi ? `<span style="display:block; font-size:0.8rem; color:#b45309; margin-top:2px;">${escapeHtml(jenjang.deskripsi)}</span>` : ''}
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <span style="padding:3px 10px; background:#f59e0b; color:white; border-radius:4px; font-size:10px; font-weight:700;">JENJANG</span>
+                <button onclick="editJenjang('${jenjang.id}', this.dataset.title)" data-title="${escapeHtml(jenjang.nama || jenjang.title)}" data-desc="${escapeHtml(jenjang.deskripsi || '')}" style="padding:5px 9px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#f59e0b;"></i></button>
+                <button onclick="deleteJenjang('${jenjang.id}')" style="padding:5px 9px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+              </div>
+            </div>`;
+
+          if (jenjangKitabs.length > 0) {
+            html += `<div style="margin-top:12px; margin-left:8px; display:flex; flex-direction:column; gap:10px;">`;
+            for (const kitab of jenjangKitabs) {
+              const kitabBagians = bagians.filter(b => b.kitab_id === kitab.id);
+              html += `<div style="padding:12px; background:white; border-radius:10px; border:1px solid #bfdbfe;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <span style="font-weight:600; color:#1e40af;">${kitab.order_index}. ${escapeHtml(kitab.nama || kitab.title)}</span>
+                    ${kitab.penulis ? `<span style="display:block; font-size:0.75rem; color:#6b7280; margin-top:1px;">${escapeHtml(kitab.penulis)}</span>` : ''}
+                  </div>
+                  <div style="display:flex; gap:4px;">
+                    <button onclick="editKitab('${kitab.id}', this.dataset.title)" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                    <button onclick="deleteKitab('${kitab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                  </div>
+                </div>`;
+
+              if (kitabBagians.length > 0) {
+                html += `<div style="margin-top:8px; margin-left:10px; display:flex; flex-direction:column; gap:6px;">`;
+                for (const bagian of kitabBagians) {
+                  const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
+                  html += `<div style="padding:8px; background:#f8fafc; border-radius:6px; border:1px solid #e2e8f0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-weight:600; color:#166534; font-size:0.875rem;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span>
+                      <div style="display:flex; gap:4px;">
+                        <button onclick="editMateri('bagian', '${bagian.id}', this.dataset.title)" data-title="${escapeHtml(bagian.title || bagian.nama)}" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                        <button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                      </div>
+                    </div>`;
+
+                  if (bagianBabs.length > 0) {
+                    html += `<div style="margin-top:6px; margin-left:10px; display:flex; flex-direction:column; gap:5px;">`;
+                    for (const bab of bagianBabs) {
+                      const babFasals = fasals.filter(f => f.bab_id === bab.id);
+                      html += `<div style="padding:6px; background:white; border-radius:5px; border:1px solid #e2e8f0;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <span style="font-weight:500; color:#374151; font-size:0.8rem;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>
+                          <div style="display:flex; gap:3px;">
+                            <button onclick="editMateri('bab', '${bab.id}', this.dataset.title)" data-title="${escapeHtml(bab.title || bab.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                            <button onclick="deleteMateri('bab', '${bab.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                          </div>
+                        </div>`;
+
+                      if (babFasals.length > 0) {
+                        html += `<div style="margin-top:4px; margin-left:8px; display:flex; flex-direction:column; gap:4px;">`;
+                        for (const fasal of babFasals) {
+                          html += `<div style="padding:5px; background:#f8fafc; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#475569; font-size:0.775rem;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>
+                            <div style="display:flex; gap:3px;">
+                              <button onclick="editMateri('fasal', '${fasal.id}', this.dataset.title)" data-title="${escapeHtml(fasal.title || fasal.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                              <button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                            </div>
+                          </div>`;
+                        }
+                        html += '</div>';
+                      }
+                      html += '</div>';
+                    }
+                    html += '</div>';
+                  }
+                  html += '</div>';
+                }
+                html += '</div>';
+              }
+              html += '</div>';
+            }
+            html += '</div>';
+          }
+          html += '</div>';
+        }
+        html += '</div>';
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">Error: ${err.message}</p></div>`;
+      }
+    }
+
+    function loadJenjangDropdown() {
+      const select = document.getElementById('newKitabJenjang');
+      if (!select) return;
+      select.innerHTML = '<option value="">Pilih Jenjang...</option>' + allJenjang.map(j => `<option value="${j.id}">${j.order_index}. ${escapeHtml(j.nama || j.title)}</option>`).join('');
+    }
+
+    function loadKitabDropdown() {
+      const select = document.getElementById('newBagianKitab');
+      if (!select) return;
+      select.innerHTML = '<option value="">Pilih Kitab...</option>' + allKitab.map(k => `<option value="${k.id}">${k.order_index}. ${escapeHtml(k.nama || k.title)}</option>`).join('');
+    }
+
+    async function addNewJenjang() {
+      const nama = document.getElementById('newJenjangNama').value.trim();
+      const desc = document.getElementById('newJenjangDesc').value.trim();
+      const errorEl = document.getElementById('addJenjangError');
+      errorEl.classList.add('hidden');
+
+      if (!nama) { errorEl.textContent = 'Nama jenjang diperlukan'; errorEl.classList.remove('hidden'); return; }
+
+      try {
+        await createJenjang({ nama, deskripsi: desc, order_index: allJenjang.length + 1 });
+        document.getElementById('newJenjangNama').value = '';
+        document.getElementById('newJenjangDesc').value = '';
+        alert('Jenjang berhasil ditambahkan!');
+        loadJenjangList();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    async function addNewKitab() {
+      const jenjangId = document.getElementById('newKitabJenjang').value;
+      const nama = document.getElementById('newKitabNama').value.trim();
+      const penulis = document.getElementById('newKitabPenulis').value.trim();
+      const errorEl = document.getElementById('addKitabError');
+      errorEl.classList.add('hidden');
+
+      if (!jenjangId || !nama) { errorEl.textContent = 'Jenjang dan nama kitab diperlukan'; errorEl.classList.remove('hidden'); return; }
+
+      const existingKitabs = allKitab.filter(k => k.jenjang_id === jenjangId);
+      try {
+        await createKitab({ jenjang_id: jenjangId, nama, penulis: penulis || null, order_index: existingKitabs.length + 1 });
+        document.getElementById('newKitabNama').value = '';
+        document.getElementById('newKitabPenulis').value = '';
+        alert('Kitab berhasil ditambahkan!');
+        loadJenjangList();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function editJenjang(id, currentTitle) {
+      if (typeof currentTitle === 'undefined' || currentTitle === 'undefined') {
+        currentTitle = this && this.dataset && this.dataset.title ? this.dataset.title : '';
+      }
+      const currentDesc = this && this.dataset && this.dataset.desc ? this.dataset.desc : '';
+      const newTitle = prompt('Edit nama jenjang:', currentTitle);
+      if (!newTitle || newTitle === currentTitle) return;
+      const newDesc = prompt('Edit deskripsi:', currentDesc) || currentDesc;
+      fetch(`${SUPABASE_URL}rest/v1/jenjang?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
+        body: JSON.stringify({ nama: newTitle, deskripsi: newDesc })
+      }).then(res => { if (res.ok) { alert('Berhasil diupdate!'); loadJenjangList(); } else { res.json().then(err => alert('Gagal: ' + err.message)); } });
+    }
+
+    function editKitab(id, currentTitle) {
+      if (typeof currentTitle === 'undefined' || currentTitle === 'undefined') {
+        currentTitle = this && this.dataset && this.dataset.title ? this.dataset.title : '';
+      }
+      const currentPenulis = this && this.dataset && this.dataset.penulis ? this.dataset.penulis : '';
+      const newTitle = prompt('Edit nama kitab:', currentTitle);
+      if (!newTitle || newTitle === currentTitle) return;
+      const newPenulis = prompt('Edit penulis:', currentPenulis) || currentPenulis;
+      fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
+        body: JSON.stringify({ nama: newTitle, penulis: newPenulis })
+      }).then(res => { if (res.ok) { alert('Berhasil diupdate!'); loadJenjangList(); } else { res.json().then(err => alert('Gagal: ' + err.message)); } });
+    }
+
+    async function deleteJenjang(id) {
+      if (!confirm('Yakin hapus jenjang ini?\n\nPERHATIAN: Semua kitab, bagian, bab, fasal di dalamnya juga akan dihapus.')) return;
+      const token = getToken();
+      if (!token) { alert('Session expired.'); return; }
+      try {
+        const [kitabsRes, bagiansRes, babsRes, fasalsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/kitab?jenjang_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}rest/v1/bagian`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}rest/v1/bab`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+        ]);
+        const kitabs = await kitabsRes.json().catch(() => []);
+        const allBagians2 = await bagiansRes.json().catch(() => []);
+        const allBabs2 = await babsRes.json().catch(() => []);
+        const allFasals2 = await fasalsRes.json().catch(() => []);
+
+        for (const k of kitabs) {
+          const kBagians = allBagians2.filter(b => b.kitab_id === k.id);
+          for (const b of kBagians) {
+            const bBabs = allBabs2.filter(bb => bb.bagian_id === b.id);
+            for (const bb of bBabs) {
+              const bbFasals = allFasals2.filter(f => f.bab_id === bb.id);
+              for (const f of bbFasals) {
+                await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+                await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+              }
+              await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+            }
+            await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${k.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+          }
+          await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${k.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        }
+        await fetch(`${SUPABASE_URL}rest/v1/jenjang?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        alert('Berhasil dihapus!');
+        loadJenjangList();
+      } catch (err) { alert('Gagal: ' + err.message); }
+    }
+
+    async function deleteKitab(id) {
+      if (!confirm('Yakin hapus kitab ini?\n\nPERHATIAN: Semua bagian, bab, fasal di dalamnya juga akan dihapus.')) return;
+      const token = getToken();
+      if (!token) { alert('Session expired.'); return; }
+      try {
+        const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}rest/v1/bab`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+        ]);
+        const allBagians2 = await bagiansRes.json().catch(() => []);
+        const allBabs2 = await babsRes.json().catch(() => []);
+        const allFasals2 = await fasalsRes.json().catch(() => []);
+
+        for (const b of allBagians2) {
+          const bBabs = allBabs2.filter(bb => bb.bagian_id === b.id);
+          for (const bb of bBabs) {
+            const bbFasals = allFasals2.filter(f => f.bab_id === bb.id);
+            for (const f of bbFasals) {
+              await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+              await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+            }
+            await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+          }
+          await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        }
+        await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        alert('Berhasil dihapus!');
+        loadJenjangList();
+      } catch (err) { alert('Gagal: ' + err.message); }
+    }
+
+    // Load Materi (nested: Jenjang > Kitab > Bagian > Bab > Fasal)
     async function loadMateri() {
       const container = document.getElementById('materiList');
       container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
@@ -1570,62 +1967,108 @@
       if (token) headers['Authorization'] = 'Bearer ' + token;
 
       try {
-        const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
+        const [jenjangRes, kitabRes, bagiansRes, babsRes, fasalsRes] = await Promise.all([
+          fetch(SUPABASE_URL + 'rest/v1/jenjang?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers }),
           fetch(SUPABASE_URL + 'rest/v1/bagian?order=order_index', { headers }),
           fetch(SUPABASE_URL + 'rest/v1/bab?order=order_index', { headers }),
           fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers })
         ]);
 
+        const jenjangs = await jenjangRes.json().catch(() => []);
+        const kitabs = await kitabRes.json().catch(() => []);
         const bagians = await bagiansRes.json().catch(() => []);
         const babs = await babsRes.json().catch(() => []);
         const fasals = await fasalsRes.json().catch(() => []);
 
-        if (!bagians || bagians.length === 0) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-book"></i></div><p class="empty-text">Belum ada materi</p></div>`;
+        allKitab = kitabs;
+        loadKitabDropdown();
+
+        if (!jenjangs || jenjangs.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-book"></i></div><p class="empty-text">Belum ada jenjang & kitab. Gunakan tab <strong>Jenjang</strong> untuk membuatnya.</p></div>`;
           return;
         }
 
-        let listHTML = '<div style="display:flex; flex-direction:column; gap:12px;">';
-        for (let i = 0; i < bagians.length; i++) {
-          const bagian = bagians[i];
-          const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
-          listHTML += `<div style="padding:14px; background:linear-gradient(135deg,#eff6ff,#e0e7ff); border-radius:12px; border:1px solid #bfdbfe;">`;
-          listHTML += `<div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:700; color:#1e40af;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span>
-            <div style="display:flex; gap:6px; align-items:center;">
-              <span style="padding:3px 8px; background:#3b82f6; color:white; border-radius:4px; font-size:10px; font-weight:700;">BAGIAN</span>
-              <button onclick="editMateri('bagian', '${bagian.id}', this.dataset.title)" data-title="${escapeHtml(bagian.title || bagian.nama)}" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px; color:#374151;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
-              <button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px; color:#374151;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
-            </div>
-          </div>`;
-          listHTML += `<div style="margin-top:10px; margin-left:10px; display:flex; flex-direction:column; gap:8px;">`;
-          for (let j = 0; j < bagianBabs.length; j++) {
-            const bab = bagianBabs[j];
-            const babFasals = fasals.filter(f => f.bab_id === bab.id);
-            listHTML += `<div style="padding:10px; background:white; border-radius:8px; border:1px solid #e2e8f0;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-weight:600; color:#166534;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>
-                <div style="display:flex; gap:4px;">
-                  <button onclick="openContentModal('bab', '${bab.id}')" style="padding:4px 8px; background:#f0fdf4; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Konten"><i class="fa-solid fa-pen" style="color:#059669;"></i></button>
-                  <button onclick="editMateri('bab', '${bab.id}', this.dataset.title)" data-title="${escapeHtml(bab.title || bab.nama)}" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Nama"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
-                  <button onclick="deleteMateri('bab', '${bab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
-                </div>
-              </div>`;
-            listHTML += `<div style="margin-top:8px; margin-left:10px; display:flex; flex-direction:column; gap:6px;">`;
-            for (let k = 0; k < babFasals.length; k++) {
-              const fasal = babFasals[k];
-              listHTML += `<div style="padding:8px; background:#f8fafc; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#475569;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>
-                <div style="display:flex; gap:4px;">
-                  <button onclick="openContentModal('fasal', '${fasal.id}')" style="padding:4px 8px; background:#f0fdf4; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Konten"><i class="fa-solid fa-pen" style="color:#059669;"></i></button>
-                  <button onclick="editMateri('fasal', '${fasal.id}', this.dataset.title)" data-title="${escapeHtml(fasal.title || fasal.nama)}" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit Nama"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
-                  <button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
-                </div>
-              </div>`;
+        let listHTML = '<div style="display:flex; flex-direction:column; gap:16px;">';
+        for (const jenjang of jenjangs) {
+          const jenjangKitabs = kitabs.filter(k => k.jenjang_id === jenjang.id);
+          listHTML += `<div style="padding:16px; background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:14px; border:1px solid #f59e0b;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-weight:700; color:#92400e; font-size:1rem;">${jenjang.order_index}. ${escapeHtml(jenjang.nama || jenjang.title)}</span>
+                ${jenjang.deskripsi ? `<span style="display:block; font-size:0.8rem; color:#b45309; margin-top:2px;">${escapeHtml(jenjang.deskripsi)}</span>` : ''}
+              </div>
+              <span style="padding:3px 10px; background:#f59e0b; color:white; border-radius:4px; font-size:10px; font-weight:700;">JENJANG</span>
+            </div>`;
+
+          if (jenjangKitabs.length > 0) {
+            listHTML += `<div style="margin-top:12px; margin-left:8px; display:flex; flex-direction:column; gap:10px;">`;
+            for (const kitab of jenjangKitabs) {
+              const kitabBagians = bagians.filter(b => b.kitab_id === kitab.id);
+              listHTML += `<div style="padding:12px; background:white; border-radius:10px; border:1px solid #bfdbfe;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <span style="font-weight:600; color:#1e40af;">${kitab.order_index}. ${escapeHtml(kitab.nama || kitab.title)}</span>
+                    ${kitab.penulis ? `<span style="display:block; font-size:0.75rem; color:#6b7280; margin-top:1px;">${escapeHtml(kitab.penulis)}</span>` : ''}
+                  </div>
+                  <div style="display:flex; gap:4px;">
+                    <button onclick="editKitab('${kitab.id}', this.dataset.title)" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                    <button onclick="deleteKitab('${kitab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                  </div>
+                </div>`;
+
+              if (kitabBagians.length > 0) {
+                listHTML += `<div style="margin-top:8px; margin-left:10px; display:flex; flex-direction:column; gap:6px;">`;
+                for (const bagian of kitabBagians) {
+                  const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
+                  listHTML += `<div style="padding:8px; background:#f8fafc; border-radius:6px; border:1px solid #e2e8f0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-weight:600; color:#166534; font-size:0.875rem;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span>
+                      <div style="display:flex; gap:4px;">
+                        <button onclick="editMateri('bagian', '${bagian.id}', this.dataset.title)" data-title="${escapeHtml(bagian.title || bagian.nama)}" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                        <button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                      </div>
+                    </div>`;
+
+                  if (bagianBabs.length > 0) {
+                    listHTML += `<div style="margin-top:6px; margin-left:10px; display:flex; flex-direction:column; gap:5px;">`;
+                    for (const bab of bagianBabs) {
+                      const babFasals = fasals.filter(f => f.bab_id === bab.id);
+                      listHTML += `<div style="padding:6px; background:white; border-radius:5px; border:1px solid #e2e8f0;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <span style="font-weight:500; color:#374151; font-size:0.8rem;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>
+                          <div style="display:flex; gap:3px;">
+                            <button onclick="editMateri('bab', '${bab.id}', this.dataset.title)" data-title="${escapeHtml(bab.title || bab.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                            <button onclick="deleteMateri('bab', '${bab.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                          </div>
+                        </div>`;
+
+                      if (babFasals.length > 0) {
+                        listHTML += `<div style="margin-top:4px; margin-left:8px; display:flex; flex-direction:column; gap:4px;">`;
+                        for (const fasal of babFasals) {
+                          listHTML += `<div style="padding:5px; background:#f8fafc; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#475569; font-size:0.775rem;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>
+                            <div style="display:flex; gap:3px;">
+                              <button onclick="editMateri('fasal', '${fasal.id}', this.dataset.title)" data-title="${escapeHtml(fasal.title || fasal.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                              <button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                            </div>
+                          </div>`;
+                        }
+                        listHTML += '</div>';
+                      }
+                      listHTML += '</div>';
+                    }
+                    listHTML += '</div>';
+                  }
+                  listHTML += '</div>';
+                }
+                listHTML += '</div>';
+              }
+              listHTML += '</div>';
             }
-            listHTML += '</div></div>';
+            listHTML += '</div>';
           }
-          listHTML += '</div></div>';
+          listHTML += '</div>';
         }
         listHTML += '</div>';
 
@@ -1645,11 +2088,14 @@
         let body = {};
 
         if (type === 'bagian') {
+          const kitabId = document.getElementById('newBagianKitab').value;
           const title = document.getElementById('newBagianNama').value.trim();
-          if (!title) { errorEl.textContent = 'Nama bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
-          body = { title, order_index: allBagians.length + 1 };
+          if (!kitabId || !title) { errorEl.textContent = 'Kitab dan nama bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
+          const existingBagians = allBagians.filter(b => b.kitab_id === kitabId);
+          body = { kitab_id: kitabId, title, order_index: existingBagians.length + 1 };
           await fetch(`${SUPABASE_URL}rest/v1/bagian`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' }, body: JSON.stringify(body) });
           document.getElementById('newBagianNama').value = '';
+          document.getElementById('newBagianKitab').value = '';
         } else if (type === 'bab') {
           const title = document.getElementById('newBabNama').value.trim();
           const bagianId = document.getElementById('newBabBagian').value;

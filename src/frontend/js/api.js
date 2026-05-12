@@ -124,6 +124,149 @@ function setUserRole(user) {
 }
 
 // ================================================================
+// KITAB
+// ================================================================
+
+/**
+ * Ambil semua Kitab
+ * @returns {Promise<Array>}
+ */
+async function fetchKitab() {
+  const token = getToken();
+  const headers = { 'apikey': SUPABASE_ANON_KEY };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(`${SUPABASE_URL}rest/v1/kitab?order=order_index`, { headers });
+  if (!res.ok) throw new Error('Gagal mengambil kitab');
+  return res.json();
+}
+
+/**
+ * Buat Kitab baru
+ * @param {Object} data
+ */
+async function createKitab(data) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+  const res = await fetch(`${SUPABASE_URL}rest/v1/kitab`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Prefer': 'return=representation' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'Gagal membuat kitab'); }
+  return res.json();
+}
+
+/**
+ * Update Kitab
+ * @param {string} id
+ * @param {Object} updates
+ */
+async function updateKitab(id, updates) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+  const res = await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Prefer': 'return=minimal' },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) throw new Error('Gagal update kitab');
+}
+
+/**
+ * Hapus Kitab (cascade bagian, bab, fasal)
+ * @param {string} id
+ */
+async function deleteKitab(id) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+
+  const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+    fetch(`${SUPABASE_URL}rest/v1/bab`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+    fetch(`${SUPABASE_URL}rest/v1/fasal`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+  ]);
+
+  const bagians = await bagiansRes.json().catch(() => []);
+  for (const b of bagians) {
+    await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${b.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+    await fetch(`${SUPABASE_URL}rest/v1/bagian?id=eq.${b.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+  }
+  await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+}
+
+// ================================================================
+// JENJANG
+// ================================================================
+
+/**
+ * Ambil semua Jenjang
+ * @returns {Promise<Array>}
+ */
+async function fetchJenjang() {
+  const token = getToken();
+  const headers = { 'apikey': SUPABASE_ANON_KEY };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(`${SUPABASE_URL}rest/v1/jenjang?order=order_index`, { headers });
+  if (!res.ok) throw new Error('Gagal mengambil jenjang');
+  return res.json();
+}
+
+/**
+ * Buat Jenjang baru
+ * @param {Object} data
+ */
+async function createJenjang(data) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+  const res = await fetch(`${SUPABASE_URL}rest/v1/jenjang`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Prefer': 'return=representation' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'Gagal membuat jenjang'); }
+  return res.json();
+}
+
+/**
+ * Update Jenjang
+ * @param {string} id
+ * @param {Object} updates
+ */
+async function updateJenjang(id, updates) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+  const res = await fetch(`${SUPABASE_URL}rest/v1/jenjang?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Prefer': 'return=minimal' },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) throw new Error('Gagal update jenjang');
+}
+
+/**
+ * Hapus Jenjang (cascade kitab, bagian, bab, fasal)
+ * @param {string} id
+ */
+async function deleteJenjang(id) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+
+  const [kitabsRes, bagiansRes, babsRes, fasalsRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}rest/v1/kitab?jenjang_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+    fetch(`${SUPABASE_URL}rest/v1/bagian`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+    fetch(`${SUPABASE_URL}rest/v1/bab`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+    fetch(`${SUPABASE_URL}rest/v1/fasal`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } }),
+  ]);
+
+  const kitabs = await kitabsRes.json().catch(() => []);
+  for (const k of kitabs) {
+    await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${k.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+    await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${k.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+  }
+  await fetch(`${SUPABASE_URL}rest/v1/jenjang?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+}
+
+// ================================================================
 // KURIKULUM
 // ================================================================
 
