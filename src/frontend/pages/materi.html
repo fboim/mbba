@@ -1031,7 +1031,15 @@
   <script src="/js/api.js"></script>
   <script src="/js/quiz.js"></script>
   <script>
-    // MARKER: inline script running - DEPLOYED 2026-05-12-QUIZ
+    window.onerror = function(msg, src, line, col, err) {
+      var e = document.createElement('div');
+      e.style = 'position:fixed;bottom:0;left:0;right:0;background:#dc2626;color:white;padding:16px;font-family:monospace;font-size:13px;z-index:99999;white-space:pre-wrap;max-height:200px;overflow:auto;';
+      e.textContent = 'JS ERROR:\n' + (err ? err.message : msg) + '\nLine: ' + line + '\nCol: ' + col;
+      document.body.appendChild(e);
+      return true;
+    };
+
+    // MARKER: inline script running - DEPLOYED 2026-05-13-QUIZ
     console.log('[MBBA] inline script executing. typeof startQuiz:', typeof startQuiz);
 
     // XSS protection - escape HTML special characters
