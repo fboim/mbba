@@ -1879,7 +1879,8 @@
       const currentPenulis = this && this.dataset && this.dataset.penulis ? this.dataset.penulis : '';
       const newTitle = prompt('Edit nama kitab:', currentTitle);
       if (!newTitle || newTitle === currentTitle) return;
-      const newPenulis = prompt('Edit penulis:', currentPenulis) || currentPenulis;
+      const newPenulis = prompt('Edit penulis:', currentPenulis);
+      if (newPenulis === null) return;
       fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
