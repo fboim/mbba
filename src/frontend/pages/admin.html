@@ -1266,9 +1266,85 @@
       </div>
     </div>
 
-  </main>
+    <!-- Jenjang Tab -->
+    <div id="contentJenjang" class="tab-content">
+      <div class="bento-grid">
+        <div class="bento-card">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-amber">
+                <i class="fa-solid fa-layer-group"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Tambah Jenjang</h3>
+                <p class="bento-subtitle">Tingkat pendidikan</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nama Jenjang</label>
+              <input type="text" id="newJenjangNama" class="form-input" placeholder="Contoh: Tingkat 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Deskripsi Singkat</label>
+              <input type="text" id="newJenjangDesc" class="form-input" placeholder="Contoh: Dasar nahwu dan sharaf">
+            </div>
+            <div id="addJenjangError" class="alert alert-error hidden"></div>
+            <button onclick="addNewJenjang()" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-plus"></i> Tambah Jenjang
+            </button>
+          </div>
+        </div>
+        <div class="bento-card">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-blue">
+                <i class="fa-solid fa-book"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Tambah Kitab</h3>
+                <p class="bento-subtitle">Buku dalam jenjang</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pilih Jenjang</label>
+              <select id="newKitabJenjang" class="form-input">
+                <option value="">Pilih Jenjang...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nama Kitab</label>
+              <input type="text" id="newKitabNama" class="form-input" placeholder="Contoh: Alfiyah">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Penulis (opsional)</label>
+              <input type="text" id="newKitabPenulis" class="form-input" placeholder="Contoh: Ibnu Malik">
+            </div>
+            <div id="addKitabError" class="alert alert-error hidden"></div>
+            <button onclick="addNewKitab()" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-plus"></i> Tambah Kitab
+            </button>
+          </div>
+        </div>
+        <div class="bento-card bento-span-2">
+          <div class="bento-inner">
+            <div class="bento-header">
+              <div class="bento-icon bento-icon-purple">
+                <i class="fa-solid fa-layer-group"></i>
+              </div>
+              <div>
+                <h3 class="bento-title">Daftar Jenjang &amp; Kitab</h3>
+                <p class="bento-subtitle">Struktur kurikulum lengkap</p>
+              </div>
+            </div>
+            <div id="jenjangList" class="loading">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <!-- Content Modal -->
+  </main>
   <div id="contentModal" class="fixed inset-0 bg-dark-900/60 backdrop-blur-sm z-50 hidden overflow-y-auto py-8">
     <div class="max-w-2xl mx-auto px-4">
       <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -1315,91 +1391,10 @@
         </div>
       </div>
     </div>
-    <!-- Jenjang Tab -->
-    <div id="contentJenjang" class="tab-content">
-      <div class="bento-grid">
-        <!-- Tambah Jenjang & Kitab -->
-        <div class="bento-card">
-          <div class="bento-inner">
-            <div class="bento-header">
-              <div class="bento-icon bento-icon-amber">
-                <i class="fa-solid fa-layer-group"></i>
-              </div>
-              <div>
-                <h3 class="bento-title">Tambah Jenjang</h3>
-                <p class="bento-subtitle">Tingkat pendidikan</p>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nama Jenjang</label>
-              <input type="text" id="newJenjangNama" class="form-input" placeholder="Contoh: Tingkat 1">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Deskripsi Singkat</label>
-              <input type="text" id="newJenjangDesc" class="form-input" placeholder="Contoh: Dasar nahwu dan sharaf">
-            </div>
-            <div id="addJenjangError" class="alert alert-error hidden"></div>
-            <button onclick="addNewJenjang()" class="btn btn-primary btn-block">
-              <i class="fa-solid fa-plus"></i> Tambah Jenjang
-            </button>
-          </div>
-        </div>
-
-        <!-- Tambah Kitab -->
-        <div class="bento-card">
-          <div class="bento-inner">
-            <div class="bento-header">
-              <div class="bento-icon bento-icon-blue">
-                <i class="fa-solid fa-book"></i>
-              </div>
-              <div>
-                <h3 class="bento-title">Tambah Kitab</h3>
-                <p class="bento-subtitle">Buku dalam jenjang</p>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Pilih Jenjang</label>
-              <select id="newKitabJenjang" class="form-input">
-                <option value="">Pilih Jenjang...</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nama Kitab</label>
-              <input type="text" id="newKitabNama" class="form-input" placeholder="Contoh: Alfiyah">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Penulis (opsional)</label>
-              <input type="text" id="newKitabPenulis" class="form-input" placeholder="Contoh: Ibnu Malik">
-            </div>
-            <div id="addKitabError" class="alert alert-error hidden"></div>
-            <button onclick="addNewKitab()" class="btn btn-primary btn-block">
-              <i class="fa-solid fa-plus"></i> Tambah Kitab
-            </button>
-          </div>
-        </div>
-
-        <!-- Jenjang List -->
-        <div class="bento-card bento-span-2">
-          <div class="bento-inner">
-            <div class="bento-header">
-              <div class="bento-icon bento-icon-purple">
-                <i class="fa-solid fa-layer-group"></i>
-              </div>
-              <div>
-                <h3 class="bento-title">Daftar Jenjang &amp; Kitab</h3>
-                <p class="bento-subtitle">Struktur kurikulum lengkap</p>
-              </div>
-            </div>
-            <div id="jenjangList" class="loading">
-              <div class="spinner"></div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+  </main>
 
-  <script src="../js/api.js"></script>
+  <!-- Content Modal -->
   <script>
     // XSS protection - escape HTML special characters
     function escapeHtml(text) {
