@@ -1317,10 +1317,10 @@
     </div>
     <!-- Jenjang Tab -->
     <div id="contentJenjang" class="tab-content">
-      <div class="bento-grid">
+      <div class="bento-grid" style="display:grid;">
         <!-- Add New Jenjang -->
-        <div class="bento-card">
-          <div class="bento-inner">
+        <div class="bento-card" style="display:block;">
+          <div class="bento-inner" style="display:block;">
             <div class="bento-header">
               <div class="bento-icon bento-icon-amber">
                 <i class="fa-solid fa-plus"></i>
@@ -1346,14 +1346,14 @@
         </div>
 
         <!-- Jenjang + Kitab List -->
-        <div class="bento-card bento-span-2">
-          <div class="bento-inner">
+        <div class="bento-card bento-span-2" style="display:block;">
+          <div class="bento-inner" style="display:block;">
             <div class="bento-header">
               <div class="bento-icon bento-icon-purple">
                 <i class="fa-solid fa-layer-group"></i>
               </div>
               <div>
-                <h3 class="bento-title">Daftar Jenjang & Kitab</h3>
+                <h3 class="bento-title">Daftar Jenjang &amp; Kitab</h3>
                 <p class="bento-subtitle">Struktur kurikulum lengkap</p>
               </div>
             </div>
@@ -1762,6 +1762,8 @@
         html += '</div>';
         container.classList.remove('loading');
         container.innerHTML = html;
+        container.style.display = 'block';
+        container.style.minHeight = 'auto';
       } catch (err) {
         console.error('loadJenjangList error:', err);
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">Error: ${err.message}</p></div>`;
