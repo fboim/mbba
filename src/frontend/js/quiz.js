@@ -417,7 +417,8 @@ function closeQuiz() {
 }
 
 function startQuiz() {
-  console.log('[QUIZ] startQuiz called, window.quizBank.length=' + (window.quizBank ? window.quizBank.length : 'N/A'));
+  alert('QUIZ: window.startQuiz() called! bank=' + (window.quizBank ? window.quizBank.length : 'EMPTY'));
+  console.log('[QUIZ] window.startQuiz called, window.quizBank.length=' + (window.quizBank ? window.quizBank.length : 'N/A'));
 
   var bank = window.quizBank || [];
   if (bank.length === 0) {
