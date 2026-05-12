@@ -1316,7 +1316,7 @@
       </div>
     </div>
     <!-- Jenjang Tab -->
-    <div id="contentJenjang" class="tab-content" style="display:none;">
+    <div id="contentJenjang" class="tab-content">
       <div class="bento-grid">
         <!-- Tambah Jenjang & Kitab -->
         <div class="bento-card">
@@ -1811,12 +1811,12 @@
         }
         html += '</div>';
         container.classList.remove('loading');
-        console.log('loadJenjangList: html built, length:', html.length, 'chars');
-        // Force visibility by setting inline style
-        container.setAttribute('style', 'display:block !important; visibility:visible !important; min-height:200px;');
+        container.className = '';
+        container.removeAttribute('class');
+        container.setAttribute('style', 'display:block !important; visibility:visible !important; min-height:200px; padding:0; overflow:visible !important;');
         container.innerHTML = html;
-        console.log('loadJenjangList: innerHTML set, container children:', container.children.length);
-        console.log('loadJenjangList: DONE - final classes:', container.className, 'innerHTML snippet:', container.innerHTML.substring(0, 300));
+        const rect = container.getBoundingClientRect();
+        console.log('loadJenjangList: rect:', rect.width + 'x' + rect.height + ' top:' + rect.top + ' left:' + rect.left + ' visible:' + (rect.height > 0 && rect.width > 0));
       } catch (err) {
         console.error('loadJenjangList error:', err);
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color:var(--red);">Error: ${err.message}</p></div>`;
