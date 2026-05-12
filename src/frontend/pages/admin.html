@@ -1629,23 +1629,29 @@
                 console.log('Set materiList height to:', materiList.style.height);
               }
 
-              // If still 0, use overlay approach
+              // If still 0, use position:fixed overlay approach - bypass ALL CSS issues
               if (materiList.offsetHeight === 0 || materiList.scrollHeight === 0) {
-                console.log('Using overlay approach');
-                // Find the bento-card parent and inject into it directly
-                var card = materiList.closest('.bento-card');
-                console.log('Found card:', !!card, card ? card.className : '');
-                if (card) {
-                  var injectedHTML = '<div class="bento-inner" style="padding: 24px; background: #fff;"><div style="padding: 20px; background: #fff; border: 2px solid #000;"><h3 style="margin:0 0 15px 0; color:#059669; font-size:20px;">DAFTAR MATERI</h3>' + html + '</div></div>';
-                  card.innerHTML = injectedHTML;
-                  console.log('Injected directly into bento-card, length:', injectedHTML.length);
+                console.log('Using position:fixed overlay approach');
+                // Remove any existing overlay
+                var existing = document.getElementById('materiOverlay');
+                if (existing) existing.remove();
 
-                  // Check after injection
-                  requestAnimationFrame(function() {
-                    console.log('After injection - card offsetHeight:', card.offsetHeight);
-                    console.log('After injection - card innerHTML length:', card.innerHTML.length);
-                  });
-                }
+                var overlay = document.createElement('div');
+                overlay.id = 'materiOverlay';
+                overlay.style.cssText = 'position:fixed !important; top:100px !important; left:20px !important; right:20px !important; z-index:9999 !important; background:#fff !important; border:3px solid #000 !important; border-radius:20px !important; padding:24px !important; box-shadow:0 20px 60px rgba(0,0,0,0.3) !important; max-height:70vh !important; overflow-y:auto !important;';
+                overlay.innerHTML = '<h3 style="margin:0 0 20px 0; color:#059669; font-size:22px; font-weight:700;">DAFTAR MATERI</h3>' + html;
+
+                var closeBtn = document.createElement('button');
+                closeBtn.textContent = 'X';
+                closeBtn.style.cssText = 'position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; border:none; background:#ef4444; color:#fff; font-weight:700; cursor:pointer;';
+                closeBtn.onclick = function() { overlay.remove(); };
+                overlay.style.position = 'relative';
+                overlay.insertBefore(closeBtn, overlay.firstChild);
+                overlay.style.position = 'fixed';
+                overlay.style.top = '100px';
+
+                document.body.appendChild(overlay);
+                console.log('Created fixed overlay');
               }
             });
           });
