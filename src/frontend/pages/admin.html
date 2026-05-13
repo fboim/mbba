@@ -3637,20 +3637,34 @@
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
-        const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bagian?select=*,kitab(nama)`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
-          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title,nama,kitab(nama))`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title,nama, bagian(title,nama,kitab(nama)))`, { headers }).catch(e => { return { ok: true, json: () => [] }; })
+        const [bagiansRes, babsRes, fasalsRes, kitabsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/bagian?select=id,audio_url,title,nama,kitab_id`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
+          fetch(`${SUPABASE_URL}rest/v1/bab?select=id,audio_url,title,nama,label,bagian_id`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,audio_url,title,nama,label,bab_id`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
+          fetch(`${SUPABASE_URL}rest/v1/kitab?select=id,nama`, { headers }).catch(e => { return { ok: true, json: () => [] }; })
         ]);
 
         const bagians = (await bagiansRes.json().catch(() => [])).filter(b => b.audio_url);
         const babs = (await babsRes.json().catch(() => [])).filter(b => b.audio_url);
         const fasals = (await fasalsRes.json().catch(() => [])).filter(f => f.audio_url);
+        const kitabs = (await kitabsRes.json().catch(() => []));
+
+        const getKitabName = (bagianId) => {
+          const bagian = allBagians.find(b => b.id === bagianId);
+          if (bagian) {
+            const kitab = kitabs.find(k => k.id === bagian.kitab_id);
+            return kitab?.nama || 'Tanpa Kitab';
+          }
+          return 'Tanpa Kitab';
+        };
 
         const allAudio = [
-          ...bagians.map(b => ({ ...b, type: 'bagian', label: b.title || b.nama, parent: b.kitab?.nama || 'Tanpa Kitab' })),
-          ...babs.map(b => ({ ...b, type: 'bab', label: b.title || b.nama || b.label, parent: b.bagian?.kitab?.nama || b.bagian?.title || b.bagian?.nama || 'Tanpa Kitab' })),
-          ...fasals.map(f => ({ ...f, type: 'fasal', label: f.title || f.nama || f.label, parent: f.bab?.bagian?.kitab?.nama || f.bab?.bagian?.title || f.bab?.bagian?.nama || 'Tanpa Kitab' }))
+          ...bagians.map(b => ({ ...b, type: 'bagian', label: b.title || b.nama, parent: getKitabName(b.id) })),
+          ...babs.map(b => ({ ...b, type: 'bab', label: b.title || b.nama || b.label, parent: getKitabName(b.bagian_id) })),
+          ...fasals.map(f => {
+            const bab = babs.find(b => b.id === f.bab_id);
+            return { ...f, type: 'fasal', label: f.title || f.nama || f.label, parent: bab ? getKitabName(bab.bagian_id) : 'Tanpa Kitab' };
+          })
         ];
 
         if (allAudio.length === 0) {
