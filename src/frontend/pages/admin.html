@@ -3155,30 +3155,6 @@
     let currentAudioUrl = null;
     let uploadedFile = null;
 
-    // Initialize Audio Tab
-    async function initAudioTab() {
-      const select = document.getElementById('audioMateriSelect');
-      const container = document.getElementById('audioList');
-      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      select.innerHTML = '<option value="">Pilih Bab atau Fasal...</option>';
-
-      // Add Bab options
-      const babOptionGroup = (allBabs || []).filter(b => b.is_muqoddimah).map(b =>
-        `<option value="bab:${b.id}">Bab - ${b.label}</option>`
-      ).join('');
-
-      // Add Fasal options
-      const fasalOptionGroup = (allFasals || []).map(f =>
-        `<option value="fasal:${f.id}">Fasal - ${f.label}</option>`
-      ).join('');
-
-      select.innerHTML = '<option value="">Pilih Bab atau Fasal...</option>' +
-        (babOptionGroup ? '<optgroup label="Bab">' + babOptionGroup + '</optgroup>' : '') +
-        (fasalOptionGroup ? '<optgroup label="Fasal">' + fasalOptionGroup + '</optgroup>' : '');
-
-      loadAudioList();
-    }
-
     // Load Audio for Selected Materi
     async function loadAudioForMateri() {
       const select = document.getElementById('audioMateriSelect');
