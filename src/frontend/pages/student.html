@@ -792,7 +792,7 @@
         <h3 id="continueTitle" class="continue-title">Memuat...</h3>
         <p id="continueSubtitle" class="continue-subtitle">Subtitle</p>
       </div>
-      <a href="#" id="continueBtn" class="continue-btn">
+      <a href="#" id="continueBtn" class="continue-btn" onclick="showMateriPopup(currentItemData); return false;">
         <span>Lanjut</span>
         <i class="fa-solid fa-arrow-right"></i>
       </a>
@@ -880,6 +880,7 @@
     var allJenjangs = [];
     var selectedJenjangId = null;
     var kurikulum = [];
+    var currentItemData = null;
 
     (async function() {
       var user = await getCurrentUser();
@@ -1087,15 +1088,13 @@
 
       if (isInProgress || true) {
         section.classList.remove('hidden');
+        currentItemData = currentItem;
         document.getElementById('continueTitle').textContent = currentItem.title;
         document.getElementById('continueSubtitle').textContent = currentItem.type === 'bab' ? 'Muqoddimah' : currentItem.subtitle;
 
         if (progress) {
           document.getElementById('continuePercent').textContent = progress.quiz_score + '%';
         }
-
-        var link = currentItem.type === 'bab' ? 'materi.html?bab=' + currentItem.id : 'materi.html?id=' + currentItem.id;
-        document.getElementById('continueBtn').href = link;
       }
     }
 
@@ -1483,6 +1482,17 @@
       var div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
+    }
+
+    // Show materi in popup/modal
+    function showMateriPopup(item) {
+      if (!item) return;
+      var url = item.type === 'bab' ? 'materi.html?bab=' + item.id : 'materi.html?id=' + item.id;
+      var width = 1200;
+      var height = 800;
+      var left = (screen.width / 2) - (width / 2);
+      var top = (screen.height / 2) - (height / 2);
+      window.open(url, 'materi', 'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
     }
   </script>
 </body>
