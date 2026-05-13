@@ -3155,6 +3155,48 @@
     let currentAudioUrl = null;
     let uploadedFile = null;
 
+    // Initialize Audio Tab
+    async function initAudioTab() {
+      const select = document.getElementById('audioMateriSelect');
+      const container = document.getElementById('audioList');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      select.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const [babsRes, fasalsRes] = await Promise.all([
+          fetch(SUPABASE_URL + 'rest/v1/bab?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers })
+        ]);
+
+        const babs = await babsRes.json().catch(() => []);
+        const fasals = await fasalsRes.json().catch(() => []);
+
+        allBabs = babs;
+        allFasals = fasals;
+
+        const babOptionGroup = babs.filter(b => b.is_muqoddimah).map(b =>
+          `<option value="bab:${b.id}">Bab - ${escapeHtml(b.label || b.title || b.nama)}</option>`
+        ).join('');
+
+        const fasalOptionGroup = fasals.map(f =>
+          `<option value="fasal:${f.id}">Fasal - ${escapeHtml(f.label || f.title || f.nama)}</option>`
+        ).join('');
+
+        select.innerHTML = '<option value="">Pilih Bab atau Fasal...</option>' +
+          (babOptionGroup ? '<optgroup label="Bab">' + babOptionGroup + '</optgroup>' : '') +
+          (fasalOptionGroup ? '<optgroup label="Fasal">' + fasalOptionGroup + '</optgroup>' : '');
+
+        loadAudioList();
+      } catch (err) {
+        console.error('Error loading audio materi:', err);
+        select.innerHTML = '<option value="">Gagal memuat - refresh halaman</option>';
+      }
+    }
+
     // Load Audio for Selected Materi
     async function loadAudioForMateri() {
       const select = document.getElementById('audioMateriSelect');
