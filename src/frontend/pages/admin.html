@@ -4137,7 +4137,13 @@
         document.getElementById('mcC').value = '';
         document.getElementById('mcD').value = '';
         alert('Soal berhasil ditambahkan!');
-        loadQuizListByFasal();
+
+        // Reload quiz list based on current selection
+        if (fasalId) {
+          loadQuizListByFasal();
+        } else if (babId) {
+          loadQuizListByBab();
+        }
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
@@ -4148,7 +4154,14 @@
       if (!confirm('Yakin hapus soal ini?')) return;
       try {
         await fetch(`${SUPABASE_URL}rest/v1/quiz?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } });
-        loadQuizList();
+        // Reload based on current selection
+        if (document.getElementById('quizFasalSelect')?.value) {
+          loadQuizListByFasal();
+        } else if (document.getElementById('quizBabSelect')?.value) {
+          loadQuizListByBab();
+        } else {
+          loadQuizList();
+        }
       } catch (err) {
         alert('Gagal hapus: ' + err.message);
       }
