@@ -1309,10 +1309,6 @@
               <textarea id="editBabContentId" class="form-input" rows="4" placeholder="<p>Konten...</p>"></textarea>
               <p class="text-xs text-slate-500 mt-1">HTML diperbolehkan: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;table&gt;, &lt;span style=&quot;color:...&quot;&gt;</p>
             </div>
-            <div class="form-group">
-              <label class="form-label">URL Audio (opsional)</label>
-              <input type="url" id="editBabAudioUrl" class="form-input" placeholder="https://example.com/audio.mp3">
-            </div>
             <div id="editBabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
           </div>
           <div id="babPanelPreview" class="hidden">
@@ -1481,7 +1477,7 @@
             <div id="quizBabSection" class="hidden">
               <div class="form-group">
                 <label class="form-label">Pilih Bab</label>
-                <select id="quizBabSelect" onchange="loadFasalForQuiz()" class="form-select">
+                <select id="quizBabSelect" onchange="onQuizBabChange()" class="form-select">
                   <option value="">Pilih Bab...</option>
                 </select>
               </div>
@@ -1491,7 +1487,7 @@
             <div id="quizFasalSection" class="hidden">
               <div class="form-group">
                 <label class="form-label">Pilih Fasal</label>
-                <select id="quizFasalSelect" class="form-select">
+                <select id="quizFasalSelect" onchange="onQuizFasalChange()" class="form-select">
                   <option value="">Pilih Fasal...</option>
                 </select>
               </div>
@@ -2160,6 +2156,100 @@
       } catch (err) {
         console.error('Error loading fasal:', err);
         fasalSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    // Handle Bab selection change - allow adding quiz directly to Bab
+    function onQuizBabChange() {
+      const babId = document.getElementById('quizBabSelect').value;
+      const fasalSelect = document.getElementById('quizFasalSelect');
+      const materiSection = document.getElementById('quizMateriSection');
+      const fasalSection = document.getElementById('quizFasalSection');
+
+      if (!babId) {
+        fasalSection.classList.add('hidden');
+        materiSection.classList.add('hidden');
+        return;
+      }
+
+      // Show fasal dropdown
+      fasalSection.classList.remove('hidden');
+
+      // Load fasals
+      loadFasalForQuiz();
+
+      // Show materi section and load Bab quizzes
+      materiSection.classList.remove('hidden');
+      loadQuizListByBab();
+    }
+
+    // Handle Fasal selection change
+    function onQuizFasalChange() {
+      const fasalId = document.getElementById('quizFasalSelect').value;
+      const materiSection = document.getElementById('quizMateriSection');
+
+      if (fasalId) {
+        materiSection.classList.remove('hidden');
+        loadQuizListByFasal();
+      } else {
+        // No fasal selected, show Bab quizzes
+        loadQuizListByBab();
+      }
+    }
+
+    // Load quiz list by Bab
+    async function loadQuizListByBab() {
+      const babId = document.getElementById('quizBabSelect').value;
+      const container = document.getElementById('quizList');
+      const emptyState = document.getElementById('quizEmptyState');
+
+      if (!babId) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/quiz?bab_id=eq.${babId}&order=created_at.desc`, { headers });
+        const quizzes = await res.json().catch(() => []);
+
+        if (quizzes.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-question-circle"></i></div><p class="empty-text">Belum ada soal untuk Bab ini</p></div>`;
+          return;
+        }
+
+        let html = '<div class="table-container"><table class="data-table"><thead><tr><th>#</th><th>Tipe</th><th>Pertanyaan</th><th>Aksi</th></tr></thead><tbody>';
+        quizzes.forEach((q, i) => {
+          const typeBadge = q.quiz_type === 'mc' ? 'badge-blue' : (q.quiz_type === 'fill-arab' ? 'badge-amber' : 'badge-purple');
+          html += `
+            <tr>
+              <td>${i + 1}</td>
+              <td><span class="badge ${typeBadge}">${q.quiz_type}</span></td>
+              <td class="font-medium truncate max-w-xs">${escapeHtml(q.question || '-')}</td>
+              <td>
+                <div class="flex gap-2">
+                  <button onclick="deleteQuiz('${q.id}')" class="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        html += '</tbody></table></div>';
+        html += `<p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-question-circle mr-1"></i>Total: ${quizzes.length} soal</p>`;
+        container.innerHTML = html;
+      } catch (err) {
+        console.error('Error loading quizzes:', err);
+        container.innerHTML = '<div class="alert alert-error">Gagal memuat soal</div>';
       }
     }
 
@@ -3491,7 +3581,6 @@
       document.getElementById('editBabIsMuqoddimah').checked = bab.is_muqoddimah === true;
       document.getElementById('editBabIsLocked').checked = bab.is_locked === true;
       document.getElementById('editBabQuizCount').value = bab.quiz_count || 10;
-      document.getElementById('editBabAudioUrl').value = bab.audio_url || '';
       document.getElementById('editBabContentArab').value = bab.content_arab || '';
       document.getElementById('editBabContentId').value = bab.content_id || '';
       document.getElementById('editBabError').classList.add('hidden');
@@ -3552,7 +3641,6 @@
       const is_muqoddimah = document.getElementById('editBabIsMuqoddimah').checked;
       const is_locked = document.getElementById('editBabIsLocked').checked;
       const quiz_count = parseInt(document.getElementById('editBabQuizCount').value) || 10;
-      const audio_url = document.getElementById('editBabAudioUrl').value.trim() || null;
       const content_arab = document.getElementById('editBabContentArab').value.trim();
       const content_id = document.getElementById('editBabContentId').value.trim();
       const errorEl = document.getElementById('editBabError');
@@ -3567,7 +3655,7 @@
         const res = await fetch(`${SUPABASE_URL}rest/v1/bab?id=eq.${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
-          body: JSON.stringify({ title, is_muqoddimah, is_locked, quiz_count, audio_url, content_arab: content_arab || null, content_id: content_id || null })
+          body: JSON.stringify({ title, is_muqoddimah, is_locked, quiz_count, content_arab: content_arab || null, content_id: content_id || null })
         });
 
         if (res.ok) {
@@ -3984,13 +4072,14 @@
     // Add New Quiz
     async function addNewQuiz() {
       const fasalId = document.getElementById('quizFasalSelect').value;
+      const babId = document.getElementById('quizBabSelect').value;
       const type = document.getElementById('newQuizType').value;
       const question = document.getElementById('newQuizQuestion').value.trim();
       const answer = document.getElementById('newQuizAnswer').value.trim();
       const errorEl = document.getElementById('addQuizError');
       errorEl.classList.add('hidden');
 
-      if (!fasalId) { errorEl.textContent = 'Pilih fasal terlebih dahulu.'; errorEl.classList.remove('hidden'); return; }
+      if (!fasalId && !babId) { errorEl.textContent = 'Pilih Bab atau Fasal terlebih dahulu.'; errorEl.classList.remove('hidden'); return; }
       if (!question || !answer) { errorEl.textContent = 'Lengkapi semua field.'; errorEl.classList.remove('hidden'); return; }
 
       // Input sanitization - prevent XSS
@@ -4001,7 +4090,8 @@
         quiz_type: type,
         question: sanitizedQuestion,
         correct_answer: sanitizedAnswer,
-        fasal_id: fasalId
+        fasal_id: fasalId || null,
+        bab_id: babId || null
       };
 
       if (type === 'mc') {
@@ -4464,37 +4554,55 @@
         return;
       }
 
-      // If value starts with "bab:", load fasals for that bab
+      // If value starts with "bab:", load audio for Bab directly OR show fasals
       if (value.startsWith('bab:')) {
-        document.getElementById('audioFasalSection').classList.remove('hidden');
         const babId = value.replace('bab:', '');
-        const fasalSelect = document.getElementById('audioFasalSelect');
-        fasalSelect.innerHTML = '<option value="">Memuat...</option>';
+        const recordingArea = document.getElementById('recordingArea');
+        const audioEmptyState = document.getElementById('audioEmptyState');
+        const fasalSection = document.getElementById('audioFasalSection');
 
+        // Check if this Bab has audio
         const token = getToken();
         const headers = { 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
         try {
-          const res = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&order=order_index`, { headers });
-          const fasals = await res.json().catch(() => []);
+          const res = await fetch(`${SUPABASE_URL}rest/v1/bab?id=eq.${babId}&select=audio_url`, { headers });
+          const data = await res.json();
+
+          // Load audio for Bab directly
+          selectedMateriType = 'bab';
+          selectedMateriId = babId;
+          recordingArea.classList.remove('hidden');
+          audioEmptyState.classList.add('hidden');
+          resetRecording();
+
+          if (data.length > 0 && data[0].audio_url) {
+            currentAudioUrl = data[0].audio_url;
+            document.getElementById('existingAudioSection').classList.remove('hidden');
+            document.getElementById('existingAudioDuration').textContent = 'Audio tersedia';
+          } else {
+            document.getElementById('existingAudioSection').classList.add('hidden');
+            currentAudioUrl = null;
+          }
+
+          // Also load fasals dropdown
+          const fasalSelect = document.getElementById('audioFasalSelect');
+          fasalSection.classList.remove('hidden');
+          fasalSelect.innerHTML = '<option value="">Memuat...</option>';
+
+          const fasalRes = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&order=order_index`, { headers });
+          const fasals = await fasalRes.json().catch(() => []);
 
           fasalSelect.innerHTML = '<option value="">Pilih Fasal...</option>' +
             fasals.map(f => `<option value="fasal:${f.id}">${escapeHtml(f.title || f.id)}</option>`).join('');
-
-          // Auto-select if only one fasal
-          if (fasals.length === 1) {
-            fasalSelect.value = `fasal:${fasals[0].id}`;
-            loadAudioForMateri();
-          }
         } catch (err) {
-          console.error('Error loading fasal:', err);
-          fasalSelect.innerHTML = '<option value="">Gagal memuat</option>';
+          console.error('Error loading audio:', err);
         }
       }
     }
 
-    // Load Audio for Selected Materi
+    // Handle Fasal selection for audio
     async function loadAudioForMateri() {
       const select = document.getElementById('audioFasalSelect');
       const value = select.value;
