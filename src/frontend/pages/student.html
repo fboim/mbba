@@ -528,6 +528,34 @@
       border-color: var(--purple);
     }
 
+    /* Tab Navigation */
+    .main-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0;
+    }
+    .main-tab {
+      padding: 12px 24px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      margin-bottom: -1px;
+    }
+    .main-tab:hover { color: var(--text-primary); }
+    .main-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     /* Quick Stats */
     .quick-stats {
       display: grid;
@@ -686,26 +714,39 @@
   <main class="main">
 
     <!-- Hero Section -->
-    <div style="margin-bottom: 32px;" class="animate-fade-up">
+    <div style="margin-bottom: 24px;" class="animate-fade-up">
       <h1 class="hero-title">
         <span class="hero-title-accent">Assalamu'alaikum</span>
       </h1>
       <p class="hero-subtitle">Madrasah Belajar Bahasa Arab</p>
     </div>
 
+    <!-- Tab Navigation -->
+    <div class="main-tabs">
+      <button class="main-tab active" onclick="switchTab('belajar')">
+        <i class="fa-solid fa-book-open" style="margin-right:6px;"></i> Belajar
+      </button>
+      <button class="main-tab" onclick="switchTab('progress')">
+        <i class="fa-solid fa-chart-line" style="margin-right:6px;"></i> Progress
+      </button>
+    </div>
+
+    <!-- Tab: Belajar -->
+    <div id="tabBelajar" class="tab-content active">
+
     <!-- Progress Card -->
     <div class="bento-card animate-fade-up" style="animation-delay: 0.1s; margin-bottom: 24px;">
       <div class="progress-card bento-inner">
         <div class="progress-ring-container">
-          <svg class="progress-ring" width="150" height="150" viewBox="0 0 150 150">
+          <svg class="progress-ring" width="120" height="120" viewBox="0 0 120 120">
             <defs>
               <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stop-color="#059669" />
                 <stop offset="100%" stop-color="#34d399" />
               </linearGradient>
             </defs>
-            <circle class="progress-ring-bg" cx="75" cy="75" r="60" />
-            <circle id="progressCircle" class="progress-ring-fill" cx="75" cy="75" r="60" stroke-dasharray="377" stroke-dashoffset="377" />
+            <circle class="progress-ring-bg" cx="60" cy="60" r="48" />
+            <circle id="progressCircle" class="progress-ring-fill" cx="60" cy="60" r="48" stroke-dasharray="302" stroke-dashoffset="302" />
           </svg>
           <div class="progress-center">
             <span id="progressPercent" class="progress-percent">0%</span>
@@ -715,7 +756,7 @@
 
         <div class="progress-stats">
           <h2 class="progress-title">Perjalanan Belajarmu</h2>
-          <p class="progress-desc">Terus semangat! Kamu di jalur yang tepat.</p>
+          <p class="progress-desc">Terus semangat!</p>
           <div class="stats-mini">
             <div class="stat-mini">
               <div id="statCompleted" class="stat-mini-value green">0</div>
@@ -822,50 +863,57 @@
         </div>
       </div>
     </div>
+    <!-- End Tab: Belajar -->
 
-    <!-- Bento Grid -->
-    <div class="bento-grid">
+    <!-- Tab: Progress -->
+    <div id="tabProgress" class="tab-content">
 
-      <!-- Timeline Section -->
-      <div class="bento-card bento-span-2 animate-fade-up" style="animation-delay: 0.3s;">
-        <div class="bento-inner">
-          <div class="section-header">
-            <div class="section-icon">
-              <i class="fa-solid fa-route"></i>
+      <!-- Bento Grid -->
+      <div class="bento-grid">
+
+        <!-- Timeline Section -->
+        <div class="bento-card bento-span-2 animate-fade-up" style="animation-delay: 0.3s;">
+          <div class="bento-inner">
+            <div class="section-header">
+              <div class="section-icon">
+                <i class="fa-solid fa-route"></i>
+              </div>
+              <h2 class="section-title">Jalur Belajar Kitab Mukhtarat</h2>
             </div>
-            <h2 class="section-title">Jalur Belajar Kitab Mukhtarat</h2>
-          </div>
 
-          <div id="fasalList" class="timeline">
+            <div id="fasalList" class="timeline">
+              <div class="activity-empty">
+                <div class="activity-empty-icon">
+                  <div class="spinner"></div>
+                </div>
+                <p class="activity-empty-text">Memuat jalur belajar...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bento-card animate-fade-up" style="animation-delay: 0.4s;">
+          <div class="activity-header">
+            <div class="activity-icon">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <h3 class="activity-title">Aktivitas Terakhir</h3>
+          </div>
+          <div id="recentActivity" class="activity-body">
             <div class="activity-empty">
               <div class="activity-empty-icon">
-                <div class="spinner"></div>
+                <i class="fa-solid fa-inbox"></i>
               </div>
-              <p class="activity-empty-text">Memuat jalur belajar...</p>
+              <p class="activity-empty-text">Belum ada aktivitas</p>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Recent Activity -->
-      <div class="bento-card animate-fade-up" style="animation-delay: 0.4s;">
-        <div class="activity-header">
-          <div class="activity-icon">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-          </div>
-          <h3 class="activity-title">Aktivitas Terakhir</h3>
-        </div>
-        <div id="recentActivity" class="activity-body">
-          <div class="activity-empty">
-            <div class="activity-empty-icon">
-              <i class="fa-solid fa-inbox"></i>
-            </div>
-            <p class="activity-empty-text">Belum ada aktivitas</p>
-          </div>
-        </div>
       </div>
-
     </div>
+    <!-- End Tab: Progress -->
+
   </main>
 
   <script src="/js/api.js"></script>
@@ -1269,6 +1317,13 @@
     function handleLogout() {
       logout();
       window.location.href = 'auth.html';
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector(`.main-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+      document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
     }
 
     async function loadKitabCards() {
