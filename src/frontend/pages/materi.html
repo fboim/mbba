@@ -1412,6 +1412,7 @@
     var urlParams = new URLSearchParams(window.location.search);
     var fasalId = urlParams.get('id');
     var babId = urlParams.get('bab');
+    var kitabId = urlParams.get('kitab');
 
     (async function() {
       var user = await getCurrentUser();
@@ -1422,8 +1423,75 @@
       }
       if (babId) { await loadBab(babId); }
       else if (fasalId) { await loadFasal(fasalId); }
+      else if (kitabId) { await loadKitab(kitabId); }
       else { window.location.href = 'student.html'; }
     })();
+
+    async function loadKitab(kitabId) {
+      try {
+        var res = await fetch(SUPABASE_URL + 'rest/v1/kitab?id=eq.' + kitabId, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+        });
+        var data = await res.json();
+        var kitab = data[0];
+        if (!kitab) { window.location.href = 'student.html'; return; }
+
+        document.getElementById('breadcrumbKitab').textContent = kitab.nama || kitab.title || 'Kitab';
+        document.getElementById('breadcrumbBagian').textContent = 'Daftar Materi';
+        document.getElementById('breadcrumbBab').textContent = '-';
+        document.getElementById('breadcrumbFasal').textContent = '-';
+        document.getElementById('fasalTitle').textContent = kitab.nama || kitab.title || 'Kitab';
+        document.getElementById('fasalNumber').textContent = '';
+        document.getElementById('fasalType').textContent = 'DAFTAR MATERI';
+        document.getElementById('fasalType').className = 'badge badge-purple';
+        document.getElementById('fasalBab').textContent = kitab.penulis || '';
+
+        // Load daftar bagian/bab/fasal untuk kitab ini
+        var bagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order=order_index', {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+        });
+        var bagians = await bagianRes.json().catch(() => []);
+
+        var content = '<div style="padding: 24px;">';
+
+        if (bagians.length === 0) {
+          content += '<div style="text-align:center;padding:48px 24px;background:#fef3c7;border-radius:16px;border:1px solid #fcd34d;margin:8px 0;"><i class="fa-solid fa-file-import" style="font-size:2rem;color:#d97706;margin-bottom:12px;display:block;"></i><p style="font-size:1rem;font-weight:600;color:#92400e;margin-bottom:4px;">Materi belum tersedia</p><p style="font-size:0.8rem;color:#b45309;">Admin perlu menambahkan materi terlebih dahulu.</p></div>';
+        } else {
+          content += '<div style="display:flex;flex-direction:column;gap:16px;">';
+          for (var bg of bagians) {
+            content += '<div style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-subtle);">';
+            content += '<h3 style="font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:12px;">' + (bg.order_index || '') + '. ' + (bg.nama || bg.title || 'Bagian') + '</h3>';
+
+            var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bg.id + '&order=order_index', {
+              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+            });
+            var babs = await babRes.json().catch(() => []);
+
+            content += '<div style="display:flex;flex-direction:column;gap:8px;">';
+            for (var bb of babs) {
+              content += '<a href="materi.html?bab=' + bb.id + '" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-base);border-radius:12px;text-decoration:none;color:inherit;transition:all 0.2s;" onmouseover="this.style.background=\'var(--border-subtle)\'" onmouseout="this.style.background=\'var(--bg-base)\'">';
+              content += '<div style="width:32px;height:32px;background:#8b5cf6;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;font-weight:700;">' + bb.order_index + '</div>';
+              content += '<div style="flex:1;">';
+              content += '<div style="font-weight:600;font-size:0.9rem;">' + (bb.title || bb.nama || 'Bab ' + bb.order_index) + '</div>';
+              content += '<div style="font-size:0.75rem;color:var(--text-muted);">' + (bb.is_muqoddimah ? 'MUQODDIMAH' : 'Daftar Fasal') + '</div>';
+              content += '</div>';
+              content += '<i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>';
+              content += '</a>';
+            }
+            content += '</div></div>';
+          }
+          content += '</div>';
+        }
+
+        content += '</div>';
+        document.getElementById('fasalContent').innerHTML = content;
+        document.getElementById('translationSection').classList.add('hidden');
+        document.getElementById('startQuizBtn').classList.add('hidden');
+
+      } catch(err) {
+        document.getElementById('fasalContent').innerHTML = '<div style="text-align:center;padding:48px;color:#ef4444;"><i class="fa-solid fa-exclamation-triangle"></i> Gagal memuat: ' + err.message + '</div>';
+      }
+    }
 
     async function loadBab(babId) {
       try {
