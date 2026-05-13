@@ -1387,12 +1387,22 @@
               </div>
             </div>
 
-            <!-- Select Materi -->
+            <!-- Select Kitab -->
             <div class="form-group">
-              <label class="form-label">Pilih Materi</label>
-              <select id="audioMateriSelect" onchange="loadAudioForMateri()" class="form-select">
-                <option value="">Pilih Bab atau Fasal...</option>
+              <label class="form-label">Pilih Kitab</label>
+              <select id="audioKitabSelect" onchange="loadBagianBabFasalForAudio()" class="form-select">
+                <option value="">Pilih Kitab...</option>
               </select>
+            </div>
+
+            <!-- Select Materi -->
+            <div id="audioMateriSection" class="hidden">
+              <div class="form-group">
+                <label class="form-label">Pilih Materi</label>
+                <select id="audioMateriSelect" onchange="loadAudioForMateri()" class="form-select">
+                  <option value="">Pilih Bagian, Bab, atau Fasal...</option>
+                </select>
+              </div>
             </div>
 
             <!-- Recording Area -->
@@ -3157,43 +3167,94 @@
 
     // Initialize Audio Tab
     async function initAudioTab() {
-      const select = document.getElementById('audioMateriSelect');
+      const kitabSelect = document.getElementById('audioKitabSelect');
       const container = document.getElementById('audioList');
       container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      select.innerHTML = '<option value="">Memuat...</option>';
+      kitabSelect.innerHTML = '<option value="">Memuat...</option>';
 
       const token = getToken();
       const headers = { 'apikey': SUPABASE_ANON_KEY };
       if (token) headers['Authorization'] = 'Bearer ' + token;
 
       try {
-        const [babsRes, fasalsRes] = await Promise.all([
-          fetch(SUPABASE_URL + 'rest/v1/bab?order=order_index', { headers }),
-          fetch(SUPABASE_URL + 'rest/v1/fasal?order=order_index', { headers })
-        ]);
+        const kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
+        const kitabs = await kitabRes.json().catch(() => []);
 
-        const babs = await babsRes.json().catch(() => []);
-        const fasals = await fasalsRes.json().catch(() => []);
+        allKitab = kitabs;
+        kitabSelect.innerHTML = '<option value="">Pilih Kitab...</option>' +
+          kitabs.map(k => `<option value="${k.id}">${escapeHtml(k.nama || k.title)}</option>`).join('');
 
-        allBabs = babs;
-        allFasals = fasals;
-
-        const babOptionGroup = babs.filter(b => b.is_muqoddimah).map(b =>
-          `<option value="bab:${b.id}">Bab - ${escapeHtml(b.label || b.title || b.nama)}</option>`
-        ).join('');
-
-        const fasalOptionGroup = fasals.map(f =>
-          `<option value="fasal:${f.id}">Fasal - ${escapeHtml(f.label || f.title || f.nama)}</option>`
-        ).join('');
-
-        select.innerHTML = '<option value="">Pilih Bab atau Fasal...</option>' +
-          (babOptionGroup ? '<optgroup label="Bab">' + babOptionGroup + '</optgroup>' : '') +
-          (fasalOptionGroup ? '<optgroup label="Fasal">' + fasalOptionGroup + '</optgroup>' : '');
-
+        // Hide materi section initially
+        document.getElementById('audioMateriSection').classList.add('hidden');
         loadAudioList();
       } catch (err) {
-        console.error('Error loading audio materi:', err);
-        select.innerHTML = '<option value="">Gagal memuat - refresh halaman</option>';
+        console.error('Error loading audio tab:', err);
+        kitabSelect.innerHTML = '<option value="">Gagal memuat - refresh halaman</option>';
+      }
+    }
+
+    // Load Bagian, Bab, Fasal for Audio selection
+    async function loadBagianBabFasalForAudio() {
+      const kitabId = document.getElementById('audioKitabSelect').value;
+      const materiSelect = document.getElementById('audioMateriSelect');
+      const materiSection = document.getElementById('audioMateriSection');
+
+      if (!kitabId) {
+        materiSection.classList.add('hidden');
+        return;
+      }
+
+      materiSection.classList.remove('hidden');
+      materiSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
+          fetch(SUPABASE_URL + `rest/v1/bagian?kitab_id=eq.${kitabId}&order=order_index`, { headers }),
+          fetch(SUPABASE_URL + `rest/v1/bab?order=order_index`, { headers }),
+          fetch(SUPABASE_URL + `rest/v1/fasal?order=order_index`, { headers })
+        ]);
+
+        const bagians = await bagiansRes.json().catch(() => []);
+        const allBabsData = await babsRes.json().catch(() => []);
+        const allFasalsData = await fasalsRes.json().catch(() => []);
+
+        // Filter babs and fasals that belong to this kitab (via bagian)
+        const kitabBagianIds = bagians.map(b => b.id);
+        const filteredBabs = allBabsData.filter(b => b.bagian_id && kitabBagianIds.includes(b.bagian_id));
+        const filteredFasals = allFasalsData.filter(f => {
+          const bab = allBabsData.find(b => b.id === f.bab_id);
+          return bab && bab.bagian_id && kitabBagianIds.includes(bab.bagian_id);
+        });
+
+        let options = '<option value="">Pilih Bagian, Bab, atau Fasal...</option>';
+
+        // Add Bagian options
+        bagians.forEach(b => {
+          options += `<option value="bagian:${b.id}">Bagian - ${escapeHtml(b.nama || b.title)}</option>`;
+        });
+
+        // Add Bab options (only muqoddimah)
+        filteredBabs.filter(b => b.is_muqoddimah).forEach(b => {
+          options += `<option value="bab:${b.id}">Bab - ${escapeHtml(b.label || b.title || b.nama)}</option>`;
+        });
+
+        // Add Fasal options
+        filteredFasals.forEach(f => {
+          options += `<option value="fasal:${f.id}">Fasal - ${escapeHtml(f.label || f.title || f.nama)}</option>`;
+        });
+
+        materiSelect.innerHTML = options;
+
+        // Hide recording area when kitab changes
+        document.getElementById('recordingArea').classList.add('hidden');
+        document.getElementById('audioEmptyState').classList.remove('hidden');
+      } catch (err) {
+        console.error('Error loading materi for audio:', err);
+        materiSelect.innerHTML = '<option value="">Gagal memuat</option>';
       }
     }
 
@@ -3221,7 +3282,7 @@
 
       // Check if audio exists for this materi
       try {
-        let table = type === 'bab' ? 'bab' : 'fasal';
+        let table = type === 'bagian' ? 'bagian' : (type === 'bab' ? 'bab' : 'fasal');
         const res = await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${id}&select=audio_url`, {
           headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
         });
@@ -3480,7 +3541,7 @@
         const audioUrl = `${SUPABASE_URL}/storage/v1/object/public/mbba-audio/${fileName}`;
 
         // Update materi with audio URL
-        const table = selectedMateriType === 'bab' ? 'bab' : 'fasal';
+        const table = selectedMateriType === 'bagian' ? 'bagian' : (selectedMateriType === 'bab' ? 'bab' : 'fasal');
         const updateRes = await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${selectedMateriId}`, {
           method: 'PATCH',
           headers: {
@@ -3546,7 +3607,7 @@
       if (!confirm('Yakin hapus audio ini?')) return;
 
       try {
-        const table = selectedMateriType === 'bab' ? 'bab' : 'fasal';
+        const table = selectedMateriType === 'bagian' ? 'bagian' : (selectedMateriType === 'bab' ? 'bab' : 'fasal');
         await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${selectedMateriId}`, {
           method: 'PATCH',
           headers: {
@@ -3576,17 +3637,20 @@
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
-        const [babsRes, fasalsRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title)`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title)`, { headers }).catch(e => { return { ok: true, json: () => [] }; })
+        const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/bagian?select=*,kitab(nama)`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
+          fetch(`${SUPABASE_URL}rest/v1/bab?select=*,bagian(title,nama,kitab(nama))`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=*,bab(title,nama, bagian(title,nama,kitab(nama)))`, { headers }).catch(e => { return { ok: true, json: () => [] }; })
         ]);
 
+        const bagians = (await bagiansRes.json().catch(() => [])).filter(b => b.audio_url);
         const babs = (await babsRes.json().catch(() => [])).filter(b => b.audio_url);
         const fasals = (await fasalsRes.json().catch(() => [])).filter(f => f.audio_url);
 
         const allAudio = [
-          ...babs.map(b => ({ ...b, type: 'bab', label: b.title, parent: b.bagian?.title || 'Tanpa Bagian' })),
-          ...fasals.map(f => ({ ...f, type: 'fasal', label: f.title, parent: f.bab?.title || 'Tanpa Bab' }))
+          ...bagians.map(b => ({ ...b, type: 'bagian', label: b.title || b.nama, parent: b.kitab?.nama || 'Tanpa Kitab' })),
+          ...babs.map(b => ({ ...b, type: 'bab', label: b.title || b.nama || b.label, parent: b.bagian?.kitab?.nama || b.bagian?.title || b.bagian?.nama || 'Tanpa Kitab' })),
+          ...fasals.map(f => ({ ...f, type: 'fasal', label: f.title || f.nama || f.label, parent: f.bab?.bagian?.kitab?.nama || f.bab?.bagian?.title || f.bab?.bagian?.nama || 'Tanpa Kitab' }))
         ];
 
         if (allAudio.length === 0) {
@@ -3602,7 +3666,7 @@
                   <th>#</th>
                   <th>Tipe</th>
                   <th>Materi</th>
-                  <th>Bagian</th>
+                  <th>Kitab</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -3610,7 +3674,7 @@
                 ${allAudio.map((a, i) => `
                   <tr>
                     <td>${i + 1}</td>
-                    <td><span class="badge ${a.type === 'bab' ? 'badge-purple' : 'badge-blue'}">${a.type.toUpperCase()}</span></td>
+                    <td><span class="badge ${a.type === 'bagian' ? 'badge-amber' : (a.type === 'bab' ? 'badge-purple' : 'badge-blue')}">${a.type.toUpperCase()}</span></td>
                     <td class="font-medium">${a.label}</td>
                     <td class="text-slate-500">${a.parent}</td>
                     <td>
@@ -3649,7 +3713,7 @@
       if (!confirm('Yakin hapus audio ini?')) return;
 
       try {
-        const table = type === 'bab' ? 'bab' : 'fasal';
+        const table = type === 'bagian' ? 'bagian' : (type === 'bab' ? 'bab' : 'fasal');
         await fetch(`${SUPABASE_URL}rest/v1/${table}?id=eq.${id}`, {
           method: 'PATCH',
           headers: {
