@@ -3637,20 +3637,35 @@
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
-        const [bagiansRes, babsRes, fasalsRes, kitabsRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bagian?select=id,audio_url,title,nama,kitab_id`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
-          fetch(`${SUPABASE_URL}rest/v1/bab?select=id,audio_url,title,nama,label,bagian_id`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,audio_url,title,nama,label,bab_id`, { headers }).catch(e => { return { ok: true, json: () => [] }; }),
-          fetch(`${SUPABASE_URL}rest/v1/kitab?select=id,nama`, { headers }).catch(e => { return { ok: true, json: () => [] }; })
+        const [bagiansRes, babsRes, fasalsRes, kitabsRes, bagiansAllRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/bagian?select=id,audio_url,title,nama,kitab_id`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/bab?select=id,audio_url,title,nama,label,bagian_id`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,audio_url,title,nama,label,bab_id`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/kitab?select=id,nama`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/bagian?select=id,kitab_id`, { headers })
         ]);
 
-        const bagians = (await bagiansRes.json().catch(() => [])).filter(b => b.audio_url);
-        const babs = (await babsRes.json().catch(() => [])).filter(b => b.audio_url);
-        const fasals = (await fasalsRes.json().catch(() => [])).filter(f => f.audio_url);
-        const kitabs = (await kitabsRes.json().catch(() => []));
+        const parseJson = async (res, fallback = []) => {
+          if (!res.ok) {
+            console.warn('Fetch failed:', res.status, await res.text());
+            return fallback;
+          }
+          try {
+            const data = await res.json();
+            return Array.isArray(data) ? data : fallback;
+          } catch (e) {
+            return fallback;
+          }
+        };
+
+        const bagians = (await parseJson(bagiansRes)).filter(b => b.audio_url);
+        const babs = (await parseJson(babsRes)).filter(b => b.audio_url);
+        const fasals = (await parseJson(fasalsRes)).filter(f => f.audio_url);
+        const kitabs = await parseJson(kitabsRes, []);
+        const allBagiansData = await parseJson(bagiansAllRes, []);
 
         const getKitabName = (bagianId) => {
-          const bagian = allBagians.find(b => b.id === bagianId);
+          const bagian = allBagiansData.find(b => b.id === bagianId);
           if (bagian) {
             const kitab = kitabs.find(k => k.id === bagian.kitab_id);
             return kitab?.nama || 'Tanpa Kitab';
