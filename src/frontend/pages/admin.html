@@ -2613,8 +2613,8 @@
           closeEditKitabModal();
           loadJenjangList();
         } else {
-          const err = await res.json();
-          errorEl.textContent = 'Gagal: ' + (err.message || 'Unknown error');
+          const errText = await res.text();
+          errorEl.textContent = 'Gagal: ' + (errText || 'Unknown error');
           errorEl.classList.remove('hidden');
         }
       } catch (err) {
@@ -2697,8 +2697,8 @@
           closeAddKitabModal();
           loadJenjangList();
         } else {
-          const err = await res.json();
-          errorEl.textContent = 'Gagal: ' + (err.message || 'Unknown error');
+          const errText = await res.text();
+          errorEl.textContent = 'Gagal: ' + (errText || 'Unknown error');
           errorEl.classList.remove('hidden');
         }
       } catch (err) {
@@ -2743,9 +2743,15 @@
       if (!token) { alert('Session expired.'); return; }
 
       try {
-        // Step 1: Get source kitab with all its children
+        // Step 1: Get source kitab
         const sourceRes = await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${sourceId}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-        const sourceKitab = (await sourceRes.json())[0];
+        if (!sourceRes.ok) {
+          errorEl.textContent = 'Gagal mengambil kitab sumber';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+        const sourceData = await sourceRes.json().catch(() => []);
+        const sourceKitab = sourceData[0];
         if (!sourceKitab) { alert('Kitab sumber tidak ditemukan'); return; }
 
         // Step 2: Create new kitab
@@ -2754,12 +2760,23 @@
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ jenjang_id: targetJenjangId, nama: newName, image_url: sourceKitab.image_url, order_index: 1 })
         });
-        if (!newKitabRes.ok) { alert('Gagal membuat kitab baru'); return; }
-        const newKitab = (await newKitabRes.json())[0];
+        if (!newKitabRes.ok) {
+          const errText = await newKitabRes.text();
+          errorEl.textContent = 'Gagal membuat kitab: ' + errText;
+          errorEl.classList.remove('hidden');
+          return;
+        }
+        const newKitabData = await newKitabRes.json().catch(() => []);
+        const newKitab = newKitabData[0];
+        if (!newKitab) {
+          errorEl.textContent = 'Gagal membuat kitab baru';
+          errorEl.classList.remove('hidden');
+          return;
+        }
 
         // Step 3: Get source bagians and clone them
         const bagiansRes = await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${sourceId}&order=order_index`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-        const sourceBagians = await bagiansRes.json();
+        const sourceBagians = await bagiansRes.json().catch(() => []);
 
         for (const sb of sourceBagians) {
           const newBagianRes = await fetch(`${SUPABASE_URL}rest/v1/bagian`, {
@@ -2768,11 +2785,13 @@
             body: JSON.stringify({ kitab_id: newKitab.id, title: sb.title, order_index: sb.order_index })
           });
           if (!newBagianRes.ok) continue;
-          const newBagian = (await newBagianRes.json())[0];
+          const newBagianData = await newBagianRes.json().catch(() => []);
+          const newBagian = newBagianData[0];
+          if (!newBagian) continue;
 
           // Clone babs for this bagian
           const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${sb.id}&order=order_index`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-          const sourceBabs = await babsRes.json();
+          const sourceBabs = await babsRes.json().catch(() => []);
 
           for (const sbb of sourceBabs) {
             const newBabRes = await fetch(`${SUPABASE_URL}rest/v1/bab`, {
@@ -2781,11 +2800,13 @@
               body: JSON.stringify({ bagian_id: newBagian.id, title: sbb.title, order_index: sbb.order_index, is_muqoddimah: sbb.is_muqoddimah })
             });
             if (!newBabRes.ok) continue;
-            const newBab = (await newBabRes.json())[0];
+            const newBabData = await newBabRes.json().catch(() => []);
+            const newBab = newBabData[0];
+            if (!newBab) continue;
 
             // Clone fasals for this bab
             const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${sbb.id}&order=order_index`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-            const sourceFasals = await fasalsRes.json();
+            const sourceFasals = await fasalsRes.json().catch(() => []);
 
             for (const sf of sourceFasals) {
               await fetch(`${SUPABASE_URL}rest/v1/fasal`, {
