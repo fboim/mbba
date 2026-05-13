@@ -1254,72 +1254,91 @@
               </div>
             </div>
 
+            <!-- Select Kitab -->
             <div class="form-group">
-              <label class="form-label">Level</label>
-              <select id="quizLevel" onchange="updateQuizLevelForm()" class="form-select">
-                <option value="fasal">Fasal</option>
-                <option value="bab">Bab</option>
+              <label class="form-label">Pilih Kitab</label>
+              <select id="quizKitabSelect" onchange="loadBagianForQuiz()" class="form-select">
+                <option value="">Pilih Kitab...</option>
               </select>
             </div>
 
-            <div id="quizFasalSelect" class="form-group">
-              <label class="form-label">Fasal</label>
-              <select id="newQuizFasal" class="form-select">
-                <option value="">Pilih Fasal...</option>
-              </select>
-            </div>
-            <div id="quizBabSelect" class="form-group hidden">
-              <label class="form-label">Bab</label>
-              <select id="newQuizBab" class="form-select">
-                <option value="">Pilih Bab...</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Tipe Soal</label>
-              <select id="newQuizType" class="form-select">
-                <option value="mc">Pilihan Ganda</option>
-                <option value="fill-arab">Isi Arab</option>
-                <option value="fill-latin">Isi Latin</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Pertanyaan</label>
-              <textarea id="newQuizQuestion" class="form-textarea" placeholder="Ketik pertanyaan..."></textarea>
-            </div>
-
-            <div id="mcOptions" class="form-group">
-              <label class="form-label">Opsi Jawaban (A-D)</label>
-              <div style="display: flex; flex-direction: column; gap: 12px;">
-                <div class="flex gap-3">
-                  <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">A</span>
-                  <input type="text" id="mcA" class="form-input flex-1" placeholder="Opsi A">
-                </div>
-                <div class="flex gap-3">
-                  <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">B</span>
-                  <input type="text" id="mcB" class="form-input flex-1" placeholder="Opsi B">
-                </div>
-                <div class="flex gap-3">
-                  <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">C</span>
-                  <input type="text" id="mcC" class="form-input flex-1" placeholder="Opsi C">
-                </div>
-                <div class="flex gap-3">
-                  <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">D</span>
-                  <input type="text" id="mcD" class="form-input flex-1" placeholder="Opsi D">
-                </div>
+            <!-- Select Bagian -->
+            <div id="quizBagianSection" class="hidden">
+              <div class="form-group">
+                <label class="form-label">Pilih Bagian</label>
+                <select id="quizBagianSelect" onchange="loadBabForQuiz()" class="form-select">
+                  <option value="">Pilih Bagian...</option>
+                </select>
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Jawaban Benar</label>
-              <input type="text" id="newQuizAnswer" class="form-input" placeholder="A, B, C, D, atau jawaban text">
+            <!-- Select Bab -->
+            <div id="quizBabSection" class="hidden">
+              <div class="form-group">
+                <label class="form-label">Pilih Bab</label>
+                <select id="quizBabSelect" onchange="loadFasalForQuiz()" class="form-select">
+                  <option value="">Pilih Bab...</option>
+                </select>
+              </div>
             </div>
 
-            <div id="addQuizError" class="alert alert-error hidden"></div>
-            <button onclick="addNewQuiz()" class="btn btn-primary btn-block">
-              <i class="fa-solid fa-plus"></i> Tambah Soal
-            </button>
+            <!-- Select Fasal -->
+            <div id="quizFasalSection" class="hidden">
+              <div class="form-group">
+                <label class="form-label">Pilih Fasal</label>
+                <select id="quizFasalSelect" class="form-select">
+                  <option value="">Pilih Fasal...</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="quizMateriSection" class="hidden">
+              <div class="form-group">
+                <label class="form-label">Tipe Soal</label>
+                <select id="newQuizType" class="form-select">
+                  <option value="mc">Pilihan Ganda</option>
+                  <option value="fill-arab">Isi Arab</option>
+                  <option value="fill-latin">Isi Latin</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Pertanyaan</label>
+                <textarea id="newQuizQuestion" class="form-textarea" placeholder="Ketik pertanyaan..."></textarea>
+              </div>
+
+              <div id="mcOptions" class="form-group">
+                <label class="form-label">Opsi Jawaban (A-D)</label>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <div class="flex gap-3">
+                    <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">A</span>
+                    <input type="text" id="mcA" class="form-input flex-1" placeholder="Opsi A">
+                  </div>
+                  <div class="flex gap-3">
+                    <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">B</span>
+                    <input type="text" id="mcB" class="form-input flex-1" placeholder="Opsi B">
+                  </div>
+                  <div class="flex gap-3">
+                    <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">C</span>
+                    <input type="text" id="mcC" class="form-input flex-1" placeholder="Opsi C">
+                  </div>
+                  <div class="flex gap-3">
+                    <span class="w-10 py-3 text-center bg-primary-100 rounded-lg font-bold text-primary-700">D</span>
+                    <input type="text" id="mcD" class="form-input flex-1" placeholder="Opsi D">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Jawaban Benar</label>
+                <input type="text" id="newQuizAnswer" class="form-input" placeholder="A, B, C, D, atau jawaban text">
+              </div>
+
+              <div id="addQuizError" class="alert alert-error hidden"></div>
+              <button onclick="addNewQuiz()" class="btn btn-primary btn-block">
+                <i class="fa-solid fa-plus"></i> Tambah Soal
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1332,31 +1351,36 @@
               </div>
               <div>
                 <h3 class="bento-title">Daftar Soal</h3>
-                <p class="bento-subtitle">Kelola bank soal</p>
+                <p class="bento-subtitle">Pilih kitab untuk melihat soal</p>
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-3 mb-4">
-              <select id="quizLevelFilter" onchange="updateQuizFilter()" class="form-select" style="width: auto; min-width: 120px;">
-                <option value="fasal">Fasal</option>
-                <option value="bab">Bab</option>
-              </select>
-              <select id="filterFasal" onchange="loadQuizList()" class="form-select" style="width: auto; min-width: 160px;">
-                <option value="">Semua Fasal</option>
-              </select>
-              <select id="filterBab" onchange="loadQuizList()" class="form-select hidden" style="width: auto; min-width: 160px;">
-                <option value="">Semua Bab</option>
-              </select>
-              <button onclick="exportQuizzes()" class="btn btn-secondary btn-sm">
-                <i class="fa-solid fa-download"></i> Export
-              </button>
-              <label class="btn btn-secondary btn-sm" style="cursor: pointer;">
-                <i class="fa-solid fa-upload"></i> Import
-                <input type="file" id="importFile" accept=".json" onchange="importQuizzes(this)" class="hidden">
-              </label>
+            <!-- Filter Dropdowns -->
+            <div id="quizFilterSection" class="hidden">
+              <div class="flex flex-wrap gap-3 mb-4">
+                <select id="quizKitabFilter" onchange="loadBagianForQuizFilter()" class="form-select" style="width: auto; min-width: 160px;">
+                  <option value="">Semua Kitab</option>
+                </select>
+                <select id="quizBagianFilter" onchange="loadBabForQuizFilter()" class="form-select hidden" style="width: auto; min-width: 160px;">
+                  <option value="">Semua Bagian</option>
+                </select>
+                <select id="quizBabFilter" onchange="loadFasalForQuizFilter()" class="form-select hidden" style="width: auto; min-width: 160px;">
+                  <option value="">Semua Bab</option>
+                </select>
+                <select id="quizFasalFilter" onchange="loadQuizListByFasal()" class="form-select" style="width: auto; min-width: 160px;">
+                  <option value="">Semua Fasal</option>
+                </select>
+              </div>
             </div>
 
-            <div id="quizList" class="loading">
+            <div id="quizEmptyState" class="empty-state">
+              <div class="empty-icon">
+                <i class="fa-solid fa-filter"></i>
+              </div>
+              <p class="empty-text">Pilih Kitab terlebih dahulu untuk melihat soal</p>
+            </div>
+
+            <div id="quizList" class="hidden">
               <div class="spinner"></div>
             </div>
           </div>
@@ -1763,7 +1787,7 @@
       console.log('showTab:', tab, '→ content display:', getComputedStyle(contentEl).display, 'classes:', contentEl.className);
 
       if (tab === 'materi') { loadMateri(); loadFasalsForSelect(); }
-      if (tab === 'quiz') { loadQuizList(); }
+      if (tab === 'quiz') { initQuizTab(); }
       if (tab === 'siswa') { loadStudentList(); }
       if (tab === 'audio') { initAudioTab(); }
       if (tab === 'stats') { loadStats(); }
@@ -1802,6 +1826,280 @@
         document.getElementById('statQuizzes').textContent = quizzes.length;
       } catch (err) {
         console.warn('Error loading stats:', err.message);
+      }
+    }
+
+    // Initialize Quiz Tab
+    async function initQuizTab() {
+      const kitabSelect = document.getElementById('quizKitabSelect');
+      const filterKitabSelect = document.getElementById('quizKitabFilter');
+      kitabSelect.innerHTML = '<option value="">Memuat...</option>';
+      filterKitabSelect.innerHTML = '<option value="">Semua Kitab</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
+        const kitabs = await kitabRes.json().catch(() => []);
+
+        const options = kitabs.map(k => `<option value="${k.id}">${escapeHtml(k.nama || k.title)}</option>`).join('');
+        kitabSelect.innerHTML = '<option value="">Pilih Kitab...</option>' + options;
+        filterKitabSelect.innerHTML = '<option value="">Semua Kitab</option>' + options;
+
+        document.getElementById('quizBagianSection').classList.add('hidden');
+        document.getElementById('quizBabSection').classList.add('hidden');
+        document.getElementById('quizFasalSection').classList.add('hidden');
+        document.getElementById('quizMateriSection').classList.add('hidden');
+        document.getElementById('quizFilterSection').classList.add('hidden');
+        document.getElementById('quizEmptyState').classList.remove('hidden');
+        document.getElementById('quizList').classList.add('hidden');
+      } catch (err) {
+        console.error('Error loading quiz tab:', err);
+        kitabSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    // Load Bagian for Quiz (Add form)
+    async function loadBagianForQuiz() {
+      const kitabId = document.getElementById('quizKitabSelect').value;
+      const bagianSelect = document.getElementById('quizBagianSelect');
+
+      if (!kitabId) {
+        document.getElementById('quizBagianSection').classList.add('hidden');
+        document.getElementById('quizBabSection').classList.add('hidden');
+        document.getElementById('quizFasalSection').classList.add('hidden');
+        document.getElementById('quizMateriSection').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('quizBagianSection').classList.remove('hidden');
+      document.getElementById('quizBabSection').classList.add('hidden');
+      document.getElementById('quizFasalSection').classList.add('hidden');
+      document.getElementById('quizMateriSection').classList.add('hidden');
+      bagianSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/bagian?kitab_id=eq.${kitabId}&order=order_index`, { headers });
+        const bagians = await res.json().catch(() => []);
+
+        bagianSelect.innerHTML = '<option value="">Pilih Bagian...</option>' +
+          bagians.map(b => `<option value="${b.id}">${escapeHtml(b.nama || b.title || b.id)}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading bagian:', err);
+        bagianSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    async function loadBabForQuiz() {
+      const bagianId = document.getElementById('quizBagianSelect').value;
+      const babSelect = document.getElementById('quizBabSelect');
+
+      if (!bagianId) {
+        document.getElementById('quizBabSection').classList.add('hidden');
+        document.getElementById('quizFasalSection').classList.add('hidden');
+        document.getElementById('quizMateriSection').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('quizBabSection').classList.remove('hidden');
+      document.getElementById('quizFasalSection').classList.add('hidden');
+      document.getElementById('quizMateriSection').classList.add('hidden');
+      babSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/bab?bagian_id=eq.${bagianId}&order=order_index`, { headers });
+        const babs = await res.json().catch(() => []);
+
+        babSelect.innerHTML = '<option value="">Pilih Bab...</option>' +
+          babs.map(b => `<option value="${b.id}">${escapeHtml(b.title || b.nama || b.id)}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading bab:', err);
+        babSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    async function loadFasalForQuiz() {
+      const babId = document.getElementById('quizBabSelect').value;
+      const fasalSelect = document.getElementById('quizFasalSelect');
+
+      if (!babId) {
+        document.getElementById('quizFasalSection').classList.add('hidden');
+        document.getElementById('quizMateriSection').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('quizFasalSection').classList.remove('hidden');
+      document.getElementById('quizMateriSection').classList.remove('hidden');
+      fasalSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&order=order_index`, { headers });
+        const fasals = await res.json().catch(() => []);
+
+        fasalSelect.innerHTML = '<option value="">Pilih Fasal...</option>' +
+          fasals.map(f => `<option value="${f.id}">${escapeHtml(f.title || f.id)}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading fasal:', err);
+        fasalSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    // Filter section functions
+    async function loadBagianForQuizFilter() {
+      const kitabId = document.getElementById('quizKitabFilter').value;
+      const bagianSelect = document.getElementById('quizBagianFilter');
+
+      if (!kitabId) {
+        bagianSelect.classList.add('hidden');
+        document.getElementById('quizBabFilter').classList.add('hidden');
+        document.getElementById('quizFasalFilter').classList.add('hidden');
+        return;
+      }
+
+      bagianSelect.classList.remove('hidden');
+      document.getElementById('quizBabFilter').classList.add('hidden');
+      document.getElementById('quizFasalFilter').classList.add('hidden');
+      bagianSelect.innerHTML = '<option value="">Semua Bagian</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/bagian?kitab_id=eq.${kitabId}&order=order_index`, { headers });
+        const bagians = await res.json().catch(() => []);
+
+        bagianSelect.innerHTML = '<option value="">Semua Bagian</option>' +
+          bagians.map(b => `<option value="${b.id}">${escapeHtml(b.nama || b.title || b.id)}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading bagian filter:', err);
+      }
+    }
+
+    async function loadBabForQuizFilter() {
+      const bagianId = document.getElementById('quizBagianFilter').value;
+      const babSelect = document.getElementById('quizBabFilter');
+
+      if (!bagianId) {
+        babSelect.classList.add('hidden');
+        document.getElementById('quizFasalFilter').classList.add('hidden');
+        return;
+      }
+
+      babSelect.classList.remove('hidden');
+      document.getElementById('quizFasalFilter').classList.add('hidden');
+      babSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/bab?bagian_id=eq.${bagianId}&order=order_index`, { headers });
+        const babs = await res.json().catch(() => []);
+
+        babSelect.innerHTML = '<option value="">Semua Bab</option>' +
+          babs.map(b => `<option value="${b.id}">${escapeHtml(b.title || b.nama || b.id)}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading bab filter:', err);
+        babSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    async function loadFasalForQuizFilter() {
+      const babId = document.getElementById('quizBabFilter').value;
+      const fasalSelect = document.getElementById('quizFasalFilter');
+
+      if (!babId) {
+        fasalSelect.classList.add('hidden');
+        return;
+      }
+
+      fasalSelect.classList.remove('hidden');
+      fasalSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&order=order_index`, { headers });
+        const fasals = await res.json().catch(() => []);
+
+        fasalSelect.innerHTML = '<option value="">Semua Fasal</option>' +
+          fasals.map(f => `<option value="${f.id}">${escapeHtml(f.title || f.id)}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading fasal filter:', err);
+        fasalSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    async function loadQuizListByFasal() {
+      const fasalId = document.getElementById('quizFasalFilter').value;
+      const container = document.getElementById('quizList');
+      const emptyState = document.getElementById('quizEmptyState');
+
+      if (!fasalId) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/quiz?fasal_id=eq.${fasalId}&order=created_at.desc`, { headers });
+        const quizzes = await res.json().catch(() => []);
+
+        if (quizzes.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-question-circle"></i></div><p class="empty-text">Belum ada soal untuk fasal ini</p></div>`;
+          return;
+        }
+
+        let html = '<div class="table-container"><table class="data-table"><thead><tr><th>#</th><th>Tipe</th><th>Pertanyaan</th><th>Aksi</th></tr></thead><tbody>';
+        quizzes.forEach((q, i) => {
+          const typeBadge = q.quiz_type === 'mc' ? 'badge-blue' : (q.quiz_type === 'fill-arab' ? 'badge-amber' : 'badge-purple');
+          html += `
+            <tr>
+              <td>${i + 1}</td>
+              <td><span class="badge ${typeBadge}">${q.quiz_type}</span></td>
+              <td class="font-medium truncate max-w-xs">${escapeHtml(q.question || '-')}</td>
+              <td>
+                <div class="flex gap-2">
+                  <button onclick="deleteQuiz('${q.id}')" class="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        html += '</tbody></table></div>';
+        html += `<p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-question-circle mr-1"></i>Total: ${quizzes.length} soal</p>`;
+        container.innerHTML = html;
+      } catch (err) {
+        console.error('Error loading quizzes:', err);
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ${err.message}</p></div>`;
       }
     }
 
@@ -2938,26 +3236,26 @@
 
     // Add New Quiz
     async function addNewQuiz() {
-      const level = document.getElementById('quizLevel').value;
+      const fasalId = document.getElementById('quizFasalSelect').value;
       const type = document.getElementById('newQuizType').value;
       const question = document.getElementById('newQuizQuestion').value.trim();
       const answer = document.getElementById('newQuizAnswer').value.trim();
       const errorEl = document.getElementById('addQuizError');
       errorEl.classList.add('hidden');
 
-      let targetId;
-      if (level === 'fasal') targetId = document.getElementById('newQuizFasal').value;
-      else targetId = document.getElementById('newQuizBab').value;
-
-      if (!targetId || !question || !answer) { errorEl.textContent = 'Lengkapi semua field.'; errorEl.classList.remove('hidden'); return; }
+      if (!fasalId) { errorEl.textContent = 'Pilih fasal terlebih dahulu.'; errorEl.classList.remove('hidden'); return; }
+      if (!question || !answer) { errorEl.textContent = 'Lengkapi semua field.'; errorEl.classList.remove('hidden'); return; }
 
       // Input sanitization - prevent XSS
       const sanitizedQuestion = question.replace(/[<>]/g, '').substring(0, 2000);
       const sanitizedAnswer = answer.replace(/[<>]/g, '').substring(0, 500);
 
-      const [quizLevel, quizId] = targetId.split(':');
-      const body = { type, question: sanitizedQuestion, correct_answer: sanitizedAnswer, order_index: allQuizzes.filter(q => quizLevel === 'fasal' ? q.fasal_id === quizId : q.bab_id === quizId).length + 1 };
-      if (quizLevel === 'fasal') body.fasal_id = quizId; else body.bab_id = quizId;
+      const body = {
+        quiz_type: type,
+        question: sanitizedQuestion,
+        correct_answer: sanitizedAnswer,
+        fasal_id: fasalId
+      };
 
       if (type === 'mc') {
         const a = document.getElementById('mcA').value.trim().replace(/[<>]/g, '').substring(0, 200);
@@ -2976,9 +3274,6 @@
         });
 
         if (!res.ok) {
-          if (res.status === 401 || res.status === 403) {
-            throw new Error('Anda tidak memiliki izin untuk menambah soal. Pastikan Anda login sebagai admin/guru.');
-          }
           const err = await res.json();
           throw new Error(err.message || 'Gagal menambah soal');
         }
@@ -2990,7 +3285,7 @@
         document.getElementById('mcC').value = '';
         document.getElementById('mcD').value = '';
         alert('Soal berhasil ditambahkan!');
-        loadQuizList();
+        loadQuizListByFasal();
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
