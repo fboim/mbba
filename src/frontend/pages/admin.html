@@ -509,6 +509,21 @@
     .badge-purple { background: var(--purple-soft); color: var(--purple); }
     .badge-red { background: var(--red-soft); color: var(--red); }
 
+    /* Role Select Dropdown */
+    .role-select {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: inherit;
+    }
+    .role-select.badge-blue { background: var(--blue-soft); color: var(--blue); }
+    .role-select.badge-purple { background: var(--purple-soft); color: var(--purple); }
+    .role-select.badge-red { background: var(--red-soft); color: var(--red); }
+    .role-select:hover { opacity: 0.8; }
+
     /* Alerts */
     .alert {
       padding: 14px 16px;
@@ -1678,6 +1693,7 @@
     let allKitab = [];
 
     let currentUserRole = 'student';
+    let currentUserId = null;
 
     (async function() {
       const user = await getCurrentUser();
@@ -1686,6 +1702,7 @@
         return;
       }
 
+      currentUserId = user.id;
       const role = user.user_metadata?.role || user.role || 'student';
       currentUserRole = role;
       if (role !== 'admin' && role !== 'teacher') {
@@ -3092,13 +3109,20 @@
           const createdAt = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
           const lastActive = progress.lastActive ? new Date(progress.lastActive).toLocaleDateString('id-ID') : '-';
           const roleBadge = u.role === 'admin' ? 'badge-red' : (u.role === 'teacher' ? 'badge-purple' : 'badge-blue');
+          const isOwnUser = user && user.id === u.id;
 
           html += `
             <tr>
               <td>${i + 1}</td>
               <td class="font-medium">${escapeHtml(u.full_name || '-')}</td>
               <td class="text-slate-600">${escapeHtml(u.email || '-')}</td>
-              <td><span class="badge ${roleBadge}">${u.role || 'student'}</span></td>
+              <td>
+                <select onchange="changeUserRole('${u.id}', this.value)" class="role-select ${roleBadge}" ${isOwnUser ? 'disabled style="opacity:0.5"' : ''}>
+                  <option value="student" ${u.role === 'student' ? 'selected' : ''}>Student</option>
+                  <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>Teacher</option>
+                  <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                </select>
+              </td>
               <td>${progress.completed}/${progress.total} (${percent}%)</td>
               <td class="text-slate-500 text-sm">${createdAt}</td>
               <td class="text-slate-500 text-sm">${lastActive}</td>
@@ -3133,6 +3157,61 @@
         alert('Skor berhasil diupdate!');
         loadStudentList();
       } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // Change User Role
+    async function changeUserRole(userId, newRole) {
+      if (userId === currentUserId) {
+        alert('Anda tidak bisa mengubah role diri sendiri!');
+        loadStudentList();
+        return;
+      }
+
+      if (!confirm(`Ubah role user ini menjadi "${newRole}"?`)) {
+        loadStudentList();
+        return;
+      }
+
+      try {
+        // Update public.users table
+        const usersRes = await fetch(`${SUPABASE_URL}rest/v1/users?id=eq.${userId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ role: newRole })
+        });
+
+        if (!usersRes.ok) {
+          const err = await usersRes.json();
+          throw new Error(err.message);
+        }
+
+        // Also update auth.users metadata for immediate effect
+        const authRes = await fetch(`${SUPABASE_URL}auth/v1/admin/users/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({
+            user_metadata: { role: newRole }
+          })
+        });
+
+        alert(`Role berhasil diubah ke "${newRole}"!`);
+        loadStudentList();
+      } catch (err) {
+        console.error('Error changing role:', err);
+        alert('Gagal mengubah role: ' + err.message);
+        loadStudentList();
+      }
+    }
         alert('Gagal update: ' + err.message);
       }
     }
