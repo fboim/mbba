@@ -1023,6 +1023,16 @@
                     Muqoddimah
                   </label>
                 </div>
+                <div class="form-group mb-2">
+                  <label class="form-label text-xs">Jumlah Soal Quiz</label>
+                  <select id="inlineBabQuizCount" class="form-select">
+                    <option value="3">3 soal</option>
+                    <option value="5">5 soal</option>
+                    <option value="10" selected>10 soal</option>
+                    <option value="15">15 soal</option>
+                    <option value="20">20 soal</option>
+                  </select>
+                </div>
                 <div class="flex gap-2">
                   <button onclick="saveInlineBab()" class="btn btn-sm" style="background:#4f46e5; color:white;">
                     <i class="fa-solid fa-check"></i> Simpan
@@ -1278,6 +1288,16 @@
                 <input type="checkbox" id="editBabIsLocked" style="width:16px; height:16px;">
                 Kunci
               </label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Jumlah Soal Quiz</label>
+              <select id="editBabQuizCount" class="form-select">
+                <option value="3">3 soal</option>
+                <option value="5">5 soal</option>
+                <option value="10">10 soal</option>
+                <option value="15">15 soal</option>
+                <option value="20">20 soal</option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">Konten Arab (HTML)</label>
@@ -3083,6 +3103,7 @@
       const bagianId = document.getElementById('newMateriBagian').value;
       const nama = document.getElementById('inlineBabNama').value.trim();
       const isMuqoddimah = document.getElementById('inlineBabMuqoddimah').checked;
+      const quizCount = parseInt(document.getElementById('inlineBabQuizCount').value) || 10;
       const errorEl = document.getElementById('addBabInlineError');
 
       if (!bagianId) { errorEl.textContent = 'Pilih Bagian terlebih dahulu'; errorEl.classList.remove('hidden'); return; }
@@ -3100,7 +3121,7 @@
         const res = await fetch(SUPABASE_URL + 'rest/v1/bab', {
           method: 'POST',
           headers,
-          body: JSON.stringify({ bagian_id: bagianId, title: nama, is_muqoddimah: isMuqoddimah, order_index: orderIndex })
+          body: JSON.stringify({ bagian_id: bagianId, title: nama, is_muqoddimah: isMuqoddimah, quiz_count: quizCount, order_index: orderIndex })
         });
 
         if (res.ok) {
@@ -3453,6 +3474,7 @@
       document.getElementById('editBabNama').value = bab.title || bab.nama || bab.label || '';
       document.getElementById('editBabIsMuqoddimah').checked = bab.is_muqoddimah === true;
       document.getElementById('editBabIsLocked').checked = bab.is_locked === true;
+      document.getElementById('editBabQuizCount').value = bab.quiz_count || 10;
       document.getElementById('editBabContentArab').value = bab.content_arab || '';
       document.getElementById('editBabContentId').value = bab.content_id || '';
       document.getElementById('editBabError').classList.add('hidden');
@@ -3512,6 +3534,7 @@
       const title = document.getElementById('editBabNama').value.trim();
       const is_muqoddimah = document.getElementById('editBabIsMuqoddimah').checked;
       const is_locked = document.getElementById('editBabIsLocked').checked;
+      const quiz_count = parseInt(document.getElementById('editBabQuizCount').value) || 10;
       const content_arab = document.getElementById('editBabContentArab').value.trim();
       const content_id = document.getElementById('editBabContentId').value.trim();
       const errorEl = document.getElementById('editBabError');
@@ -3526,7 +3549,7 @@
         const res = await fetch(`${SUPABASE_URL}rest/v1/bab?id=eq.${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
-          body: JSON.stringify({ title, is_muqoddimah, is_locked, content_arab: content_arab || null, content_id: content_id || null })
+          body: JSON.stringify({ title, is_muqoddimah, is_locked, quiz_count, content_arab: content_arab || null, content_id: content_id || null })
         });
 
         if (res.ok) {
