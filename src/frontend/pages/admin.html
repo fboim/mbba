@@ -771,6 +771,38 @@
       background: var(--red);
       color: white;
     }
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    textarea.form-input {
+      resize: vertical;
+      min-height: 80px;
+    }
   </style>
   <script src="/js/api.js"></script>
 </head>
@@ -992,6 +1024,86 @@
               <div class="spinner"></div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Materi Modal -->
+    <div id="editMateriModal" class="modal-overlay hidden">
+      <div class="modal-content" style="max-width:700px; max-height:90vh; overflow-y:auto;">
+        <div class="modal-header">
+          <h3 id="editMateriTitle" style="margin:0; color:#1e40af;">Edit Materi</h3>
+          <button onclick="closeEditMateriModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+          <input type="hidden" id="editMateriType" value="">
+          <input type="hidden" id="editMateriId" value="">
+
+          <!-- Title Field (for all types) -->
+          <div class="form-group">
+            <label class="form-label" id="editMateriLabelTitle">Judul</label>
+            <input type="text" id="editMateriTitleInput" class="form-input" placeholder="Nama materi...">
+          </div>
+
+          <!-- Description for Bagian -->
+          <div id="editBagianFields" class="hidden">
+            <div class="form-group">
+              <label class="form-label">Deskripsi</label>
+              <textarea id="editBagianDesc" class="form-input" rows="3" placeholder="Deskripsi bagian..."></textarea>
+            </div>
+          </div>
+
+          <!-- Content for Bab -->
+          <div id="editBabFields" class="hidden">
+            <div class="form-group">
+              <label class="form-label">Konten Arab</label>
+              <textarea id="editBabContentArab" class="form-input" rows="4" dir="rtl" lang="ar" placeholder="المحتوى العربي..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Konten Indonesia</label>
+              <textarea id="editBabContentId" class="form-input" rows="4" placeholder="Konten terjemahan Indonesia..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="editBabIsMuqoddimah" style="width:16px; height:16px;">
+                <span>Muqoddimah (Penjelasan Kitab)</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="editBabIsLocked" style="width:16px; height:16px;">
+                <span>Kunci (tidak bisa diakses siswa)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Content for Fasal -->
+          <div id="editFasalFields" class="hidden">
+            <div class="form-group">
+              <label class="form-label">Konten Arab</label>
+              <textarea id="editFasalContentArab" class="form-input" rows="4" dir="rtl" lang="ar" placeholder="المحتوى العربي..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Konten Indonesia</label>
+              <textarea id="editFasalContentId" class="form-input" rows="4" placeholder="Konten terjemahan Indonesia..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Audio URL (opsional)</label>
+              <input type="text" id="editFasalAudioUrl" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="editFasalIsLocked" style="width:16px; height:16px;">
+                <span>Kunci (tidak bisa diakses siswa)</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="editMateriError" class="alert alert-error hidden" style="margin-top:12px;"></div>
+        </div>
+        <div class="modal-footer" style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:8px;">
+          <button onclick="closeEditMateriModal()" class="btn" style="background:#e2e8f0; color:#374151;">Batal</button>
+          <button onclick="saveEditMateri()" class="btn btn-primary">Simpan</button>
         </div>
       </div>
     </div>
@@ -1560,6 +1672,8 @@
         }
 
         loadKitabDropdown();
+        loadBagiansForDropdown();
+        loadBabsForDropdown();
         updateQuizLevelForm();
       } catch (err) {
         console.error('Error loading fasals:', err);
@@ -1668,7 +1782,7 @@
 
     async function loadBabsForDropdown() {
       const select = document.getElementById('newFasalBab');
-      select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
+      select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.order_index}. ${escapeHtml(b.title || b.nama)}</option>`).join('');
     }
 
     // Load Jenjang List
@@ -1713,10 +1827,14 @@
 
         allJenjang = jenjangs;
         allKitab = kitabs;
+        allBagians = bagians;
+        allBabs = babs;
 
         // Load dropdowns
         loadJenjangDropdown();
         loadKitabDropdown();
+        loadBagiansForDropdown();
+        loadBabsForDropdown();
 
         if (!jenjangs || jenjangs.length === 0) {
           console.log('loadJenjangList: no jenjangs found');
@@ -1766,7 +1884,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                       <span style="font-weight:600; color:#166534; font-size:0.875rem;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span>
                       <div style="display:flex; gap:4px;">
-                        <button onclick="editMateri('bagian', '${bagian.id}', this.dataset.title)" data-title="${escapeHtml(bagian.title || bagian.nama)}" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                        <button onclick="openEditMateriModal('bagian', '${bagian.id}')" data-title="${escapeHtml(bagian.title || bagian.nama)}" data-desc="${escapeHtml(bagian.description || '')}" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                         <button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                       </div>
                     </div>`;
@@ -1779,7 +1897,7 @@
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                           <span style="font-weight:500; color:#374151; font-size:0.8rem;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>
                           <div style="display:flex; gap:3px;">
-                            <button onclick="editMateri('bab', '${bab.id}', this.dataset.title)" data-title="${escapeHtml(bab.title || bab.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                            <button onclick="openEditMateriModal('bab', '${bab.id}')" data-title="${escapeHtml(bab.title || bab.nama)}" data-content-arab="${escapeHtml(bab.content_arab || '')}" data-content-id="${escapeHtml(bab.content_id || '')}" data-is-muqoddimah="${bab.is_muqoddimah || false}" data-is-locked="${bab.is_locked || false}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                             <button onclick="deleteMateri('bab', '${bab.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                           </div>
                         </div>`;
@@ -1790,7 +1908,7 @@
                           html += `<div style="padding:5px; background:#f8fafc; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
                             <span style="color:#475569; font-size:0.775rem;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>
                             <div style="display:flex; gap:3px;">
-                              <button onclick="editMateri('fasal', '${fasal.id}', this.dataset.title)" data-title="${escapeHtml(fasal.title || fasal.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                              <button onclick="openEditMateriModal('fasal', '${fasal.id}')" data-title="${escapeHtml(fasal.title || fasal.nama)}" data-content-arab="${escapeHtml(fasal.content_arab || '')}" data-content-id="${escapeHtml(fasal.content_id || '')}" data-audio-url="${escapeHtml(fasal.audio_url || '')}" data-is-locked="${fasal.is_locked || false}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                               <button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                             </div>
                           </div>`;
@@ -2033,7 +2151,12 @@
         const fasals = await fasalsRes.json().catch(() => []);
 
         allKitab = kitabs;
+        allBagians = bagians;
+        allBabs = babs;
+        allFasals = fasals;
         loadKitabDropdown();
+        loadBagiansForDropdown();
+        loadBabsForDropdown();
 
         if (!jenjangs || jenjangs.length === 0) {
           container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-book"></i></div><p class="empty-text">Belum ada jenjang & kitab. Gunakan tab <strong>Jenjang</strong> untuk membuatnya.</p></div>`;
@@ -2078,7 +2201,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                       <span style="font-weight:600; color:#166534; font-size:0.875rem;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span>
                       <div style="display:flex; gap:4px;">
-                        <button onclick="editMateri('bagian', '${bagian.id}', this.dataset.title)" data-title="${escapeHtml(bagian.title || bagian.nama)}" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                        <button onclick="openEditMateriModal('bagian', '${bagian.id}')" data-title="${escapeHtml(bagian.title || bagian.nama)}" data-desc="${escapeHtml(bagian.description || '')}" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                         <button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                       </div>
                     </div>`;
@@ -2091,7 +2214,7 @@
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                           <span style="font-weight:500; color:#374151; font-size:0.8rem;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>
                           <div style="display:flex; gap:3px;">
-                            <button onclick="editMateri('bab', '${bab.id}', this.dataset.title)" data-title="${escapeHtml(bab.title || bab.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                            <button onclick="openEditMateriModal('bab', '${bab.id}')" data-title="${escapeHtml(bab.title || bab.nama)}" data-content-arab="${escapeHtml(bab.content_arab || '')}" data-content-id="${escapeHtml(bab.content_id || '')}" data-is-muqoddimah="${bab.is_muqoddimah || false}" data-is-locked="${bab.is_locked || false}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                             <button onclick="deleteMateri('bab', '${bab.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                           </div>
                         </div>`;
@@ -2102,7 +2225,7 @@
                           listHTML += `<div style="padding:5px; background:#f8fafc; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
                             <span style="color:#475569; font-size:0.775rem;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>
                             <div style="display:flex; gap:3px;">
-                              <button onclick="editMateri('fasal', '${fasal.id}', this.dataset.title)" data-title="${escapeHtml(fasal.title || fasal.nama)}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                              <button onclick="openEditMateriModal('fasal', '${fasal.id}')" data-title="${escapeHtml(fasal.title || fasal.nama)}" data-content-arab="${escapeHtml(fasal.content_arab || '')}" data-content-id="${escapeHtml(fasal.content_id || '')}" data-audio-url="${escapeHtml(fasal.audio_url || '')}" data-is-locked="${fasal.is_locked || false}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                               <button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                             </div>
                           </div>`;
@@ -2181,18 +2304,115 @@
       }
     }
 
-    function editMateri(type, id, currentTitle) {
-      if (typeof currentTitle === 'undefined' || currentTitle === 'undefined') {
-        currentTitle = this && this.dataset && this.dataset.title ? this.dataset.title : '';
+    // Open Edit Materi Modal
+    function openEditMateriModal(type, id) {
+      const modal = document.getElementById('editMateriModal');
+      const titleInput = document.getElementById('editMateriTitleInput');
+      const titleLabel = document.getElementById('editMateriLabelTitle');
+      const editBagianFields = document.getElementById('editBagianFields');
+      const editBabFields = document.getElementById('editBabFields');
+      const editFasalFields = document.getElementById('editFasalFields');
+      const errorEl = document.getElementById('editMateriError');
+
+      // Hide all type-specific fields
+      editBagianFields.classList.add('hidden');
+      editBabFields.classList.add('hidden');
+      editFasalFields.classList.add('hidden');
+      errorEl.classList.add('hidden');
+
+      // Set type and id
+      document.getElementById('editMateriType').value = type;
+      document.getElementById('editMateriId').value = id;
+
+      // Get button element to access dataset
+      const btn = event.target.closest('button');
+
+      if (type === 'bagian') {
+        titleLabel.textContent = 'Nama Bagian';
+        titleInput.value = btn.dataset.title || '';
+        document.getElementById('editBagianDesc').value = btn.dataset.desc || '';
+        editBagianFields.classList.remove('hidden');
+        document.getElementById('editMateriTitle').textContent = 'Edit Bagian';
+      } else if (type === 'bab') {
+        titleLabel.textContent = 'Nama Bab';
+        titleInput.value = btn.dataset.title || '';
+        document.getElementById('editBabContentArab').value = btn.dataset.contentArab || '';
+        document.getElementById('editBabContentId').value = btn.dataset.contentId || '';
+        document.getElementById('editBabIsMuqoddimah').checked = btn.dataset.isMuqoddimah === 'true';
+        document.getElementById('editBabIsLocked').checked = btn.dataset.isLocked === 'true';
+        editBabFields.classList.remove('hidden');
+        document.getElementById('editMateriTitle').textContent = 'Edit Bab';
+      } else if (type === 'fasal') {
+        titleLabel.textContent = 'Nama Fasal';
+        titleInput.value = btn.dataset.title || '';
+        document.getElementById('editFasalContentArab').value = btn.dataset.contentArab || '';
+        document.getElementById('editFasalContentId').value = btn.dataset.contentId || '';
+        document.getElementById('editFasalAudioUrl').value = btn.dataset.audioUrl || '';
+        document.getElementById('editFasalIsLocked').checked = btn.dataset.isLocked === 'true';
+        editFasalFields.classList.remove('hidden');
+        document.getElementById('editMateriTitle').textContent = 'Edit Fasal';
       }
-      const newTitle = prompt(`Edit nama ${type}:`, currentTitle);
-      if (!newTitle || newTitle === currentTitle) return;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeEditMateriModal() {
+      document.getElementById('editMateriModal').classList.add('hidden');
+    }
+
+    async function saveEditMateri() {
+      const type = document.getElementById('editMateriType').value;
+      const id = document.getElementById('editMateriId').value;
+      const title = document.getElementById('editMateriTitleInput').value.trim();
+      const errorEl = document.getElementById('editMateriError');
+
+      if (!title) {
+        errorEl.textContent = 'Judul tidak boleh kosong';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
       const tables = { bagian: 'bagian', bab: 'bab', fasal: 'fasal' };
-      fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
-        body: JSON.stringify({ title: newTitle })
-      }).then(res => { if (res.ok) { alert('Berhasil diupdate!'); loadMateri(); } else { res.json().then(err => alert('Gagal: ' + err.message)); } });
+      let body = { title };
+
+      if (type === 'bagian') {
+        body.description = document.getElementById('editBagianDesc').value.trim();
+      } else if (type === 'bab') {
+        body.content_arab = document.getElementById('editBabContentArab').value.trim();
+        body.content_id = document.getElementById('editBabContentId').value.trim();
+        body.is_muqoddimah = document.getElementById('editBabIsMuqoddimah').checked;
+        body.is_locked = document.getElementById('editBabIsLocked').checked;
+      } else if (type === 'fasal') {
+        body.content_arab = document.getElementById('editFasalContentArab').value.trim();
+        body.content_id = document.getElementById('editFasalContentId').value.trim();
+        body.audio_url = document.getElementById('editFasalAudioUrl').value.trim() || null;
+        body.is_locked = document.getElementById('editFasalIsLocked').checked;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/${tables[type]}?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (res.ok) {
+          alert('Berhasil diupdate!');
+          closeEditMateriModal();
+          loadMateri();
+        } else {
+          const err = await res.json();
+          errorEl.textContent = 'Gagal: ' + (err.message || 'Unknown error');
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.classList.remove('hidden');
+      }
     }
 
     async function deleteMateri(type, id) {

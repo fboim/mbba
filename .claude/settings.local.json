@@ -9,7 +9,26 @@
       "PowerShell(& \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" add .; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" commit -m \"MBBA MVP: initial commit\"; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" branch -M main; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" remote add origin https://github.com/fboim/mbba; & \"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\" push -u origin main)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(ls -la vercel.json)",
+      "Bash(cat vercel.json)",
+      "Bash(node --check \"C:\\\\Users\\\\AM SERVICE\\\\mbba\\\\src\\\\frontend\\\\pages\\\\materi.html\")",
+      "Bash(powershell *)",
+      "Bash(node --check \"src\\\\frontend\\\\js\\\\api.js\")",
+      "Bash(node --check \"src\\\\frontend\\\\js\\\\quiz.js\")",
+      "Bash(Get-ChildItem -Recurse -Name \"package.json\")",
+      "Bash(Select-Object -First 10)",
+      "Bash(node -e ' *)",
+      "Bash(node --check \"pages/materi_inline_check.js\")",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(node --input-type=module)",
+      "WebFetch(domain:mbba.vercel.app)",
+      "Bash(curl -s \"https://mbba.vercel.app/materi\")",
+      "Bash(curl -sI \"https://mbba.vercel.app/materi\")",
+      "Bash(curl -s \"https://api.vercel.com/v13/deployments?limit=1\")",
+      "Bash(curl -s \"https://mbba.vercel.app/js/quiz.js\")",
+      "Bash(curl -s \"https://mbba.vercel.app/student\")",
+      "Bash(node *)"
     ]
   }
 }

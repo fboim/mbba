@@ -1,0 +1,615 @@
+  <script>
+    window.onerror = function(msg, src, line, col, err) {
+      var e = document.createElement('div');
+      e.style = 'position:fixed;bottom:0;left:0;right:0;background:#dc2626;color:white;padding:16px;font-family:monospace;font-size:13px;z-index:99999;white-space:pre-wrap;max-height:200px;overflow:auto;';
+      e.textContent = 'JS ERROR: ' + (err ? err.message : msg) + ' Line: ' + line;
+      document.body.appendChild(e);
+      return true;
+    };
+
+    // ================================================================
+    // QUIZ STATE (module-level variables)
+    // ================================================================
+    window._quizState = null;
+    var quizQuestions = [];
+    var currentQuestionIndex = 0;
+    var answeredQuestions = {};
+
+    // ================================================================
+    // QUIZ CORE FUNCTIONS
+    // ================================================================
+
+    function shuffleQuiz(bank, count) {
+      count = count || 10;
+      var shuffled = bank.slice().sort(function() { return Math.random() - 0.5; });
+      return shuffled.slice(0, Math.min(count, bank.length));
+    }
+
+    function initQuiz(bank, fasalId, count, callbacks) {
+      var questions = shuffleQuiz(bank, count);
+      window._quizState = {
+        questions: questions,
+        fasalId: fasalId,
+        count: count,
+        selectedAnswers: {},
+        submitted: false,
+        callbacks: callbacks || {}
+      };
+      return questions;
+    }
+
+    function setAnswer(questionId, answer) {
+      var state = window._quizState;
+      if (!state || state.submitted) return;
+      state.selectedAnswers[questionId] = answer;
+    }
+
+    function normalizeAnswer(answer, type) {
+      if (!answer) return '';
+      var n = answer.trim();
+      if (type === 'fill-latin') n = n.toLowerCase();
+      if (type === 'fill-arab') n = n.replace(/[ً-ْ]/g, '').replace(/[ـ]/g, '');
+      return n;
+    }
+
+    function submitQuizResult() {
+      var state = window._quizState;
+      if (!state) throw new Error('Quiz not initialized');
+      if (state.submitted) return;
+      state.submitted = true;
+
+      var correct = 0, results = [];
+      state.questions.forEach(function(q) {
+        var userAns = normalizeAnswer(state.selectedAnswers[q.id], q.type);
+        var corrAns = normalizeAnswer(q.correct_answer, q.type);
+        var isCorrect = userAns === corrAns;
+        if (isCorrect) correct++;
+        results.push({ questionId: q.id, isCorrect: isCorrect, userAnswer: userAns, correctAnswer: corrAns });
+      });
+
+      var score = Math.round((correct / state.questions.length) * 100);
+      var passed = score >= 100;
+      var result = { score: score, passed: passed, correct: correct, total: state.questions.length, results: results };
+
+      if (passed && state.callbacks.onPass) state.callbacks.onPass(score, correct, state.questions.length, results);
+      else if (!passed && state.callbacks.onFail) state.callbacks.onFail(score, correct, state.questions.length, results);
+
+      return result;
+    }
+
+    function resetQuiz(bank) {
+      var state = window._quizState;
+      if (!state || !bank) return;
+      state.questions = shuffleQuiz(bank);
+      state.selectedAnswers = {};
+      state.submitted = false;
+      return state.questions;
+    }
+
+    // ================================================================
+    // RENDER QUESTION
+    // ================================================================
+
+    function renderQuestion() {
+      var state = window._quizState;
+      var container = document.getElementById('quizContent');
+      var answers = state ? (state.selectedAnswers || {}) : {};
+      var total = state ? state.questions.length : 0;
+      var idx = total > 0 ? Math.min(currentQuestionIndex, total - 1) : 0;
+
+      // Update header
+      document.getElementById('currentQ').textContent = total > 0 ? (idx + 1) : 1;
+      document.getElementById('totalQ').textContent = total > 0 ? total : 10;
+      var pct = total > 0 ? Math.round(((idx + 1) / total) * 100) : 0;
+      document.getElementById('progressPercent').textContent = pct + '%';
+      document.getElementById('progressBar').style.width = (total > 0 ? Math.max(pct, 2) : 2) + '%';
+
+      // Update dots
+      var dotsEl = document.getElementById('questionDots');
+      dotsEl.innerHTML = '';
+      if (state && state.questions) {
+        state.questions.forEach(function(qi, i) {
+          var isAnswered = !!answers[qi.id];
+          var isCurrent = i === idx;
+          var isCorrect = answeredQuestions[qi.id] === true;
+          var isWrong = answeredQuestions[qi.id] === false;
+          var cls = 'progress-dot';
+          if (isCurrent) cls += ' current';
+          else if (isCorrect) cls += ' correct';
+          else if (isWrong) cls += ' wrong';
+          else if (isAnswered) cls += ' answered';
+          var btn = document.createElement('button');
+          btn.className = cls;
+          btn.title = 'Soal ' + (i + 1);
+          btn.style.cssText = 'background:none;border:none;cursor:pointer;padding:0;';
+          btn.onclick = (function(ii) { return function() { goToQuestion(ii); }; })(i);
+          dotsEl.appendChild(btn);
+        });
+      }
+
+      container.innerHTML = '';
+
+      if (!state || !state.questions || state.questions.length === 0) {
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:200px;"><p style="color:#ef4444;">Quiz tidak tersedia.</p></div>';
+        return;
+      }
+
+      var q = state.questions[idx];
+      if (!q || !q.id) {
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:200px;"><p style="color:#94a3b8;">Data soal tidak valid.</p></div>';
+        return;
+      }
+
+      // Badge
+      var badge = document.createElement('span');
+      var qtype = q.type || 'mc';
+      badge.className = 'quiz-question-type' + (qtype === 'mc' ? ' mc' : qtype === 'fill-arab' ? ' arab' : ' latin');
+      badge.innerHTML = qtype === 'mc' ? '<i class="fa-solid fa-list-check"></i> Pilihan Ganda' :
+                        qtype === 'fill-arab' ? '<i class="fa-solid fa-pen"></i> Isi Arab' :
+                        '<i class="fa-solid fa-pen"></i> Isi Latin';
+      container.appendChild(badge);
+
+      // Question box
+      var qBox = document.createElement('div');
+      qBox.className = 'quiz-question-box';
+      var qText = q.question || '';
+      if (!qText.trim()) {
+        qBox.classList.add('quiz-no-content');
+        qBox.innerHTML = '<i class="fa-solid fa-circle-info" style="color:#94a3b8;font-size:1.5rem;margin-bottom:8px;display:block;"></i><p style="color:#94a3b8;font-size:0.9rem;">Pertanyaan ini belum memiliki teks.</p>';
+      } else {
+        var qP = document.createElement('p');
+        qP.className = 'quiz-question-text';
+        qP.textContent = qText;
+        qBox.appendChild(qP);
+      }
+      container.appendChild(qBox);
+
+      // Options or fill input
+      if (qtype === 'mc' && q.options) {
+        var optsObj = {};
+        try {
+          var parsed = JSON.parse(q.options);
+          if (Array.isArray(parsed)) parsed.forEach(function(item) { optsObj[item.key] = item.value; });
+          else optsObj = parsed;
+        } catch(e) {}
+
+        var optsDiv = document.createElement('div');
+        optsDiv.className = 'quiz-options';
+        Object.keys(optsObj).forEach(function(key) {
+          var isSelected = answers[q.id] === key;
+          var optDiv = document.createElement('div');
+          optDiv.className = 'quiz-option' + (isSelected ? ' selected' : '');
+          optDiv.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:8px;border-radius:12px;border:2px solid #e2e8f0;cursor:pointer;transition:all 0.2s;background:#fff;';
+          optDiv.onmouseover = function() { if (!isSelected) optDiv.style.borderColor = '#10b981'; };
+          optDiv.onmouseout = function() { if (!isSelected) optDiv.style.borderColor = '#e2e8f0'; };
+          optDiv.onclick = (function(qid, k) { return function() { window.quizSelectAnswer(qid, k); }; })(q.id, key);
+
+          var keyDiv = document.createElement('div');
+          keyDiv.className = 'quiz-option-key';
+          keyDiv.style.cssText = 'width:36px;height:36px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;color:#475569;flex-shrink:0;';
+          keyDiv.textContent = key;
+
+          var txtDiv = document.createElement('div');
+          txtDiv.className = 'quiz-option-text';
+          txtDiv.style.cssText = 'flex:1;font-weight:500;';
+          txtDiv.textContent = optsObj[key];
+
+          var chkDiv = document.createElement('div');
+          chkDiv.className = 'quiz-option-check';
+          chkDiv.style.cssText = 'color:#10b981;opacity:' + (isSelected ? '1' : '0') + ';transition:opacity 0.2s;';
+          chkDiv.innerHTML = '<i class="fa-solid fa-check text-xs"></i>';
+
+          optDiv.appendChild(keyDiv);
+          optDiv.appendChild(txtDiv);
+          optDiv.appendChild(chkDiv);
+          optsDiv.appendChild(optDiv);
+        });
+        container.appendChild(optsDiv);
+      } else {
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.id = 'answerInput';
+        inp.value = answers[q.id] || '';
+        inp.placeholder = 'Ketik jawaban...';
+        inp.className = 'quiz-fill-input';
+        inp.style.cssText = 'width:100%;padding:16px;border-radius:12px;border:2px solid #e2e8f0;font-size:1.1rem;outline:none;box-sizing:border-box;';
+        inp.oninput = (function(qid) { return function() { setAnswer(qid, inp.value); }; })(q.id);
+        container.appendChild(inp);
+      }
+
+      // Navigation buttons
+      var navDiv = document.createElement('div');
+      navDiv.className = 'quiz-nav';
+
+      var backBtn = document.createElement('button');
+      backBtn.className = 'btn btn-secondary' + (currentQuestionIndex === 0 ? ' opacity-50' : '');
+      backBtn.disabled = currentQuestionIndex === 0;
+      backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Kembali';
+      if (currentQuestionIndex > 0) backBtn.onclick = window.quizPrevQuestion;
+      navDiv.appendChild(backBtn);
+
+      var actionBtn = document.createElement('button');
+      actionBtn.className = 'btn btn-primary';
+      if (currentQuestionIndex < total - 1) {
+        actionBtn.innerHTML = 'Lanjut <i class="fa-solid fa-arrow-right"></i>';
+        actionBtn.onclick = window.quizNextQuestion;
+      } else {
+        actionBtn.innerHTML = '<i class="fa-solid fa-check"></i> Kirim';
+        actionBtn.onclick = window.quizSubmit;
+      }
+      navDiv.appendChild(actionBtn);
+
+      container.appendChild(navDiv);
+    }
+
+    // ================================================================
+    // QUIZ NAVIGATION (attached to window)
+    // ================================================================
+
+    window.quizPrevQuestion = function() {
+      if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); }
+    };
+
+    window.quizNextQuestion = function() {
+      if (currentQuestionIndex < quizQuestions.length - 1) { currentQuestionIndex++; renderQuestion(); }
+    };
+
+    window.goToQuestion = function(index) {
+      currentQuestionIndex = index;
+      renderQuestion();
+    };
+
+    window.quizSelectAnswer = function(qid, ans) {
+      setAnswer(qid, ans);
+      answeredQuestions[qid] = null;
+      renderQuestion();
+    };
+
+    window.quizSubmit = function() {
+      var result = submitQuizResult();
+      if (!result) return;
+
+      var state = window._quizState;
+      if (result.results) {
+        result.results.forEach(function(r) {
+          answeredQuestions[r.questionId] = r.isCorrect;
+        });
+      }
+
+      var container = document.getElementById('quizContent');
+      var passed = result.passed;
+      var icon = passed ? 'fa-check-circle' : 'fa-times-circle';
+      var iconColor = passed ? '#22c55e' : '#ef4444';
+      var bgClass = passed ? 'from-green-50 to-emerald-50' : 'from-red-50 to-orange-50';
+      var title = passed ? 'Alhamdulillah!' : 'Belum Lulus';
+      var titleColor = passed ? '#16a34a' : '#dc2626';
+      var msg = passed ? 'Semua jawabanmu benar!' : 'Skor: ' + result.score + '%. Syarat: 100%.';
+
+      container.innerHTML = '<div style="text-align:center;padding:48px 24px;background:linear-gradient(180deg, ' + (passed ? '#f0fdf4' : '#fef2f2') + ', #fff);border-radius:16px;">';
+      container.innerHTML += '<div style="width:96px;height:96px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 8px 32px rgba(0,0,0,0.1);">';
+      container.innerHTML += '<i class="fa-solid ' + icon + '" style="font-size:3rem;color:' + iconColor + ';"></i>';
+      container.innerHTML += '</div>';
+      container.innerHTML += '<h3 style="font-size:2rem;font-weight:700;color:' + titleColor + ';margin-bottom:12px;">' + title + '</h3>';
+      container.innerHTML += '<p style="color:#64748b;margin-bottom:24px;">' + msg + '</p>';
+      container.innerHTML += '<div style="display:inline-flex;align-items:center;gap:24px;background:#fff;padding:16px 24px;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08);margin-bottom:24px;">';
+      container.innerHTML += '<div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:' + iconColor + ';">' + result.score + '%</div><div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">Skor</div></div>';
+      container.innerHTML += '<div style="width:1px;height:40px;background:#e2e8f0;"></div>';
+      container.innerHTML += '<div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:#1e293b;">' + result.correct + '/' + result.total + '</div><div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">Benar</div></div>';
+      container.innerHTML += '</div>';
+
+      if (passed) {
+        container.innerHTML += '<a href="student.html" class="btn btn-primary"><i class="fa-solid fa-home"></i> Kembali ke Dashboard</a>';
+      } else {
+        container.innerHTML += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">';
+        container.innerHTML += '<button onclick="window.quizRetry()" class="btn btn-primary"><i class="fa-solid fa-redo"></i> Coba Lagi</button>';
+        container.innerHTML += '<button onclick="window.quizClose()" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Kembali</button>';
+        container.innerHTML += '</div>';
+      }
+      container.innerHTML += '</div>';
+
+      if (passed) {
+        var id = window.currentFasal ? window.currentFasal.id : window.currentBab ? window.currentBab.id : null;
+        if (id) handleQuizComplete(true, result.score, result.correct, result.total);
+      }
+    };
+
+    window.quizRetry = function() {
+      resetQuiz(window.quizBank || []);
+      quizQuestions = window._quizState ? window._quizState.questions : [];
+      currentQuestionIndex = 0;
+      answeredQuestions = {};
+      renderQuestion();
+    };
+
+    window.quizClose = function() {
+      document.getElementById('quizModal').classList.add('hidden');
+      document.body.style.overflow = '';
+      window.location.href = 'student.html';
+    };
+
+    // ================================================================
+    // START QUIZ (the main entry point)
+    // ================================================================
+
+    window.quizStart = function() {
+      var bank = window.quizBank || [];
+      if (bank.length === 0) {
+        alert('Quiz bank kosong!');
+        return;
+      }
+      document.getElementById('quizModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      var quizId = (window.currentFasal ? window.currentFasal.id : null) ||
+                   (window.currentBab ? window.currentBab.id : null);
+      var quizTitle = (window.currentFasal ? window.currentFasal.title : null) ||
+                      (window.currentBab ? window.currentBab.title : 'Tes');
+
+      document.getElementById('quizFasalName').textContent = quizTitle || 'Tes Verifikasi';
+
+      initQuiz(bank, quizId, 10, {
+        onPass: function(score, correct, total, results) {
+          handleQuizComplete(true, score, correct, total);
+        },
+        onFail: function(score, correct, total, results) {
+          handleQuizComplete(false, score, correct, total);
+        }
+      });
+
+      quizQuestions = window._quizState.questions;
+      currentQuestionIndex = 0;
+      answeredQuestions = {};
+      document.getElementById('totalQ').textContent = quizQuestions.length;
+
+      renderQuestion();
+    };
+
+    // ================================================================
+    // PAGE INIT & DATA LOADING
+    // ================================================================
+
+    window.currentFasal = null;
+    window.currentBab = null;
+    window.quizBank = [];
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var fasalId = urlParams.get('id');
+    var babId = urlParams.get('bab');
+
+    (async function() {
+      var user = await getCurrentUser();
+      if (!user) { window.location.href = 'auth.html'; return; }
+      var role = (user.user_metadata && user.user_metadata.role) || 'student';
+      if (role === 'admin' || role === 'teacher') {
+        document.getElementById('adminLinkMateri').classList.remove('hidden');
+      }
+      if (babId) { await loadBab(babId); }
+      else if (fasalId) { await loadFasal(fasalId); }
+      else { window.location.href = 'student.html'; }
+    })();
+
+    async function loadBab(babId) {
+      try {
+        var res = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + babId + '&select=*,bagian(*)', {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+        });
+        var data = await res.json();
+        var bab = data[0];
+        if (!bab) { window.location.href = 'student.html'; return; }
+
+        window.currentBab = bab;
+
+        document.getElementById('breadcrumbKitab').textContent = 'Kitab Mukhtarat';
+        document.getElementById('breadcrumbBagian').textContent = 'Bagian ' + (bab.bagian ? bab.bagian.order_index : 1);
+        document.getElementById('breadcrumbBab').textContent = 'Bab ' + bab.order_index;
+        document.getElementById('breadcrumbFasal').textContent = bab.title || 'Muqoddimah';
+        document.getElementById('fasalTitle').textContent = bab.title || 'Muqoddimah';
+        document.getElementById('fasalNumber').textContent = (bab.bagian ? bab.bagian.order_index : 1) + '.' + bab.order_index;
+        document.getElementById('fasalType').textContent = 'MUQODDIMAH';
+        document.getElementById('fasalType').className = 'badge badge-amber';
+        document.getElementById('fasalBab').textContent = 'Bab ' + bab.order_index + ' dari Bagian ' + (bab.bagian ? bab.bagian.order_index : 1);
+        document.getElementById('quizFasalName').textContent = 'Tes Muqoddimah';
+
+        var content = bab.content_arab && bab.content_arab.trim()
+          ? bab.content_arab
+          : '<div style="text-align:center;padding:48px 24px;background:#fef3c7;border-radius:16px;border:1px solid #fcd34d;margin:8px 0;"><i class="fa-solid fa-file-import" style="font-size:2rem;color:#d97706;margin-bottom:12px;display:block;"></i><p style="font-size:1rem;font-weight:600;color:#92400e;margin-bottom:4px;">Konten belum tersedia</p><p style="font-size:0.8rem;color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
+        document.getElementById('fasalContent').innerHTML = content;
+
+        if (bab.content_id) {
+          document.getElementById('translationSection').classList.remove('hidden');
+          document.getElementById('fasalTranslation').innerHTML = bab.content_id;
+        }
+
+        var progress = null;
+        try { progress = await fetchBabProgress(babId); } catch(e) {}
+        updateStatus(progress);
+
+        window.quizBank = [];
+        try {
+          window.quizBank = await fetchQuizBankBab(babId);
+          if (window.quizBank.length === 0 && window.currentBab) {
+            var fasalRes = await fetch(SUPABASE_URL + 'rest/v1/fasal?bab_id=eq.' + babId + '&select=id', {
+              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+            });
+            var fasals = await fasalRes.json();
+            for (var f of fasals) {
+              var fQuizzes = await fetchQuizBank(f.id);
+              window.quizBank = window.quizBank.concat(fQuizzes);
+            }
+          }
+        } catch(e) { console.error('quiz fetch error', e); }
+
+        if (window.quizBank.length === 0) {
+          document.getElementById('startQuizBtn').disabled = true;
+          document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Quiz';
+        }
+      } catch(err) {
+        document.getElementById('fasalContent').innerHTML = '<div style="text-align:center;padding:48px;color:#ef4444;"><i class="fa-solid fa-exclamation-triangle"></i> Gagal memuat: ' + err.message + '</div>';
+      }
+    }
+
+    async function loadFasal(fasalId) {
+      try {
+        var fasal = await fetchFasal(fasalId);
+        if (!fasal) { window.location.href = 'student.html'; return; }
+        window.currentFasal = fasal;
+
+        try {
+          var audioRes = await fetch(SUPABASE_URL + 'rest/v1/fasal?id=eq.' + fasalId + '&select=audio_url', {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+          });
+          var audioData = await audioRes.json();
+          if (audioData.length > 0 && audioData[0].audio_url) {
+            window.currentFasal.audio_url = audioData[0].audio_url;
+          }
+        } catch(e) {}
+
+        var bagianOrder = 1, babOrder = 1, babTitle = 'Bab';
+        if (fasal.bab) {
+          var bab = fasal.bab;
+          babOrder = bab.order_index;
+          babTitle = bab.title || bab.nama || 'Bab ' + bab.order_index;
+          if (bab.bagian) bagianOrder = bab.bagian.order_index;
+        }
+
+        document.getElementById('breadcrumbKitab').textContent = 'Kitab Mukhtarat';
+        document.getElementById('breadcrumbBagian').textContent = 'Bagian ' + bagianOrder;
+        document.getElementById('breadcrumbBab').textContent = 'Bab ' + babOrder;
+        document.getElementById('breadcrumbFasal').textContent = fasal.title || 'Fasal';
+        document.getElementById('fasalTitle').textContent = fasal.title || 'Fasal';
+        document.getElementById('fasalNumber').textContent = bagianOrder + '.' + babOrder + '.' + fasal.order_index;
+        document.getElementById('fasalType').textContent = 'FASAL';
+        document.getElementById('fasalType').className = 'badge badge-blue';
+        document.getElementById('fasalBab').textContent = babTitle + ' dari Bagian ' + bagianOrder;
+        document.getElementById('quizFasalName').textContent = 'Tes ' + (fasal.title || 'Fasal');
+
+        var content = fasal.content_arab && fasal.content_arab.trim()
+          ? fasal.content_arab
+          : '<div style="text-align:center;padding:48px 24px;background:#fef3c7;border-radius:16px;border:1px solid #fcd34d;margin:8px 0;"><i class="fa-solid fa-file-import" style="font-size:2rem;color:#d97706;margin-bottom:12px;display:block;"></i><p style="font-size:1rem;font-weight:600;color:#92400e;margin-bottom:4px;">Konten belum tersedia</p><p style="font-size:0.8rem;color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
+        document.getElementById('fasalContent').innerHTML = content;
+
+        if (fasal.content_id) {
+          document.getElementById('translationSection').classList.remove('hidden');
+          document.getElementById('fasalTranslation').innerHTML = fasal.content_id;
+        }
+
+        var progress = null;
+        try { progress = await fetchFasalProgress(fasalId); } catch(e) {}
+        updateStatus(progress);
+
+        window.quizBank = [];
+        try { window.quizBank = await fetchQuizBank(fasalId); } catch(e) {}
+
+        if (window.quizBank.length === 0) {
+          document.getElementById('startQuizBtn').disabled = true;
+          document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Quiz';
+        }
+
+        if (window.currentFasal && window.currentFasal.audio_url) {
+          initStudentAudioPlayer(window.currentFasal.audio_url);
+        }
+      } catch(err) {
+        document.getElementById('fasalContent').innerHTML = '<div style="text-align:center;padding:48px;color:#ef4444;"><i class="fa-solid fa-exclamation-triangle"></i> Gagal memuat: ' + err.message + '</div>';
+      }
+    }
+
+    function updateStatus(progress) {
+      var statusEl = document.getElementById('fasalStatus');
+      if (!progress) {
+        statusEl.className = 'header-status';
+        statusEl.innerHTML = '<i class="fa-regular fa-circle"></i><span>Belum Dimulai</span>';
+      } else if (progress.status === 'completed') {
+        statusEl.className = 'header-status badge badge-success';
+        statusEl.innerHTML = '<i class="fa-solid fa-check"></i><span>Lulus (' + progress.quiz_score + '%)</span>';
+      } else if (progress.status === 'unlocked') {
+        statusEl.className = 'header-status badge badge-amber';
+        statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Sedang Dikerjakan</span>';
+      } else {
+        statusEl.className = 'header-status';
+        statusEl.innerHTML = '<i class="fa-regular fa-circle"></i><span>Belum Dimulai</span>';
+      }
+    }
+
+    async function handleQuizComplete(passed, score, correct, total) {
+      var id = window.currentFasal ? window.currentFasal.id : (window.currentBab ? window.currentBab.id : null);
+      if (!id) return;
+      var attempts = 1;
+      var existing = null;
+      try { existing = await fetchFasalProgress(id); } catch(e) {}
+      if (existing) attempts = (existing.quiz_attempts || 0) + 1;
+      await saveProgress(id, score, attempts, passed ? 'completed' : 'unlocked');
+      updateStatus({ status: passed ? 'completed' : 'unlocked', quiz_score: score });
+    }
+
+    function handleLogout() { logout(); window.location.href = 'auth.html'; }
+
+    // ================================================================
+    // AUDIO PLAYER
+    // ================================================================
+    var studentAudio = null, studentAudioUrl = null, isStudentAudioPlaying = false;
+
+    function initStudentAudioPlayer(audioUrl) {
+      if (!audioUrl) { document.getElementById('audioPlayerSection').classList.add('hidden'); return; }
+      studentAudioUrl = audioUrl;
+      document.getElementById('audioPlayerSection').classList.remove('hidden');
+      studentAudio = new Audio(audioUrl);
+      studentAudio.addEventListener('loadedmetadata', function() {
+        document.getElementById('studentAudioDuration').textContent = formatStudentTime(studentAudio.duration);
+        drawStudentWaveform(audioUrl);
+      });
+      studentAudio.addEventListener('timeupdate', function() {
+        var progress = (studentAudio.currentTime / studentAudio.duration) * 100;
+        document.getElementById('studentAudioProgressFill').style.width = progress + '%';
+        document.getElementById('studentAudioCurrentTime').textContent = formatStudentTime(studentAudio.currentTime);
+      });
+      studentAudio.addEventListener('ended', function() {
+        isStudentAudioPlaying = false;
+        document.getElementById('studentAudioPlayBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+        document.getElementById('studentAudioPlayBtn').classList.remove('playing');
+        document.getElementById('studentAudioProgressFill').style.width = '0%';
+      });
+    }
+
+    function toggleStudentAudio() {
+      if (!studentAudio) return;
+      if (isStudentAudioPlaying) {
+        studentAudio.pause();
+        document.getElementById('studentAudioPlayBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+        document.getElementById('studentAudioPlayBtn').classList.remove('playing');
+      } else {
+        studentAudio.play();
+        document.getElementById('studentAudioPlayBtn').innerHTML = '<i class="fa-solid fa-pause"></i>';
+        document.getElementById('studentAudioPlayBtn').classList.add('playing');
+      }
+      isStudentAudioPlaying = !isStudentAudioPlaying;
+    }
+
+    function seekStudentAudio(event) {
+      if (!studentAudio) return;
+      var rect = event.currentTarget.getBoundingClientRect();
+      studentAudio.currentTime = studentAudio.duration * ((event.clientX - rect.left) / rect.width);
+    }
+
+    function formatStudentTime(seconds) {
+      if (isNaN(seconds)) return '00:00';
+      return String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(Math.floor(seconds % 60)).padStart(2, '0');
+    }
+
+    async function drawStudentWaveform(audioUrl) {
+      var canvas = document.getElementById('studentWaveformCanvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 64;
+      ctx.fillStyle = 'var(--bg-base)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = 'var(--purple)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (var i = 0; i < 60; i++) {
+        var height = Math.random() * 40 + 10;
+        ctx.fillRect(i * (canvas.width / 60), (canvas.height - height) / 2, 3, height);
+      }
+    }
+  </script>
