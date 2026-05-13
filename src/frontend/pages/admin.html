@@ -2152,87 +2152,25 @@
         loadKitabDropdown();
         loadBagiansForDropdown();
         loadBabsForDropdown();
-        updateQuizLevelForm();
       } catch (err) {
         console.error('Error loading fasals:', err);
       }
     }
 
-    function updateQuizLevelForm() {
-      const level = document.getElementById('quizLevel').value;
-      document.getElementById('quizFasalSelect').classList.toggle('hidden', level !== 'fasal');
-      document.getElementById('quizBabSelect').classList.toggle('hidden', level !== 'bab');
-    }
+    // Legacy functions - removed/changed to hierarchical dropdowns
+    function updateQuizLevelForm() { /* deprecated */ }
+    function updateQuizFilter() { /* deprecated */ }
 
-    function updateQuizFilter() {
-      const level = document.getElementById('quizLevelFilter').value;
-      document.getElementById('filterFasal').classList.toggle('hidden', level !== 'fasal');
-      document.getElementById('filterBab').classList.toggle('hidden', level !== 'bab');
-      loadQuizList();
-    }
-
-    // Load Quiz List
+    // Load Quiz List - deprecated, use loadQuizListByFasal instead
     async function loadQuizList() {
       const container = document.getElementById('quizList');
-      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      const level = document.getElementById('quizLevelFilter').value;
-      const fasalFilter = document.getElementById('filterFasal').value;
-      const babFilter = document.getElementById('filterBab').value;
-
-      try {
-        let url = `${SUPABASE_URL}rest/v1/quiz?order=order_index`;
-        if (level === 'fasal' && fasalFilter) url += `&fasal_id=eq.${fasalFilter.replace('fasal:', '')}`;
-        else if (level === 'bab' && babFilter) url += `&bab_id=eq.${babFilter.replace('bab:', '')}`;
-
-        const token = getToken();
-        const headers = { 'apikey': SUPABASE_ANON_KEY };
-        if (token) headers['Authorization'] = `Bearer ${token}`;
-
-        const res = await fetch(url, { headers });
-        if (!res.ok) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Gagal memuat data.</p></div>`;
-          return;
-        }
-        allQuizzes = await res.json().catch(() => []);
-
-        if (!allQuizzes || allQuizzes.length === 0) {
-          container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-question"></i></div><p class="empty-text">Belum ada soal kuis</p></div>`;
-          return;
-        }
-
-        container.innerHTML = `
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Level</th>
-                  <th>Tipe</th>
-                  <th>Pertanyaan</th>
-                  <th class="text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${allQuizzes.map((q, i) => `
-                  <tr>
-                    <td>${i + 1}</td>
-                    <td><span class="badge ${q.bab_id ? 'badge-purple' : 'badge-blue'}">${q.bab_id ? 'BAB' : 'FASAL'}</span></td>
-                    <td><span class="badge ${q.type === 'mc' ? 'badge-green' : 'badge-amber'}">${q.type.toUpperCase()}</span></td>
-                    <td class="truncate-cell">${escapeHtml(q.question)}</td>
-                    <td class="text-center">
-                      <button onclick="deleteQuiz('${q.id}')" class="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-colors">
-                        <i class="fa-solid fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-          <p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-database mr-1"></i>Total: ${allQuizzes.length} soal</p>
-        `;
-      } catch (err) {
-        container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text" style="color: var(--red);">Error: ${err.message}</p></div>`;
+      if (!container) return;
+      // Show empty state since quiz list now requires fasal selection
+      const emptyState = document.getElementById('quizEmptyState');
+      if (emptyState) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.innerHTML = `<div class="empty-icon"><i class="fa-solid fa-filter"></i></div><p class="empty-text">Pilih Kitab terlebih dahulu untuk melihat soal</p>`;
       }
     }
 
