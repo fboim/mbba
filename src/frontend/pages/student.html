@@ -1361,7 +1361,7 @@
           coverHtml = '<div class="kitab-card-cover-placeholder"><i class="fa-solid fa-book"></i></div>';
         }
 
-        html += '<a href="materi.html?kitab=' + k.id + '" class="kitab-card" style="text-decoration:none; color:inherit; display:flex; flex-direction:column;">' +
+        html += '<a href="materi.html?kitab=' + k.id + '" class="kitab-card" style="text-decoration:none; color:inherit; display:flex; flex-direction:column;" onclick="goToFirstBab(\'' + k.id + '\'); return false;">' +
           coverHtml +
           '<div class="kitab-card-body">' +
             '<div class="kitab-card-title">' + escHtml(k.nama || k.title || 'Kitab') + '</div>' +
@@ -1370,34 +1370,78 @@
             '<div class="kitab-card-progress">' +
               '<div class="kitab-card-progress-fill" style="width: ' + progress.percent + '%"></div>' +
             '</div>' +
-            '<div style="font-size:0.65rem; color:var(--text-muted); margin-top:4px;">' + progress.completed + '/' + progress.total + ' selesai</div>' +
+            '<div style="font-size:0.65rem; color:var(--text-muted); margin-top:4px;">' + (progress.total < 0 ? 'Mulai belajar' : progress.completed + '/' + progress.total + ' selesai') + '</div>' +
           '</div>' +
         '</a>';
       }
       container.innerHTML = html;
     }
 
+    async function goToFirstBab(kitabId) {
+      try {
+        var token = getToken();
+        var headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        // Get first bagian in kitab
+        var bagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order=order_index&limit=1', { headers });
+        var bagians = await bagianRes.json().catch(() => []);
+        if (bagians.length === 0) return;
+        var bagian = bagians[0];
+
+        // Get first bab (muqoddimah) in bagian
+        var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order=order_index&limit=1', { headers });
+        var babs = await babRes.json().catch(() => []);
+        if (babs.length === 0) return;
+        var bab = babs[0];
+
+        // Redirect to first bab
+        window.location.href = 'materi.html?bab=' + bab.id;
+      } catch(e) {
+        // Fallback to kitab page
+        window.location.href = 'materi.html?kitab=' + kitabId;
+      }
+    }
+
     function calculateKitabProgress(kitabId) {
-      // Find all bagian/bab/fasal for this kitab
+      // Use items array which contains all fasals from kurikulum
+      // Items have bagian_id which can be linked to kitab through allKitabs
       var total = 0;
       var completed = 0;
 
-      if (typeof kurikulum !== 'undefined' && kurikulum) {
+      // Get bagian_ids for this kitab
+      var validBagianIds = new Set();
+      if (typeof kurikulum !== 'undefined' && kurikulum && kurikulum.length > 0) {
         kurikulum.forEach(function(bagian) {
-          // Check if this bagian belongs to the kitab
-          var kitabs = allKitabs.filter(function(k) { return k.id === kitabId; });
-          if (kitabs.length === 0) return;
-
-          var bagianKitabs = kitabs[0];
-          (bagian.bab || []).forEach(function(bab) {
-            (bab.fasal || []).forEach(function(fasal) {
-              total++;
-              if (userProgress.some(function(p) { return p.fasal_id === fasal.id && p.status === 'completed'; })) {
-                completed++;
-              }
+          // Check if bagian belongs to this kitab
+          var belongsToKitab = false;
+          if (typeof items !== 'undefined' && items.length > 0) {
+            // Check if any item from this bagian exists in items
+            belongsToKitab = items.some(function(item) {
+              return item.bagian_id === bagian.id;
             });
-          });
+          }
+          if (belongsToKitab) {
+            validBagianIds.add(bagian.id);
+          }
         });
+      }
+
+      // Count fasals in valid bagian_ids
+      if (typeof items !== 'undefined' && items.length > 0) {
+        items.forEach(function(item) {
+          if (item.type === 'fasal' && validBagianIds.has(item.bagian_id)) {
+            total++;
+            if (userProgress.some(function(p) { return p.fasal_id === item.id && p.status === 'completed'; })) {
+              completed++;
+            }
+          }
+        });
+      }
+
+      // If no data, show "Mulai" instead of 0/0
+      if (total === 0 && completed === 0) {
+        return { total: -1, completed: 0, percent: 0 }; // -1 means not started
       }
 
       var percent = total > 0 ? Math.round((completed / total) * 100) : 0;
