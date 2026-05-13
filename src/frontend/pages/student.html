@@ -702,7 +702,15 @@
 
     async function loadDashboard() {
       try {
-        var kurikulum = await fetchKurikulum().catch(function(e) { console.error('fetchKurikulum error:', e); return []; });
+        console.log('loadDashboard: starting...');
+        var kurikulum;
+        try {
+          kurikulum = await fetchKurikulum();
+          console.log('loadDashboard: fetchKurikulum result:', kurikulum);
+        } catch(e) {
+          console.error('fetchKurikulum error:', e);
+          kurikulum = [];
+        }
         if (!kurikulum) kurikulum = [];
         allFasals = [];
         allBabs = [];
@@ -879,12 +887,15 @@
 
     function renderTimeline() {
       var container = document.getElementById('fasalList');
+      console.log('renderTimeline: items.length =', items.length);
+
       if (items.length === 0) {
         container.innerHTML = '<div class="activity-empty"><div class="activity-empty-icon"><i class="fa-solid fa-book-open"></i></div><p class="activity-empty-text">Belum ada materi</p></div>';
         return;
       }
 
       var completedIds = userProgress.filter(function(p) { return p.status === 'completed'; }).map(function(p) { return p.fasal_id; });
+      console.log('renderTimeline: completedIds =', completedIds);
 
       var isItemUnlocked = function(item) {
         if (!item.unlock_after_id) return true;
