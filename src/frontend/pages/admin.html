@@ -3109,7 +3109,7 @@
           const createdAt = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
           const lastActive = progress.lastActive ? new Date(progress.lastActive).toLocaleDateString('id-ID') : '-';
           const roleBadge = u.role === 'admin' ? 'badge-red' : (u.role === 'teacher' ? 'badge-purple' : 'badge-blue');
-          const isOwnUser = user && user.id === u.id;
+          const isOwnUser = currentUserId && currentUserId === u.id;
 
           html += `
             <tr>
