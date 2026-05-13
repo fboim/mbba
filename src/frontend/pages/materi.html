@@ -1330,13 +1330,6 @@
       document.getElementById('quizModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
 
-      var quizId = (window.currentFasal ? window.currentFasal.id : null) ||
-                   (window.currentBab ? window.currentBab.id : null);
-      var quizTitle = (window.currentFasal ? window.currentFasal.title : null) ||
-                      (window.currentBab ? window.currentBab.title : 'Tes');
-
-      document.getElementById('quizFasalName').textContent = quizTitle || 'Tes Verifikasi';
-
       initQuiz(bank, quizId, 10, {
         onPass: function(score, correct, total, results) {
           handleQuizComplete(true, score, correct, total);
@@ -1439,7 +1432,6 @@
         content += '</div>';
         document.getElementById('fasalContent').innerHTML = content;
         document.getElementById('translationSection').classList.add('hidden');
-        document.getElementById('startQuizBtn').classList.add('hidden');
 
       } catch(err) {
         document.getElementById('fasalContent').innerHTML = '<div style="text-align:center;padding:48px;color:#ef4444;"><i class="fa-solid fa-exclamation-triangle"></i> Gagal memuat: ' + err.message + '</div>';
@@ -1466,7 +1458,6 @@
         document.getElementById('fasalType').textContent = 'MUQODDIMAH';
         document.getElementById('fasalType').className = 'badge badge-amber';
         document.getElementById('fasalBab').textContent = 'Bab ' + bab.order_index + ' dari Bagian ' + (bab.bagian ? bab.bagian.order_index : 1);
-        document.getElementById('quizFasalName').textContent = 'Tes Muqoddimah';
 
         var content = bab.content_arab && bab.content_arab.trim()
           ? bab.content_arab
@@ -1540,7 +1531,6 @@
         document.getElementById('fasalType').textContent = 'FASAL';
         document.getElementById('fasalType').className = 'badge badge-blue';
         document.getElementById('fasalBab').textContent = babTitle + ' dari Bagian ' + bagianOrder;
-        document.getElementById('quizFasalName').textContent = 'Tes ' + (fasal.title || 'Fasal');
 
         var content = fasal.content_arab && fasal.content_arab.trim()
           ? fasal.content_arab
