@@ -1111,6 +1111,43 @@
       </div>
     </div>
 
+    <!-- Edit Kitab Modal -->
+    <div id="editKitabModal" class="modal-overlay hidden">
+      <div class="modal-content" style="max-width:500px;">
+        <div class="modal-header">
+          <h3 style="margin:0; color:#1e40af;">Edit Kitab</h3>
+          <button onclick="closeEditKitabModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+          <input type="hidden" id="editKitabId" value="">
+          <div class="form-group">
+            <label class="form-label">Nama Kitab</label>
+            <input type="text" id="editKitabNama" class="form-input" placeholder="Nama kitab...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Penulis</label>
+            <input type="text" id="editKitabPenulis" class="form-input" placeholder="Nama penulis...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cover/Gambar</label>
+            <div style="display:flex; gap:8px; align-items:flex-start;">
+              <input type="text" id="editKitabImageUrl" class="form-input" placeholder="URL gambar..." style="flex:1;">
+              <label for="editKitabFileInput" class="btn" style="background:#e2e8f0; color:#374151; cursor:pointer; padding:8px 12px; border-radius:6px;">
+                <i class="fa-solid fa-upload"></i> Upload
+              </label>
+              <input type="file" id="editKitabFileInput" accept="image/*" class="hidden" onchange="handleKitabImageUpload(this)">
+            </div>
+            <div id="editKitabPreview" style="margin-top:8px;"></div>
+          </div>
+          <div id="editKitabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
+        </div>
+        <div class="modal-footer" style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:8px;">
+          <button onclick="closeEditKitabModal()" class="btn" style="background:#e2e8f0; color:#374151;">Batal</button>
+          <button onclick="saveEditKitab()" class="btn btn-primary">Simpan</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Quiz Tab -->
     <div id="contentQuiz" class="tab-content">
       <div class="bento-grid">
@@ -1864,7 +1901,6 @@
           if (jenjangKitabs.length > 0) {
             html += `<div style="margin-top:12px; margin-left:8px; display:flex; flex-direction:column; gap:10px;">`;
             for (const kitab of jenjangKitabs) {
-              const kitabBagians = bagians.filter(b => b.kitab_id === kitab.id);
               const kitabThumb = kitab.image_url ? `<img src="${escapeHtml(kitab.image_url)}" alt="cover" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0; flex-shrink:0;" onerror="this.style.display='none'">` : '';
               html += `<div style="padding:12px; background:white; border-radius:10px; border:1px solid #bfdbfe;">
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
@@ -1874,59 +1910,11 @@
                     ${kitab.penulis ? `<span style="display:block; font-size:0.75rem; color:#6b7280; margin-top:1px;">${escapeHtml(kitab.penulis)}</span>` : ''}
                   </div>
                   <div style="display:flex; gap:4px;">
-                    <button onclick="editKitab('${kitab.id}', this.dataset.title)" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" data-image="${escapeHtml(kitab.image_url || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                    <button onclick="openEditKitabModal('${kitab.id}')" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" data-image="${escapeHtml(kitab.image_url || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                     <button onclick="deleteKitab('${kitab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                   </div>
-                </div>`;
-
-              if (kitabBagians.length > 0) {
-                html += `<div style="margin-top:8px; margin-left:10px; display:flex; flex-direction:column; gap:6px;">`;
-                for (const bagian of kitabBagians) {
-                  const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
-                  html += `<div style="padding:8px; background:#f8fafc; border-radius:6px; border:1px solid #e2e8f0;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <span style="font-weight:600; color:#166534; font-size:0.875rem;">${bagian.order_index}. ${escapeHtml(bagian.title || bagian.nama)}</span>
-                      <div style="display:flex; gap:4px;">
-                        <button onclick="openEditMateriModal('bagian', '${bagian.id}')" data-title="${escapeHtml(bagian.title || bagian.nama)}" data-desc="${escapeHtml(bagian.description || '')}" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
-                        <button onclick="deleteMateri('bagian', '${bagian.id}')" style="padding:3px 7px; background:white; border:1px solid #d1d5db; border-radius:5px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
-                      </div>
-                    </div>`;
-
-                  if (bagianBabs.length > 0) {
-                    html += `<div style="margin-top:6px; margin-left:10px; display:flex; flex-direction:column; gap:5px;">`;
-                    for (const bab of bagianBabs) {
-                      const babFasals = fasals.filter(f => f.bab_id === bab.id);
-                      html += `<div style="padding:6px; background:white; border-radius:5px; border:1px solid #e2e8f0;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                          <span style="font-weight:500; color:#374151; font-size:0.8rem;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama)}</span>
-                          <div style="display:flex; gap:3px;">
-                            <button onclick="openEditMateriModal('bab', '${bab.id}')" data-title="${escapeHtml(bab.title || bab.nama)}" data-content-arab="${escapeHtml(bab.content_arab || '')}" data-content-id="${escapeHtml(bab.content_id || '')}" data-is-muqoddimah="${bab.is_muqoddimah || false}" data-is-locked="${bab.is_locked || false}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
-                            <button onclick="deleteMateri('bab', '${bab.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
-                          </div>
-                        </div>`;
-
-                      if (babFasals.length > 0) {
-                        html += `<div style="margin-top:4px; margin-left:8px; display:flex; flex-direction:column; gap:4px;">`;
-                        for (const fasal of babFasals) {
-                          html += `<div style="padding:5px; background:#f8fafc; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
-                            <span style="color:#475569; font-size:0.775rem;">${fasal.order_index}. ${escapeHtml(fasal.title || fasal.nama)}</span>
-                            <div style="display:flex; gap:3px;">
-                              <button onclick="openEditMateriModal('fasal', '${fasal.id}')" data-title="${escapeHtml(fasal.title || fasal.nama)}" data-content-arab="${escapeHtml(fasal.content_arab || '')}" data-content-id="${escapeHtml(fasal.content_id || '')}" data-audio-url="${escapeHtml(fasal.audio_url || '')}" data-is-locked="${fasal.is_locked || false}" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
-                              <button onclick="deleteMateri('fasal', '${fasal.id}')" style="padding:3px 6px; background:white; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
-                            </div>
-                          </div>`;
-                        }
-                        html += '</div>';
-                      }
-                      html += '</div>';
-                    }
-                    html += '</div>';
-                  }
-                  html += '</div>';
-                }
-                html += '</div>';
-              }
-              html += '</div>';
+                </div>
+              </div>`;
             }
             html += '</div>';
           }
@@ -2407,6 +2395,77 @@
           alert('Berhasil diupdate!');
           closeEditMateriModal();
           loadMateri();
+        } else {
+          const err = await res.json();
+          errorEl.textContent = 'Gagal: ' + (err.message || 'Unknown error');
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    // Edit Kitab Modal Functions
+    function openEditKitabModal(id) {
+      const btn = event.target.closest('button');
+      document.getElementById('editKitabId').value = id;
+      document.getElementById('editKitabNama').value = btn.dataset.title || '';
+      document.getElementById('editKitabPenulis').value = btn.dataset.penulis || '';
+      document.getElementById('editKitabImageUrl').value = btn.dataset.image || '';
+      const preview = document.getElementById('editKitabPreview');
+      if (btn.dataset.image) {
+        preview.innerHTML = `<img src="${escapeHtml(btn.dataset.image)}" style="max-width:120px; max-height:80px; border-radius:6px;">`;
+      } else {
+        preview.innerHTML = '';
+      }
+      document.getElementById('editKitabError').classList.add('hidden');
+      document.getElementById('editKitabModal').classList.remove('hidden');
+    }
+
+    function closeEditKitabModal() {
+      document.getElementById('editKitabModal').classList.add('hidden');
+    }
+
+    function handleKitabImageUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('editKitabImageUrl').value = e.target.result;
+        document.getElementById('editKitabPreview').innerHTML = `<img src="${e.target.result}" style="max-width:120px; max-height:80px; border-radius:6px;">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveEditKitab() {
+      const id = document.getElementById('editKitabId').value;
+      const nama = document.getElementById('editKitabNama').value.trim();
+      const penulis = document.getElementById('editKitabPenulis').value.trim();
+      const image_url = document.getElementById('editKitabImageUrl').value.trim() || null;
+      const errorEl = document.getElementById('editKitabError');
+
+      if (!nama) {
+        errorEl.textContent = 'Nama kitab tidak boleh kosong';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ nama, penulis: penulis || null, image_url })
+        });
+
+        if (res.ok) {
+          alert('Berhasil diupdate!');
+          closeEditKitabModal();
+          loadJenjangList();
         } else {
           const err = await res.json();
           errorEl.textContent = 'Gagal: ' + (err.message || 'Unknown error');
