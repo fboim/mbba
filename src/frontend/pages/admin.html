@@ -3637,11 +3637,11 @@
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
-        const [bagiansRes, babsRes, fasalsRes, kitabsRes, bagiansAllRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/bagian?select=id,audio_url,title,nama,kitab_id`, { headers }),
-          fetch(`${SUPABASE_URL}rest/v1/bab?select=id,audio_url,title,nama,label,bagian_id`, { headers }),
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,audio_url,title,nama,label,bab_id`, { headers }),
+        const [fasalsRes, kitabsRes, allFasalsRes, allBabsRes, allBagiansRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,audio_url,title,label,bab_id`, { headers }),
           fetch(`${SUPABASE_URL}rest/v1/kitab?select=id,nama`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,bab_id`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/bab?select=id,bagian_id`, { headers }),
           fetch(`${SUPABASE_URL}rest/v1/bagian?select=id,kitab_id`, { headers })
         ]);
 
@@ -3658,29 +3658,34 @@
           }
         };
 
-        const bagians = (await parseJson(bagiansRes)).filter(b => b.audio_url);
-        const babs = (await parseJson(babsRes)).filter(b => b.audio_url);
         const fasals = (await parseJson(fasalsRes)).filter(f => f.audio_url);
         const kitabs = await parseJson(kitabsRes, []);
-        const allBagiansData = await parseJson(bagiansAllRes, []);
+        const allFasalsData = await parseJson(allFasalsRes, []);
+        const allBabsData = await parseJson(allBabsRes, []);
+        const allBagiansData = await parseJson(allBagiansRes, []);
 
-        const getKitabName = (bagianId) => {
-          const bagian = allBagiansData.find(b => b.id === bagianId);
-          if (bagian) {
-            const kitab = kitabs.find(k => k.id === bagian.kitab_id);
-            return kitab?.nama || 'Tanpa Kitab';
+        const getKitabName = (fasalId) => {
+          const fasal = allFasalsData.find(f => f.id === fasalId);
+          if (fasal) {
+            const bab = allBabsData.find(b => b.id === fasal.bab_id);
+            if (bab) {
+              const bagian = allBagiansData.find(bg => bg.id === bab.bagian_id);
+              if (bagian) {
+                const kitab = kitabs.find(k => k.id === bagian.kitab_id);
+                return kitab?.nama || 'Tanpa Kitab';
+              }
+            }
           }
           return 'Tanpa Kitab';
         };
 
-        const allAudio = [
-          ...bagians.map(b => ({ ...b, type: 'bagian', label: b.title || b.nama, parent: getKitabName(b.id) })),
-          ...babs.map(b => ({ ...b, type: 'bab', label: b.title || b.nama || b.label, parent: getKitabName(b.bagian_id) })),
-          ...fasals.map(f => {
-            const bab = babs.find(b => b.id === f.bab_id);
-            return { ...f, type: 'fasal', label: f.title || f.nama || f.label, parent: bab ? getKitabName(bab.bagian_id) : 'Tanpa Kitab' };
-          })
-        ];
+        const allAudio = fasals.map(f => ({
+          ...f,
+          type: 'fasal',
+          label: f.title || f.label || f.id,
+          parent: getKitabName(f.id)
+        })
+        );
 
         if (allAudio.length === 0) {
           container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-music"></i></div><p class="empty-text">Belum ada audio yang diupload</p></div>`;
