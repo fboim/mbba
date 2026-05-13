@@ -1168,6 +1168,108 @@
       </div>
     </div>
 
+    <!-- Edit Bagian Modal -->
+    <div id="editBagianModal" class="modal-overlay hidden">
+      <div class="modal-content" style="max-width:450px;">
+        <div class="modal-header">
+          <h3 style="margin:0; color:#6366f1;">Edit Bagian</h3>
+          <button onclick="closeEditBagianModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+          <input type="hidden" id="editBagianId" value="">
+          <div class="form-group">
+            <label class="form-label">Nama Bagian</label>
+            <input type="text" id="editBagianNama" class="form-input" placeholder="Nama bagian...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Deskripsi</label>
+            <textarea id="editBagianDesc" class="form-input" rows="2" placeholder="Deskripsi (opsional)..."></textarea>
+          </div>
+          <div id="editBagianError" class="alert alert-error hidden" style="margin-top:12px;"></div>
+        </div>
+        <div class="modal-footer" style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:8px;">
+          <button onclick="closeEditBagianModal()" class="btn" style="background:#e2e8f0; color:#374151;">Batal</button>
+          <button onclick="saveEditBagian()" class="btn btn-primary">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Bab Modal -->
+    <div id="editBabModal" class="modal-overlay hidden">
+      <div class="modal-content" style="max-width:500px;">
+        <div class="modal-header">
+          <h3 style="margin:0; color:#8b5cf6;">Edit Bab</h3>
+          <button onclick="closeEditBabModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+          <input type="hidden" id="editBabMId" value="">
+          <div class="form-group">
+            <label class="form-label">Nama Bab</label>
+            <input type="text" id="editBabNama" class="form-input" placeholder="Nama bab...">
+          </div>
+          <div class="form-group" style="display:flex; gap:12px;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.875rem;">
+              <input type="checkbox" id="editBabIsMuqoddimah" style="width:16px; height:16px;">
+              Muqoddimah
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.875rem;">
+              <input type="checkbox" id="editBabIsLocked" style="width:16px; height:16px;">
+              Kunci
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konten Arab</label>
+            <textarea id="editBabContentArab" class="form-input" rows="3" dir="rtl" lang="ar" placeholder="المحتوى العربي..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konten Indonesia</label>
+            <textarea id="editBabContentId" class="form-input" rows="3" placeholder="Konten terjemahan..."></textarea>
+          </div>
+          <div id="editBabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
+        </div>
+        <div class="modal-footer" style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:8px;">
+          <button onclick="closeEditBabModal()" class="btn" style="background:#e2e8f0; color:#374151;">Batal</button>
+          <button onclick="saveEditBab()" class="btn btn-primary">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Fasal Modal -->
+    <div id="editFasalModal" class="modal-overlay hidden">
+      <div class="modal-content" style="max-width:550px;">
+        <div class="modal-header">
+          <h3 style="margin:0; color:#4f46e5;">Edit Fasal</h3>
+          <button onclick="closeEditFasalModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+          <input type="hidden" id="editFasalId" value="">
+          <div class="form-group">
+            <label class="form-label">Nama Fasal</label>
+            <input type="text" id="editFasalNama" class="form-input" placeholder="Nama fasal...">
+          </div>
+          <div class="form-group">
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.875rem;">
+              <input type="checkbox" id="editFasalIsLocked" style="width:16px; height:16px;">
+              Kunci (tidak bisa diakses siswa)
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konten Arab</label>
+            <textarea id="editFasalContentArab" class="form-input" rows="4" dir="rtl" lang="ar" style="font-family:'Amiri',serif;" placeholder="المحتوى العربي..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konten Indonesia</label>
+            <textarea id="editFasalContentId" class="form-input" rows="4" placeholder="Konten terjemahan Indonesia..."></textarea>
+          </div>
+          <div id="editFasalError" class="alert alert-error hidden" style="margin-top:12px;"></div>
+        </div>
+        <div class="modal-footer" style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:8px;">
+          <button onclick="closeEditFasalModal()" class="btn" style="background:#e2e8f0; color:#374151;">Batal</button>
+          <button onclick="saveEditFasal()" class="btn btn-primary">Simpan</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Add Kitab Modal -->
     <div id="addKitabModal" class="modal-overlay hidden">
       <div class="modal-content" style="max-width:500px;">
@@ -2673,7 +2775,11 @@
               listHTML += `<div style="margin-top:6px; margin-left:6px; padding:8px; background:#f8fafc; border-radius:6px; border:1px dashed #cbd5e1;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span style="font-weight:500; color:#475569; font-size:0.85rem;">${bagian.order_index}. ${escapeHtml(bagian.nama || bagian.title)}</span>
-                  <span style="padding:1px 6px; background:#6366f1; color:white; border-radius:3px; font-size:8px; font-weight:600;">BAGIAN</span>
+                  <div style="display:flex; gap:4px; align-items:center;">
+                    <span style="padding:1px 6px; background:#6366f1; color:white; border-radius:3px; font-size:8px; font-weight:600;">BAGIAN</span>
+                    <button onclick="openEditBagianModal('${bagian.id}')" style="padding:2px 5px; background:#eef2ff; border:1px solid #c7d2fe; border-radius:3px; cursor:pointer; font-size:9px;" title="Edit"><i class="fa-solid fa-pen" style="color:#6366f1;"></i></button>
+                    <button onclick="deleteBagian('${bagian.id}')" style="padding:2px 5px; background:#fef2f2; border:1px solid #fecaca; border-radius:3px; cursor:pointer; font-size:9px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                  </div>
                 </div>`;
 
               for (const bab of bagianBabs) {
@@ -2685,12 +2791,22 @@
                       <span style="font-weight:400; color:#64748b; font-size:0.8rem;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama || bab.label)}</span>
                       ${muqoddimahBadge}
                     </div>
-                    <span style="padding:1px 5px; background:#8b5cf6; color:white; border-radius:3px; font-size:7px; font-weight:600;">BAB</span>
+                    <div style="display:flex; gap:4px; align-items:center;">
+                      <span style="padding:1px 5px; background:#8b5cf6; color:white; border-radius:3px; font-size:7px; font-weight:600;">BAB</span>
+                      <button onclick="openEditBabModal('${bab.id}')" style="padding:2px 5px; background:#ede9fe; border:1px solid #ddd6fe; border-radius:3px; cursor:pointer; font-size:9px;" title="Edit"><i class="fa-solid fa-pen" style="color:#8b5cf6;"></i></button>
+                      <button onclick="deleteBab('${bab.id}')" style="padding:2px 5px; background:#fef2f2; border:1px solid #fecaca; border-radius:3px; cursor:pointer; font-size:9px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                    </div>
                   </div>`;
 
                 for (const fasal of babFasals) {
                   listHTML += `<div style="margin-top:3px; margin-left:6px; padding:4px 6px; background:#f1f5f9; border-radius:3px; border-left:2px solid #94a3b8;">
-                    <span style="font-size:0.75rem; color:#475569;">${bab.order_index}.${fasal.order_index} ${escapeHtml(fasal.title || fasal.id)}</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:0.75rem; color:#475569;">${bab.order_index}.${fasal.order_index} ${escapeHtml(fasal.title || fasal.id)}</span>
+                      <div style="display:flex; gap:4px;">
+                        <button onclick="openEditFasalModal('${fasal.id}')" style="padding:2px 5px; background:#e0e7ff; border:1px solid #c7d2fe; border-radius:3px; cursor:pointer; font-size:9px;" title="Edit"><i class="fa-solid fa-pen" style="color:#4f46e5;"></i></button>
+                        <button onclick="deleteFasal('${fasal.id}')" style="padding:2px 5px; background:#fef2f2; border:1px solid #fecaca; border-radius:3px; cursor:pointer; font-size:9px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+                      </div>
+                    </div>
                   </div>`;
                 }
                 listHTML += '</div>';
@@ -2944,6 +3060,240 @@
       } catch (err) {
         errorEl.textContent = 'Error: ' + err.message;
         errorEl.classList.remove('hidden');
+      }
+    }
+
+    // Edit Bagian Modal
+    function openEditBagianModal(id) {
+      const bagian = allBagians.find(b => b.id === id);
+      if (!bagian) return;
+      document.getElementById('editBagianId').value = id;
+      document.getElementById('editBagianNama').value = bagian.nama || bagian.title || '';
+      document.getElementById('editBagianDesc').value = bagian.deskripsi || '';
+      document.getElementById('editBagianError').classList.add('hidden');
+      document.getElementById('editBagianModal').classList.remove('hidden');
+    }
+
+    function closeEditBagianModal() {
+      document.getElementById('editBagianModal').classList.add('hidden');
+    }
+
+    async function saveEditBagian() {
+      const id = document.getElementById('editBagianId').value;
+      const nama = document.getElementById('editBagianNama').value.trim();
+      const deskripsi = document.getElementById('editBagianDesc').value.trim();
+      const errorEl = document.getElementById('editBagianError');
+
+      if (!nama) {
+        errorEl.textContent = 'Nama tidak boleh kosong';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/bagian?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify({ nama, deskripsi: deskripsi || null })
+        });
+
+        if (res.ok) {
+          alert('Berhasil diupdate!');
+          closeEditBagianModal();
+          loadMateri();
+        } else {
+          const errText = await res.text();
+          errorEl.textContent = 'Gagal: ' + errText;
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    async function deleteBagian(id) {
+      if (!confirm('Yakin hapus Bagian ini?\n\n⚠️ Semua Bab dan Fasal di dalamnya juga akan dihapus!')) return;
+
+      try {
+        // Get all babs in this bagian
+        const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+        const babs = await babsRes.json().catch(() => []);
+
+        for (const bab of babs) {
+          // Delete fasals
+          await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bab.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+          // Delete user progress
+          await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=in.(SELECT id FROM fasal WHERE bab_id=eq.${bab.id})`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+        }
+
+        // Delete babs
+        await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+
+        // Delete bagian
+        const res = await fetch(`${SUPABASE_URL}rest/v1/bagian?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+
+        if (res.ok) {
+          alert('Berhasil dihapus!');
+          loadMateri();
+        } else {
+          alert('Gagal hapus: ' + await res.text());
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // Edit Bab Modal
+    function openEditBabModal(id) {
+      const bab = allBabs.find(b => b.id === id);
+      if (!bab) return;
+      document.getElementById('editBabMId').value = id;
+      document.getElementById('editBabNama').value = bab.title || bab.nama || bab.label || '';
+      document.getElementById('editBabIsMuqoddimah').checked = bab.is_muqoddimah === true;
+      document.getElementById('editBabIsLocked').checked = bab.is_locked === true;
+      document.getElementById('editBabContentArab').value = bab.content_arab || '';
+      document.getElementById('editBabContentId').value = bab.content_id || '';
+      document.getElementById('editBabError').classList.add('hidden');
+      document.getElementById('editBabModal').classList.remove('hidden');
+    }
+
+    function closeEditBabModal() {
+      document.getElementById('editBabModal').classList.add('hidden');
+    }
+
+    async function saveEditBab() {
+      const id = document.getElementById('editBabMId').value;
+      const title = document.getElementById('editBabNama').value.trim();
+      const is_muqoddimah = document.getElementById('editBabIsMuqoddimah').checked;
+      const is_locked = document.getElementById('editBabIsLocked').checked;
+      const content_arab = document.getElementById('editBabContentArab').value.trim();
+      const content_id = document.getElementById('editBabContentId').value.trim();
+      const errorEl = document.getElementById('editBabError');
+
+      if (!title) {
+        errorEl.textContent = 'Nama tidak boleh kosong';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/bab?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify({ title, is_muqoddimah, is_locked, content_arab: content_arab || null, content_id: content_id || null })
+        });
+
+        if (res.ok) {
+          alert('Berhasil diupdate!');
+          closeEditBabModal();
+          loadMateri();
+        } else {
+          errorEl.textContent = 'Gagal: ' + await res.text();
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    async function deleteBab(id) {
+      if (!confirm('Yakin hapus Bab ini?\n\n⚠️ Semua Fasal dan Quiz di dalamnya juga akan dihapus!')) return;
+
+      try {
+        // Get all fasals
+        const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+        const fasals = await fasalsRes.json().catch(() => []);
+
+        for (const fasal of fasals) {
+          await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${fasal.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+          await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${fasal.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+        }
+
+        await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+        const res = await fetch(`${SUPABASE_URL}rest/v1/bab?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+
+        if (res.ok) {
+          alert('Berhasil dihapus!');
+          loadMateri();
+        } else {
+          alert('Gagal hapus: ' + await res.text());
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // Edit Fasal Modal
+    function openEditFasalModal(id) {
+      const fasal = allFasals.find(f => f.id === id);
+      if (!fasal) return;
+      document.getElementById('editFasalId').value = id;
+      document.getElementById('editFasalNama').value = fasal.title || '';
+      document.getElementById('editFasalContentArab').value = fasal.content_arab || '';
+      document.getElementById('editFasalContentId').value = fasal.content_id || '';
+      document.getElementById('editFasalIsLocked').checked = fasal.is_locked === true;
+      document.getElementById('editFasalError').classList.add('hidden');
+      document.getElementById('editFasalModal').classList.remove('hidden');
+    }
+
+    function closeEditFasalModal() {
+      document.getElementById('editFasalModal').classList.add('hidden');
+    }
+
+    async function saveEditFasal() {
+      const id = document.getElementById('editFasalId').value;
+      const title = document.getElementById('editFasalNama').value.trim();
+      const content_arab = document.getElementById('editFasalContentArab').value.trim();
+      const content_id = document.getElementById('editFasalContentId').value.trim();
+      const is_locked = document.getElementById('editFasalIsLocked').checked;
+      const errorEl = document.getElementById('editFasalError');
+
+      if (!title) {
+        errorEl.textContent = 'Nama tidak boleh kosong';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/fasal?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify({ title, content_arab: content_arab || null, content_id: content_id || null, is_locked })
+        });
+
+        if (res.ok) {
+          alert('Berhasil diupdate!');
+          closeEditFasalModal();
+          loadMateri();
+        } else {
+          errorEl.textContent = 'Gagal: ' + await res.text();
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    async function deleteFasal(id) {
+      if (!confirm('Yakin hapus Fasal ini?')) return;
+
+      try {
+        await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+        await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+
+        const res = await fetch(`${SUPABASE_URL}rest/v1/fasal?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY } });
+
+        if (res.ok) {
+          alert('Berhasil dihapus!');
+          loadMateri();
+        } else {
+          alert('Gagal hapus: ' + await res.text());
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
       }
     }
 
