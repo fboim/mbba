@@ -3623,9 +3623,11 @@
         return;
       }
 
-      const contentArab = contentArabEl.value || '';
-      const contentId = contentIdEl.value || '';
+      const contentArab = document.getElementById('editBabContentArab') ? document.getElementById('editBabContentArab').value : '';
+      const contentId = document.getElementById('editBabContentId') ? document.getElementById('editBabContentId').value : '';
 
+      console.log('direct read - editBabContentArab.value:', document.getElementById('editBabContentArab')?.value);
+      console.log('direct read - editBabContentId.value:', document.getElementById('editBabContentId')?.value);
       console.log('contentArab:', contentArab);
       console.log('contentId:', contentId);
 
