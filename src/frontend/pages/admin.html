@@ -2469,30 +2469,31 @@
       }
     }
 
-    // Update Materi Form
+    // Update Materi Form - Legacy function, kept for compatibility
     function updateMateriForm() {
-      const type = document.getElementById('newMateriType').value;
-      document.getElementById('bagianFields').classList.add('hidden');
-      document.getElementById('babFields').classList.add('hidden');
-      document.getElementById('fasalFields').classList.add('hidden');
+      const type = document.getElementById('newMateriType')?.value;
+      const bagianFields = document.getElementById('bagianFields');
+      const babFields = document.getElementById('babFields');
+      const fasalFields = document.getElementById('fasalFields');
 
-      if (type === 'bagian') { document.getElementById('bagianFields').classList.remove('hidden'); loadKitabDropdown(); }
-      else if (type === 'bab') {
-        document.getElementById('babFields').classList.remove('hidden');
-        loadBagiansForDropdown();
-      } else if (type === 'fasal') {
-        document.getElementById('fasalFields').classList.remove('hidden');
-        loadBabsForDropdown();
-      }
+      if (bagianFields) bagianFields.classList.add('hidden');
+      if (babFields) babFields.classList.add('hidden');
+      if (fasalFields) fasalFields.classList.add('hidden');
+
+      if (type === 'bagian' && bagianFields) { bagianFields.classList.remove('hidden'); loadKitabDropdown(); }
+      else if (type === 'bab' && babFields) { babFields.classList.remove('hidden'); loadBagiansForDropdown(); }
+      else if (type === 'fasal' && fasalFields) { fasalFields.classList.remove('hidden'); loadBabsForDropdown(); }
     }
 
     async function loadBagiansForDropdown() {
       const select = document.getElementById('newBabBagian');
+      if (!select) return;
       select.innerHTML = '<option value="">Pilih Bagian...</option>' + allBagians.map(b => `<option value="${b.id}">${b.order_index}. ${b.title || b.nama}</option>`).join('');
     }
 
     async function loadBabsForDropdown() {
       const select = document.getElementById('newFasalBab');
+      if (!select) return;
       select.innerHTML = '<option value="">Pilih Bab...</option>' + allBabs.map(b => `<option value="${b.id}">${b.order_index}. ${escapeHtml(b.title || b.nama)}</option>`).join('');
     }
 
