@@ -921,6 +921,7 @@
         kurikulum = [];
         try {
           kurikulum = await fetchKurikulum();
+          console.log('fetchKurikulum result:', JSON.stringify(kurikulum).substring(0, 500));
         } catch(e) {
           console.error('fetchKurikulum error:', e);
           kurikulum = [];
@@ -936,7 +937,10 @@
           return;
         }
 
+        console.log('kurikulum count:', kurikulum.length);
         kurikulum.forEach(function(bagian) {
+          console.log('bagian:', bagian.id, bagian.nama || bagian.title);
+        });
           (bagian.bab || []).forEach(function(bab) {
             allBabs.push({
               id: bab.id,
