@@ -1677,6 +1677,8 @@
     let allJenjang = [];
     let allKitab = [];
 
+    let currentUserRole = 'student';
+
     (async function() {
       const user = await getCurrentUser();
       if (!user) {
@@ -1685,9 +1687,21 @@
       }
 
       const role = user.user_metadata?.role || user.role || 'student';
+      currentUserRole = role;
       if (role !== 'admin' && role !== 'teacher') {
         window.location.href = 'student.html';
         return;
+      }
+
+      // Update badge in nav based on role
+      const adminBadge = document.querySelector('.admin-badge');
+      if (adminBadge) {
+        if (role === 'teacher') {
+          adminBadge.innerHTML = '<i class="fa-solid fa-chalkboard-user"></i> Teacher';
+          adminBadge.style.background = '#8b5cf6';
+        } else {
+          adminBadge.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Admin Panel';
+        }
       }
 
       loadStats();
