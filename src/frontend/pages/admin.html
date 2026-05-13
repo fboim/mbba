@@ -1153,6 +1153,76 @@
       </div>
     </div>
 
+    <!-- Add Kitab Modal -->
+    <div id="addKitabModal" class="modal-overlay hidden">
+      <div class="modal-content" style="max-width:500px;">
+        <div class="modal-header">
+          <h3 style="margin:0; color:#7c3aed;">Tambah Kitab Baru</h3>
+          <button onclick="closeAddKitabModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+          <input type="hidden" id="addKitabJenjangId" value="">
+          <div class="form-group">
+            <label class="form-label">Nama Kitab</label>
+            <input type="text" id="addKitabNama" class="form-input" placeholder="Nama kitab...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Penulis (opsional)</label>
+            <input type="text" id="addKitabPenulis" class="form-input" placeholder="Nama penulis...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cover / Gambar (opsional)</label>
+            <div style="display:flex; gap:8px; align-items:flex-start;">
+              <input type="text" id="addKitabImageUrl" class="form-input" placeholder="URL atau upload..." style="flex:1;">
+              <label for="addKitabFileInput" class="btn" style="background:#e2e8f0; color:#374151; cursor:pointer; padding:8px 12px; border-radius:6px;">
+                <i class="fa-solid fa-upload"></i>
+              </label>
+              <input type="file" id="addKitabFileInput" accept="image/*" class="hidden" onchange="handleAddKitabFileUpload(this)">
+            </div>
+            <div id="addKitabPreview" style="margin-top:8px;"></div>
+          </div>
+          <div id="addKitabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
+        </div>
+        <div class="modal-footer" style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:8px;">
+          <button onclick="closeAddKitabModal()" class="btn" style="background:#e2e8f0; color:#374151;">Batal</button>
+          <button onclick="submitAddKitab()" class="btn btn-primary" style="background:#7c3aed;">Tambah Kitab</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clone Kitab Modal -->
+    <div id="cloneKitabModal" class="modal-overlay hidden">
+      <div class="modal-content" style="max-width:500px;">
+        <div class="modal-header">
+          <h3 style="margin:0; color:#0891b2;">Clone / Salin Kitab</h3>
+          <button onclick="closeCloneKitabModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+          <p style="margin-bottom:16px; color:#6b7280;">Salin kitab ke jenjang lain. Semua bagian, bab, dan fasal akan disalin.</p>
+          <input type="hidden" id="cloneKitabSourceId" value="">
+          <div class="form-group">
+            <label class="form-label">Kitab Sumber</label>
+            <input type="text" id="cloneKitabSourceName" class="form-input" disabled style="background:#f1f5f9;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jenjang Tujuan</label>
+            <select id="cloneKitabTargetJenjang" class="form-select">
+              <option value="">Pilih Jenjang...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Kitab Baru</label>
+            <input type="text" id="cloneKitabNewName" class="form-input" placeholder="Nama kitab baru...">
+          </div>
+          <div id="cloneKitabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
+        </div>
+        <div class="modal-footer" style="padding:12px 16px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:8px;">
+          <button onclick="closeCloneKitabModal()" class="btn" style="background:#e2e8f0; color:#374151;">Batal</button>
+          <button onclick="submitCloneKitab()" class="btn btn-primary" style="background:#0891b2;">Clone Kitab</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Quiz Tab -->
     <div id="contentQuiz" class="tab-content">
       <div class="bento-grid">
@@ -1922,12 +1992,20 @@
                   </div>
                   <div style="display:flex; gap:4px;">
                     <button onclick="openEditKitabModal('${kitab.id}')" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" data-image="${escapeHtml(kitab.image_url || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
+                    <button onclick="openCloneKitabModal('${kitab.id}')" data-title="${escapeHtml(kitab.nama || kitab.title)}" style="padding:4px 8px; background:#e0f2fe; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Clone"><i class="fa-solid fa-copy" style="color:#0891b2;"></i></button>
                     <button onclick="deleteKitab('${kitab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                   </div>
                 </div>
               </div>`;
             }
+            html += `<button onclick="openAddKitabModal('${jenjang.id}')" style="padding:8px 12px; background:#f3f4f6; border:1px dashed #9ca3af; border-radius:8px; cursor:pointer; font-size:12px; color:#6b7280; width:100%;">
+              <i class="fa-solid fa-plus"></i> Tambah Kitab
+            </button>`;
             html += '</div>';
+          } else {
+            html += `<button onclick="openAddKitabModal('${jenjang.id}')" style="margin-top:8px; padding:8px 12px; background:#f3f4f6; border:1px dashed #9ca3af; border-radius:8px; cursor:pointer; font-size:12px; color:#6b7280; width:100%;">
+              <i class="fa-solid fa-plus"></i> Tambah Kitab
+            </button>`;
           }
           html += '</div>';
         }
@@ -2075,9 +2153,48 @@
     }
 
     async function deleteJenjang(id) {
-      if (!confirm('Yakin hapus jenjang ini?\n\nPERHATIAN: Semua kitab, bagian, bab, fasal di dalamnya juga akan dihapus.')) return;
       const token = getToken();
       if (!token) { alert('Session expired.'); return; }
+
+      // Get counts for confirmation
+      const kitabsRes = await fetch(`${SUPABASE_URL}rest/v1/kitab?jenjang_id=eq.${id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+      const kitabs = await kitabsRes.json();
+      let totalBagians = 0, totalBabs = 0, totalFasals = 0, totalQuizzes = 0;
+
+      for (const k of kitabs) {
+        const bagiansRes = await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${k.id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        const bagians = await bagiansRes.json();
+        totalBagians += bagians.length;
+
+        for (const b of bagians) {
+          const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${b.id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+          const babs = await babsRes.json();
+          totalBabs += babs.length;
+
+          for (const bb of babs) {
+            const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+            const fasals = await fasalsRes.json();
+            totalFasals += fasals.length;
+
+            for (const f of fasals) {
+              const quizzesRes = await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+              const quizzes = await quizzesRes.json();
+              totalQuizzes += quizzes.length;
+            }
+          }
+        }
+      }
+
+      const msg = `Yakin hapus jenjang ini?\n\n` +
+        `📊 Data yang akan dihapus:\n` +
+        `   • Kitab: ${kitabs.length}\n` +
+        `   • Bagian: ${totalBagians}\n` +
+        `   • Bab: ${totalBabs}\n` +
+        `   • Fasal: ${totalFasals}\n` +
+        `   • Quiz: ${totalQuizzes}\n\n` +
+        `⚠️ Semua data akan dihapus permanen!`;
+
+      if (!confirm(msg)) return;
 
       try {
         const kitabsRes = await fetch(`${SUPABASE_URL}rest/v1/kitab?jenjang_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
@@ -2119,9 +2236,43 @@
     }
 
     async function deleteKitab(id) {
-      if (!confirm('Yakin hapus kitab ini?\n\nPERHATIAN: Semua bagian, bab, fasal di dalamnya juga akan dihapus.')) return;
       const token = getToken();
       if (!token) { alert('Session expired.'); return; }
+
+      // Get counts for confirmation
+      let totalBagians = 0, totalBabs = 0, totalFasals = 0, totalQuizzes = 0;
+
+      const bagiansRes = await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+      const bagians = await bagiansRes.json();
+      totalBagians = bagians.length;
+
+      for (const b of bagians) {
+        const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${b.id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        const babs = await babsRes.json();
+        totalBabs += babs.length;
+
+        for (const bb of babs) {
+          const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+          const fasals = await fasalsRes.json();
+          totalFasals += fasals.length;
+
+          for (const f of fasals) {
+            const quizzesRes = await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}&select=id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+            const quizzes = await quizzesRes.json();
+            totalQuizzes += quizzes.length;
+          }
+        }
+      }
+
+      const msg = `Yakin hapus kitab ini?\n\n` +
+        `📊 Data yang akan dihapus:\n` +
+        `   • Bagian: ${totalBagians}\n` +
+        `   • Bab: ${totalBabs}\n` +
+        `   • Fasal: ${totalFasals}\n` +
+        `   • Quiz: ${totalQuizzes}\n\n` +
+        `⚠️ Semua data akan dihapus permanen!`;
+
+      if (!confirm(msg)) return;
 
       try {
         const bagiansRes = await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
@@ -2466,6 +2617,184 @@
           errorEl.textContent = 'Gagal: ' + (err.message || 'Unknown error');
           errorEl.classList.remove('hidden');
         }
+      } catch (err) {
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    // Add Kitab Modal Functions
+    function openAddKitabModal(jenjangId) {
+      document.getElementById('addKitabJenjangId').value = jenjangId;
+      document.getElementById('addKitabNama').value = '';
+      document.getElementById('addKitabPenulis').value = '';
+      document.getElementById('addKitabImageUrl').value = '';
+      document.getElementById('addKitabPreview').innerHTML = '';
+      document.getElementById('addKitabError').classList.add('hidden');
+      document.getElementById('addKitabModal').classList.remove('hidden');
+    }
+
+    function closeAddKitabModal() {
+      document.getElementById('addKitabModal').classList.add('hidden');
+    }
+
+    function handleAddKitabFileUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('addKitabImageUrl').value = e.target.result;
+        document.getElementById('addKitabPreview').innerHTML = `<img src="${e.target.result}" style="max-width:120px; max-height:80px; border-radius:6px;">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function submitAddKitab() {
+      const jenjangId = document.getElementById('addKitabJenjangId').value;
+      const nama = document.getElementById('addKitabNama').value.trim();
+      const penulis = document.getElementById('addKitabPenulis').value.trim();
+      const image_url = document.getElementById('addKitabImageUrl').value.trim() || null;
+      const errorEl = document.getElementById('addKitabError');
+
+      if (!nama) {
+        errorEl.textContent = 'Nama kitab tidak boleh kosong';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}rest/v1/kitab`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`,
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({
+            jenjang_id: jenjangId,
+            nama,
+            penulis: penulis || null,
+            image_url,
+            order_index: 1
+          })
+        });
+
+        if (res.ok) {
+          alert('Kitab berhasil ditambahkan!');
+          closeAddKitabModal();
+          loadJenjangList();
+        } else {
+          const err = await res.json();
+          errorEl.textContent = 'Gagal: ' + (err.message || 'Unknown error');
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    // Clone Kitab Modal Functions
+    function openCloneKitabModal(kitabId) {
+      const btn = event.target.closest('button');
+      document.getElementById('cloneKitabSourceId').value = kitabId;
+      document.getElementById('cloneKitabSourceName').value = btn.dataset.title || '';
+      document.getElementById('cloneKitabNewName').value = btn.dataset.title + ' (Copy)';
+      document.getElementById('cloneKitabError').classList.add('hidden');
+
+      // Populate jenjang dropdown
+      const select = document.getElementById('cloneKitabTargetJenjang');
+      select.innerHTML = '<option value="">Pilih Jenjang...</option>' +
+        allJenjang.map(j => `<option value="${j.id}">${j.order_index}. ${escapeHtml(j.nama || j.title)}</option>`).join('');
+
+      document.getElementById('cloneKitabModal').classList.remove('hidden');
+    }
+
+    function closeCloneKitabModal() {
+      document.getElementById('cloneKitabModal').classList.add('hidden');
+    }
+
+    async function submitCloneKitab() {
+      const sourceId = document.getElementById('cloneKitabSourceId').value;
+      const targetJenjangId = document.getElementById('cloneKitabTargetJenjang').value;
+      const newName = document.getElementById('cloneKitabNewName').value.trim();
+      const errorEl = document.getElementById('cloneKitabError');
+
+      if (!targetJenjangId || !newName) {
+        errorEl.textContent = 'Pilih jenjang dan isi nama kitab baru';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      const token = getToken();
+      if (!token) { alert('Session expired.'); return; }
+
+      try {
+        // Step 1: Get source kitab with all its children
+        const sourceRes = await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${sourceId}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        const sourceKitab = (await sourceRes.json())[0];
+        if (!sourceKitab) { alert('Kitab sumber tidak ditemukan'); return; }
+
+        // Step 2: Create new kitab
+        const newKitabRes = await fetch(`${SUPABASE_URL}rest/v1/kitab`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ jenjang_id: targetJenjangId, nama: newName, image_url: sourceKitab.image_url, order_index: 1 })
+        });
+        if (!newKitabRes.ok) { alert('Gagal membuat kitab baru'); return; }
+        const newKitab = (await newKitabRes.json())[0];
+
+        // Step 3: Get source bagians and clone them
+        const bagiansRes = await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${sourceId}&order=order_index`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+        const sourceBagians = await bagiansRes.json();
+
+        for (const sb of sourceBagians) {
+          const newBagianRes = await fetch(`${SUPABASE_URL}rest/v1/bagian`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ kitab_id: newKitab.id, title: sb.title, order_index: sb.order_index })
+          });
+          if (!newBagianRes.ok) continue;
+          const newBagian = (await newBagianRes.json())[0];
+
+          // Clone babs for this bagian
+          const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${sb.id}&order=order_index`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+          const sourceBabs = await babsRes.json();
+
+          for (const sbb of sourceBabs) {
+            const newBabRes = await fetch(`${SUPABASE_URL}rest/v1/bab`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ bagian_id: newBagian.id, title: sbb.title, order_index: sbb.order_index, is_muqoddimah: sbb.is_muqoddimah })
+            });
+            if (!newBabRes.ok) continue;
+            const newBab = (await newBabRes.json())[0];
+
+            // Clone fasals for this bab
+            const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${sbb.id}&order=order_index`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
+            const sourceFasals = await fasalsRes.json();
+
+            for (const sf of sourceFasals) {
+              await fetch(`${SUPABASE_URL}rest/v1/fasal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                  bab_id: newBab.id,
+                  title: sf.title,
+                  order_index: sf.order_index,
+                  content_arab: sf.content_arab,
+                  content_id: sf.content_id,
+                  is_locked: sf.is_locked
+                })
+              });
+            }
+          }
+        }
+
+        alert('Kitab berhasil di-clone!');
+        closeCloneKitabModal();
+        loadJenjangList();
       } catch (err) {
         errorEl.textContent = 'Error: ' + err.message;
         errorEl.classList.remove('hidden');

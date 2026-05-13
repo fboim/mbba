@@ -194,6 +194,55 @@ async function deleteKitab(id) {
   await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
 }
 
+/**
+ * Upload gambar cover kitab ke Supabase Storage
+ * @param {File} file - File gambar
+ * @returns {Promise<string>} - URL publik gambar
+ */
+async function uploadKitabCover(file) {
+  const token = getToken();
+  if (!token) throw new Error('Harus login');
+
+  // Generate unique filename
+  const ext = file.name.split('.').pop();
+  const fileName = `kitab-covers/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`;
+
+  const res = await fetch(`${SUPABASE_URL}storage/v1/object/kitab-covers/${fileName}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': file.type,
+    },
+    body: file,
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error('Gagal upload gambar: ' + err);
+  }
+
+  return `${SUPABASE_URL}storage/v1/object/public/kitab-covers/${fileName}`;
+}
+
+/**
+ * Hapus gambar cover kitab dari Supabase Storage
+ * @param {string} imageUrl - URL lengkap gambar
+ */
+async function deleteKitabCover(imageUrl) {
+  if (!imageUrl || !imageUrl.includes('kitab-covers')) return;
+  const token = getToken();
+  if (!token) return;
+
+  // Extract filename from URL
+  const fileName = imageUrl.split('/kitab-covers/')[1];
+  if (!fileName) return;
+
+  await fetch(`${SUPABASE_URL}storage/v1/object/kitab-covers/${fileName}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+}
+
 // ================================================================
 // JENJANG
 // ================================================================
