@@ -4087,10 +4087,24 @@
       const sanitizedQuestion = question.replace(/[<>]/g, '').substring(0, 2000);
       const sanitizedAnswer = answer.replace(/[<>]/g, '').substring(0, 500);
 
+      // Get next order_index
+      let orderIndex = 1;
+      try {
+        const filter = babId ? `bab_id=eq.${babId}` : `fasal_id=eq.${fasalId}`;
+        const countRes = await fetch(`${SUPABASE_URL}rest/v1/quiz?${filter}&select=order_index&order=order_index.desc&limit=1`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+        });
+        const existing = await countRes.json().catch(() => []);
+        if (existing.length > 0) orderIndex = (existing[0].order_index || 0) + 1;
+      } catch (err) {
+        console.error('Error getting order_index:', err);
+      }
+
       const body = {
         quiz_type: type,
         question: sanitizedQuestion,
         correct_answer: sanitizedAnswer,
+        order_index: orderIndex,
         fasal_id: fasalId || null,
         bab_id: babId || null
       };
