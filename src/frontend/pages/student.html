@@ -752,7 +752,8 @@
               title: bab.title,
               subtitle: 'Muqoddimah - Kitab Mukhtarat',
               order: bab.bagian_order * 1000 + bab.order_index * 100,
-              hasContent: bab.content_arab && bab.content_arab.trim().length > 0
+              hasContent: bab.content_arab && bab.content_arab.trim().length > 0,
+              unlock_after_id: bab.unlock_after_id || null
             });
           }
         });
@@ -764,7 +765,8 @@
             title: fasal.title,
             subtitle: fasal.bab_title,
             order: fasal.bagian_order * 1000 + parseInt(fasal.order.split('.')[1]) * 100 + parseInt(fasal.order.split('.')[2]),
-            hasContent: fasal.content_arab && fasal.content_arab.trim().length > 0
+            hasContent: fasal.content_arab && fasal.content_arab.trim().length > 0,
+            unlock_after_id: fasal.unlock_after_id || null
           });
         });
 
@@ -773,10 +775,20 @@
         var completedIds = userProgress.filter(function(p) { return p.status === 'completed'; }).map(function(p) { return p.fasal_id; });
         nextUnlockIndex = 0;
         for (var i = 0; i < items.length; i++) {
-          if (!completedIds.includes(items[i].id)) {
+          var item = items[i];
+          // Check unlock_after_id: if set, must complete that item first
+          if (item.unlock_after_id) {
+            if (!completedIds.includes(item.unlock_after_id)) {
+              // Previous item not completed, skip this one
+              continue;
+            }
+          }
+          // Check if this item is already completed
+          if (!completedIds.includes(item.id)) {
             nextUnlockIndex = i;
             break;
           }
+          // If last item and all completed
           if (i === items.length - 1) nextUnlockIndex = items.length;
         }
 
@@ -825,17 +837,33 @@
 
     function updateContinueSection() {
       var section = document.getElementById('continueSection');
-      var currentItem = items[nextUnlockIndex];
-      if (!currentItem || nextUnlockIndex >= items.length) {
+
+      // Find the first unlocked, uncompleted item
+      var currentItem = null;
+      var completedIds = userProgress.filter(function(p) { return p.status === 'completed'; }).map(function(p) { return p.fasal_id; });
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        // Check unlock_after_id: if set, must complete that item first
+        if (item.unlock_after_id && !completedIds.includes(item.unlock_after_id)) {
+          continue; // Locked by unlock_after_id
+        }
+        // Check if already completed
+        if (!completedIds.includes(item.id)) {
+          currentItem = item;
+          break;
+        }
+      }
+
+      if (!currentItem) {
         section.classList.add('hidden');
         return;
       }
 
       var progress = userProgress.find(function(p) { return p.fasal_id === currentItem.id; });
       var isInProgress = progress && progress.status !== 'completed';
-      var isLocked = nextUnlockIndex === 0 && !progress;
 
-      if (isInProgress || (nextUnlockIndex > 0 && !isLocked)) {
+      if (isInProgress || true) {
         section.classList.remove('hidden');
         document.getElementById('continueTitle').textContent = currentItem.title;
         document.getElementById('continueSubtitle').textContent = currentItem.type === 'bab' ? 'Muqoddimah' : currentItem.subtitle;
@@ -846,8 +874,6 @@
 
         var link = currentItem.type === 'bab' ? 'materi.html?bab=' + currentItem.id : 'materi.html?id=' + currentItem.id;
         document.getElementById('continueBtn').href = link;
-      } else {
-        section.classList.add('hidden');
       }
     }
 
@@ -860,12 +886,19 @@
 
       var completedIds = userProgress.filter(function(p) { return p.status === 'completed'; }).map(function(p) { return p.fasal_id; });
 
+      var isItemUnlocked = function(item) {
+        if (!item.unlock_after_id) return true;
+        return completedIds.includes(item.unlock_after_id);
+      };
+
       var html = '';
 
       items.forEach(function(item, index) {
         var isCompleted = completedIds.includes(item.id);
-        var isActive = index === nextUnlockIndex;
-        var isLocked = index > nextUnlockIndex;
+        var isUnlocked = isItemUnlocked(item);
+        var isActive = isUnlocked && !isCompleted;
+        var isLocked = !isUnlocked;
+
         var progress = userProgress.find(function(p) { return p.fasal_id === item.id; });
 
         var nodeClass = isCompleted ? 'completed' : isActive ? 'active' : 'locked';
@@ -890,7 +923,7 @@
         html += '<h4 class="timeline-item-title">' + item.title + '</h4>';
         html += '<p class="timeline-item-subtitle">' + item.subtitle + '</p>';
 
-        if (!isLocked) {
+        if (isUnlocked) {
           html += '<div class="timeline-actions">';
           if (isCompleted) {
             html += '<a href="' + link + '" class="timeline-btn secondary"><i class="fa-solid fa-book-open"></i> Baca</a>';

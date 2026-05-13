@@ -1309,6 +1309,10 @@
               <textarea id="editBabContentId" class="form-input" rows="4" placeholder="<p>Konten...</p>"></textarea>
               <p class="text-xs text-slate-500 mt-1">HTML diperbolehkan: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;table&gt;, &lt;span style=&quot;color:...&quot;&gt;</p>
             </div>
+            <div class="form-group">
+              <label class="form-label">URL Audio (opsional)</label>
+              <input type="url" id="editBabAudioUrl" class="form-input" placeholder="https://example.com/audio.mp3">
+            </div>
             <div id="editBabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
           </div>
           <div id="babPanelPreview" class="hidden">
@@ -3114,6 +3118,12 @@
         const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
+        // Get last bab in this bagian for unlock logic
+        const lastBabRes = await fetch(SUPABASE_URL + `rest/v1/bab?bagian_id=eq.${bagianId}&order=order_index.desc&limit=1`, { headers });
+        const lastBabs = await lastBabRes.json().catch(() => []);
+        const lastBabId = lastBabs.length > 0 ? lastBabs[0].id : null;
+
+        // Get order_index
         const countRes = await fetch(SUPABASE_URL + `rest/v1/bab?bagian_id=eq.${bagianId}&select=order_index&order=order_index.desc&limit=1`, { headers });
         const existing = await countRes.json().catch(() => []);
         const orderIndex = existing.length > 0 ? existing[0].order_index + 1 : 1;
@@ -3121,7 +3131,7 @@
         const res = await fetch(SUPABASE_URL + 'rest/v1/bab', {
           method: 'POST',
           headers,
-          body: JSON.stringify({ bagian_id: bagianId, title: nama, is_muqoddimah: isMuqoddimah, quiz_count: quizCount, order_index: orderIndex })
+          body: JSON.stringify({ bagian_id: bagianId, title: nama, is_muqoddimah: isMuqoddimah, quiz_count: quizCount, order_index: orderIndex, unlock_after_id: lastBabId })
         });
 
         if (res.ok) {
@@ -3162,6 +3172,12 @@
         const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
+        // Get last fasal in this bab for unlock logic
+        const lastFasalRes = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&order=order_index.desc&limit=1`, { headers });
+        const lastFasals = await lastFasalRes.json().catch(() => []);
+        const lastFasalId = lastFasals.length > 0 ? lastFasals[0].id : null;
+
+        // Get order_index
         const countRes = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&select=order_index&order=order_index.desc&limit=1`, { headers });
         const existing = await countRes.json().catch(() => []);
         const orderIndex = existing.length > 0 ? existing[0].order_index + 1 : 1;
@@ -3169,7 +3185,7 @@
         const res = await fetch(SUPABASE_URL + 'rest/v1/fasal', {
           method: 'POST',
           headers,
-          body: JSON.stringify({ bab_id: babId, title: nama, order_index: orderIndex })
+          body: JSON.stringify({ bab_id: babId, title: nama, order_index: orderIndex, unlock_after_id: lastFasalId })
         });
 
         if (res.ok) {
@@ -3475,6 +3491,7 @@
       document.getElementById('editBabIsMuqoddimah').checked = bab.is_muqoddimah === true;
       document.getElementById('editBabIsLocked').checked = bab.is_locked === true;
       document.getElementById('editBabQuizCount').value = bab.quiz_count || 10;
+      document.getElementById('editBabAudioUrl').value = bab.audio_url || '';
       document.getElementById('editBabContentArab').value = bab.content_arab || '';
       document.getElementById('editBabContentId').value = bab.content_id || '';
       document.getElementById('editBabError').classList.add('hidden');
@@ -3535,6 +3552,7 @@
       const is_muqoddimah = document.getElementById('editBabIsMuqoddimah').checked;
       const is_locked = document.getElementById('editBabIsLocked').checked;
       const quiz_count = parseInt(document.getElementById('editBabQuizCount').value) || 10;
+      const audio_url = document.getElementById('editBabAudioUrl').value.trim() || null;
       const content_arab = document.getElementById('editBabContentArab').value.trim();
       const content_id = document.getElementById('editBabContentId').value.trim();
       const errorEl = document.getElementById('editBabError');
@@ -3549,7 +3567,7 @@
         const res = await fetch(`${SUPABASE_URL}rest/v1/bab?id=eq.${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` },
-          body: JSON.stringify({ title, is_muqoddimah, is_locked, quiz_count, content_arab: content_arab || null, content_id: content_id || null })
+          body: JSON.stringify({ title, is_muqoddimah, is_locked, quiz_count, audio_url, content_arab: content_arab || null, content_id: content_id || null })
         });
 
         if (res.ok) {
