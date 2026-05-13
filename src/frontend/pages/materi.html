@@ -982,53 +982,13 @@
             <i class="fa-solid fa-list"></i>
             <span>Daftar</span>
           </a>
-          <button id="startQuizBtn" class="btn btn-primary">
-            <i class="fa-solid fa-play"></i>
-            <span>Mulai Tes</span>
-          </button>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- Quiz Modal -->
-  <div id="quizModal" class="modal-backdrop hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">
-          <div class="modal-title-icon">
-            <i class="fa-solid fa-clipboard-check"></i>
-          </div>
-          <div class="modal-title-text">
-            <h3>Tes Verifikasi</h3>
-            <p id="quizFasalName"></p>
-          </div>
-        </div>
-        <button onclick="window.quizClose()" class="modal-close">
-          <i class="fa-solid fa-times"></i>
-        </button>
-      </div>
-
-      <div class="quiz-progress">
-        <div class="quiz-progress-header">
-          <span class="quiz-progress-text">Soal <span id="currentQ">1</span> dari <span id="totalQ">10</span></span>
-          <span class="quiz-progress-percent" id="progressPercent">0%</span>
-        </div>
-        <div class="quiz-progress-bar">
-          <div id="progressBar" class="quiz-progress-fill" style="width: 10%"></div>
-        </div>
-        <div id="questionDots" class="quiz-progress-dots">
-        </div>
-      </div>
-
-      <div id="quizContent" class="quiz-body">
-      </div>
-    </div>
-  </div>
-
   <script src="/js/api.js"></script>
-  <!-- quiz.js removed: quiz logic is now fully inline in the inline script -->
   <script>
     window.onerror = function(msg, src, line, col, err) {
       var e = document.createElement('div');
@@ -1037,13 +997,6 @@
       document.body.appendChild(e);
       return true;
     };
-
-    // Attach button click AFTER all functions are defined
-    document.getElementById('startQuizBtn').addEventListener('click', function() {
-      if (typeof window.quizStart === 'function') {
-        window.quizStart();
-      }
-    });
 
     // ================================================================
     // QUIZ STATE (module-level variables)
