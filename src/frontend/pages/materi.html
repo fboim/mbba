@@ -1040,11 +1040,8 @@
 
     // Attach button click AFTER all functions are defined
     document.getElementById('startQuizBtn').addEventListener('click', function() {
-      console.log('[BTN] startQuizBtn clicked! typeof window.quizStart =', typeof window.quizStart);
       if (typeof window.quizStart === 'function') {
         window.quizStart();
-      } else {
-        alert('window.quizStart is not a function! type=' + typeof window.quizStart);
       }
     });
 
