@@ -3027,36 +3027,77 @@
         const headers = { 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const progressRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers });
+        // Fetch users and progress data
+        const [usersRes, progressRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}rest/v1/users?order=created_at.desc`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/user_progress?select=*`, { headers })
+        ]);
+
+        const usersData = usersRes.ok ? await usersRes.json().catch(() => []) : [];
         const progressData = progressRes.ok ? await progressRes.json().catch(() => []) : [];
 
-        if (progressData.length === 0) {
-          container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-users"></i></div><p class="empty-text">Belum ada aktivitas siswa</p></div>';
+        // Build progress map by user_id
+        const progressMap = {};
+        progressData.forEach(p => {
+          if (!progressMap[p.user_id]) {
+            progressMap[p.user_id] = { completed: 0, total: 0, lastActive: null };
+          }
+          progressMap[p.user_id].total++;
+          if (p.status === 'completed') progressMap[p.user_id].completed++;
+          if (p.completed_at && (!progressMap[p.user_id].lastActive || p.completed_at > progressMap[p.user_id].lastActive)) {
+            progressMap[p.user_id].lastActive = p.completed_at;
+          }
+        });
+
+        if (usersData.length === 0) {
+          container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-users"></i></div><p class="empty-text">Belum ada pendaftar</p></div>';
           return;
         }
 
-        // Build student data from progress
-        const studentData = {};
-        progressData.forEach(p => {
-          if (!studentData[p.user_id]) {
-            studentData[p.user_id] = { id: p.user_id, completed: 0, total: 0, lastActive: null };
-          }
-          studentData[p.user_id].total++;
-          if (p.status === 'completed') studentData[p.user_id].completed++;
-          if (p.completed_at) studentData[p.user_id].lastActive = p.completed_at;
+        // Build HTML table
+        let html = `
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Progress</th>
+                  <th>Terdaftar</th>
+                  <th>Terakhir Aktif</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        usersData.forEach((u, i) => {
+          const progress = progressMap[u.id] || { completed: 0, total: 0, lastActive: null };
+          const percent = progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
+          const createdAt = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-';
+          const lastActive = progress.lastActive ? new Date(progress.lastActive).toLocaleDateString('id-ID') : '-';
+          const roleBadge = u.role === 'admin' ? 'badge-red' : (u.role === 'teacher' ? 'badge-purple' : 'badge-blue');
+
+          html += `
+            <tr>
+              <td>${i + 1}</td>
+              <td class="font-medium">${escapeHtml(u.full_name || '-')}</td>
+              <td class="text-slate-600">${escapeHtml(u.email || '-')}</td>
+              <td><span class="badge ${roleBadge}">${u.role || 'student'}</span></td>
+              <td>${progress.completed}/${progress.total} (${percent}%)</td>
+              <td class="text-slate-500 text-sm">${createdAt}</td>
+              <td class="text-slate-500 text-sm">${lastActive}</td>
+            </tr>
+          `;
         });
 
-        // Build HTML table
-        const students = Object.values(studentData);
-        let html = '<div class="table-container"><table class="data-table"><thead><tr><th>#</th><th>ID</th><th>Progress</th><th>Terakhir Aktif</th></tr></thead><tbody>';
-        students.forEach((s, i) => {
-          const percent = s.total > 0 ? Math.round((s.completed / s.total) * 100) : 0;
-          const lastActive = s.lastActive ? new Date(s.lastActive).toLocaleDateString('id-ID') : '-';
-          html += `<tr><td>${i + 1}</td><td><code style="font-size: 0.8rem;">${s.id.substring(0, 8)}...</code></td><td>${s.completed}/${s.total} (${percent}%)</td><td>${lastActive}</td></tr>`;
-        });
         html += '</tbody></table></div>';
+        html += `<p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-users mr-1"></i>Total: ${usersData.length} pendaftar</p>`;
+
         container.innerHTML = html;
       } catch (err) {
+        console.error('Error loading student list:', err);
         container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="empty-text">Error: ${err.message}</p></div>`;
       }
     }
