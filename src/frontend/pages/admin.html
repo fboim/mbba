@@ -3590,11 +3590,16 @@
       // Reset to edit tab
       switchBabEditTab('edit');
 
-      // Add input listeners for live preview
-      document.getElementById('editBabContentArab').removeEventListener('input', updateBabPreview);
-      document.getElementById('editBabContentId').removeEventListener('input', updateBabPreview);
-      document.getElementById('editBabContentArab').addEventListener('input', updateBabPreview);
-      document.getElementById('editBabContentId').addEventListener('input', updateBabPreview);
+      // Add input listeners for live preview with debounce
+      const arabInput = document.getElementById('editBabContentArab');
+      const idInput = document.getElementById('editBabContentId');
+
+      if (arabInput) {
+        arabInput.oninput = function() { updateBabPreview(); };
+      }
+      if (idInput) {
+        idInput.oninput = function() { updateBabPreview(); };
+      }
     }
 
     function switchBabEditTab(tab) {
@@ -3716,10 +3721,15 @@
       switchFasalEditTab('edit');
 
       // Add input listeners for live preview
-      document.getElementById('editFasalContentArab').removeEventListener('input', updateFasalPreview);
-      document.getElementById('editFasalContentId').removeEventListener('input', updateFasalPreview);
-      document.getElementById('editFasalContentArab').addEventListener('input', updateFasalPreview);
-      document.getElementById('editFasalContentId').addEventListener('input', updateFasalPreview);
+      const arabInput = document.getElementById('editFasalContentArab');
+      const idInput = document.getElementById('editFasalContentId');
+
+      if (arabInput) {
+        arabInput.oninput = function() { updateFasalPreview(); };
+      }
+      if (idInput) {
+        idInput.oninput = function() { updateFasalPreview(); };
+      }
     }
 
     function switchFasalEditTab(tab) {
