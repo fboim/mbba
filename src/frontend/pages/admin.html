@@ -2757,12 +2757,12 @@
         // Step 2: Create new kitab
         const newKitabRes = await fetch(`${SUPABASE_URL}rest/v1/kitab`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}`, 'Prefer': 'return=representation' },
           body: JSON.stringify({ jenjang_id: targetJenjangId, nama: newName, image_url: sourceKitab.image_url, order_index: 1 })
         });
-        if (!newKitabRes.ok) {
+        if (newKitabRes.status < 200 || newKitabRes.status >= 300) {
           const errText = await newKitabRes.text();
-          errorEl.textContent = 'Gagal membuat kitab: ' + errText;
+          errorEl.textContent = 'Gagal membuat kitab: ' + (errText || 'Status ' + newKitabRes.status);
           errorEl.classList.remove('hidden');
           return;
         }
@@ -2784,7 +2784,7 @@
             headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ kitab_id: newKitab.id, title: sb.title, order_index: sb.order_index })
           });
-          if (!newBagianRes.ok) continue;
+          if (newBagianRes.status >= 300) continue;
           const newBagianData = await newBagianRes.json().catch(() => []);
           const newBagian = newBagianData[0];
           if (!newBagian) continue;
@@ -2799,7 +2799,7 @@
               headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` },
               body: JSON.stringify({ bagian_id: newBagian.id, title: sbb.title, order_index: sbb.order_index, is_muqoddimah: sbb.is_muqoddimah })
             });
-            if (!newBabRes.ok) continue;
+            if (newBabRes.status >= 300) continue;
             const newBabData = await newBabRes.json().catch(() => []);
             const newBab = newBabData[0];
             if (!newBab) continue;
