@@ -1131,13 +1131,18 @@
           <div class="form-group">
             <label class="form-label">Cover/Gambar</label>
             <div style="display:flex; gap:8px; align-items:flex-start;">
-              <input type="text" id="editKitabImageUrl" class="form-input" placeholder="URL gambar..." style="flex:1;">
+              <input type="text" id="editKitabImageUrl" class="form-input" placeholder="URL atau upload file..." style="flex:1;">
               <label for="editKitabFileInput" class="btn" style="background:#e2e8f0; color:#374151; cursor:pointer; padding:8px 12px; border-radius:6px;">
-                <i class="fa-solid fa-upload"></i> Upload
+                <i class="fa-solid fa-upload"></i>
               </label>
               <input type="file" id="editKitabFileInput" accept="image/*" class="hidden" onchange="handleKitabImageUpload(this)">
             </div>
             <div id="editKitabPreview" style="margin-top:8px;"></div>
+          </div>
+          <div class="form-group">
+            <button type="button" onclick="clearKitabImage()" class="btn" style="background:#fee2e2; color:#dc2626; font-size:12px; padding:6px 12px;">
+              <i class="fa-solid fa-trash"></i> Hapus Gambar
+            </button>
           </div>
           <div id="editKitabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
         </div>
@@ -1473,8 +1478,14 @@
               <input type="text" id="newKitabPenulis" class="form-input" placeholder="Contoh: Ibnu Malik">
             </div>
             <div class="form-group">
-              <label class="form-label">URL Cover / Gambar (opsional)</label>
-              <input type="url" id="newKitabImage" class="form-input" placeholder="https://example.com/cover.jpg" oninput="previewKitabImage(this.value)">
+              <label class="form-label">Cover / Gambar (opsional)</label>
+              <div style="display:flex; gap:8px; align-items:flex-start;">
+                <input type="url" id="newKitabImageUrl" class="form-input" placeholder="https://..." style="flex:1;" oninput="previewKitabImage(this.value)">
+                <label for="newKitabFileInput" class="btn" style="background:#e2e8f0; color:#374151; cursor:pointer; padding:8px 12px; border-radius:6px;">
+                  <i class="fa-solid fa-upload"></i>
+                </label>
+                <input type="file" id="newKitabFileInput" accept="image/*" class="hidden" onchange="handleKitabFileUpload(this, 'newKitabImageUrl', 'kitabImagePreview', 'kitabThumbImg')">
+              </div>
               <div id="kitabImagePreview" class="kitab-thumb-preview hidden" style="margin-top:8px;">
                 <img id="kitabThumbImg" src="" alt="Preview" style="height:60px; border-radius:8px; object-fit:cover; border:1px solid #e2e8f0;">
               </div>
@@ -1979,7 +1990,7 @@
       const jenjangId = document.getElementById('newKitabJenjang').value;
       const nama = document.getElementById('newKitabNama').value.trim();
       const penulis = document.getElementById('newKitabPenulis').value.trim();
-      const imageUrl = document.getElementById('newKitabImage').value.trim();
+      const imageUrl = document.getElementById('newKitabImageUrl').value.trim();
       const errorEl = document.getElementById('addKitabError');
       errorEl.classList.add('hidden');
 
@@ -1990,7 +2001,7 @@
         await createKitab({ jenjang_id: jenjangId, nama, penulis: penulis || null, order_index: existingKitabs.length + 1, image_url: imageUrl || null });
         document.getElementById('newKitabNama').value = '';
         document.getElementById('newKitabPenulis').value = '';
-        document.getElementById('newKitabImage').value = '';
+        document.getElementById('newKitabImageUrl').value = '';
         document.getElementById('kitabImagePreview').classList.add('hidden');
         alert('Kitab berhasil ditambahkan!');
         loadJenjangList();
@@ -2010,6 +2021,22 @@
       } else {
         preview.classList.add('hidden');
       }
+    }
+
+    function handleKitabFileUpload(input, targetInputId, previewContainerId, previewImgId) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(targetInputId).value = e.target.result;
+        const preview = document.getElementById(previewContainerId);
+        const img = document.getElementById(previewImgId);
+        if (img) {
+          img.src = e.target.result;
+          preview.classList.remove('hidden');
+        }
+      };
+      reader.readAsDataURL(file);
     }
 
     function editJenjang(id, currentTitle) {
@@ -2399,6 +2426,11 @@
         document.getElementById('editKitabPreview').innerHTML = `<img src="${e.target.result}" style="max-width:120px; max-height:80px; border-radius:6px;">`;
       };
       reader.readAsDataURL(file);
+    }
+
+    function clearKitabImage() {
+      document.getElementById('editKitabImageUrl').value = '';
+      document.getElementById('editKitabPreview').innerHTML = '';
     }
 
     async function saveEditKitab() {
