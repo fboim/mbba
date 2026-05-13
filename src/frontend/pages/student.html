@@ -970,7 +970,7 @@
         userProgress = progressData || [];
 
         allBabs.forEach(function(bab) {
-          if (bab.is_muqoddimah) {
+          if (bab.is_muqoddimah || (bab.title && bab.title.toLowerCase().includes('muqoddimah'))) {
             items.push({
               type: 'bab',
               id: bab.id,
