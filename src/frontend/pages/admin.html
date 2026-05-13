@@ -1142,11 +1142,11 @@
           <div id="editBabFields" class="hidden">
             <div class="form-group">
               <label class="form-label">Konten Arab</label>
-              <textarea id="editBabContentArab" class="form-input" rows="4" dir="rtl" lang="ar" placeholder="المحتوى العربي..."></textarea>
+              <textarea id="editMateriBabContentArab" class="form-input" rows="4" dir="rtl" lang="ar" placeholder="المحتوى العربي..."></textarea>
             </div>
             <div class="form-group">
               <label class="form-label">Konten Indonesia</label>
-              <textarea id="editBabContentId" class="form-input" rows="4" placeholder="Konten terjemahan Indonesia..."></textarea>
+              <textarea id="editMateriBabContentId" class="form-input" rows="4" placeholder="Konten terjemahan Indonesia..."></textarea>
             </div>
             <div class="form-group">
               <label class="form-label" style="display:flex; align-items:center; gap:8px;">
@@ -1301,12 +1301,12 @@
             </div>
             <div class="form-group">
               <label class="form-label">Konten Arab (HTML)</label>
-              <textarea id="editBabContentArab" class="form-input" rows="4" dir="rtl" lang="ar" style="font-family:'Amiri',serif;" placeholder="<p>المحتوى العربي...</p>"></textarea>
+              <textarea id="editBabModalContentArab" class="form-input" rows="4" dir="rtl" lang="ar" style="font-family:'Amiri',serif;" placeholder="<p>المحتوى العربي...</p>"></textarea>
               <p class="text-xs text-slate-500 mt-1">HTML diperbolehkan: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;table&gt;, &lt;span style=&quot;color:...&quot;&gt;</p>
             </div>
             <div class="form-group">
               <label class="form-label">Konten Indonesia (HTML)</label>
-              <textarea id="editBabContentId" class="form-input" rows="4" placeholder="<p>Konten...</p>"></textarea>
+              <textarea id="editBabModalContentId" class="form-input" rows="4" placeholder="<p>Konten...</p>"></textarea>
               <p class="text-xs text-slate-500 mt-1">HTML diperbolehkan: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;table&gt;, &lt;span style=&quot;color:...&quot;&gt;</p>
             </div>
             <div id="editBabError" class="alert alert-error hidden" style="margin-top:12px;"></div>
@@ -1348,12 +1348,12 @@
             </div>
             <div class="form-group">
               <label class="form-label">Konten Arab (HTML)</label>
-              <textarea id="editFasalContentArab" class="form-input" rows="5" dir="rtl" lang="ar" style="font-family:'Amiri',serif;" placeholder="<p>المحتوى العربي...</p>"></textarea>
+              <textarea id="editFasalModalContentArab" class="form-input" rows="5" dir="rtl" lang="ar" style="font-family:'Amiri',serif;" placeholder="<p>المحتوى العربي...</p>"></textarea>
               <p class="text-xs text-slate-500 mt-1">HTML diperbolehkan: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;table&gt;, &lt;span style=&quot;color:...&quot;&gt;</p>
             </div>
             <div class="form-group">
               <label class="form-label">Konten Indonesia (HTML)</label>
-              <textarea id="editFasalContentId" class="form-input" rows="5" placeholder="<p>Konten...</p>"></textarea>
+              <textarea id="editFasalModalContentId" class="form-input" rows="5" placeholder="<p>Konten...</p>"></textarea>
               <p class="text-xs text-slate-500 mt-1">HTML diperbolehkan: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;table&gt;, &lt;span style=&quot;color:...&quot;&gt;</p>
             </div>
             <div id="editFasalError" class="alert alert-error hidden" style="margin-top:12px;"></div>
@@ -3337,8 +3337,8 @@
       } else if (type === 'bab') {
         titleLabel.textContent = 'Nama Bab';
         titleInput.value = btn.dataset.title || '';
-        document.getElementById('editBabContentArab').value = btn.dataset.contentArab || '';
-        document.getElementById('editBabContentId').value = btn.dataset.contentId || '';
+        document.getElementById('editBabModalContentArab').value = btn.dataset.contentArab || '';
+        document.getElementById('editBabModalContentId').value = btn.dataset.contentId || '';
         document.getElementById('editBabIsMuqoddimah').checked = btn.dataset.isMuqoddimah === 'true';
         document.getElementById('editBabIsLocked').checked = btn.dataset.isLocked === 'true';
         editBabFields.classList.remove('hidden');
@@ -3346,8 +3346,8 @@
       } else if (type === 'fasal') {
         titleLabel.textContent = 'Nama Fasal';
         titleInput.value = btn.dataset.title || '';
-        document.getElementById('editFasalContentArab').value = btn.dataset.contentArab || '';
-        document.getElementById('editFasalContentId').value = btn.dataset.contentId || '';
+        document.getElementById('editFasalModalContentArab').value = btn.dataset.contentArab || '';
+        document.getElementById('editFasalModalContentId').value = btn.dataset.contentId || '';
         document.getElementById('editFasalAudioUrl').value = btn.dataset.audioUrl || '';
         document.getElementById('editFasalIsLocked').checked = btn.dataset.isLocked === 'true';
         editFasalFields.classList.remove('hidden');
@@ -3379,13 +3379,13 @@
       if (type === 'bagian') {
         body.description = document.getElementById('editBagianDesc').value.trim();
       } else if (type === 'bab') {
-        body.content_arab = document.getElementById('editBabContentArab').value.trim();
-        body.content_id = document.getElementById('editBabContentId').value.trim();
+        body.content_arab = document.getElementById('editBabModalContentArab').value.trim();
+        body.content_id = document.getElementById('editBabModalContentId').value.trim();
         body.is_muqoddimah = document.getElementById('editBabIsMuqoddimah').checked;
         body.is_locked = document.getElementById('editBabIsLocked').checked;
       } else if (type === 'fasal') {
-        body.content_arab = document.getElementById('editFasalContentArab').value.trim();
-        body.content_id = document.getElementById('editFasalContentId').value.trim();
+        body.content_arab = document.getElementById('editFasalModalContentArab').value.trim();
+        body.content_id = document.getElementById('editFasalModalContentId').value.trim();
         body.audio_url = document.getElementById('editFasalAudioUrl').value.trim() || null;
         body.is_locked = document.getElementById('editFasalIsLocked').checked;
       }
@@ -3582,8 +3582,8 @@
       document.getElementById('editBabIsMuqoddimah').checked = bab.is_muqoddimah === true;
       document.getElementById('editBabIsLocked').checked = bab.is_locked === true;
       document.getElementById('editBabQuizCount').value = bab.quiz_count || 10;
-      document.getElementById('editBabContentArab').value = bab.content_arab || '';
-      document.getElementById('editBabContentId').value = bab.content_id || '';
+      document.getElementById('editBabModalContentArab').value = bab.content_arab || '';
+      document.getElementById('editBabModalContentId').value = bab.content_id || '';
       document.getElementById('editBabError').classList.add('hidden');
       document.getElementById('editBabModal').classList.remove('hidden');
 
@@ -3609,8 +3609,8 @@
     }
 
     function updateBabPreview() {
-      const contentArabEl = document.getElementById('editBabContentArab');
-      const contentIdEl = document.getElementById('editBabContentId');
+      const contentArabEl = document.getElementById('editBabModalContentArab');
+      const contentIdEl = document.getElementById('editBabModalContentId');
       const previewEl = document.getElementById('babPreviewContent');
 
       console.log('updateBabPreview called');
@@ -3623,11 +3623,11 @@
         return;
       }
 
-      const contentArab = document.getElementById('editBabContentArab') ? document.getElementById('editBabContentArab').value : '';
-      const contentId = document.getElementById('editBabContentId') ? document.getElementById('editBabContentId').value : '';
+      const contentArab = document.getElementById('editBabModalContentArab') ? document.getElementById('editBabModalContentArab').value : '';
+      const contentId = document.getElementById('editBabModalContentId') ? document.getElementById('editBabModalContentId').value : '';
 
-      console.log('direct read - editBabContentArab.value:', document.getElementById('editBabContentArab')?.value);
-      console.log('direct read - editBabContentId.value:', document.getElementById('editBabContentId')?.value);
+      console.log('direct read - editBabModalContentArab.value:', document.getElementById('editBabModalContentArab')?.value);
+      console.log('direct read - editBabModalContentId.value:', document.getElementById('editBabModalContentId')?.value);
       console.log('contentArab:', contentArab);
       console.log('contentId:', contentId);
 
@@ -3660,8 +3660,8 @@
       const is_muqoddimah = document.getElementById('editBabIsMuqoddimah').checked;
       const is_locked = document.getElementById('editBabIsLocked').checked;
       const quiz_count = parseInt(document.getElementById('editBabQuizCount').value) || 10;
-      const content_arab = document.getElementById('editBabContentArab').value.trim();
-      const content_id = document.getElementById('editBabContentId').value.trim();
+      const content_arab = document.getElementById('editBabModalContentArab').value.trim();
+      const content_id = document.getElementById('editBabModalContentId').value.trim();
       const errorEl = document.getElementById('editBabError');
 
       if (!title) {
@@ -3724,8 +3724,8 @@
       if (!fasal) return;
       document.getElementById('editFasalId').value = id;
       document.getElementById('editFasalNama').value = fasal.title || '';
-      document.getElementById('editFasalContentArab').value = fasal.content_arab || '';
-      document.getElementById('editFasalContentId').value = fasal.content_id || '';
+      document.getElementById('editFasalModalContentArab').value = fasal.content_arab || '';
+      document.getElementById('editFasalModalContentId').value = fasal.content_id || '';
       document.getElementById('editFasalIsLocked').checked = fasal.is_locked === true;
       document.getElementById('editFasalError').classList.add('hidden');
       document.getElementById('editFasalModal').classList.remove('hidden');
@@ -3752,8 +3752,8 @@
     }
 
     function updateFasalPreview() {
-      const contentArabEl = document.getElementById('editFasalContentArab');
-      const contentIdEl = document.getElementById('editFasalContentId');
+      const contentArabEl = document.getElementById('editFasalModalContentArab');
+      const contentIdEl = document.getElementById('editFasalModalContentId');
       const previewEl = document.getElementById('fasalPreviewContent');
 
       if (!contentArabEl || !contentIdEl || !previewEl) {
@@ -3784,8 +3784,8 @@
     async function saveEditFasal() {
       const id = document.getElementById('editFasalId').value;
       const title = document.getElementById('editFasalNama').value.trim();
-      const content_arab = document.getElementById('editFasalContentArab').value.trim();
-      const content_id = document.getElementById('editFasalContentId').value.trim();
+      const content_arab = document.getElementById('editFasalModalContentArab').value.trim();
+      const content_id = document.getElementById('editFasalModalContentId').value.trim();
       const is_locked = document.getElementById('editFasalIsLocked').checked;
       const errorEl = document.getElementById('editFasalError');
 
