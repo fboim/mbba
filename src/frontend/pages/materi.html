@@ -1373,11 +1373,8 @@
     // ================================================================
 
     window.quizStart = function() {
-      console.log('[quizStart] CALLED! window.quizBank.length=' + (window.quizBank ? window.quizBank.length : 'N/A'));
-      alert('window.quizStart() is running!');
       var bank = window.quizBank || [];
       if (bank.length === 0) {
-        alert('Quiz bank kosong!');
         return;
       }
       document.getElementById('quizModal').classList.remove('hidden');
