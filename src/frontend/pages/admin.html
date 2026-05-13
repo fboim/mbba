@@ -2639,35 +2639,63 @@
           return;
         }
 
-        let listHTML = '<div style="display:flex; flex-direction:column; gap:16px;">';
+        let listHTML = '<div style="display:flex; flex-direction:column; gap:12px;">';
+
         for (const jenjang of jenjangs) {
           const jenjangKitabs = kitabs.filter(k => k.jenjang_id === jenjang.id);
-          listHTML += `<div style="padding:16px; background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:14px; border:1px solid #f59e0b;">
+          listHTML += `<div style="padding:12px; background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:12px; border:1px solid #f59e0b;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div>
-                <span style="font-weight:700; color:#92400e; font-size:1rem;">${jenjang.order_index}. ${escapeHtml(jenjang.nama || jenjang.title)}</span>
-                ${jenjang.deskripsi ? `<span style="display:block; font-size:0.8rem; color:#b45309; margin-top:2px;">${escapeHtml(jenjang.deskripsi)}</span>` : ''}
+                <span style="font-weight:700; color:#92400e;">${jenjang.order_index}. ${escapeHtml(jenjang.nama || jenjang.title)}</span>
+                ${jenjang.deskripsi ? `<span style="display:block; font-size:0.75rem; color:#b45309;">${escapeHtml(jenjang.deskripsi)}</span>` : ''}
               </div>
-              <span style="padding:3px 10px; background:#f59e0b; color:white; border-radius:4px; font-size:10px; font-weight:700;">JENJANG</span>
+              <span style="padding:2px 8px; background:#f59e0b; color:white; border-radius:4px; font-size:9px; font-weight:700;">JENJANG</span>
             </div>`;
 
-          if (jenjangKitabs.length > 0) {
-            listHTML += `<div style="margin-top:12px; margin-left:8px; display:flex; flex-direction:column; gap:10px;">`;
-            for (const kitab of jenjangKitabs) {
-              const kitabThumb = kitab.image_url ? `<img src="${escapeHtml(kitab.image_url)}" alt="cover" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0; flex-shrink:0;" onerror="this.style.display='none'">` : '';
-              listHTML += `<div style="padding:12px; background:white; border-radius:10px; border:1px solid #bfdbfe;">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-                  ${kitabThumb}
-                  <div style="flex:1; min-width:0;">
-                    <span style="font-weight:600; color:#1e40af;">${kitab.order_index}. ${escapeHtml(kitab.nama || kitab.title)}</span>
-                    ${kitab.penulis ? `<span style="display:block; font-size:0.75rem; color:#6b7280; margin-top:1px;">${escapeHtml(kitab.penulis)}</span>` : ''}
-                  </div>
-                  <div style="display:flex; gap:4px;">
-                    <button onclick="openEditKitabModal('${kitab.id}')" data-title="${escapeHtml(kitab.nama || kitab.title)}" data-penulis="${escapeHtml(kitab.penulis || '')}" data-image="${escapeHtml(kitab.image_url || '')}" style="padding:4px 8px; background:#eff6ff; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
-                    <button onclick="deleteKitab('${kitab.id}')" style="padding:4px 8px; background:white; border:1px solid #d1d5db; border-radius:6px; cursor:pointer; font-size:11px;" title="Hapus"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
-                  </div>
+          for (const kitab of jenjangKitabs) {
+            const kitabBagians = bagians.filter(b => b.kitab_id === kitab.id);
+            const kitabThumb = kitab.image_url ? `<img src="${escapeHtml(kitab.image_url)}" alt="cover" style="width:32px; height:32px; object-fit:cover; border-radius:4px; border:1px solid #e2e8f0;" onerror="this.style.display='none'">` : '';
+
+            listHTML += `<div style="margin-top:8px; margin-left:8px; padding:10px; background:white; border-radius:8px; border:1px solid #bfdbfe;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                ${kitabThumb}
+                <div style="flex:1; min-width:0;">
+                  <span style="font-weight:600; color:#1e40af; font-size:0.9rem;">${kitab.order_index}. ${escapeHtml(kitab.nama || kitab.title)}</span>
+                  ${kitab.penulis ? `<span style="display:block; font-size:0.7rem; color:#6b7280;">${escapeHtml(kitab.penulis)}</span>` : ''}
+                </div>
+                <div style="display:flex; gap:3px;">
+                  <button onclick="openEditKitabModal('${kitab.id}')" style="padding:3px 6px; background:#eff6ff; border:1px solid #d1d5db; border-radius:4px; cursor:pointer; font-size:10px;" title="Edit"><i class="fa-solid fa-pen" style="color:#3b82f6;"></i></button>
                 </div>
               </div>`;
+
+            for (const bagian of kitabBagians) {
+              const bagianBabs = babs.filter(b => b.bagian_id === bagian.id);
+              listHTML += `<div style="margin-top:6px; margin-left:6px; padding:8px; background:#f8fafc; border-radius:6px; border:1px dashed #cbd5e1;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-weight:500; color:#475569; font-size:0.85rem;">${bagian.order_index}. ${escapeHtml(bagian.nama || bagian.title)}</span>
+                  <span style="padding:1px 6px; background:#6366f1; color:white; border-radius:3px; font-size:8px; font-weight:600;">BAGIAN</span>
+                </div>`;
+
+              for (const bab of bagianBabs) {
+                const babFasals = fasals.filter(f => f.bab_id === bab.id);
+                const muqoddimahBadge = bab.is_muqoddimah ? `<span style="padding:1px 4px; background:#10b981; color:white; border-radius:3px; font-size:7px; font-weight:600; margin-left:4px;">MQ</span>` : '';
+                listHTML += `<div style="margin-top:4px; margin-left:6px; padding:6px; background:white; border-radius:4px; border:1px solid #e2e8f0;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center;">
+                      <span style="font-weight:400; color:#64748b; font-size:0.8rem;">${bab.order_index}. ${escapeHtml(bab.title || bab.nama || bab.label)}</span>
+                      ${muqoddimahBadge}
+                    </div>
+                    <span style="padding:1px 5px; background:#8b5cf6; color:white; border-radius:3px; font-size:7px; font-weight:600;">BAB</span>
+                  </div>`;
+
+                for (const fasal of babFasals) {
+                  listHTML += `<div style="margin-top:3px; margin-left:6px; padding:4px 6px; background:#f1f5f9; border-radius:3px; border-left:2px solid #94a3b8;">
+                    <span style="font-size:0.75rem; color:#475569;">${bab.order_index}.${fasal.order_index} ${escapeHtml(fasal.title || fasal.id)}</span>
+                  </div>`;
+                }
+                listHTML += '</div>';
+              }
+              listHTML += '</div>';
             }
             listHTML += '</div>';
           }
@@ -2681,6 +2709,7 @@
       }
     }
 
+    // Load Jenjang List
     // Add New Materi
     async function addNewMateri() {
       const type = document.getElementById('newMateriType').value;
