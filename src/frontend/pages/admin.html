@@ -3175,7 +3175,7 @@
       }
 
       try {
-        // Update public.users table
+        // Update public.users table only
         const usersRes = await fetch(`${SUPABASE_URL}rest/v1/users?id=eq.${userId}`, {
           method: 'PATCH',
           headers: {
@@ -3190,19 +3190,6 @@
           const err = await usersRes.json();
           throw new Error(err.message);
         }
-
-        // Also update auth.users metadata for immediate effect
-        const authRes = await fetch(`${SUPABASE_URL}auth/v1/admin/users/${userId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`
-          },
-          body: JSON.stringify({
-            user_metadata: { role: newRole }
-          })
-        });
 
         alert(`Role berhasil diubah ke "${newRole}"!`);
         loadStudentList();
