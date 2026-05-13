@@ -3589,17 +3589,6 @@
 
       // Reset to edit tab
       switchBabEditTab('edit');
-
-      // Add input listeners for live preview with debounce
-      const arabInput = document.getElementById('editBabContentArab');
-      const idInput = document.getElementById('editBabContentId');
-
-      if (arabInput) {
-        arabInput.oninput = function() { updateBabPreview(); };
-      }
-      if (idInput) {
-        idInput.oninput = function() { updateBabPreview(); };
-      }
     }
 
     function switchBabEditTab(tab) {
@@ -3620,21 +3609,34 @@
     }
 
     function updateBabPreview() {
-      const contentArab = document.getElementById('editBabContentArab').value || '';
-      const contentId = document.getElementById('editBabContentId').value || '';
-      const preview = document.getElementById('babPreviewContent');
+      const contentArabEl = document.getElementById('editBabContentArab');
+      const contentIdEl = document.getElementById('editBabContentId');
+      const previewEl = document.getElementById('babPreviewContent');
+
+      console.log('updateBabPreview called');
+      console.log('contentArabEl:', contentArabEl);
+      console.log('contentIdEl:', contentIdEl);
+      console.log('previewEl:', previewEl);
+
+      if (!contentArabEl || !contentIdEl || !previewEl) {
+        console.error('Elements not found!');
+        return;
+      }
+
+      const contentArab = contentArabEl.value || '';
+      const contentId = contentIdEl.value || '';
 
       let html = '';
       if (contentArab) {
-        html += `<div class="mb-4" dir="rtl" lang="ar" style="font-family:'Amiri',serif; font-size:1.2rem; line-height:1.8;">${contentArab}</div>`;
+        html += '<div class="mb-4" dir="rtl" lang="ar" style="font-family:\'Amiri\',serif; font-size:1.2rem; line-height:1.8;">' + contentArab + '</div>';
       }
       if (contentId) {
-        html += `<div class="text-slate-700" style="line-height:1.7;">${contentId}</div>`;
+        html += '<div class="text-slate-700" style="line-height:1.7;">' + contentId + '</div>';
       }
       if (!contentArab && !contentId) {
         html = '<p class="text-slate-400 text-center">Belum ada konten</p>';
       }
-      preview.innerHTML = html;
+      previewEl.innerHTML = html;
     }
 
     function closeEditBabModal() {
@@ -3719,17 +3721,6 @@
 
       // Reset to edit tab
       switchFasalEditTab('edit');
-
-      // Add input listeners for live preview
-      const arabInput = document.getElementById('editFasalContentArab');
-      const idInput = document.getElementById('editFasalContentId');
-
-      if (arabInput) {
-        arabInput.oninput = function() { updateFasalPreview(); };
-      }
-      if (idInput) {
-        idInput.oninput = function() { updateFasalPreview(); };
-      }
     }
 
     function switchFasalEditTab(tab) {
@@ -3750,21 +3741,29 @@
     }
 
     function updateFasalPreview() {
-      const contentArab = document.getElementById('editFasalContentArab').value || '';
-      const contentId = document.getElementById('editFasalContentId').value || '';
-      const preview = document.getElementById('fasalPreviewContent');
+      const contentArabEl = document.getElementById('editFasalContentArab');
+      const contentIdEl = document.getElementById('editFasalContentId');
+      const previewEl = document.getElementById('fasalPreviewContent');
+
+      if (!contentArabEl || !contentIdEl || !previewEl) {
+        console.error('Elements not found!');
+        return;
+      }
+
+      const contentArab = contentArabEl.value || '';
+      const contentId = contentIdEl.value || '';
 
       let html = '';
       if (contentArab) {
-        html += `<div class="mb-4" dir="rtl" lang="ar" style="font-family:'Amiri',serif; font-size:1.2rem; line-height:1.8;">${contentArab}</div>`;
+        html += '<div class="mb-4" dir="rtl" lang="ar" style="font-family:\'Amiri\',serif; font-size:1.2rem; line-height:1.8;">' + contentArab + '</div>';
       }
       if (contentId) {
-        html += `<div class="text-slate-700" style="line-height:1.7;">${contentId}</div>`;
+        html += '<div class="text-slate-700" style="line-height:1.7;">' + contentId + '</div>';
       }
       if (!contentArab && !contentId) {
         html = '<p class="text-slate-400 text-center">Belum ada konten</p>';
       }
-      preview.innerHTML = html;
+      previewEl.innerHTML = html;
     }
 
     function closeEditFasalModal() {
