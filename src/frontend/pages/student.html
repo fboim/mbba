@@ -1361,7 +1361,7 @@
           coverHtml = '<div class="kitab-card-cover-placeholder"><i class="fa-solid fa-book"></i></div>';
         }
 
-        html += '<div class="kitab-card" onclick="goToKitab(\'' + k.id + '\')">' +
+        html += '<a href="materi.html?kitab=' + k.id + '" class="kitab-card" style="text-decoration:none; color:inherit; display:flex; flex-direction:column;">' +
           coverHtml +
           '<div class="kitab-card-body">' +
             '<div class="kitab-card-title">' + escHtml(k.nama || k.title || 'Kitab') + '</div>' +
@@ -1372,7 +1372,7 @@
             '</div>' +
             '<div style="font-size:0.65rem; color:var(--text-muted); margin-top:4px;">' + progress.completed + '/' + progress.total + ' selesai</div>' +
           '</div>' +
-        '</div>';
+        '</a>';
       }
       container.innerHTML = html;
     }
