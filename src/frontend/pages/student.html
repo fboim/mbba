@@ -940,7 +940,6 @@
         console.log('kurikulum count:', kurikulum.length);
         kurikulum.forEach(function(bagian) {
           console.log('bagian:', bagian.id, bagian.nama || bagian.title);
-        });
           (bagian.bab || []).forEach(function(bab) {
             allBabs.push({
               id: bab.id,
@@ -1002,19 +1001,15 @@
         nextUnlockIndex = 0;
         for (var i = 0; i < items.length; i++) {
           var item = items[i];
-          // Check unlock_after_id: if set, must complete that item first
           if (item.unlock_after_id) {
             if (!completedIds.includes(item.unlock_after_id)) {
-              // Previous item not completed, skip this one
               continue;
             }
           }
-          // Check if this item is already completed
           if (!completedIds.includes(item.id)) {
             nextUnlockIndex = i;
             break;
           }
-          // If last item and all completed
           if (i === items.length - 1) nextUnlockIndex = items.length;
         }
 
