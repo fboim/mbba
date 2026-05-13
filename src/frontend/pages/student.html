@@ -488,6 +488,162 @@
     .kitab-card-jenjang { display: inline-block; margin-top: 6px; padding: 2px 8px; background: var(--purple-soft); color: var(--purple); border-radius: 100px; font-size: 0.6rem; font-weight: 700; }
     .dark .kitab-card-jenjang { background: rgba(139,92,246,0.2); }
 
+    /* Progress Bar in Kitab Card */
+    .kitab-card-progress {
+      margin-top: 8px;
+      height: 4px;
+      background: var(--border-soft);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .kitab-card-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #059669, #34d399);
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    /* Jenjang Filter Tabs */
+    .jenjang-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .jenjang-tab {
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .jenjang-tab:hover { border-color: var(--purple); color: var(--purple); }
+    .jenjang-tab.active {
+      background: var(--purple);
+      color: white;
+      border-color: var(--purple);
+    }
+
+    /* Quick Stats */
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .quick-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+    .quick-stat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      font-size: 14px;
+    }
+    .quick-stat-icon.green { background: var(--accent-soft); color: var(--accent); }
+    .quick-stat-icon.blue { background: var(--blue-soft); color: var(--blue); }
+    .quick-stat-icon.amber { background: var(--amber-soft); color: #f59e0b; }
+    .quick-stat-value { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+    .quick-stat-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Currently Learning Section */
+    .current-kitab {
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      color: white;
+      margin-bottom: 24px;
+    }
+    .current-kitab-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .current-kitab-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .current-kitab-label {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .current-kitab-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .current-kitab-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .current-kitab-info {
+      flex: 1;
+    }
+    .current-kitab-subtitle {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+    .current-kitab-progress {
+      margin-top: 12px;
+    }
+    .current-kitab-progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .current-kitab-progress-fill {
+      height: 100%;
+      background: white;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    .current-kitab-progress-text {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+    .current-kitab-btn {
+      padding: 10px 20px;
+      background: white;
+      color: #8b5cf6;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .current-kitab-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
     /* Animations */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -578,8 +734,53 @@
       </div>
     </div>
 
+    <!-- Quick Stats -->
+    <div id="quickStatsSection" class="quick-stats animate-fade-up" style="animation-delay: 0.05s;">
+      <div class="quick-stat">
+        <div class="quick-stat-icon green"><i class="fa-solid fa-book-open"></i></div>
+        <div id="statKitabStarted" class="quick-stat-value">0</div>
+        <div class="quick-stat-label">Kitab Dimulai</div>
+      </div>
+      <div class="quick-stat">
+        <div class="quick-stat-icon blue"><i class="fa-solid fa-clock"></i></div>
+        <div id="statLearningTime" class="quick-stat-value">0h</div>
+        <div class="quick-stat-label">Waktu Belajar</div>
+      </div>
+      <div class="quick-stat">
+        <div class="quick-stat-icon amber"><i class="fa-solid fa-fire"></i></div>
+        <div id="statStudyStreak" class="quick-stat-value">0</div>
+        <div class="quick-stat-label">Hari Streak</div>
+      </div>
+    </div>
+
+    <!-- Currently Learning Section -->
+    <div id="currentKitabSection" class="current-kitab animate-fade-up hidden" style="animation-delay: 0.1s;">
+      <div class="current-kitab-header">
+        <div class="current-kitab-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div>
+          <div class="current-kitab-label">Sedang Dipelajari</div>
+          <div id="currentKitabTitle" class="current-kitab-title">-</div>
+        </div>
+      </div>
+      <div class="current-kitab-body">
+        <div class="current-kitab-info">
+          <div id="currentKitabSubtitle" class="current-kitab-subtitle">-</div>
+          <div class="current-kitab-progress">
+            <div class="current-kitab-progress-bar">
+              <div id="currentKitabProgressFill" class="current-kitab-progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="currentKitabProgressText" class="current-kitab-progress-text">0% selesai</div>
+          </div>
+        </div>
+        <a href="#" id="currentKitabBtn" class="current-kitab-btn">
+          <span>Lanjutkan</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
     <!-- Continue Section -->
-    <div id="continueSection" class="continue-card animate-fade-up hidden" style="animation-delay: 0.2s; margin-bottom: 24px;">
+    <div id="continueSection" class="continue-card animate-fade-up hidden" style="animation-delay: 0.15s; margin-bottom: 24px;">
       <div class="continue-icon">
         <i class="fa-solid fa-play"></i>
       </div>
@@ -599,12 +800,21 @@
 
     <!-- Kitab Cards Section -->
     <div id="kitabSection" class="animate-fade-up" style="margin-bottom: 24px;">
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-        <div style="width:36px; height:36px; background:linear-gradient(135deg,#8b5cf6,#a78bfa); border-radius:10px; display:flex; align-items:center; justify-content:center;">
-          <i class="fa-solid fa-book-open" style="color:white; font-size:14px;"></i>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:36px; height:36px; background:linear-gradient(135deg,#8b5cf6,#a78bfa); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            <i class="fa-solid fa-book-open" style="color:white; font-size:14px;"></i>
+          </div>
+          <h2 style="font-size:1.1rem; font-weight:700; color:var(--text-primary);">Daftar Kitab</h2>
         </div>
-        <h2 style="font-size:1.1rem; font-weight:700; color:var(--text-primary);">Daftar Kitab</h2>
+        <span id="kitabCount" style="font-size:0.75rem; color:var(--text-muted);">0 kitab</span>
       </div>
+
+      <!-- Jenjang Filter Tabs -->
+      <div id="jenjangTabs" class="jenjang-tabs">
+        <button class="jenjang-tab active" onclick="filterByJenjang(null)">Semua</button>
+      </div>
+
       <div id="kitabCards" class="kitab-cards-grid">
         <div style="text-align:center; padding:40px; color:var(--text-muted);">
           <div class="spinner" style="margin:0 auto 12px;"></div>
@@ -666,6 +876,11 @@
     var items = [];
     var nextUnlockIndex = 0;
 
+    var allKitabs = [];
+    var allJenjangs = [];
+    var selectedJenjangId = null;
+    var kurikulum = [];
+
     (async function() {
       var user = await getCurrentUser();
       if (!user) {
@@ -680,7 +895,8 @@
       var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
       document.getElementById('userName').textContent = 'Hai, ' + name;
       await loadDashboard();
-      loadKitabCards().catch(function(e) { console.error('loadKitabCards error:', e); });
+      await loadKitabCards();
+      await loadQuickStats();
 
       // Dark Mode with smooth transition
       const themeToggle = document.getElementById('theme-toggle');
@@ -702,11 +918,9 @@
 
     async function loadDashboard() {
       try {
-        console.log('loadDashboard: starting...');
-        var kurikulum;
+        kurikulum = [];
         try {
           kurikulum = await fetchKurikulum();
-          console.log('loadDashboard: fetchKurikulum result:', kurikulum);
         } catch(e) {
           console.error('fetchKurikulum error:', e);
           kurikulum = [];
@@ -804,6 +1018,7 @@
         renderTimeline();
         renderRecentActivity();
         updateContinueSection();
+        updateCurrentKitabSection();
       } catch (err) {
         console.error('loadDashboard error:', err);
         document.getElementById('fasalList').innerHTML = '<div class="activity-empty"><div class="activity-empty-icon"><i class="fa-solid fa-exclamation-triangle"></i></div><p class="activity-empty-text">Gagal memuat data: ' + err.message + '</p></div>';
@@ -885,9 +1100,48 @@
       }
     }
 
+    function updateCurrentKitabSection() {
+      var section = document.getElementById('currentKitabSection');
+      if (!section) return;
+
+      // Find the most recently accessed/first uncompleted kitab
+      var currentItem = null;
+      var completedIds = userProgress.filter(function(p) { return p.status === 'completed'; }).map(function(p) { return p.fasal_id; });
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (item.unlock_after_id && !completedIds.includes(item.unlock_after_id)) {
+          continue;
+        }
+        if (!completedIds.includes(item.id)) {
+          currentItem = item;
+          break;
+        }
+      }
+
+      if (!currentItem) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      // Find progress for this item
+      var progress = userProgress.find(function(p) { return p.fasal_id === currentItem.id; });
+      var percent = progress ? (progress.quiz_score || 0) : 0;
+
+      // Update UI
+      section.classList.remove('hidden');
+      document.getElementById('currentKitabTitle').textContent = currentItem.title;
+      document.getElementById('currentKitabSubtitle').textContent = currentItem.type === 'bab' ? 'Muqoddimah' : (currentItem.subtitle || 'Bab');
+
+      document.getElementById('currentKitabProgressFill').style.width = percent + '%';
+      document.getElementById('currentKitabProgressText').textContent = percent + '% selesai';
+
+      var link = currentItem.type === 'bab' ? 'materi.html?bab=' + currentItem.id : 'materi.html?id=' + currentItem.id;
+      document.getElementById('currentKitabBtn').href = link;
+    }
+
     function renderTimeline() {
       var container = document.getElementById('fasalList');
-      console.log('renderTimeline: items.length =', items.length);
 
       if (items.length === 0) {
         container.innerHTML = '<div class="activity-empty"><div class="activity-empty-icon"><i class="fa-solid fa-book-open"></i></div><p class="activity-empty-text">Belum ada materi</p></div>';
@@ -895,7 +1149,6 @@
       }
 
       var completedIds = userProgress.filter(function(p) { return p.status === 'completed'; }).map(function(p) { return p.fasal_id; });
-      console.log('renderTimeline: completedIds =', completedIds);
 
       var isItemUnlocked = function(item) {
         if (!item.unlock_after_id) return true;
@@ -1022,6 +1275,8 @@
 
     async function loadKitabCards() {
       var container = document.getElementById('kitabCards');
+      var jenjangTabsContainer = document.getElementById('jenjangTabs');
+      var kitabCountEl = document.getElementById('kitabCount');
       try {
         var token = getToken();
         var headers = { 'apikey': SUPABASE_ANON_KEY };
@@ -1035,39 +1290,149 @@
         var jenjangs = await jenjangRes.json().catch(() => []);
         var kitabs = await kitabRes.json().catch(() => []);
 
+        allJenjangs = jenjangs;
+        allKitabs = kitabs;
+
+        // Build Jenjang tabs
+        var tabsHtml = '<button class="jenjang-tab active" onclick="filterByJenjang(null)">Semua</button>';
+        jenjangs.forEach(function(j) {
+          var label = j.nama || j.title || 'Jenjang';
+          tabsHtml += '<button class="jenjang-tab" onclick="filterByJenjang(\'' + j.id + '\')">' + escHtml(label) + '</button>';
+        });
+        jenjangTabsContainer.innerHTML = tabsHtml;
+
         if (!kitabs || kitabs.length === 0) {
           container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-book-open" style="font-size:2rem; margin-bottom:12px; display:block; opacity:0.5;"></i><p>Belum ada kitab</p></div>';
+          kitabCountEl.textContent = '0 kitab';
           return;
         }
 
-        var html = '';
-        for (var k of kitabs) {
-          var jenjang = jenjangs.find(j => j.id === k.jenjang_id);
-          var jenjangLabel = jenjang ? (jenjang.nama || jenjang.title || 'Jenjang') : '';
-          var coverHtml;
-          if (k.image_url) {
-            coverHtml = '<img src="' + escHtml(k.image_url) + '" alt="' + escHtml(k.nama || k.title || '') + '" class="kitab-card-cover" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">' +
-                        '<div class="kitab-card-cover-placeholder" style="display:none;"><i class="fa-solid fa-book"></i></div>';
-          } else {
-            coverHtml = '<div class="kitab-card-cover-placeholder"><i class="fa-solid fa-book"></i></div>';
-          }
-          html += '<div class="kitab-card" onclick="goToKitab(\'' + k.id + '\')">' +
-            coverHtml +
-            '<div class="kitab-card-body">' +
-              '<div class="kitab-card-title">' + escHtml(k.nama || k.title || 'Kitab') + '</div>' +
-              (k.penulis ? '<div class="kitab-card-author">' + escHtml(k.penulis) + '</div>' : '') +
-              (jenjangLabel ? '<div class="kitab-card-jenjang">' + escHtml(jenjangLabel) + '</div>' : '') +
-            '</div>' +
-          '</div>';
-        }
-        container.innerHTML = html;
+        renderKitabCards(kitabs);
+        kitabCountEl.textContent = kitabs.length + ' kitab';
       } catch (e) {
+        console.error('loadKitabCards error:', e);
         container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><p>Gagal memuat kitab</p></div>';
       }
     }
 
+    function filterByJenjang(jenjangId) {
+      selectedJenjangId = jenjangId;
+
+      // Update tab active state
+      document.querySelectorAll('.jenjang-tab').forEach(function(tab) {
+        if ((jenjangId === null && tab.textContent === 'Semua') ||
+            (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes(jenjangId))) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      // Filter kitabs
+      var filteredKitabs = jenjangId ? allKitabs.filter(function(k) { return k.jenjang_id === jenjangId; }) : allKitabs;
+      renderKitabCards(filteredKitabs);
+
+      // Update count
+      var kitabCountEl = document.getElementById('kitabCount');
+      kitabCountEl.textContent = filteredKitabs.length + ' kitab';
+    }
+
+    function renderKitabCards(kitabs) {
+      var container = document.getElementById('kitabCards');
+
+      if (!kitabs || kitabs.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-book-open" style="font-size:2rem; margin-bottom:12px; display:block; opacity:0.5;"></i><p>Tidak ada kitab untuk jenjang ini</p></div>';
+        return;
+      }
+
+      var html = '';
+      for (var k of kitabs) {
+        var jenjang = allJenjangs.find(j => j.id === k.jenjang_id);
+        var jenjangLabel = jenjang ? (jenjang.nama || jenjang.title || 'Jenjang') : '';
+
+        // Calculate progress for this kitab
+        var progress = calculateKitabProgress(k.id);
+
+        var coverHtml;
+        if (k.image_url) {
+          coverHtml = '<img src="' + escHtml(k.image_url) + '" alt="' + escHtml(k.nama || k.title || '') + '" class="kitab-card-cover" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">' +
+                        '<div class="kitab-card-cover-placeholder" style="display:none;"><i class="fa-solid fa-book"></i></div>';
+        } else {
+          coverHtml = '<div class="kitab-card-cover-placeholder"><i class="fa-solid fa-book"></i></div>';
+        }
+
+        html += '<div class="kitab-card" onclick="goToKitab(\'' + k.id + '\')">' +
+          coverHtml +
+          '<div class="kitab-card-body">' +
+            '<div class="kitab-card-title">' + escHtml(k.nama || k.title || 'Kitab') + '</div>' +
+            (k.penulis ? '<div class="kitab-card-author">' + escHtml(k.penulis) + '</div>' : '') +
+            (jenjangLabel ? '<div class="kitab-card-jenjang">' + escHtml(jenjangLabel) + '</div>' : '') +
+            '<div class="kitab-card-progress">' +
+              '<div class="kitab-card-progress-fill" style="width: ' + progress.percent + '%"></div>' +
+            '</div>' +
+            '<div style="font-size:0.65rem; color:var(--text-muted); margin-top:4px;">' + progress.completed + '/' + progress.total + ' selesai</div>' +
+          '</div>' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function calculateKitabProgress(kitabId) {
+      // Find all bagian/bab/fasal for this kitab
+      var total = 0;
+      var completed = 0;
+
+      if (typeof kurikulum !== 'undefined' && kurikulum) {
+        kurikulum.forEach(function(bagian) {
+          // Check if this bagian belongs to the kitab
+          var kitabs = allKitabs.filter(function(k) { return k.id === kitabId; });
+          if (kitabs.length === 0) return;
+
+          var bagianKitabs = kitabs[0];
+          (bagian.bab || []).forEach(function(bab) {
+            (bab.fasal || []).forEach(function(fasal) {
+              total++;
+              if (userProgress.some(function(p) { return p.fasal_id === fasal.id && p.status === 'completed'; })) {
+                completed++;
+              }
+            });
+          });
+        });
+      }
+
+      var percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+      return { total: total, completed: completed, percent: percent };
+    }
+
     function goToKitab(kitabId) {
       window.location.href = 'materi.html?kitab=' + kitabId;
+    }
+
+    async function loadQuickStats() {
+      var kitabStarted = 0;
+      var learningTime = 0;
+      var streak = calculateStreak();
+
+      // Calculate kitab started (has at least one progress entry)
+      var startedKitabIds = new Set();
+      userProgress.forEach(function(p) {
+        if (p.status !== 'locked') {
+          // Find which kitab this fasal belongs to
+          items.forEach(function(item) {
+            if (item.id === p.fasal_id && item.kitab_id) {
+              startedKitabIds.add(item.kitab_id);
+            }
+          });
+        }
+      });
+      kitabStarted = startedKitabIds.size;
+
+      // Calculate learning time (rough estimate based on progress entries)
+      learningTime = Math.round(userProgress.length * 0.5); // 30 min per entry
+
+      document.getElementById('statKitabStarted').textContent = kitabStarted;
+      document.getElementById('statLearningTime').textContent = learningTime + 'h';
+      document.getElementById('statStudyStreak').textContent = streak;
     }
 
     function escHtml(text) {
