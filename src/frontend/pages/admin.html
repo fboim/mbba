@@ -1390,18 +1390,36 @@
             <!-- Select Kitab -->
             <div class="form-group">
               <label class="form-label">Pilih Kitab</label>
-              <select id="audioKitabSelect" onchange="loadBagianBabFasalForAudio()" class="form-select">
+              <select id="audioKitabSelect" onchange="loadBagianForAudio()" class="form-select">
                 <option value="">Pilih Kitab...</option>
               </select>
             </div>
 
-            <!-- Select Materi -->
+            <!-- Select Materi - Hierarchical: Kitab > Bagian > Bab > Fasal -->
             <div id="audioMateriSection" class="hidden">
               <div class="form-group">
-                <label class="form-label">Pilih Materi</label>
-                <select id="audioMateriSelect" onchange="loadAudioForMateri()" class="form-select">
-                  <option value="">Pilih Bagian, Bab, atau Fasal...</option>
+                <label class="form-label">Pilih Bagian</label>
+                <select id="audioBagianSelect" onchange="loadBabForAudio()" class="form-select">
+                  <option value="">Pilih Bagian...</option>
                 </select>
+              </div>
+
+              <div id="audioBabSection" class="hidden">
+                <div class="form-group">
+                  <label class="form-label">Pilih Bab</label>
+                  <select id="audioBabSelect" onchange="loadFasalForAudio()" class="form-select">
+                    <option value="">Pilih Bab...</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="audioFasalSection" class="hidden">
+                <div class="form-group">
+                  <label class="form-label">Pilih Fasal</label>
+                  <select id="audioFasalSelect" onchange="loadAudioForMateri()" class="form-select">
+                    <option value="">Pilih Fasal...</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -3193,87 +3211,132 @@
       }
     }
 
-    // Load Bagian, Bab, Fasal for Audio selection
-    async function loadBagianBabFasalForAudio() {
+    // Load Bagian dropdown
+    async function loadBagianForAudio() {
       const kitabId = document.getElementById('audioKitabSelect').value;
-      const materiSelect = document.getElementById('audioMateriSelect');
-      const materiSection = document.getElementById('audioMateriSection');
+      const bagianSelect = document.getElementById('audioBagianSelect');
+      const babSection = document.getElementById('audioBabSection');
+      const fasalSection = document.getElementById('audioFasalSection');
 
       if (!kitabId) {
-        materiSection.classList.add('hidden');
+        document.getElementById('audioMateriSection').classList.add('hidden');
         return;
       }
 
-      materiSection.classList.remove('hidden');
-      materiSelect.innerHTML = '<option value="">Memuat...</option>';
+      document.getElementById('audioMateriSection').classList.remove('hidden');
+      babSection.classList.add('hidden');
+      fasalSection.classList.add('hidden');
+      bagianSelect.innerHTML = '<option value="">Memuat...</option>';
 
       const token = getToken();
       const headers = { 'apikey': SUPABASE_ANON_KEY };
       if (token) headers['Authorization'] = 'Bearer ' + token;
 
       try {
-        const [bagiansRes, babsRes, fasalsRes] = await Promise.all([
-          fetch(SUPABASE_URL + `rest/v1/bagian?kitab_id=eq.${kitabId}&order=order_index`, { headers }),
-          fetch(SUPABASE_URL + `rest/v1/bab?order=order_index`, { headers }),
-          fetch(SUPABASE_URL + `rest/v1/fasal?order=order_index`, { headers })
-        ]);
+        const res = await fetch(SUPABASE_URL + `rest/v1/bagian?kitab_id=eq.${kitabId}&order=order_index`, { headers });
+        const bagians = await res.json().catch(() => []);
 
-        const parseJson = (res, fallback = []) => {
-          if (!res.ok) {
-            console.warn('Fetch failed:', res.status);
-            return fallback;
-          }
-          try {
-            const data = res.json();
-            return data instanceof Promise ? data : Promise.resolve(data);
-          } catch (e) {
-            return Promise.resolve(fallback);
-          }
-        };
+        bagianSelect.innerHTML = '<option value="">Pilih Bagian...</option>' +
+          bagians.map(b => `<option value="${b.id}">${escapeHtml(b.nama || b.title || b.id)}</option>`).join('');
+      } catch (err) {
+        console.error('Error loading bagian:', err);
+        bagianSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
 
-        const bagians = await bagiansRes.json().catch(() => []);
-        const allBabsData = await babsRes.json().catch(() => []);
-        const allFasalsData = await fasalsRes.json().catch(() => []);
+    // Load Bab dropdown
+    async function loadBabForAudio() {
+      const bagianId = document.getElementById('audioBagianSelect').value;
+      const babSelect = document.getElementById('audioBabSelect');
+      const babSection = document.getElementById('audioBabSection');
+      const fasalSection = document.getElementById('audioFasalSection');
 
-        // Filter babs and fasals that belong to this kitab (via bagian)
-        const kitabBagianIds = bagians.map(b => b.id);
-        const filteredBabs = allBabsData.filter(b => b.bagian_id && kitabBagianIds.includes(b.bagian_id));
-        const filteredFasals = allFasalsData.filter(f => {
-          const bab = allBabsData.find(b => b.id === f.bab_id);
-          return bab && bab.bagian_id && kitabBagianIds.includes(bab.bagian_id);
-        });
-
-        let options = '<option value="">Pilih Bagian, Bab, atau Fasal...</option>';
-
-        // Add Bagian options
-        bagians.forEach(b => {
-          options += `<option value="bagian:${b.id}">Bagian - ${escapeHtml(b.nama || b.title || b.id)}</option>`;
-        });
-
-        // Add Bab options (only muqoddimah)
-        filteredBabs.filter(b => b.is_muqoddimah).forEach(b => {
-          options += `<option value="bab:${b.id}">Bab - ${escapeHtml(b.title || b.nama || b.id)}</option>`;
-        });
-
-        // Add Fasal options
-        filteredFasals.forEach(f => {
-          options += `<option value="fasal:${f.id}">Fasal - ${escapeHtml(f.title || f.id)}</option>`;
-        });
-
-        materiSelect.innerHTML = options;
-
-        // Hide recording area when kitab changes
+      if (!bagianId) {
+        babSection.classList.add('hidden');
+        fasalSection.classList.add('hidden');
         document.getElementById('recordingArea').classList.add('hidden');
         document.getElementById('audioEmptyState').classList.remove('hidden');
+        return;
+      }
+
+      babSection.classList.remove('hidden');
+      fasalSection.classList.add('hidden');
+      babSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/bab?bagian_id=eq.${bagianId}&order=order_index`, { headers });
+        const babs = await res.json().catch(() => []);
+
+        // Filter only muqoddimah (introduction)
+        const muqoddimahBabs = babs.filter(b => b.is_muqoddimah);
+
+        babSelect.innerHTML = '<option value="">Pilih Bab...</option>' +
+          muqoddimahBabs.map(b => `<option value="bab:${b.id}">${escapeHtml(b.title || b.nama || b.id)}</option>`).join('');
+
+        // Auto-select if only one bab
+        if (muqoddimahBabs.length === 1) {
+          babSelect.value = `bab:${muqoddimahBabs[0].id}`;
+          loadFasalForAudio();
+        } else if (muqoddimahBabs.length === 0) {
+          // No muqoddimah, allow selecting all babs for audio
+          babSelect.innerHTML = '<option value="">Pilih Bab...</option>' +
+            babs.map(b => `<option value="bab:${b.id}">${escapeHtml(b.title || b.nama || b.id)}</option>`).join('');
+        }
       } catch (err) {
-        console.error('Error loading materi for audio:', err);
-        materiSelect.innerHTML = '<option value="">Gagal memuat</option>';
+        console.error('Error loading bab:', err);
+        babSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    // Load Fasal dropdown
+    async function loadFasalForAudio() {
+      const babSelect = document.getElementById('audioBabSelect');
+      const value = babSelect.value;
+
+      if (!value) {
+        document.getElementById('audioFasalSection').classList.add('hidden');
+        document.getElementById('recordingArea').classList.add('hidden');
+        document.getElementById('audioEmptyState').classList.remove('hidden');
+        return;
+      }
+
+      // If value starts with "bab:", load fasals for that bab
+      if (value.startsWith('bab:')) {
+        document.getElementById('audioFasalSection').classList.remove('hidden');
+        const babId = value.replace('bab:', '');
+        const fasalSelect = document.getElementById('audioFasalSelect');
+        fasalSelect.innerHTML = '<option value="">Memuat...</option>';
+
+        const token = getToken();
+        const headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        try {
+          const res = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&order=order_index`, { headers });
+          const fasals = await res.json().catch(() => []);
+
+          fasalSelect.innerHTML = '<option value="">Pilih Fasal...</option>' +
+            fasals.map(f => `<option value="fasal:${f.id}">${escapeHtml(f.title || f.id)}</option>`).join('');
+
+          // Auto-select if only one fasal
+          if (fasals.length === 1) {
+            fasalSelect.value = `fasal:${fasals[0].id}`;
+            loadAudioForMateri();
+          }
+        } catch (err) {
+          console.error('Error loading fasal:', err);
+          fasalSelect.innerHTML = '<option value="">Gagal memuat</option>';
+        }
       }
     }
 
     // Load Audio for Selected Materi
     async function loadAudioForMateri() {
-      const select = document.getElementById('audioMateriSelect');
+      const select = document.getElementById('audioFasalSelect');
       const value = select.value;
 
       if (!value) {
