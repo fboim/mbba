@@ -2051,106 +2051,61 @@
       if (!confirm('Yakin hapus jenjang ini?\n\nPERHATIAN: Semua kitab, bagian, bab, fasal di dalamnya juga akan dihapus.')) return;
       const token = getToken();
       if (!token) { alert('Session expired.'); return; }
-      console.log('deleteJenjang: starting, id:', id, 'token:', token ? 'present' : 'missing');
 
       try {
-        // Step 1: Get all kitabs for this jenjang
-        console.log('Step 1: Fetching kitabs...');
         const kitabsRes = await fetch(`${SUPABASE_URL}rest/v1/kitab?jenjang_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-        console.log('kitabsRes status:', kitabsRes.status);
-        if (!kitabsRes.ok) {
-          const errText = await kitabsRes.text();
-          console.error('Failed to fetch kitabs:', errText);
-          alert('Gagal mengambil data kitab');
-          return;
-        }
+        if (!kitabsRes.ok) { alert('Gagal mengambil data kitab'); return; }
         const kitabs = await kitabsRes.json();
-        console.log('Found kitabs:', kitabs.length);
 
-        // Step 2: Delete each kitab and its children
         for (const k of kitabs) {
-          console.log('Deleting kitab:', k.id, k.nama);
-
-          // Get bagian for this kitab
           const bagiansRes = await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${k.id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           const bagians = await bagiansRes.json();
-          console.log('Found bagians for kitab', k.id, ':', bagians.length);
 
           for (const b of bagians) {
-            // Get babs for this bagian
             const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${b.id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
             const babs = await babsRes.json();
 
             for (const bb of babs) {
-              // Get fasals for this bab
               const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
               const fasals = await fasalsRes.json();
 
               for (const f of fasals) {
-                // Delete quiz and progress for each fasal
                 await fetch(`${SUPABASE_URL}rest/v1/quiz?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
                 await fetch(`${SUPABASE_URL}rest/v1/user_progress?fasal_id=eq.${f.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
               }
-              // Delete fasals
               await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
             }
-            // Delete babs
             await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${b.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           }
-          // Delete bagians
           await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${k.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-          // Delete kitab
-          const kitDel = await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${k.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-          console.log('Delete kitab', k.id, 'status:', kitDel.status);
+          await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${k.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
         }
 
-        // Step 3: Delete jenjang
-        console.log('Step 3: Deleting jenjang:', id);
         const res = await fetch(`${SUPABASE_URL}rest/v1/jenjang?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-        console.log('Delete jenjang status:', res.status);
-
         if (res.ok) {
           alert('Berhasil dihapus!');
           loadJenjangList();
         } else {
-          const err = await res.text();
-          console.error('Delete jenjang failed:', err);
-          alert('Gagal hapus jenjang: ' + err);
+          alert('Gagal hapus jenjang: ' + await res.text());
         }
-      } catch (err) {
-        console.error('deleteJenjang error:', err);
-        alert('Gagal: ' + err.message);
-      }
+      } catch (err) { alert('Gagal: ' + err.message); }
     }
 
     async function deleteKitab(id) {
       if (!confirm('Yakin hapus kitab ini?\n\nPERHATIAN: Semua bagian, bab, fasal di dalamnya juga akan dihapus.')) return;
       const token = getToken();
       if (!token) { alert('Session expired.'); return; }
-      console.log('deleteKitab: starting, id:', id);
 
       try {
-        // Get all bagians for this kitab
         const bagiansRes = await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-        if (!bagiansRes.ok) {
-          const errText = await bagiansRes.text();
-          console.error('Failed to fetch bagians:', errText);
-          alert('Gagal mengambil data bagian');
-          return;
-        }
+        if (!bagiansRes.ok) { alert('Gagal mengambil data bagian'); return; }
         const bagians = await bagiansRes.json();
-        console.log('Found bagians:', bagians.length);
 
-        // Delete each bagian and its children
         for (const b of bagians) {
-          console.log('Processing bagian:', b.id);
-
-          // Get babs for this bagian
           const babsRes = await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${b.id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           const babs = await babsRes.json();
 
           for (const bb of babs) {
-            // Get fasals for this bab
             const fasalsRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
             const fasals = await fasalsRes.json();
 
@@ -2160,29 +2115,18 @@
             }
             await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${bb.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
           }
-          // Delete babs
           await fetch(`${SUPABASE_URL}rest/v1/bab?bagian_id=eq.${b.id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
         }
-        // Delete bagians
         await fetch(`${SUPABASE_URL}rest/v1/bagian?kitab_id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
 
-        // Delete kitab
-        console.log('Deleting kitab:', id);
         const res = await fetch(`${SUPABASE_URL}rest/v1/kitab?id=eq.${id}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${token}` } });
-        console.log('Delete kitab status:', res.status);
-
         if (res.ok) {
           alert('Berhasil dihapus!');
           loadJenjangList();
         } else {
-          const err = await res.text();
-          console.error('Delete kitab failed:', err);
-          alert('Gagal hapus kitab: ' + err);
+          alert('Gagal hapus kitab: ' + await res.text());
         }
-      } catch (err) {
-        console.error('deleteKitab error:', err);
-        alert('Gagal: ' + err.message);
-      }
+      } catch (err) { alert('Gagal: ' + err.message); }
     }
 
     // Load Materi (nested: Jenjang > Kitab > Bagian > Bab > Fasal)
