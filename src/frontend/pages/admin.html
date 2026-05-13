@@ -957,71 +957,128 @@
               </div>
               <div>
                 <h3 class="bento-title">Tambah Materi Baru</h3>
-                <p class="bento-subtitle">Bagian, Bab, atau Fasal</p>
+                <p class="bento-subtitle">Tambah Bagian, Bab, atau Fasal</p>
               </div>
             </div>
 
+            <!-- Step 1: Pilih Kitab -->
             <div class="form-group">
-              <label class="form-label">Tipe Materi</label>
-              <select id="newMateriType" onchange="updateMateriForm()" class="form-select">
-                <option value="bagian">Bagian</option>
-                <option value="bab">Bab</option>
-                <option value="fasal">Fasal</option>
+              <label class="form-label">1. Pilih Kitab</label>
+              <select id="newMateriKitab" onchange="loadNewBagianOptions()" class="form-select">
+                <option value="">Pilih Kitab...</option>
               </select>
             </div>
 
-            <div id="bagianFields">
+            <!-- Step 2: Pilih/Tambah Bagian -->
+            <div id="newBagianSection" class="hidden">
               <div class="form-group">
-                <label class="form-label">Kitab Induk</label>
-                <select id="newBagianKitab" class="form-select" onchange="loadBagiansForDropdown()">
-                  <option value="">Pilih Kitab...</option>
-                </select>
+                <label class="form-label">2. Pilih Bagian</label>
+                <div class="flex gap-2">
+                  <select id="newMateriBagian" class="form-select" style="flex:1;" onchange="loadNewBabOptions()">
+                    <option value="">Pilih Bagian...</option>
+                  </select>
+                  <button type="button" onclick="showAddNewBagianInline()" class="btn btn-sm" style="background:#e0e7ff; color:#4f46e5; padding:6px 12px; white-space:nowrap;">
+                    <i class="fa-solid fa-plus"></i> Baru
+                  </button>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Nama Bagian</label>
-                <input type="text" id="newBagianNama" class="form-input" placeholder="Contoh: Al-Qawa'id">
+
+              <!-- Inline Add Bagian -->
+              <div id="addBagianInline" class="hidden mb-3 p-3" style="background:#f5f3ff; border-radius:8px; border:1px dashed #c4b5fd;">
+                <div class="flex gap-2 items-center mb-2">
+                  <input type="text" id="inlineBagianNama" class="form-input" placeholder="Nama Bagian baru..." style="flex:1;">
+                  <button onclick="saveInlineBagian()" class="btn btn-sm" style="background:#4f46e5; color:white;">
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+                  <button onclick="hideAddBagianInline()" class="btn btn-sm" style="background:#e2e8f0; color:#6b7280;">
+                    <i class="fa-solid fa-times"></i>
+                  </button>
+                </div>
+                <p id="addBagianInlineError" class="text-xs text-red-500 hidden"></p>
               </div>
             </div>
 
-            <div id="babFields" class="hidden">
+            <!-- Step 3: Pilih/Tambah Bab -->
+            <div id="newBabSection" class="hidden">
               <div class="form-group">
-                <label class="form-label">Nama Bab</label>
-                <input type="text" id="newBabNama" class="form-input" placeholder="Contoh: Muqoddimah">
+                <label class="form-label">3. Pilih Bab</label>
+                <div class="flex gap-2">
+                  <select id="newMateriBab" class="form-select" style="flex:1;" onchange="loadNewFasalOptions()">
+                    <option value="">Pilih Bab...</option>
+                  </select>
+                  <button type="button" onclick="showAddNewBabInline()" class="btn btn-sm" style="background:#e0e7ff; color:#4f46e5; padding:6px 12px; white-space:nowrap;">
+                    <i class="fa-solid fa-plus"></i> Baru
+                  </button>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Bagian Induk</label>
-                <select id="newBabBagian" class="form-select">
-                  <option value="">Pilih Bagian...</option>
-                </select>
+
+              <!-- Inline Add Bab -->
+              <div id="addBabInline" class="hidden mb-3 p-3" style="background:#f5f3ff; border-radius:8px; border:1px dashed #c4b5fd;">
+                <div class="flex gap-2 items-center mb-2">
+                  <input type="text" id="inlineBabNama" class="form-input" placeholder="Nama Bab baru..." style="flex:1;">
+                </div>
+                <div class="flex gap-4 mb-2">
+                  <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" id="inlineBabMuqoddimah">
+                    Muqoddimah
+                  </label>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="saveInlineBab()" class="btn btn-sm" style="background:#4f46e5; color:white;">
+                    <i class="fa-solid fa-check"></i> Simpan
+                  </button>
+                  <button onclick="hideAddBabInline()" class="btn btn-sm" style="background:#e2e8f0; color:#6b7280;">
+                    <i class="fa-solid fa-times"></i> Batal
+                  </button>
+                </div>
+                <p id="addBabInlineError" class="text-xs text-red-500 hidden mt-2"></p>
               </div>
             </div>
 
-            <div id="fasalFields" class="hidden">
+            <!-- Step 4: Pilih/Tambah Fasal -->
+            <div id="newFasalSection" class="hidden">
               <div class="form-group">
-                <label class="form-label">Nama Fasal</label>
-                <input type="text" id="newFasalNama" class="form-input" placeholder="Contoh: Isim">
+                <label class="form-label">4. Pilih Fasal</label>
+                <div class="flex gap-2">
+                  <select id="newMateriFasal" class="form-select" style="flex:1;">
+                    <option value="">Pilih Fasal...</option>
+                  </select>
+                  <button type="button" onclick="showAddNewFasalInline()" class="btn btn-sm" style="background:#e0e7ff; color:#4f46e5; padding:6px 12px; white-space:nowrap;">
+                    <i class="fa-solid fa-plus"></i> Baru
+                  </button>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Bab Induk</label>
-                <select id="newFasalBab" class="form-select">
-                  <option value="">Pilih Bab...</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Jumlah Soal Quiz</label>
-                <select id="newFasalQuizCount" class="form-select">
-                  <option value="3">3 soal</option>
-                  <option value="5">5 soal</option>
-                  <option value="10" selected>10 soal</option>
-                  <option value="15">15 soal</option>
-                  <option value="20">20 soal</option>
-                </select>
+
+              <!-- Inline Add Fasal -->
+              <div id="addFasalInline" class="hidden mb-3 p-3" style="background:#f5f3ff; border-radius:8px; border:1px dashed #c4b5fd;">
+                <div class="flex gap-2 items-center mb-2">
+                  <input type="text" id="inlineFasalNama" class="form-input" placeholder="Nama Fasal baru..." style="flex:1;">
+                </div>
+                <div class="form-group mb-2">
+                  <label class="form-label text-xs">Jumlah Soal Quiz</label>
+                  <select id="inlineFasalQuizCount" class="form-select">
+                    <option value="3">3 soal</option>
+                    <option value="5">5 soal</option>
+                    <option value="10" selected>10 soal</option>
+                    <option value="15">15 soal</option>
+                    <option value="20">20 soal</option>
+                  </select>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="saveInlineFasal()" class="btn btn-sm" style="background:#4f46e5; color:white;">
+                    <i class="fa-solid fa-check"></i> Simpan
+                  </button>
+                  <button onclick="hideAddFasalInline()" class="btn btn-sm" style="background:#e2e8f0; color:#6b7280;">
+                    <i class="fa-solid fa-times"></i> Batal
+                  </button>
+                </div>
+                <p id="addFasalInlineError" class="text-xs text-red-500 hidden mt-2"></p>
               </div>
             </div>
 
             <div id="addMateriError" class="alert alert-error hidden"></div>
-            <button onclick="addNewMateri()" class="btn btn-primary btn-block">
-              <i class="fa-solid fa-plus"></i> Tambah Materi
+            <button onclick="resetAddMateriForm()" class="btn btn-secondary btn-block">
+              <i class="fa-solid fa-rotate-left"></i> Reset Form
             </button>
           </div>
         </div>
@@ -1910,7 +1967,7 @@
       tabEl.classList.add('active');
       console.log('showTab:', tab, '→ content display:', getComputedStyle(contentEl).display, 'classes:', contentEl.className);
 
-      if (tab === 'materi') { loadMateri(); loadFasalsForSelect(); }
+      if (tab === 'materi') { loadMateri(); initAddMateriKitab(); }
       if (tab === 'quiz') { initQuizTab(); }
       if (tab === 'siswa') { loadStudentList(); }
       if (tab === 'audio') { initAudioTab(); }
@@ -2848,54 +2905,276 @@
     }
 
     // Load Jenjang List
-    // Add New Materi
-    async function addNewMateri() {
-      const type = document.getElementById('newMateriType').value;
-      const errorEl = document.getElementById('addMateriError');
-      errorEl.classList.add('hidden');
+
+    // ============ Hierarchical Add Materi Form ============
+
+    // Initialize Kitab dropdown for add form
+    async function initAddMateriKitab() {
+      const select = document.getElementById('newMateriKitab');
+      if (!select) return;
+      select.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
 
       try {
-        let body = {};
+        const res = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
+        const kitabs = await res.json().catch(() => []);
+        select.innerHTML = '<option value="">Pilih Kitab...</option>' +
+          kitabs.map(k => `<option value="${k.id}">${escapeHtml(k.nama || k.title)}</option>`).join('');
+      } catch (err) {
+        select.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
 
-        if (type === 'bagian') {
-          const kitabId = document.getElementById('newBagianKitab').value;
-          const title = document.getElementById('newBagianNama').value.trim();
-          if (!kitabId || !title) { errorEl.textContent = 'Kitab dan nama bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
-          const existingBagians = allBagians.filter(b => b.kitab_id === kitabId);
-          body = { kitab_id: kitabId, title, order_index: existingBagians.length + 1 };
-          await fetch(`${SUPABASE_URL}rest/v1/bagian`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' }, body: JSON.stringify(body) });
-          document.getElementById('newBagianNama').value = '';
-          document.getElementById('newBagianKitab').value = '';
-        } else if (type === 'bab') {
-          const title = document.getElementById('newBabNama').value.trim();
-          const bagianId = document.getElementById('newBabBagian').value;
-          if (!title || !bagianId) { errorEl.textContent = 'Nama bab dan bagian diperlukan'; errorEl.classList.remove('hidden'); return; }
-          const existingBabs = allBabs.filter(b => b.bagian_id === bagianId);
-          body = { title, bagian_id: bagianId, order_index: existingBabs.length + 1 };
-          await fetch(`${SUPABASE_URL}rest/v1/bab`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' }, body: JSON.stringify(body) });
-          document.getElementById('newBabNama').value = '';
-          document.getElementById('newBabBagian').value = '';
-        } else if (type === 'fasal') {
-          const title = document.getElementById('newFasalNama').value.trim();
-          const babId = document.getElementById('newFasalBab').value;
-          if (!title || !babId) { errorEl.textContent = 'Nama fasal dan bab diperlukan'; errorEl.classList.remove('hidden'); return; }
-          let orderIndex = 1;
-          try {
-            const countRes = await fetch(`${SUPABASE_URL}rest/v1/fasal?bab_id=eq.${babId}&select=order_index&order=order_index.desc&limit=1`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}` } });
-            if (countRes.ok) { const existing = await countRes.json(); if (existing.length > 0) orderIndex = existing[0].order_index + 1; }
-          } catch (e) {}
-          body = { title, bab_id: babId, order_index: orderIndex };
-          await fetch(`${SUPABASE_URL}rest/v1/fasal`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${getToken()}`, 'Prefer': 'return=representation' }, body: JSON.stringify(body) });
-          document.getElementById('newFasalNama').value = '';
-          document.getElementById('newFasalBab').value = '';
+    // Load Bagian options based on selected Kitab
+    async function loadNewBagianOptions() {
+      const kitabId = document.getElementById('newMateriKitab').value;
+      const bagianSelect = document.getElementById('newMateriBagian');
+      const babSection = document.getElementById('newBabSection');
+      const fasalSection = document.getElementById('newFasalSection');
+
+      if (!kitabId) {
+        document.getElementById('newBagianSection').classList.add('hidden');
+        document.getElementById('newBabSection').classList.add('hidden');
+        document.getElementById('newFasalSection').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('newBagianSection').classList.remove('hidden');
+      document.getElementById('newBabSection').classList.add('hidden');
+      document.getElementById('newFasalSection').classList.add('hidden');
+      bagianSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/bagian?kitab_id=eq.${kitabId}&order=order_index`, { headers });
+        const bagians = await res.json().catch(() => []);
+        bagianSelect.innerHTML = '<option value="">Pilih Bagian...</option>' +
+          bagians.map(b => `<option value="${b.id}">${escapeHtml(b.nama || b.title)}</option>`).join('');
+      } catch (err) {
+        bagianSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    // Load Bab options based on selected Bagian
+    async function loadNewBabOptions() {
+      const bagianId = document.getElementById('newMateriBagian').value;
+      const babSelect = document.getElementById('newMateriBab');
+      const babSection = document.getElementById('newBabSection');
+      const fasalSection = document.getElementById('newFasalSection');
+
+      if (!bagianId) {
+        babSection.classList.add('hidden');
+        fasalSection.classList.add('hidden');
+        return;
+      }
+
+      babSection.classList.remove('hidden');
+      fasalSection.classList.add('hidden');
+      babSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/bab?bagian_id=eq.${bagianId}&order=order_index`, { headers });
+        const babs = await res.json().catch(() => []);
+        babSelect.innerHTML = '<option value="">Pilih Bab...</option>' +
+          babs.map(b => `<option value="${b.id}">${escapeHtml(b.title || b.nama || b.label)}</option>`).join('');
+      } catch (err) {
+        babSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    // Load Fasal options based on selected Bab
+    async function loadNewFasalOptions() {
+      const babId = document.getElementById('newMateriBab').value;
+      const fasalSelect = document.getElementById('newMateriFasal');
+      const fasalSection = document.getElementById('newFasalSection');
+
+      if (!babId) {
+        fasalSection.classList.add('hidden');
+        return;
+      }
+
+      fasalSection.classList.remove('hidden');
+      fasalSelect.innerHTML = '<option value="">Memuat...</option>';
+
+      const token = getToken();
+      const headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      try {
+        const res = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&order=order_index`, { headers });
+        const fasals = await res.json().catch(() => []);
+        fasalSelect.innerHTML = '<option value="">Pilih Fasal...</option>' +
+          fasals.map(f => `<option value="${f.id}">${escapeHtml(f.title || f.id)}</option>`).join('');
+      } catch (err) {
+        fasalSelect.innerHTML = '<option value="">Gagal memuat</option>';
+      }
+    }
+
+    // Inline add Bagian
+    function showAddNewBagianInline() {
+      document.getElementById('addBagianInline').classList.remove('hidden');
+      document.getElementById('inlineBagianNama').value = '';
+      document.getElementById('inlineBagianNama').focus();
+    }
+    function hideAddBagianInline() {
+      document.getElementById('addBagianInline').classList.add('hidden');
+    }
+
+    async function saveInlineBagian() {
+      const kitabId = document.getElementById('newMateriKitab').value;
+      const nama = document.getElementById('inlineBagianNama').value.trim();
+      const errorEl = document.getElementById('addBagianInlineError');
+
+      if (!kitabId) { errorEl.textContent = 'Pilih Kitab terlebih dahulu'; errorEl.classList.remove('hidden'); return; }
+      if (!nama) { errorEl.textContent = 'Nama Bagian tidak boleh kosong'; errorEl.classList.remove('hidden'); return; }
+
+      try {
+        const token = getToken();
+        const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        // Get next order_index
+        const countRes = await fetch(SUPABASE_URL + `rest/v1/bagian?kitab_id=eq.${kitabId}&select=order_index&order=order_index.desc&limit=1`, { headers });
+        const existing = await countRes.json().catch(() => []);
+        const orderIndex = existing.length > 0 ? existing[0].order_index + 1 : 1;
+
+        const res = await fetch(SUPABASE_URL + 'rest/v1/bagian', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ kitab_id: kitabId, nama, order_index: orderIndex })
+        });
+
+        if (res.ok) {
+          hideAddBagianInline();
+          loadNewBagianOptions();
+          loadMateri();
+        } else {
+          errorEl.textContent = 'Gagal menyimpan';
+          errorEl.classList.remove('hidden');
         }
-
-        alert('Materi berhasil ditambahkan!');
-        location.reload();
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
       }
+    }
+
+    // Inline add Bab
+    function showAddNewBabInline() {
+      document.getElementById('addBabInline').classList.remove('hidden');
+      document.getElementById('inlineBabNama').value = '';
+      document.getElementById('inlineBabMuqoddimah').checked = false;
+      document.getElementById('inlineBabNama').focus();
+    }
+    function hideAddBabInline() {
+      document.getElementById('addBabInline').classList.add('hidden');
+    }
+
+    async function saveInlineBab() {
+      const bagianId = document.getElementById('newMateriBagian').value;
+      const nama = document.getElementById('inlineBabNama').value.trim();
+      const isMuqoddimah = document.getElementById('inlineBabMuqoddimah').checked;
+      const errorEl = document.getElementById('addBabInlineError');
+
+      if (!bagianId) { errorEl.textContent = 'Pilih Bagian terlebih dahulu'; errorEl.classList.remove('hidden'); return; }
+      if (!nama) { errorEl.textContent = 'Nama Bab tidak boleh kosong'; errorEl.classList.remove('hidden'); return; }
+
+      try {
+        const token = getToken();
+        const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const countRes = await fetch(SUPABASE_URL + `rest/v1/bab?bagian_id=eq.${bagianId}&select=order_index&order=order_index.desc&limit=1`, { headers });
+        const existing = await countRes.json().catch(() => []);
+        const orderIndex = existing.length > 0 ? existing[0].order_index + 1 : 1;
+
+        const res = await fetch(SUPABASE_URL + 'rest/v1/bab', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ bagian_id: bagianId, title: nama, is_muqoddimah: isMuqoddimah, order_index: orderIndex })
+        });
+
+        if (res.ok) {
+          hideAddBabInline();
+          loadNewBabOptions();
+          loadMateri();
+        } else {
+          errorEl.textContent = 'Gagal menyimpan';
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    // Inline add Fasal
+    function showAddNewFasalInline() {
+      document.getElementById('addFasalInline').classList.remove('hidden');
+      document.getElementById('inlineFasalNama').value = '';
+      document.getElementById('inlineFasalQuizCount').value = '10';
+      document.getElementById('inlineFasalNama').focus();
+    }
+    function hideAddFasalInline() {
+      document.getElementById('addFasalInline').classList.add('hidden');
+    }
+
+    async function saveInlineFasal() {
+      const babId = document.getElementById('newMateriBab').value;
+      const nama = document.getElementById('inlineFasalNama').value.trim();
+      const errorEl = document.getElementById('addFasalInlineError');
+
+      if (!babId) { errorEl.textContent = 'Pilih Bab terlebih dahulu'; errorEl.classList.remove('hidden'); return; }
+      if (!nama) { errorEl.textContent = 'Nama Fasal tidak boleh kosong'; errorEl.classList.remove('hidden'); return; }
+
+      try {
+        const token = getToken();
+        const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const countRes = await fetch(SUPABASE_URL + `rest/v1/fasal?bab_id=eq.${babId}&select=order_index&order=order_index.desc&limit=1`, { headers });
+        const existing = await countRes.json().catch(() => []);
+        const orderIndex = existing.length > 0 ? existing[0].order_index + 1 : 1;
+
+        const res = await fetch(SUPABASE_URL + 'rest/v1/fasal', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ bab_id: babId, title: nama, order_index: orderIndex })
+        });
+
+        if (res.ok) {
+          hideAddFasalInline();
+          loadNewFasalOptions();
+          loadMateri();
+          alert('Fasal berhasil ditambahkan!');
+        } else {
+          errorEl.textContent = 'Gagal menyimpan';
+          errorEl.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    // Reset form
+    function resetAddMateriForm() {
+      document.getElementById('newMateriKitab').value = '';
+      document.getElementById('newBagianSection').classList.add('hidden');
+      document.getElementById('newBabSection').classList.add('hidden');
+      document.getElementById('newFasalSection').classList.add('hidden');
+      hideAddBagianInline();
+      hideAddBabInline();
+      hideAddFasalInline();
     }
 
     // Open Edit Materi Modal
