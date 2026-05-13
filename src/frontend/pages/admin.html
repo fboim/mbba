@@ -3218,6 +3218,19 @@
           fetch(SUPABASE_URL + `rest/v1/fasal?order=order_index`, { headers })
         ]);
 
+        const parseJson = (res, fallback = []) => {
+          if (!res.ok) {
+            console.warn('Fetch failed:', res.status);
+            return fallback;
+          }
+          try {
+            const data = res.json();
+            return data instanceof Promise ? data : Promise.resolve(data);
+          } catch (e) {
+            return Promise.resolve(fallback);
+          }
+        };
+
         const bagians = await bagiansRes.json().catch(() => []);
         const allBabsData = await babsRes.json().catch(() => []);
         const allFasalsData = await fasalsRes.json().catch(() => []);
@@ -3234,17 +3247,17 @@
 
         // Add Bagian options
         bagians.forEach(b => {
-          options += `<option value="bagian:${b.id}">Bagian - ${escapeHtml(b.nama || b.title)}</option>`;
+          options += `<option value="bagian:${b.id}">Bagian - ${escapeHtml(b.nama || b.title || b.id)}</option>`;
         });
 
         // Add Bab options (only muqoddimah)
         filteredBabs.filter(b => b.is_muqoddimah).forEach(b => {
-          options += `<option value="bab:${b.id}">Bab - ${escapeHtml(b.label || b.title || b.nama)}</option>`;
+          options += `<option value="bab:${b.id}">Bab - ${escapeHtml(b.title || b.nama || b.id)}</option>`;
         });
 
         // Add Fasal options
         filteredFasals.forEach(f => {
-          options += `<option value="fasal:${f.id}">Fasal - ${escapeHtml(f.label || f.title || f.nama)}</option>`;
+          options += `<option value="fasal:${f.id}">Fasal - ${escapeHtml(f.title || f.id)}</option>`;
         });
 
         materiSelect.innerHTML = options;
@@ -3638,7 +3651,7 @@
 
       try {
         const [fasalsRes, kitabsRes, allFasalsRes, allBabsRes, allBagiansRes] = await Promise.all([
-          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,audio_url,title,label,bab_id`, { headers }),
+          fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,audio_url,title,bab_id`, { headers }),
           fetch(`${SUPABASE_URL}rest/v1/kitab?select=id,nama`, { headers }),
           fetch(`${SUPABASE_URL}rest/v1/fasal?select=id,bab_id`, { headers }),
           fetch(`${SUPABASE_URL}rest/v1/bab?select=id,bagian_id`, { headers }),
@@ -3682,7 +3695,7 @@
         const allAudio = fasals.map(f => ({
           ...f,
           type: 'fasal',
-          label: f.title || f.label || f.id,
+          label: f.title || f.id,
           parent: getKitabName(f.id)
         })
         );
