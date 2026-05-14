@@ -1208,10 +1208,12 @@
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
         var user = await getCurrentUser();
+        if (!user) return;
         var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&order=completed_at.desc&limit=1', { headers });
+        if (!res.ok) return;
         var progress = await res.json().catch(() => []);
 
-        if (progress.length > 0) {
+        if (progress && progress.length > 0) {
           var lastActivity = new Date(progress[0].completed_at);
           var today = new Date();
           var daysDiff = Math.floor((today - lastActivity) / (1000 * 60 * 60 * 24));
@@ -1234,8 +1236,11 @@
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
         var user = await getCurrentUser();
+        if (!user) return;
         var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&status=eq.completed', { headers });
+        if (!res.ok) return;
         var completed = await res.json().catch(() => []);
+        if (!Array.isArray(completed)) completed = [];
 
         var container = document.getElementById('badgeContainer');
         var badges = [];
@@ -1259,8 +1264,11 @@
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
         var user = await getCurrentUser();
+        if (!user) return;
         var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&order=updated_at.desc&limit=1', { headers });
+        if (!res.ok) return;
         var progress = await res.json().catch(() => []);
+        if (!Array.isArray(progress)) progress = [];
 
         if (progress.length > 0 && progress[0].kitab_id) {
           var floatingBtn = document.getElementById('floatingContinue');
@@ -1316,6 +1324,7 @@
         if (!user) return null;
 
         var res = await fetch(SUPABASE_URL + 'rest/v1/profiles?id=eq.' + user.id, { headers });
+        if (!res.ok) return null;
         var profiles = await res.json().catch(() => []);
         return profiles.length > 0 ? profiles[0] : null;
       } catch(e) {
@@ -1339,7 +1348,8 @@
 
         var jenjangs = await jenjangRes.json().catch(() => []);
         var kitabs = await kitabRes.json().catch(() => []);
-        var allProgress = await progressRes.json().catch(() => []);
+        var allProgressRaw = await progressRes.json().catch(() => []);
+        var allProgress = Array.isArray(allProgressRaw) ? allProgressRaw : [];
 
         allJenjangs = jenjangs;
         allKitabs = kitabs;
