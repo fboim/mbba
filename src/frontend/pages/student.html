@@ -1644,9 +1644,13 @@
           html += '</div>';
         }
         html += '</div>';
-      } else if (q.quiz_type === 'fill-arab' || q.quiz_type === 'fill') {
+      } else {
+        // For fill-arab, fill, latin, or any other fill type - show input box
         var savedValue = window.quizAnswers[window.quizCurrentIndex] || '';
-        html += '<input type="text" id="quizFillInput" class="form-input" placeholder="Ketik jawaban..." style="width:100%; padding:14px; border-radius:var(--radius-md); border:2px solid var(--border-subtle); font-size:1rem; text-align:' + (q.quiz_type === 'fill-arab' ? 'right' : 'left') + ';" value="' + escHtml(savedValue) + '" oninput="window.quizAnswers[' + window.quizCurrentIndex + ']=this.value">';
+        var isArab = (q.quiz_type === 'fill-arab');
+        html += '<div style="margin-top:16px;">';
+        html += '<input type="text" id="quizFillInput" placeholder="' + (isArab ? 'اكتب الجواب' : 'Ketik jawaban...') + '" style="width:100%; padding:16px; border-radius:12px; border:2px solid var(--accent); font-size:1.1rem; ' + (isArab ? 'text-align:right; direction:rtl; font-family:\"Amiri\",serif;' : '') + 'background:var(--bg-card);" value="' + escHtml(savedValue) + '" oninput="window.quizAnswers[' + window.quizCurrentIndex + ']=this.value">';
+        html += '</div>';
       }
       html += '</div>';
 
