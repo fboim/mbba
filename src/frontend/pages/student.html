@@ -816,18 +816,22 @@
       document.getElementById('userName').textContent = 'Hai, ' + name;
       document.getElementById('heroGreeting').textContent = 'Assalamu\'alaikum, ' + name;
 
-      // Get user data including jenjang
-      currentUserData = await getUserData();
+      // Get user data including jenjang (optional - don't fail if table doesn't exist)
+      try {
+        currentUserData = await getUserData();
+      } catch(e) { currentUserData = null; }
+
+      // Load kitab cards
       await loadKitabCards();
 
-      // Check streak and show reminder
-      await checkStreak();
+      // Check streak and show reminder (optional)
+      try { await checkStreak(); } catch(e) {}
 
-      // Load badges
-      await loadBadges();
+      // Load badges (optional)
+      try { await loadBadges(); } catch(e) {}
 
-      // Update floating continue button
-      await updateFloatingContinue();
+      // Update floating continue button (optional)
+      try { await updateFloatingContinue(); } catch(e) {}
 
       // Dark Mode with smooth transition
       const themeToggle = document.getElementById('theme-toggle');
@@ -1226,7 +1230,7 @@
             setTimeout(function() { toast.classList.add('hidden'); }, 5000);
           }
         }
-      } catch(e) { console.error('checkStreak error:', e); }
+      } catch(e) {}
     }
 
     async function loadBadges() {
@@ -1254,7 +1258,7 @@
             return '<div class="badge-item"><i class="fa-solid ' + b.icon + '"></i>' + b.text + '</div>';
           }).join('');
         }
-      } catch(e) { console.error('loadBadges error:', e); }
+      } catch(e) {}
     }
 
     async function updateFloatingContinue() {
@@ -1277,7 +1281,7 @@
           floatingBtn.dataset.kitabId = progress[0].kitab_id;
           bottomNav.style.display = 'flex';
         }
-      } catch(e) { console.error('updateFloatingContinue error:', e); }
+      } catch(e) {}
     }
 
     function openLastKitab() {
@@ -1328,7 +1332,6 @@
         var profiles = await res.json().catch(() => []);
         return profiles.length > 0 ? profiles[0] : null;
       } catch(e) {
-        console.error('getUserData error:', e);
         return null;
       }
     }
