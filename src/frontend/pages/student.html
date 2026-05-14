@@ -1518,6 +1518,7 @@
 
         // Show floating button
         var floatingBtn = document.getElementById('floatingContinue');
+        floatingBtn.dataset.kitabId = kitabId;
         floatingBtn.classList.remove('hidden');
       } catch(e) {
         console.error('openKitab error:', e);
