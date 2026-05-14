@@ -1593,9 +1593,11 @@
         document.getElementById('fasalType').className = 'badge badge-amber';
         document.getElementById('fasalBab').textContent = 'Bab ' + bab.order_index + ' dari Bagian ' + (bab.bagian ? bab.bagian.order_index : 1);
 
-        var content = bab.content_arab && bab.content_arab.trim()
-          ? bab.content_arab
-          : '<div style="text-align:center;padding:48px 24px;background:#fef3c7;border-radius:16px;border:1px solid #fcd34d;margin:8px 0;"><i class="fa-solid fa-file-import" style="font-size:2rem;color:#d97706;margin-bottom:12px;display:block;"></i><p style="font-size:1rem;font-weight:600;color:#92400e;margin-bottom:4px;">Konten belum tersedia</p><p style="font-size:0.8rem;color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
+        // Check if content is available
+        var hasContent = bab.content_arab && bab.content_arab.trim().length > 0;
+        if (!hasContent) {
+          content = '<div style="text-align:center;padding:48px 24px;background:#fef3c7;border-radius:16px;border:1px solid #fcd34d;margin:8px 0;"><i class="fa-solid fa-lock" style="font-size:2rem;color:#d97706;margin-bottom:12px;display:block;"></i><p style="font-size:1rem;font-weight:600;color:#92400e;margin-bottom:4px;">Materi belum tersedia</p><p style="font-size:0.8rem;color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
+        }
         document.getElementById('fasalContent').innerHTML = content;
 
         if (bab.content_id) {
@@ -1622,10 +1624,16 @@
           }
         } catch(e) { console.error('quiz fetch error', e); }
 
-        if (window.quizBank.length === 0) {
+        if (window.quizBank.length === 0 || !hasContent) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
-          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Evaluasi';
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> ' + (!hasContent ? 'Belum Ada Materi' : 'Belum Ada Evaluasi');
+        }
+
+        // Also lock swipe if content not available
+        if (!hasContent) {
+          window.nextBabId = null;
+          window.prevBabId = null;
         }
 
         // Load prev/next bab for swipe navigation
@@ -1735,9 +1743,11 @@
         document.getElementById('fasalType').className = 'badge badge-blue';
         document.getElementById('fasalBab').textContent = babTitle + ' dari Bagian ' + bagianOrder;
 
-        var content = fasal.content_arab && fasal.content_arab.trim()
-          ? fasal.content_arab
-          : '<div style="text-align:center;padding:48px 24px;background:#fef3c7;border-radius:16px;border:1px solid #fcd34d;margin:8px 0;"><i class="fa-solid fa-file-import" style="font-size:2rem;color:#d97706;margin-bottom:12px;display:block;"></i><p style="font-size:1rem;font-weight:600;color:#92400e;margin-bottom:4px;">Konten belum tersedia</p><p style="font-size:0.8rem;color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
+        // Check if content is available
+        var hasContent = fasal.content_arab && fasal.content_arab.trim().length > 0;
+        if (!hasContent) {
+          content = '<div style="text-align:center;padding:48px 24px;background:#fef3c7;border-radius:16px;border:1px solid #fcd34d;margin:8px 0;"><i class="fa-solid fa-lock" style="font-size:2rem;color:#d97706;margin-bottom:12px;display:block;"></i><p style="font-size:1rem;font-weight:600;color:#92400e;margin-bottom:4px;">Materi belum tersedia</p><p style="font-size:0.8rem;color:#b45309;">Admin perlu menambahkan materi Arab terlebih dahulu.</p></div>';
+        }
         document.getElementById('fasalContent').innerHTML = content;
 
         if (fasal.content_id) {
@@ -1752,10 +1762,10 @@
         window.quizBank = [];
         try { window.quizBank = await fetchQuizBank(fasalId); } catch(e) {}
 
-        if (window.quizBank.length === 0) {
+        if (window.quizBank.length === 0 || !hasContent) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
-          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Evaluasi';
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> ' + (!hasContent ? 'Belum Ada Materi' : 'Belum Ada Evaluasi');
         }
 
         if (window.currentFasal && window.currentFasal.audio_url) {
