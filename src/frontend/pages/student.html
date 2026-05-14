@@ -887,10 +887,10 @@
         document.getElementById('adminLink').style.display = 'flex';
       }
 
-      // Get user name from profiles table or auth metadata
+      // Get user name from users table or auth metadata
       var userName = 'Pelajar';
       try {
-        var profileRes = await fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + user.id + '?select=full_name', { headers });
+        var profileRes = await fetch(SUPABASE_URL + '/rest/v1/users?id=eq.' + user.id + '?select=full_name', { headers });
         if (profileRes.ok) {
           var profiles = await profileRes.json().catch(() => []);
           if (profiles && profiles.length > 0 && profiles[0].full_name) {
