@@ -500,8 +500,10 @@ async function fetchFasalProgress(fasalId) {
  * @param {number} score
  * @param {number} attempts
  * @param {string} status 'in_progress' | 'completed'
+ * @param {string} kitabId - ID kitab untuk tracking
+ * @param {string} babId - ID bab untuk tracking
  */
-async function saveProgress(fasalId, score, attempts, status) {
+async function saveProgress(fasalId, score, attempts, status, kitabId, babId) {
   const token = getToken();
   if (!token) return;
 
@@ -511,6 +513,8 @@ async function saveProgress(fasalId, score, attempts, status) {
   const body = {
     user_id: user.id,
     fasal_id: fasalId,
+    kitab_id: kitabId || null,
+    bab_id: babId || null,
     quiz_score: score,
     quiz_attempts: attempts,
     status,

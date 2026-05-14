@@ -1669,7 +1669,12 @@
       var existing = null;
       try { existing = await fetchFasalProgress(id); } catch(e) {}
       if (existing) attempts = (existing.quiz_attempts || 0) + 1;
-      await saveProgress(id, score, attempts, passed ? 'completed' : 'unlocked');
+
+      // Get kitab and bab IDs
+      var kitabId = window.currentKitabId || (window.currentBab ? window.currentBab.kitab_id : null);
+      var babId = window.currentBab ? window.currentBab.id : null;
+
+      await saveProgress(id, score, attempts, passed ? 'completed' : 'unlocked', kitabId, babId);
       updateStatus({ status: passed ? 'completed' : 'unlocked', quiz_score: score });
     }
 
