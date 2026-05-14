@@ -1344,11 +1344,8 @@
           var kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
           if (kitabRes.ok) kitabs = await kitabRes.json().catch(() => []);
         } catch(e) {}
-        try {
-          var progressRes = await fetch(SUPABASE_URL + 'rest/v1/progress?select=*', { headers });
-          if (progressRes.ok) allProgress = await progressRes.json().catch(() => []);
-          else allProgress = [];
-        } catch(e) { allProgress = []; }
+        // Skip progress fetch - table doesn't exist yet
+        allProgress = [];
 
         allJenjangs = jenjangs;
         allKitabs = kitabs;
