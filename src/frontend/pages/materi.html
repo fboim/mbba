@@ -977,6 +977,11 @@
       return true;
     };
 
+    function escHtml(text) {
+      if (!text) return '';
+      return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
     // ================================================================
     // QUIZ STATE (module-level variables)
     // ================================================================
@@ -1279,7 +1284,11 @@
 
       if (passed) {
         var id = window.currentFasal ? window.currentFasal.id : window.currentBab ? window.currentBab.id : null;
-        if (id) handleQuizComplete(true, result.score, result.correct, result.total);
+        if (id) {
+          handleQuizComplete(true, result.score, result.correct, result.total);
+          // Show next materi popup instead of redirecting
+          showNextMateriPopupFromSubmit();
+        }
       }
     };
 
@@ -1335,6 +1344,50 @@
             '<p style="color:var(--text-muted); margin:0 0 24px 0;">Kamu telah menyelesaikan semua materi.</p>' +
             '<button onclick="closeQuizModalAndReturn()" class="btn btn-primary"><i class="fa-solid fa-home"></i> Kembali ke Beranda</button>' +
             '</div>';
+        }
+      }
+
+      // For quizSubmit flow - show popup with next materi
+      function showNextMateriPopupFromSubmit() {
+        var body = document.getElementById('quizModalBody');
+        var contentDiv = body.querySelector('div');
+
+        if (window.nextBabId) {
+          fetchNextBabContentFromSubmit(window.nextBabId, contentDiv);
+        } else {
+          contentDiv.innerHTML += '<div style="margin-top:24px; text-align:center;">' +
+            '<p style="color:var(--accent); margin-bottom:16px;"><i class="fa-solid fa-check-circle"></i> Progress tersimpan!</p>' +
+            '<button onclick="closeQuizModalAndReturn()" class="btn btn-primary"><i class="fa-solid fa-home"></i> Kembali ke Beranda</button>' +
+            '</div>';
+        }
+      }
+
+      async function fetchNextBabContentFromSubmit(babId, container) {
+        try {
+          var res = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + babId, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+          });
+          var data = await res.json();
+          var nextBab = data[0];
+          if (!nextBab) return;
+
+          container.innerHTML = '<div style="padding:20px;">' +
+            '<div style="margin-bottom:16px;"><span class="badge badge-green">' + (nextBab.is_muqoddimah ? 'MUQODDIMAH' : 'MATERI') + '</span></div>' +
+            '<h3 style="margin:0 0 16px 0; color:var(--text-primary);">' + (nextBab.title || nextBab.nama || 'Materi Berikutnya') + '</h3>';
+
+          if (nextBab.content_arab) {
+            container.innerHTML += '<div style="background:#fef3c7; padding:16px; border-radius:12px; margin-bottom:16px;">' +
+              '<p style="font-family:Amiri,serif; font-size:1.3rem; direction:rtl; text-align:right; line-height:2; margin:0;">' + escHtml(nextBab.content_arab) + '</p>' +
+              '</div>';
+          }
+
+          container.innerHTML += '<div style="margin-top:20px; display:flex; gap:12px; justify-content:flex-end;">' +
+            '<button onclick="closeQuizModalAndReturn()" class="btn btn-secondary"><i class="fa-solid fa-home"></i> Kembali</button>' +
+            '<button onclick="loadMateriFromPopup(\'' + babId + '\')" class="btn btn-primary"><i class="fa-solid fa-play"></i> Mulai Belajar</button>' +
+            '</div></div>';
+
+        } catch(e) {
+          console.error('Error loading next bab:', e);
         }
       }
 
@@ -1741,9 +1794,12 @@
       console.log('existing progress:', existing);
       if (existing) attempts = (existing.quiz_attempts || 0) + 1;
 
-      // Get kitab and bab IDs
-      var kitabId = window.currentKitabId || (window.currentBab ? window.currentBab.kitab_id : null);
+      // Get kitab and bab IDs - kitab_id is in bagian.kitab_id
+      var kitabId = null;
       var babId = window.currentBab ? window.currentBab.id : null;
+      if (window.currentBab && window.currentBab.bagian && window.currentBab.bagian.kitab_id) {
+        kitabId = window.currentBab.bagian.kitab_id;
+      }
       console.log('kitabId:', kitabId, 'babId:', babId);
 
       await saveProgress(id, score, attempts, passed ? 'completed' : 'unlocked', kitabId, babId);
