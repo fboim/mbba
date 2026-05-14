@@ -3276,7 +3276,7 @@
         const res = await fetch(SUPABASE_URL + 'rest/v1/fasal', {
           method: 'POST',
           headers,
-          body: JSON.stringify({ bab_id: babId, title: nama, order_index: orderIndex, unlock_after_id: lastFasalId })
+          body: JSON.stringify({ bab_id: babId, title: nama, order_index: orderIndex })
         });
 
         if (res.ok) {
@@ -3285,7 +3285,9 @@
           loadMateri();
           alert('Fasal berhasil ditambahkan!');
         } else {
-          errorEl.textContent = 'Gagal menyimpan';
+          const errData = await res.json().catch(() => ({}));
+          console.error('Fasal save error:', errData);
+          errorEl.textContent = 'Gagal menyimpan: ' + (errData.message || 'Cek konsol untuk detail');
           errorEl.classList.remove('hidden');
         }
       } catch (err) {
