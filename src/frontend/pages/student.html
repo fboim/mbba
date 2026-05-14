@@ -717,6 +717,9 @@
     }
 
     /* Mobile Responsive */
+    @media (min-width: 641px) {
+      .floating-continue { bottom: 24px; right: 24px; }
+    }
     @media (max-width: 640px) {
       .bottom-nav { display: flex; justify-content: space-around; }
       .floating-continue { bottom: 80px; right: 16px; }
@@ -1507,14 +1510,55 @@
         }
 
         // Show popup with bab content
-        showMateriPopup(babs[0], kitab);
+        showMateriPopup(babs[0], kitab, bagians[0]);
+
+        // Store next bab id for navigation after quiz
+        window.nextBabId = null;
+        await loadNextBab(babs[0].id, kitab.id, bagians[0].order_index);
+
+        // Show floating button
+        var floatingBtn = document.getElementById('floatingContinue');
+        floatingBtn.classList.remove('hidden');
       } catch(e) {
         console.error('openKitab error:', e);
         alert('Gagal memuat materi');
       }
     }
 
-    function showMateriPopup(bab, kitab) {
+    async function loadNextBab(currentBabId, kitabId, currentBagianOrder) {
+      try {
+        var token = getToken();
+        var headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        // Get current bab's bagian
+        var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + currentBabId + '&select=*,bagian(*)', { headers });
+        var babs = await babRes.json().catch(() => []);
+        if (babs.length === 0) return;
+        var currentBab = babs[0];
+
+        // Try next bab in same bagian
+        var nextBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + currentBab.bagian_id + '&order_index=gt.' + currentBab.order_index + '&order=order_index&limit=1', { headers });
+        var nextBabs = await nextBabRes.json().catch(() => []);
+        if (nextBabs.length > 0) {
+          window.nextBabId = nextBabs[0].id;
+          return;
+        }
+
+        // Try first bab in next bagian
+        var nextBagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order_index=gt.' + currentBagianOrder + '&order=order_index&limit=1', { headers });
+        var nextBagians = await nextBagianRes.json().catch(() => []);
+        if (nextBagians.length > 0) {
+          var firstBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + nextBagians[0].id + '&order=order_index&limit=1', { headers });
+          var firstBabs = await firstBabRes.json().catch(() => []);
+          if (firstBabs.length > 0) {
+            window.nextBabId = firstBabs[0].id;
+          }
+        }
+      } catch(e) { console.error('loadNextBab error:', e); }
+    }
+
+    function showMateriPopup(bab, kitab, bagian) {
       var modal = document.getElementById('materiModal');
       var title = document.getElementById('materiModalTitle');
       var badge = document.getElementById('materiModalBadge');
@@ -1734,8 +1778,9 @@
       if (!passed) {
         quizContent.innerHTML += '<button class="btn btn-primary" onclick="window.retryQuiz()"><i class="fa-solid fa-redo"></i> Coba Lagi</button>';
       } else {
-        quizContent.innerHTML += '<p style="color:var(--accent); margin-bottom:20px;"><i class="fa-solid fa-check-circle"></i> Kamu bisa lanjut ke materi berikutnya</p>';
-        quizContent.innerHTML += '<button class="btn btn-secondary" onclick="closeQuizModal()"><i class="fa-solid fa-home"></i> Kembali ke Beranda</button>';
+        quizContent.innerHTML += '<p style="color:var(--accent); margin-bottom:16px;"><i class="fa-solid fa-check-circle"></i> Alhamdulillah! Kamu lulus evaluasi.</p>';
+        quizContent.innerHTML += '<button class="btn btn-primary" onclick="goToNextMateri()" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> Lanjut ke Materi Berikutnya</button>';
+        quizContent.innerHTML += '<button class="btn btn-secondary" onclick="closeQuizModal(); closeMateriModal();"><i class="fa-solid fa-home"></i> Kembali ke Beranda</button>';
       }
 
       quizContent.innerHTML += '</div>';
@@ -1745,15 +1790,32 @@
     function retryQuiz() {
       window.quizCurrentIndex = 0;
       window.quizAnswers = {};
-      renderQuizQuestion();
+      window.renderQuizQuestion();
     }
     window.retryQuiz = retryQuiz;
 
     function closeMateriModal() {
       document.getElementById('materiModal').classList.add('hidden');
     }
+    window.closeMateriModal = closeMateriModal;
 
-    function handleLogout() {
+    function closeQuizModal() {
+      document.getElementById('quizModal').classList.add('hidden');
+    }
+    window.closeQuizModal = closeQuizModal;
+
+    function goToNextMateri() {
+      closeQuizModal();
+      closeMateriModal();
+      // Go to next bab in materi.html
+      if (window.nextBabId) {
+        window.location.href = 'materi.html?bab=' + window.nextBabId;
+      } else {
+        // No more materi, go back to student dashboard
+        window.location.href = 'student.html';
+      }
+    }
+    window.goToNextMateri = goToNextMateri;
       logout();
       window.location.href = 'auth.html';
     }
