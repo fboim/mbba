@@ -449,11 +449,14 @@
     /* Kitab Cards */
     .kitab-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
     }
-    @media (min-width: 640px) {
-      .kitab-cards-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    @media (min-width: 768px) {
+      .kitab-cards-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+    }
+    @media (min-width: 1024px) {
+      .kitab-cards-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
     }
     .kitab-card {
       background: var(--bg-card);
@@ -482,14 +485,14 @@
       justify-content: center;
     }
     .kitab-card-cover-placeholder i { color: white; font-size: 2rem; opacity: 0.8; }
-    .kitab-card-body { padding: 12px; flex: 1; display: flex; flex-direction: column; }
-    .kitab-card-title { font-weight: 700; font-size: 0.875rem; color: var(--text-primary); margin-bottom: 4px; line-height: 1.3; }
-    .kitab-card-author { font-size: 0.75rem; color: var(--text-muted); }
-    .kitab-card-jenjang { display: inline-block; margin-top: 6px; padding: 2px 8px; background: var(--purple-soft); color: var(--purple); border-radius: 100px; font-size: 0.6rem; font-weight: 700; }
+    .kitab-card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+    .kitab-card-title { font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 6px; line-height: 1.3; }
+    .kitab-card-author { font-size: 0.85rem; color: var(--text-muted); }
+    .kitab-card-jenjang { display: inline-block; margin-top: 8px; padding: 4px 12px; background: var(--purple-soft); color: var(--purple); border-radius: 100px; font-size: 0.7rem; font-weight: 700; }
     .dark .kitab-card-jenjang { background: rgba(139,92,246,0.2); }
-    .kitab-card-progress { margin-top: auto; padding-top: 8px; height: 4px; background: var(--border-soft); border-radius: 2px; overflow: hidden; }
-    .kitab-card-progress-fill { height: 100%; background: linear-gradient(90deg, #059669, #34d399); border-radius: 2px; transition: width 0.5s ease; }
-    .kitab-card-btn { display: block; width: 100%; margin-top: 10px; padding: 8px 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.75rem; text-align: center; border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .kitab-card-progress { margin-top: auto; padding-top: 12px; height: 6px; background: var(--border-soft); border-radius: 3px; overflow: hidden; }
+    .kitab-card-progress-fill { height: 100%; background: linear-gradient(90deg, #059669, #34d399); border-radius: 3px; transition: width 0.5s ease; }
+    .kitab-card-btn { display: block; width: 100%; margin-top: 12px; padding: 12px 16px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.85rem; text-align: center; border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
     .kitab-card-btn-mulai { background: var(--accent); color: white; }
     .kitab-card-btn-lanjut { background: var(--purple); color: white; }
     .kitab-card-btn:hover { opacity: 0.9; transform: translateY(-1px); }
@@ -812,15 +815,15 @@
       if (role === 'admin' || role === 'teacher') {
         document.getElementById('adminLink').style.display = 'flex';
       }
-      var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
+
+      // Get user data from profiles table for full_name
+      try {
+        currentUserData = await getUserData();
+      } catch(e) { currentUserData = null; }
+
+      var name = (currentUserData && currentUserData.full_name) || (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
       document.getElementById('userName').textContent = 'Hai, ' + name;
       document.getElementById('heroGreeting').textContent = 'Assalamu\'alaikum, ' + name;
-
-      // Skip getUserData, badges, streak, floating button - tables don't exist yet
-      currentUserData = null;
-      // await checkStreak();
-      // await loadBadges();
-      // await updateFloatingContinue();
 
       // Load kitab cards
       await loadKitabCards();
