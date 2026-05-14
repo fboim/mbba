@@ -620,53 +620,7 @@
     }
     .badge-item i { font-size: 0.9rem; }
 
-    /* Floating Continue Button */
-    .floating-continue {
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
-      z-index: 999;
-    }
-    .floating-continue.hidden { display: none; }
-    .floating-continue-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 20px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      color: white;
-      border: none;
-      border-radius: 100px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(5, 150, 105, 0.4);
-      transition: all 0.3s ease;
-    }
-    .floating-continue-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(5, 150, 105, 0.5);
-    }
-    .floating-continue-btn i { font-size: 1rem; }
-
-    /* Mobile Bottom Navigation */
-    .bottom-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--bg-card);
-      border-top: 1px solid var(--border-subtle);
-      padding: 8px 0;
-      padding-bottom: calc(8px + env(safe-area-inset-bottom));
-      z-index: 1000;
-    }
-    .bottom-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
+    /* Main padding for mobile (replacing bottom nav) */
       padding: 8px 16px;
       color: var(--text-muted);
       text-decoration: none;
@@ -717,13 +671,8 @@
     }
 
     /* Mobile Responsive */
-    @media (min-width: 641px) {
-      .floating-continue { bottom: 24px; right: 24px; }
-    }
     @media (max-width: 640px) {
-      .bottom-nav { display: flex; justify-content: space-around; }
-      .floating-continue { bottom: 80px; right: 16px; }
-      .main { padding-bottom: 80px; }
+      .main { padding-bottom: 20px; }
     }
   </style>
 </head>
@@ -786,30 +735,6 @@
     </div>
 
   </main>
-
-  <!-- Floating Continue Button -->
-  <div id="floatingContinue" class="floating-continue hidden">
-    <button onclick="window.openLastKitab()" class="floating-continue-btn">
-      <i class="fa-solid fa-play"></i>
-      <span id="floatingContinueText">Lanjut</span>
-    </button>
-  </div>
-
-  <!-- Mobile Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="student.html" class="bottom-nav-item active">
-      <i class="fa-solid fa-home"></i>
-      <span>Beranda</span>
-    </a>
-    <a href="profile.html" class="bottom-nav-item">
-      <i class="fa-solid fa-user"></i>
-      <span>Profil</span>
-    </a>
-    <a href="#" id="bottomNavContinue" class="bottom-nav-item" onclick="window.openLastKitab(); return false;">
-      <i class="fa-solid fa-play-circle"></i>
-      <span>Lanjut</span>
-    </a>
-  </nav>
 
   <!-- Celebrations Container -->
   <div id="celebrationContainer"></div>
