@@ -505,10 +505,18 @@ async function fetchFasalProgress(fasalId) {
  */
 async function saveProgress(fasalId, score, attempts, status, kitabId, babId) {
   const token = getToken();
-  if (!token) return;
+  if (!token) {
+    console.log('saveProgress: no token');
+    return;
+  }
 
   const user = await getCurrentUser();
-  if (!user) return;
+  if (!user) {
+    console.log('saveProgress: no user');
+    return;
+  }
+
+  console.log('saveProgress: saving', {user_id: user.id, fasal_id: fasalId, kitab_id: kitabId, bab_id: babId, status, score});
 
   const body = {
     user_id: user.id,
@@ -543,6 +551,8 @@ async function saveProgress(fasalId, score, attempts, status, kitabId, babId) {
   } else {
     const postBody = { ...body, started_at: new Date().toISOString() };
 
+    console.log('saveProgress: inserting with body', postBody);
+
     const insertRes = await fetch(`${SUPABASE_URL}rest/v1/user_progress`, {
       method: 'POST',
       headers: {
@@ -553,6 +563,15 @@ async function saveProgress(fasalId, score, attempts, status, kitabId, babId) {
       },
       body: JSON.stringify(postBody),
     });
+
+    console.log('saveProgress: insert response status:', insertRes.status);
+    if (!insertRes.ok) {
+      const err = await insertRes.text();
+      console.log('saveProgress: insert error:', err);
+    } else {
+      const data = await insertRes.json();
+      console.log('saveProgress: insert success:', data);
+    }
   }
 }
 

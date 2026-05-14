@@ -1731,16 +1731,20 @@
     }
 
     async function handleQuizComplete(passed, score, correct, total) {
+      console.log('handleQuizComplete called:', {passed, score, correct, total});
       var id = window.currentFasal ? window.currentFasal.id : (window.currentBab ? window.currentBab.id : null);
+      console.log('current id:', id);
       if (!id) return;
       var attempts = 1;
       var existing = null;
       try { existing = await fetchFasalProgress(id); } catch(e) {}
+      console.log('existing progress:', existing);
       if (existing) attempts = (existing.quiz_attempts || 0) + 1;
 
       // Get kitab and bab IDs
       var kitabId = window.currentKitabId || (window.currentBab ? window.currentBab.kitab_id : null);
       var babId = window.currentBab ? window.currentBab.id : null;
+      console.log('kitabId:', kitabId, 'babId:', babId);
 
       await saveProgress(id, score, attempts, passed ? 'completed' : 'unlocked', kitabId, babId);
       updateStatus({ status: passed ? 'completed' : 'unlocked', quiz_score: score });
