@@ -1350,7 +1350,41 @@
       else if (fasalId) { await loadFasal(fasalId); }
       else if (kitabId) { await loadKitab(kitabId); }
       else { window.location.href = 'student.html'; }
+
+      // Initialize swipe gestures for mobile
+      initSwipeGestures();
     })();
+
+    // Swipe Gestures for Mobile Navigation
+    function initSwipeGestures() {
+      var startX = 0;
+      var endX = 0;
+      var content = document.getElementById('fasalContent');
+
+      if (!content) return;
+
+      content.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      content.addEventListener('touchend', function(e) {
+        endX = e.changedTouches[0].clientX;
+        handleSwipe();
+      }, { passive: true });
+
+      function handleSwipe() {
+        var diff = startX - endX;
+        if (Math.abs(diff) < 100) return; // Minimum swipe distance
+
+        if (diff > 50 && window.nextBabId) {
+          // Swipe left - go to next
+          window.location.href = 'materi.html?bab=' + window.nextBabId;
+        } else if (diff < -50 && window.prevBabId) {
+          // Swipe right - go to previous
+          window.location.href = 'materi.html?bab=' + window.prevBabId;
+        }
+      }
+    }
 
     async function loadKitab(kitabId) {
       try {
@@ -1470,11 +1504,80 @@
         if (window.quizBank.length === 0) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
-          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Quiz';
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Evaluasi';
         }
+
+        // Load prev/next bab for swipe navigation
+        await loadPrevNextBab(babId);
       } catch(err) {
         document.getElementById('fasalContent').innerHTML = '<div style="text-align:center;padding:48px;color:#ef4444;"><i class="fa-solid fa-exclamation-triangle"></i> Gagal memuat: ' + err.message + '</div>';
       }
+    }
+
+    async function loadPrevNextBab(babId) {
+      try {
+        var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + babId + '&select=*,bagian(*,kitab_id)', {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+        });
+        var babs = await babRes.json();
+        if (babs.length === 0) return;
+        var currentBab = babs[0];
+        var kitabId = currentBab.bagian.kitab_id;
+        var currentOrder = currentBab.order_index;
+        var currentBagianOrder = currentBab.bagian.order_index;
+
+        // Get previous bab (same bagian first, then previous bagian)
+        var prevBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + currentBab.bagian_id + '&order=order_index&limit=1', {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+        });
+        var prevBabs = await prevBabRes.json();
+        window.prevBabId = null;
+        if (prevBabs.length > 0 && prevBabs[0].id !== babId) {
+          window.prevBabId = prevBabs[0].id;
+        } else {
+          // Check previous bagian
+          var prevBagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order_index=lt.' + currentBagianOrder + '&order=order_index&limit=1', {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+          });
+          var prevBagians = await prevBagianRes.json();
+          if (prevBagians.length > 0) {
+            var prevLastBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + prevBagians[0].id + '&order=order_index.desc&limit=1', {
+              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+            });
+            var prevLastBabs = await prevLastBabRes.json();
+            if (prevLastBabs.length > 0) window.prevBabId = prevLastBabs[0].id;
+          }
+        }
+
+        // Get next bab
+        var nextBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + currentBab.bagian_id + '&order_index=gt.' + currentOrder + '&order=order_index&limit=1', {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+        });
+        var nextBabs = await nextBabRes.json();
+        window.nextBabId = null;
+        if (nextBabs.length > 0) {
+          window.nextBabId = nextBabs[0].id;
+        } else {
+          // Check next bagian
+          var nextBagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order_index=gt.' + currentBagianOrder + '&order=order_index&limit=1', {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+          });
+          var nextBagians = await nextBagianRes.json();
+          if (nextBagians.length > 0) {
+            var nextFirstBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + nextBagians[0].id + '&order=order_index&limit=1', {
+              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + getToken() }
+            });
+            var nextFirstBabs = await nextFirstBabRes.json();
+            if (nextFirstBabs.length > 0) window.nextBabId = nextFirstBabs[0].id;
+          }
+        }
+
+        // Update next button text
+        var nextBtn = document.getElementById('nextFasalBtn');
+        if (nextBtn) {
+          nextBtn.innerHTML = window.nextBabId ? '<i class="fa-solid fa-arrow-right"></i>下一个' : '<i class="fa-solid fa-flag-checkered"></i>完成';
+        }
+      } catch(e) { console.error('loadPrevNextBab error:', e); }
     }
 
     async function loadFasal(fasalId) {
@@ -1531,7 +1634,7 @@
         if (window.quizBank.length === 0) {
           document.getElementById('startQuizBtn').disabled = true;
           document.getElementById('startQuizBtn').classList.add('opacity-50', 'cursor-not-allowed');
-          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Quiz';
+          document.getElementById('startQuizBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Belum Ada Evaluasi';
         }
 
         if (window.currentFasal && window.currentFasal.audio_url) {

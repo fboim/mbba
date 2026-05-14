@@ -482,26 +482,26 @@
       justify-content: center;
     }
     .kitab-card-cover-placeholder i { color: white; font-size: 2rem; opacity: 0.8; }
-    .kitab-card-body { padding: 12px; flex: 1; }
+    .kitab-card-body { padding: 12px; flex: 1; display: flex; flex-direction: column; }
     .kitab-card-title { font-weight: 700; font-size: 0.875rem; color: var(--text-primary); margin-bottom: 4px; line-height: 1.3; }
     .kitab-card-author { font-size: 0.75rem; color: var(--text-muted); }
     .kitab-card-jenjang { display: inline-block; margin-top: 6px; padding: 2px 8px; background: var(--purple-soft); color: var(--purple); border-radius: 100px; font-size: 0.6rem; font-weight: 700; }
     .dark .kitab-card-jenjang { background: rgba(139,92,246,0.2); }
+    .kitab-card-progress { margin-top: auto; padding-top: 8px; height: 4px; background: var(--border-soft); border-radius: 2px; overflow: hidden; }
+    .kitab-card-progress-fill { height: 100%; background: linear-gradient(90deg, #059669, #34d399); border-radius: 2px; transition: width 0.5s ease; }
+    .kitab-card-btn { display: block; width: 100%; margin-top: 10px; padding: 8px 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.75rem; text-align: center; border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .kitab-card-btn-mulai { background: var(--accent); color: white; }
+    .kitab-card-btn-lanjut { background: var(--purple); color: white; }
+    .kitab-card-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-    /* Progress Bar in Kitab Card */
-    .kitab-card-progress {
-      margin-top: 8px;
-      height: 4px;
-      background: var(--border-soft);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .kitab-card-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #059669, #34d399);
-      border-radius: 2px;
-      transition: width 0.5s ease;
-    }
+    /* Modal Styles */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+    .modal-content { background: var(--bg-card); border-radius: var(--radius-lg); width: 100%; max-width: 700px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+    .modal-body h4 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 12px 0; }
+    .modal-body p { color: var(--text-secondary); line-height: 1.6; margin: 0 0 16px 0; }
+    .modal-body .arabic-text { font-family: 'Amiri', serif; font-size: 1.2rem; line-height: 2; color: var(--text-primary); }
 
     /* Jenjang Filter Tabs */
     .jenjang-tabs {
@@ -528,156 +528,160 @@
       border-color: var(--purple);
     }
 
-    /* Tab Navigation */
-    .main-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 0;
-    }
-    .main-tab {
-      padding: 12px 24px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      margin-bottom: -1px;
-    }
-    .main-tab:hover { color: var(--text-primary); }
-    .main-tab.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* Quick Stats */
-    .quick-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .quick-stat {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      text-align: center;
-    }
-    .quick-stat-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 8px;
-      font-size: 14px;
-    }
-    .quick-stat-icon.green { background: var(--accent-soft); color: var(--accent); }
-    .quick-stat-icon.blue { background: var(--blue-soft); color: var(--blue); }
-    .quick-stat-icon.amber { background: var(--amber-soft); color: #f59e0b; }
-    .quick-stat-value { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-    .quick-stat-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
-
-    /* Currently Learning Section */
-    .current-kitab {
-      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      color: white;
-      margin-bottom: 24px;
-    }
-    .current-kitab-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .current-kitab-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-    .current-kitab-label {
-      font-size: 0.7rem;
-      opacity: 0.8;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .current-kitab-title {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    .current-kitab-body {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .current-kitab-info {
-      flex: 1;
-    }
-    .current-kitab-subtitle {
-      font-size: 0.8rem;
-      opacity: 0.9;
-      margin-top: 4px;
-    }
-    .current-kitab-progress {
-      margin-top: 12px;
-    }
-    .current-kitab-progress-bar {
-      height: 6px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .current-kitab-progress-fill {
-      height: 100%;
-      background: white;
-      border-radius: 3px;
-      transition: width 0.5s ease;
-    }
-    .current-kitab-progress-text {
-      font-size: 0.7rem;
-      opacity: 0.8;
-      margin-top: 4px;
-    }
-    .current-kitab-btn {
-      padding: 10px 20px;
-      background: white;
-      color: #8b5cf6;
-      border-radius: 100px;
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .current-kitab-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
     /* Animations */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-up { animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+    /* Streak Toast */
+    .streak-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+      z-index: 1001;
+      animation: slideDown 0.5s ease;
+    }
+    .streak-toast.hidden { display: none; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .streak-toast i { font-size: 1.2rem; }
+
+    /* Badge Container */
+    .badge-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: white;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-item i { font-size: 0.9rem; }
+
+    /* Floating Continue Button */
+    .floating-continue {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      z-index: 999;
+    }
+    .floating-continue.hidden { display: none; }
+    .floating-continue-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: white;
+      border: none;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(5, 150, 105, 0.4);
+      transition: all 0.3s ease;
+    }
+    .floating-continue-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(5, 150, 105, 0.5);
+    }
+    .floating-continue-btn i { font-size: 1rem; }
+
+    /* Mobile Bottom Navigation */
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-subtle);
+      padding: 8px 0;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom));
+      z-index: 1000;
+    }
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.65rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .bottom-nav-item i { font-size: 1.2rem; }
+    .bottom-nav-item.active { color: var(--accent); }
+    .bottom-nav-item:hover { color: var(--text-primary); }
+
+    /* Celebration Confetti */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      z-index: 1002;
+      animation: confettiFall 3s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+    }
+
+    /* Celebration Toast */
+    .celebration-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: white;
+      padding: 24px 40px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      z-index: 1003;
+      animation: celebrationPop 0.5s ease;
+      box-shadow: 0 8px 40px rgba(5, 150, 105, 0.5);
+    }
+    .celebration-toast i { font-size: 3rem; margin-bottom: 12px; display: block; }
+    .celebration-toast h3 { font-size: 1.5rem; margin: 0 0 8px 0; }
+    .celebration-toast p { font-size: 0.9rem; opacity: 0.9; margin: 0; }
+
+    @keyframes celebrationPop {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 640px) {
+      .bottom-nav { display: flex; justify-content: space-around; }
+      .floating-continue { bottom: 80px; right: 16px; }
+      .main { padding-bottom: 80px; }
+    }
   </style>
 </head>
 <body>
@@ -713,208 +717,74 @@
   <!-- Main Content -->
   <main class="main">
 
+    <!-- Streak Reminder Toast -->
+    <div id="streakToast" class="streak-toast hidden">
+      <i class="fa-solid fa-fire-flame-curved"></i>
+      <span id="streakToastText">Ayo lanjut belajarnya!</span>
+    </div>
+
     <!-- Hero Section -->
     <div style="margin-bottom: 24px;" class="animate-fade-up">
       <h1 class="hero-title">
-        <span class="hero-title-accent">Assalamu'alaikum</span>
+        <span class="hero-title-accent" id="heroGreeting">Assalamu'alaikum</span>
       </h1>
-      <p class="hero-subtitle">Madrasah Belajar Bahasa Arab</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem;" id="heroSubtitle">Pilih kitab untuk memulai belajar</p>
     </div>
 
-    <!-- Tab Navigation -->
-    <div class="main-tabs">
-      <button class="main-tab active" onclick="switchTab('belajar')">
-        <i class="fa-solid fa-book-open" style="margin-right:6px;"></i> Belajar
-      </button>
-      <button class="main-tab" onclick="switchTab('progress')">
-        <i class="fa-solid fa-chart-line" style="margin-right:6px;"></i> Progress
-      </button>
-    </div>
+    <!-- Badge Display -->
+    <div id="badgeContainer" class="badge-container" style="margin-bottom: 20px;"></div>
 
-    <!-- Tab: Belajar -->
-    <div id="tabBelajar" class="tab-content active">
-
-    <!-- Progress Card -->
-    <div class="bento-card animate-fade-up" style="animation-delay: 0.1s; margin-bottom: 24px;">
-      <div class="progress-card bento-inner">
-        <div class="progress-ring-container">
-          <svg class="progress-ring" width="120" height="120" viewBox="0 0 120 120">
-            <defs>
-              <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#059669" />
-                <stop offset="100%" stop-color="#34d399" />
-              </linearGradient>
-            </defs>
-            <circle class="progress-ring-bg" cx="60" cy="60" r="48" />
-            <circle id="progressCircle" class="progress-ring-fill" cx="60" cy="60" r="48" stroke-dasharray="302" stroke-dashoffset="302" />
-          </svg>
-          <div class="progress-center">
-            <span id="progressPercent" class="progress-percent">0%</span>
-            <span class="progress-label">terselesaikan</span>
-          </div>
-        </div>
-
-        <div class="progress-stats">
-          <h2 class="progress-title">Perjalanan Belajarmu</h2>
-          <p class="progress-desc">Terus semangat!</p>
-          <div class="stats-mini">
-            <div class="stat-mini">
-              <div id="statCompleted" class="stat-mini-value green">0</div>
-              <div class="stat-mini-label">Selesai</div>
-            </div>
-            <div class="stat-mini">
-              <div id="statRemaining" class="stat-mini-value blue">0</div>
-              <div class="stat-mini-label">Tersisa</div>
-            </div>
-            <div class="stat-mini">
-              <div id="statStreak" class="stat-mini-value amber">0</div>
-              <div class="stat-mini-label">Hari</div>
-            </div>
-          </div>
-        </div>
+    <!-- Kitab Cards Grid -->
+    <div id="kitabCards" class="kitab-cards-grid">
+      <div style="text-align:center; padding:60px 40px; color:var(--text-muted); grid-column:1/-1;">
+        <div class="spinner" style="margin:0 auto 12px;"></div>
+        <p>Memuat kitab...</p>
       </div>
     </div>
-
-    <!-- Quick Stats -->
-    <div id="quickStatsSection" class="quick-stats animate-fade-up" style="animation-delay: 0.05s;">
-      <div class="quick-stat">
-        <div class="quick-stat-icon green"><i class="fa-solid fa-book-open"></i></div>
-        <div id="statKitabStarted" class="quick-stat-value">0</div>
-        <div class="quick-stat-label">Kitab Dimulai</div>
-      </div>
-      <div class="quick-stat">
-        <div class="quick-stat-icon blue"><i class="fa-solid fa-clock"></i></div>
-        <div id="statLearningTime" class="quick-stat-value">0h</div>
-        <div class="quick-stat-label">Waktu Belajar</div>
-      </div>
-      <div class="quick-stat">
-        <div class="quick-stat-icon amber"><i class="fa-solid fa-fire"></i></div>
-        <div id="statStudyStreak" class="quick-stat-value">0</div>
-        <div class="quick-stat-label">Hari Streak</div>
-      </div>
-    </div>
-
-    <!-- Currently Learning Section -->
-    <div id="currentKitabSection" class="current-kitab animate-fade-up hidden" style="animation-delay: 0.1s;">
-      <div class="current-kitab-header">
-        <div class="current-kitab-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-        <div>
-          <div class="current-kitab-label">Sedang Dipelajari</div>
-          <div id="currentKitabTitle" class="current-kitab-title">-</div>
-        </div>
-      </div>
-      <div class="current-kitab-body">
-        <div class="current-kitab-info">
-          <div id="currentKitabSubtitle" class="current-kitab-subtitle">-</div>
-          <div class="current-kitab-progress">
-            <div class="current-kitab-progress-bar">
-              <div id="currentKitabProgressFill" class="current-kitab-progress-fill" style="width: 0%"></div>
-            </div>
-            <div id="currentKitabProgressText" class="current-kitab-progress-text">0% selesai</div>
-          </div>
-        </div>
-        <a href="#" id="currentKitabBtn" class="current-kitab-btn">
-          <span>Lanjutkan</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </a>
-      </div>
-    </div>
-
-    <!-- Continue Section -->
-    <div id="continueSection" class="continue-card animate-fade-up hidden" style="animation-delay: 0.15s; margin-bottom: 24px;">
-      <div class="continue-icon">
-        <i class="fa-solid fa-play"></i>
-      </div>
-      <div class="continue-content">
-        <div class="continue-badges">
-          <span class="continue-badge">LANJUTKAN</span>
-          <span id="continuePercent" class="continue-badge continue-badge-accent">60%</span>
-        </div>
-        <h3 id="continueTitle" class="continue-title">Memuat...</h3>
-        <p id="continueSubtitle" class="continue-subtitle">Subtitle</p>
-      </div>
-      <a href="#" id="continueBtn" class="continue-btn" onclick="showMateriPopup(currentItemData); return false;">
-        <span>Lanjut</span>
-        <i class="fa-solid fa-arrow-right"></i>
-      </a>
-    </div>
-
-    <!-- Kitab Cards Section -->
-    <div id="kitabSection" class="animate-fade-up" style="margin-bottom: 24px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="width:36px; height:36px; background:linear-gradient(135deg,#8b5cf6,#a78bfa); border-radius:10px; display:flex; align-items:center; justify-content:center;">
-            <i class="fa-solid fa-book-open" style="color:white; font-size:14px;"></i>
-          </div>
-          <h2 style="font-size:1.1rem; font-weight:700; color:var(--text-primary);">Daftar Kitab</h2>
-        </div>
-        <span id="kitabCount" style="font-size:0.75rem; color:var(--text-muted);">0 kitab</span>
-      </div>
-
-      <!-- Jenjang Filter Tabs -->
-      <div id="jenjangTabs" class="jenjang-tabs">
-        <button class="jenjang-tab active" onclick="filterByJenjang(null)">Semua</button>
-      </div>
-
-      <div id="kitabCards" class="kitab-cards-grid">
-        <div style="text-align:center; padding:40px; color:var(--text-muted);">
-          <div class="spinner" style="margin:0 auto 12px;"></div>
-          <p>Memuat kitab...</p>
-        </div>
-      </div>
-    </div>
-    <!-- End Tab: Belajar -->
-
-    <!-- Tab: Progress -->
-    <div id="tabProgress" class="tab-content">
-
-      <!-- Bento Grid -->
-      <div class="bento-grid">
-
-        <!-- Timeline Section -->
-        <div class="bento-card bento-span-2 animate-fade-up" style="animation-delay: 0.3s;">
-          <div class="bento-inner">
-            <div class="section-header">
-              <div class="section-icon">
-                <i class="fa-solid fa-route"></i>
-              </div>
-              <h2 class="section-title">Jalur Belajar Kitab Mukhtarat</h2>
-            </div>
-
-            <div id="fasalList" class="timeline">
-              <div class="activity-empty">
-                <div class="activity-empty-icon">
-                  <div class="spinner"></div>
-                </div>
-                <p class="activity-empty-text">Memuat jalur belajar...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="bento-card animate-fade-up" style="animation-delay: 0.4s;">
-          <div class="activity-header">
-            <div class="activity-icon">
-              <i class="fa-solid fa-clock-rotate-left"></i>
-            </div>
-            <h3 class="activity-title">Aktivitas Terakhir</h3>
-          </div>
-          <div id="recentActivity" class="activity-body">
-            <div class="activity-empty">
-              <div class="activity-empty-icon">
-                <i class="fa-solid fa-inbox"></i>
-              </div>
-              <p class="activity-empty-text">Belum ada aktivitas</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <!-- End Tab: Progress -->
 
   </main>
+
+  <!-- Floating Continue Button -->
+  <div id="floatingContinue" class="floating-continue hidden">
+    <button onclick="openLastKitab()" class="floating-continue-btn">
+      <i class="fa-solid fa-play"></i>
+      <span id="floatingContinueText">Lanjut</span>
+    </button>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="student.html" class="bottom-nav-item active">
+      <i class="fa-solid fa-home"></i>
+      <span>Beranda</span>
+    </a>
+    <a href="profile.html" class="bottom-nav-item">
+      <i class="fa-solid fa-user"></i>
+      <span>Profil</span>
+    </a>
+    <a href="#" id="bottomNavContinue" class="bottom-nav-item" onclick="openLastKitab(); return false;">
+      <i class="fa-solid fa-play-circle"></i>
+      <span>Lanjut</span>
+    </a>
+  </nav>
+
+  <!-- Celebrations Container -->
+  <div id="celebrationContainer"></div>
+
+  <!-- Materi Popup Modal -->
+  <div id="materiModal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width:700px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header">
+        <h3 id="materiModalTitle" style="margin:0; color:var(--text-primary);">Materi</h3>
+        <button onclick="closeMateriModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <div class="modal-body" id="materiModalBody" style="padding:16px;"></div>
+      <div class="modal-footer" id="materiModalFooter" style="padding:12px 16px; border-top:1px solid var(--border-subtle); display:flex; justify-content:flex-end; gap:8px;">
+        <button onclick="closeMateriModal()" class="btn" style="background:var(--bg-secondary); color:var(--text-primary);">Tutup</button>
+        <button id="materiModalActionBtn" class="btn btn-primary">Lanjut</button>
+      </div>
+    </div>
+  </div>
 
   <script src="/js/api.js"></script>
   <script>
@@ -929,6 +799,7 @@
     var selectedJenjangId = null;
     var kurikulum = [];
     var currentItemData = null;
+    var currentUserData = null;
 
     (async function() {
       var user = await getCurrentUser();
@@ -943,9 +814,20 @@
       }
       var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
       document.getElementById('userName').textContent = 'Hai, ' + name;
-      await loadDashboard();
+      document.getElementById('heroGreeting').textContent = 'Assalamu\'alaikum, ' + name;
+
+      // Get user data including jenjang
+      currentUserData = await getUserData();
       await loadKitabCards();
-      await loadQuickStats();
+
+      // Check streak and show reminder
+      await checkStreak();
+
+      // Load badges
+      await loadBadges();
+
+      // Update floating continue button
+      await updateFloatingContinue();
 
       // Dark Mode with smooth transition
       const themeToggle = document.getElementById('theme-toggle');
@@ -1319,235 +1201,343 @@
       window.location.href = 'auth.html';
     }
 
-    function switchTab(tabName) {
-      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelector(`.main-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
-      document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+    async function checkStreak() {
+      try {
+        var token = getToken();
+        var headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var user = await getCurrentUser();
+        var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&order=completed_at.desc&limit=1', { headers });
+        var progress = await res.json().catch(() => []);
+
+        if (progress.length > 0) {
+          var lastActivity = new Date(progress[0].completed_at);
+          var today = new Date();
+          var daysDiff = Math.floor((today - lastActivity) / (1000 * 60 * 60 * 24));
+
+          if (daysDiff >= 1 && daysDiff < 7) {
+            var toast = document.getElementById('streakToast');
+            var toastText = document.getElementById('streakToastText');
+            toastText.textContent = daysDiff === 1 ? 'Ayo lanjut belajarnya! Streak hampir putus.' : 'Ayo belajar lagi! Streak sudah ' + daysDiff + ' hari tidak aktif.';
+            toast.classList.remove('hidden');
+            setTimeout(function() { toast.classList.add('hidden'); }, 5000);
+          }
+        }
+      } catch(e) { console.error('checkStreak error:', e); }
+    }
+
+    async function loadBadges() {
+      try {
+        var token = getToken();
+        var headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var user = await getCurrentUser();
+        var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&status=eq.completed', { headers });
+        var completed = await res.json().catch(() => []);
+
+        var container = document.getElementById('badgeContainer');
+        var badges = [];
+
+        if (completed.length >= 1) badges.push({ icon: 'fa-star', text: 'Kitab Pertama' });
+        if (completed.length >= 5) badges.push({ icon: 'fa-fire', text: '5 Kitab' });
+        if (completed.length >= 10) badges.push({ icon: 'fa-crown', text: '10 Kitab' });
+
+        if (badges.length > 0) {
+          container.innerHTML = badges.map(function(b) {
+            return '<div class="badge-item"><i class="fa-solid ' + b.icon + '"></i>' + b.text + '</div>';
+          }).join('');
+        }
+      } catch(e) { console.error('loadBadges error:', e); }
+    }
+
+    async function updateFloatingContinue() {
+      try {
+        var token = getToken();
+        var headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var user = await getCurrentUser();
+        var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&order=updated_at.desc&limit=1', { headers });
+        var progress = await res.json().catch(() => []);
+
+        if (progress.length > 0 && progress[0].kitab_id) {
+          var floatingBtn = document.getElementById('floatingContinue');
+          var bottomNav = document.getElementById('bottomNavContinue');
+          floatingBtn.classList.remove('hidden');
+          floatingBtn.dataset.kitabId = progress[0].kitab_id;
+          bottomNav.style.display = 'flex';
+        }
+      } catch(e) { console.error('updateFloatingContinue error:', e); }
+    }
+
+    function openLastKitab() {
+      var floatingBtn = document.getElementById('floatingContinue');
+      if (floatingBtn.dataset.kitabId) {
+        openKitab(floatingBtn.dataset.kitabId);
+      }
+    }
+
+    function showCelebration(type) {
+      var container = document.getElementById('celebrationContainer');
+
+      if (type === 'complete') {
+        container.innerHTML = '<div class="celebration-toast"><i class="fa-solid fa-trophy"></i><h3>Alhamdulillah!</h3><p>Kitab selesai dipelajari</p></div>';
+        createConfetti();
+        setTimeout(function() { container.innerHTML = ''; }, 3000);
+      }
+    }
+
+    function createConfetti() {
+      var colors = ['#059669', '#34d399', '#8b5cf6', '#fbbf24', '#f59e0b', '#ef4444'];
+      var container = document.getElementById('celebrationContainer');
+
+      for (var i = 0; i < 50; i++) {
+        var piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.top = '-10px';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 2 + 's';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        container.appendChild(piece);
+        setTimeout(function() { piece.remove(); }, 5000);
+      }
+    }
+
+    async function getUserData() {
+      try {
+        var token = getToken();
+        var headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var user = await getCurrentUser();
+        if (!user) return null;
+
+        var res = await fetch(SUPABASE_URL + 'rest/v1/profiles?id=eq.' + user.id, { headers });
+        var profiles = await res.json().catch(() => []);
+        return profiles.length > 0 ? profiles[0] : null;
+      } catch(e) {
+        console.error('getUserData error:', e);
+        return null;
+      }
     }
 
     async function loadKitabCards() {
       var container = document.getElementById('kitabCards');
-      var jenjangTabsContainer = document.getElementById('jenjangTabs');
-      var kitabCountEl = document.getElementById('kitabCount');
       try {
         var token = getToken();
         var headers = { 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
-        var [jenjangRes, kitabRes] = await Promise.all([
+        var [jenjangRes, kitabRes, progressRes] = await Promise.all([
           fetch(SUPABASE_URL + 'rest/v1/jenjang?order=order_index', { headers }),
-          fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers })
+          fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers }),
+          fetch(SUPABASE_URL + 'rest/v1/progress?select=*', { headers })
         ]);
 
         var jenjangs = await jenjangRes.json().catch(() => []);
         var kitabs = await kitabRes.json().catch(() => []);
+        var allProgress = await progressRes.json().catch(() => []);
 
         allJenjangs = jenjangs;
         allKitabs = kitabs;
 
-        // Build Jenjang tabs
-        var tabsHtml = '<button class="jenjang-tab active" onclick="filterByJenjang(null)">Semua</button>';
-        jenjangs.forEach(function(j) {
-          var label = j.nama || j.title || 'Jenjang';
-          tabsHtml += '<button class="jenjang-tab" onclick="filterByJenjang(\'' + j.id + '\')">' + escHtml(label) + '</button>';
-        });
-        jenjangTabsContainer.innerHTML = tabsHtml;
+        // Filter kitabs by user's jenjang if set
+        var userJenjangId = currentUserData && currentUserData.jenjang_id;
+        var filteredKitabs = userJenjangId ? kitabs.filter(k => k.jenjang_id === userJenjangId) : kitabs;
 
-        if (!kitabs || kitabs.length === 0) {
-          container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-book-open" style="font-size:2rem; margin-bottom:12px; display:block; opacity:0.5;"></i><p>Belum ada kitab</p></div>';
-          kitabCountEl.textContent = '0 kitab';
+        if (filteredKitabs.length === 0) {
+          container.innerHTML = '<div style="text-align:center; padding:60px 40px; color:var(--text-muted); grid-column:1/-1;"><i class="fa-solid fa-book-open" style="font-size:2.5rem; margin-bottom:16px; display:block; opacity:0.5;"></i><p>Belum ada kitab untuk jenjangmu</p></div>';
           return;
         }
 
-        renderKitabCards(kitabs);
-        kitabCountEl.textContent = kitabs.length + ' kitab';
+        // Build progress map by kitab_id with bab details
+        var progressMap = {};
+        allProgress.forEach(function(p) {
+          if (!progressMap[p.kitab_id]) progressMap[p.kitab_id] = { completed: 0, total: 0, lastBabId: null, babMap: {} };
+          if (p.status === 'completed') progressMap[p.kitab_id].completed++;
+          progressMap[p.kitab_id].total++;
+          if (p.last_position) progressMap[p.kitab_id].lastBabId = p.last_position;
+          if (p.bab_id) progressMap[p.kitab_id].babMap[p.bab_id] = true;
+        });
+
+        var html = '';
+        for (var k of filteredKitabs) {
+          var jenjang = jenjangs.find(j => j.id === k.jenjang_id);
+          var jenjangLabel = jenjang ? (jenjang.nama || jenjang.title || '') : '';
+          var progress = progressMap[k.id] || { completed: 0, total: 0, lastBabId: null };
+          var hasProgress = progress.total > 0;
+          var percent = progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
+
+          var coverHtml;
+          if (k.image_url) {
+            coverHtml = '<img src="' + escHtml(k.image_url) + '" alt="' + escHtml(k.nama || k.title || '') + '" class="kitab-card-cover" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">' +
+                          '<div class="kitab-card-cover-placeholder" style="display:none;"><i class="fa-solid fa-book"></i></div>';
+          } else {
+            coverHtml = '<div class="kitab-card-cover-placeholder"><i class="fa-solid fa-book"></i></div>';
+          }
+
+          var btnClass = hasProgress ? 'kitab-card-btn-lanjut' : 'kitab-card-btn-mulai';
+          var btnText = hasProgress ? 'Lanjut' : 'Mulai';
+
+          var progressText = hasProgress ? progress.completed + '/' + progress.total + ' selesai' : 'Belum dimulai';
+
+          html += '<div class="kitab-card" style="text-decoration:none; color:inherit; display:flex; flex-direction:column;">' +
+            coverHtml +
+            '<div class="kitab-card-body">' +
+              '<div class="kitab-card-title">' + escHtml(k.nama || k.title || 'Kitab') + '</div>' +
+              (k.penulis ? '<div class="kitab-card-author">' + escHtml(k.penulis) + '</div>' : '') +
+              (jenjangLabel ? '<div class="kitab-card-jenjang">' + escHtml(jenjangLabel) + '</div>' : '') +
+              '<div class="kitab-card-progress"><div class="kitab-card-progress-fill" style="width:' + percent + '%"></div></div>' +
+              '<div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">' + progressText + '</div>' +
+              '<button class="kitab-card-btn ' + btnClass + '" onclick="openKitab(\'' + k.id + '\')">' + btnText + '</button>' +
+            '</div>' +
+          '</div>';
+        }
+        container.innerHTML = html;
       } catch (e) {
         console.error('loadKitabCards error:', e);
-        container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><p>Gagal memuat kitab</p></div>';
+        container.innerHTML = '<div style="text-align:center; padding:60px 40px; color:var(--text-muted); grid-column:1/-1;"><p>Gagal memuat kitab</p></div>';
       }
     }
 
-    function filterByJenjang(jenjangId) {
-      selectedJenjangId = jenjangId;
-
-      // Update tab active state
-      document.querySelectorAll('.jenjang-tab').forEach(function(tab) {
-        if ((jenjangId === null && tab.textContent === 'Semua') ||
-            (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes(jenjangId))) {
-          tab.classList.add('active');
-        } else {
-          tab.classList.remove('active');
-        }
-      });
-
-      // Filter kitabs
-      var filteredKitabs = jenjangId ? allKitabs.filter(function(k) { return k.jenjang_id === jenjangId; }) : allKitabs;
-      renderKitabCards(filteredKitabs);
-
-      // Update count
-      var kitabCountEl = document.getElementById('kitabCount');
-      kitabCountEl.textContent = filteredKitabs.length + ' kitab';
-    }
-
-    function renderKitabCards(kitabs) {
-      var container = document.getElementById('kitabCards');
-
-      if (!kitabs || kitabs.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fa-solid fa-book-open" style="font-size:2rem; margin-bottom:12px; display:block; opacity:0.5;"></i><p>Tidak ada kitab untuk jenjang ini</p></div>';
-        return;
-      }
-
-      var html = '';
-      for (var k of kitabs) {
-        var jenjang = allJenjangs.find(j => j.id === k.jenjang_id);
-        var jenjangLabel = jenjang ? (jenjang.nama || jenjang.title || 'Jenjang') : '';
-
-        // Calculate progress for this kitab
-        var progress = calculateKitabProgress(k.id);
-
-        var coverHtml;
-        if (k.image_url) {
-          coverHtml = '<img src="' + escHtml(k.image_url) + '" alt="' + escHtml(k.nama || k.title || '') + '" class="kitab-card-cover" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">' +
-                        '<div class="kitab-card-cover-placeholder" style="display:none;"><i class="fa-solid fa-book"></i></div>';
-        } else {
-          coverHtml = '<div class="kitab-card-cover-placeholder"><i class="fa-solid fa-book"></i></div>';
-        }
-
-        html += '<a href="materi.html?kitab=' + k.id + '" class="kitab-card" style="text-decoration:none; color:inherit; display:flex; flex-direction:column;" onclick="goToFirstBab(\'' + k.id + '\'); return false;">' +
-          coverHtml +
-          '<div class="kitab-card-body">' +
-            '<div class="kitab-card-title">' + escHtml(k.nama || k.title || 'Kitab') + '</div>' +
-            (k.penulis ? '<div class="kitab-card-author">' + escHtml(k.penulis) + '</div>' : '') +
-            (jenjangLabel ? '<div class="kitab-card-jenjang">' + escHtml(jenjangLabel) + '</div>' : '') +
-            '<div class="kitab-card-progress">' +
-              '<div class="kitab-card-progress-fill" style="width: ' + progress.percent + '%"></div>' +
-            '</div>' +
-            '<div style="font-size:0.65rem; color:var(--text-muted); margin-top:4px;">' + (progress.total < 0 ? 'Mulai belajar' : progress.completed + '/' + progress.total + ' selesai') + '</div>' +
-          '</div>' +
-        '</a>';
-      }
-      container.innerHTML = html;
-    }
-
-    async function goToFirstBab(kitabId) {
+    async function openKitab(kitabId) {
       try {
         var token = getToken();
         var headers = { 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
-        // Get first bagian in kitab
-        var bagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order=order_index&limit=1', { headers });
-        var bagians = await bagianRes.json().catch(() => []);
-        if (bagians.length === 0) return;
-        var bagian = bagians[0];
+        // Get user's progress for this kitab
+        var progressRes = await fetch(SUPABASE_URL + 'rest/v1/progress?kitab_id=eq.' + kitabId + '&order=updated_at.desc&limit=1', { headers });
+        var progressData = await progressRes.json().catch(() => []);
+        var lastProgress = progressData.length > 0 ? progressData[0] : null;
 
-        // Get first bab (muqoddimah) in bagian
-        var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order=order_index&limit=1', { headers });
+        // Get kitab info
+        var kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?id=eq.' + kitabId, { headers });
+        var kitabs = await kitabRes.json().catch(() => []);
+        if (kitabs.length === 0) return;
+        var kitab = kitabs[0];
+
+        // Get bagian and bab
+        var bagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order=order_index', { headers });
+        var bagians = await bagianRes.json().catch(() => []);
+
+        // Find the bab to show
+        var targetBab = null;
+
+        if (lastProgress && lastProgress.last_position) {
+          // Find next uncompleted bab after last position
+          for (var bagian of bagians) {
+            var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order=order_index', { headers });
+            var babs = await babRes.json().catch(() => []);
+            for (var bab of babs) {
+              if (bab.id === lastProgress.last_position) {
+                // Get next bab
+                var nextBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order_index=gt.' + bab.order_index + '&order=order_index&limit=1', { headers });
+                var nextBabs = await nextBabRes.json().catch(() => []);
+                if (nextBabs.length > 0) {
+                  targetBab = nextBabs[0];
+                } else {
+                  // Try next bagian
+                  var nextBagians = bagians.filter(b => b.order_index > bagian.order_index);
+                  if (nextBagians.length > 0) {
+                    var nextBabRes2 = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + nextBagians[0].id + '&order=order_index&limit=1', { headers });
+                    var nextBabs2 = await nextBabRes2.json().catch(() => []);
+                    if (nextBabs2.length > 0) targetBab = nextBabs2[0];
+                  }
+                }
+                break;
+              }
+            }
+            if (targetBab) break;
+          }
+        }
+
+        // If no target, get first muqoddimah or first bab
+        if (!targetBab) {
+          for (var bagian of bagians) {
+            var muqRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order=order_index&limit=1', { headers });
+            var muqBabs = await muqRes.json().catch(() => []);
+            if (muqBabs.length > 0) {
+              targetBab = muqBabs[0];
+              break;
+            }
+          }
+        }
+
+        if (!targetBab) {
+          alert('Materi belum tersedia untuk kitab ini');
+          return;
+        }
+
+        // Get bab content
+        var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + targetBab.id, { headers });
         var babs = await babRes.json().catch(() => []);
         if (babs.length === 0) return;
         var bab = babs[0];
 
-        // Redirect to first bab
-        window.location.href = 'materi.html?bab=' + bab.id;
+        // Show popup
+        showMateriPopup(bab, kitab);
       } catch(e) {
-        // Fallback to kitab page
-        window.location.href = 'materi.html?kitab=' + kitabId;
+        console.error('openKitab error:', e);
+        alert('Gagal memuat materi');
       }
     }
 
-    function calculateKitabProgress(kitabId) {
-      // Use items array which contains all fasals from kurikulum
-      // Items have bagian_id which can be linked to kitab through allKitabs
-      var total = 0;
-      var completed = 0;
+    function showMateriPopup(bab, kitab) {
+      var modal = document.getElementById('materiModal');
+      var title = document.getElementById('materiModalTitle');
+      var body = document.getElementById('materiModalBody');
+      var actionBtn = document.getElementById('materiModalActionBtn');
 
-      // Get bagian_ids for this kitab
-      var validBagianIds = new Set();
-      if (typeof kurikulum !== 'undefined' && kurikulum && kurikulum.length > 0) {
-        kurikulum.forEach(function(bagian) {
-          // Check if bagian belongs to this kitab
-          var belongsToKitab = false;
-          if (typeof items !== 'undefined' && items.length > 0) {
-            // Check if any item from this bagian exists in items
-            belongsToKitab = items.some(function(item) {
-              return item.bagian_id === bagian.id;
-            });
-          }
-          if (belongsToKitab) {
-            validBagianIds.add(bagian.id);
-          }
-        });
+      title.textContent = bab.title || bab.nama || 'Materi';
+
+      var html = '';
+      if (bab.content_arab) {
+        html += '<h4>Konten Arab</h4>';
+        html += '<p class="arabic-text" style="text-align:right; direction:rtl;">' + escHtml(bab.content_arab) + '</p>';
+      }
+      if (bab.content_id) {
+        html += '<h4 style="margin-top:16px;">Terjemahan</h4>';
+        html += '<p>' + escHtml(bab.content_id) + '</p>';
+      }
+      if (!bab.content_arab && !bab.content_id) {
+        html += '<p style="color:var(--text-muted); text-align:center;">Konten belum tersedia</p>';
       }
 
-      // Count fasals in valid bagian_ids
-      if (typeof items !== 'undefined' && items.length > 0) {
-        items.forEach(function(item) {
-          if (item.type === 'fasal' && validBagianIds.has(item.bagian_id)) {
-            total++;
-            if (userProgress.some(function(p) { return p.fasal_id === item.id && p.status === 'completed'; })) {
-              completed++;
-            }
-          }
-        });
-      }
+      body.innerHTML = html;
+      actionBtn.textContent = 'Lanjut ke Evaluasi';
+      actionBtn.onclick = function() {
+        window.location.href = 'materi.html?bab=' + bab.id;
+      };
 
-      // If no data, show "Mulai" instead of 0/0
-      if (total === 0 && completed === 0) {
-        return { total: -1, completed: 0, percent: 0 }; // -1 means not started
-      }
-
-      var percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-      return { total: total, completed: completed, percent: percent };
+      modal.classList.remove('hidden');
     }
 
-    function goToKitab(kitabId) {
-      window.location.href = 'materi.html?kitab=' + kitabId;
+    function closeMateriModal() {
+      document.getElementById('materiModal').classList.add('hidden');
     }
 
-    async function loadQuickStats() {
-      var kitabStarted = 0;
-      var learningTime = 0;
-      var streak = calculateStreak();
-
-      // Calculate kitab started (has at least one progress entry)
-      var startedKitabIds = new Set();
-      userProgress.forEach(function(p) {
-        if (p.status !== 'locked') {
-          // Find which kitab this fasal belongs to
-          items.forEach(function(item) {
-            if (item.id === p.fasal_id && item.kitab_id) {
-              startedKitabIds.add(item.kitab_id);
-            }
-          });
-        }
-      });
-      kitabStarted = startedKitabIds.size;
-
-      // Calculate learning time (rough estimate based on progress entries)
-      learningTime = Math.round(userProgress.length * 0.5); // 30 min per entry
-
-      document.getElementById('statKitabStarted').textContent = kitabStarted;
-      document.getElementById('statLearningTime').textContent = learningTime + 'h';
-      document.getElementById('statStudyStreak').textContent = streak;
+    function handleLogout() {
+      logout();
+      window.location.href = 'auth.html';
     }
 
     function escHtml(text) {
       if (!text) return '';
-      var div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
+      return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // Show materi in popup/modal
-    function showMateriPopup(item) {
-      if (!item) return;
-      var url = item.type === 'bab' ? 'materi.html?bab=' + item.id : 'materi.html?id=' + item.id;
-      var width = 1200;
-      var height = 800;
-      var left = (screen.width / 2) - (width / 2);
-      var top = (screen.height / 2) - (height / 2);
-      window.open(url, 'materi', 'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
+    function logout() {
+      localStorage.removeItem('mbba_token');
+      localStorage.removeItem('mbba_user');
+    }
+
+    function escHtml(text) {
+      if (!text) return '';
+      return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
   </script>
 </body>
