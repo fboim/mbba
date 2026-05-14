@@ -787,9 +787,9 @@
 
   </main>
 
-  <!-- Floating Continue Button - Hidden, using card buttons instead -->
-  <div id="floatingContinue" class="floating-continue hidden" style="display:none;">
-    <button onclick="openLastKitab()" class="floating-continue-btn">
+  <!-- Floating Continue Button -->
+  <div id="floatingContinue" class="floating-continue hidden">
+    <button onclick="window.openLastKitab()" class="floating-continue-btn">
       <i class="fa-solid fa-play"></i>
       <span id="floatingContinueText">Lanjut</span>
     </button>
@@ -805,7 +805,7 @@
       <i class="fa-solid fa-user"></i>
       <span>Profil</span>
     </a>
-    <a href="#" id="bottomNavContinue" class="bottom-nav-item" onclick="openLastKitab(); return false;">
+    <a href="#" id="bottomNavContinue" class="bottom-nav-item" onclick="window.openLastKitab(); return false;">
       <i class="fa-solid fa-play-circle"></i>
       <span>Lanjut</span>
     </a>
@@ -887,16 +887,39 @@
         document.getElementById('adminLink').style.display = 'flex';
       }
 
-      // Skip profiles fetch - table doesn't exist yet
-      // Use auth metadata full_name instead
-      currentUserData = {};
-
-      var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
-      document.getElementById('userName').textContent = 'Hai, ' + name;
-      document.getElementById('heroGreeting').textContent = 'Assalamu\'alaikum, ' + name;
+      // Get user name from profiles table or auth metadata
+      var userName = 'Pelajar';
+      try {
+        var profileRes = await fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + user.id + '?select=full_name', { headers });
+        if (profileRes.ok) {
+          var profiles = await profileRes.json().catch(() => []);
+          if (profiles && profiles.length > 0 && profiles[0].full_name) {
+            userName = profiles[0].full_name;
+          } else if (user.user_metadata && user.user_metadata.full_name) {
+            userName = user.user_metadata.full_name;
+          } else if (user.email) {
+            // Extract name from email if no full_name
+            userName = user.email.split('@')[0];
+          }
+        } else if (user.user_metadata && user.user_metadata.full_name) {
+          userName = user.user_metadata.full_name;
+        }
+      } catch(e) {
+        // Fallback to metadata or email
+        if (user.user_metadata && user.user_metadata.full_name) {
+          userName = user.user_metadata.full_name;
+        } else if (user.email) {
+          userName = user.email.split('@')[0];
+        }
+      }
+      document.getElementById('userName').textContent = 'Hai, ' + userName;
+      document.getElementById('heroGreeting').textContent = 'Assalamu\'alaikum, ' + userName;
 
       // Load kitab cards
       await loadKitabCards();
+
+      // Update floating continue button based on progress
+      await updateFloatingContinue();
 
       // Dark Mode with smooth transition
       const themeToggle = document.getElementById('theme-toggle');
@@ -1265,11 +1288,6 @@
       container.innerHTML = html;
     }
 
-    function handleLogout() {
-      logout();
-      window.location.href = 'auth.html';
-    }
-
     async function checkStreak() {
       try {
         var token = getToken();
@@ -1351,10 +1369,15 @@
 
     function openLastKitab() {
       var floatingBtn = document.getElementById('floatingContinue');
-      if (floatingBtn.dataset.kitabId) {
-        openKitab(floatingBtn.dataset.kitabId);
+      var kitabId = floatingBtn.dataset.kitabId;
+      if (kitabId) {
+        window.location.href = 'materi.html?kitab=' + kitabId;
+      } else if (allKitabs.length > 0) {
+        // If no kitab_id stored, go to first kitab
+        window.location.href = 'materi.html?kitab=' + allKitabs[0].id;
       }
     }
+    window.openLastKitab = openLastKitab;
 
     function showCelebration(type) {
       var container = document.getElementById('celebrationContainer');
@@ -1417,8 +1440,16 @@
           var kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
           if (kitabRes.ok) kitabs = await kitabRes.json().catch(() => []);
         } catch(e) {}
-        // Skip progress fetch - table doesn't exist yet
-        allProgress = [];
+        // Fetch progress by user_id
+        try {
+          var user = await getCurrentUser();
+          if (user) {
+            var progressRes = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id, { headers });
+            if (progressRes.ok) allProgress = await progressRes.json().catch(() => []);
+          }
+        } catch(e) {
+          allProgress = [];
+        }
 
         allJenjangs = jenjangs;
         allKitabs = kitabs;
@@ -1471,10 +1502,8 @@
               '<div class="kitab-card-progress"><div class="kitab-card-progress-fill" style="width:' + percent + '%"></div></div>' +
               '<div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">' + progressText + '</div>';
 
-          // Only show button if has progress
-          if (hasProgress) {
-            html += '<button class="kitab-card-btn ' + btnClass + '" onclick="openKitab(\'' + k.id + '\')">' + btnText + '</button>';
-          }
+          // Always show button - "Lanjut" if has progress, "Mulai" if not
+          html += '<button class="kitab-card-btn ' + btnClass + '" onclick="window.openKitab(\'' + k.id + '\')">' + btnText + '</button>';
 
           html += '</div></div>';
         }
@@ -1523,6 +1552,7 @@
         alert('Gagal memuat materi');
       }
     }
+    window.openKitab = openKitab;
 
     async function loadNextBab(currentBabId, kitabId, currentBagianOrder) {
       try {
@@ -1616,10 +1646,6 @@
       window.quizBabId = babId;
 
       modal.classList.remove('hidden');
-    }
-
-    function closeQuizModal() {
-      document.getElementById('quizModal').classList.add('hidden');
     }
 
     async function startInlineQuiz() {
