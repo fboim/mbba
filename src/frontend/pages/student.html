@@ -1768,15 +1768,76 @@
     function goToNextMateri() {
       closeQuizModal();
       closeMateriModal();
-      // Go to next bab in materi.html
+
+      // Load and show next bab in popup instead of redirect
       if (window.nextBabId) {
-        window.location.href = 'materi.html?bab=' + window.nextBabId;
+        showNextBabInPopup(window.nextBabId);
       } else {
-        // No more materi, go back to student dashboard
         window.location.href = 'student.html';
       }
     }
+
+    async function showNextBabInPopup(babId) {
+      try {
+        var token = getToken();
+        var headers = { 'apikey': SUPABASE_ANON_KEY };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var res = await fetch(SUPABASE_URL + '/rest/v1/bab?id=eq.' + babId, { headers });
+        var data = await res.json();
+        var bab = data[0];
+        if (!bab) return;
+
+        var modal = document.getElementById('materiModal');
+        var title = document.getElementById('materiModalTitle');
+        var badge = document.getElementById('materiModalBadge');
+        var body = document.getElementById('materiModalBody');
+        var actionBtn = document.getElementById('materiModalActionBtn');
+
+        title.textContent = bab.title || bab.nama || 'Materi Berikutnya';
+        badge.textContent = bab.is_muqoddimah ? 'MUQODDIMAH' : 'MATERI';
+
+        var html = '';
+        if (bab.content_arab) {
+          html += '<div class="materi-section-label">Konten Arab</div>';
+          html += '<div class="materi-content-arab">';
+          html += '<p class="arabic-text" style="text-align:right; direction:rtl; margin:0;">' + escHtml(bab.content_arab) + '</p>';
+          html += '</div>';
+        }
+        if (bab.content_id) {
+          html += '<div class="materi-section-label" style="margin-top:' + (bab.content_arab ? '20px' : '0') + ';">Terjemahan</div>';
+          html += '<div class="materi-content-translation">';
+          html += '<p style="margin:0; line-height:1.8;">' + escHtml(bab.content_id) + '</p>';
+          html += '</div>';
+        }
+        if (!bab.content_arab && !bab.content_id) {
+          html += '<div style="text-align:center; padding:40px 20px; color:var(--text-muted);">';
+          html += '<i class="fa-solid fa-file-lines" style="font-size:3rem; opacity:0.3; margin-bottom:12px;"></i>';
+          html += '<p>Konten belum tersedia</p>';
+          html += '</div>';
+        }
+
+        body.innerHTML = html;
+
+        // Store bab id for quiz
+        window.currentBabId = bab.id;
+        window.currentKitabId = bab.kitab_id;
+
+        // Change action button to open quiz
+        actionBtn.innerHTML = '<i class="fa-solid fa-brain"></i> Mulai Evaluasi';
+        actionBtn.onclick = function() {
+          closeMateriModal();
+          window.quizBabId = bab.id;
+          window.quizStart();
+        };
+
+        modal.classList.remove('hidden');
+      } catch(e) {
+        console.error('Error loading next bab:', e);
+      }
+    }
     window.goToNextMateri = goToNextMateri;
+    window.showNextBabInPopup = showNextBabInPopup;
 
     function handleLogout() {
       logout();
