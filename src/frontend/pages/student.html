@@ -891,26 +891,27 @@
       var userName = 'Pelajar';
       try {
         var profileRes = await fetch(SUPABASE_URL + '/rest/v1/users?id=eq.' + user.id + '&select=full_name', { headers });
+        console.log('users fetch status:', profileRes.status);
         if (profileRes.ok) {
           var profiles = await profileRes.json().catch(() => []);
+          console.log('users response:', profiles);
           if (profiles && profiles.length > 0 && profiles[0].full_name) {
             userName = profiles[0].full_name;
+            console.log('Using full_name from users table:', userName);
           } else if (user.user_metadata && user.user_metadata.full_name) {
             userName = user.user_metadata.full_name;
+            console.log('Using full_name from metadata:', userName);
           } else if (user.email) {
-            // Extract name from email if no full_name
             userName = user.email.split('@')[0];
+            console.log('Using email prefix:', userName);
           }
-        } else if (user.user_metadata && user.user_metadata.full_name) {
-          userName = user.user_metadata.full_name;
-        }
-      } catch(e) {
-        // Fallback to metadata or email
-        if (user.user_metadata && user.user_metadata.full_name) {
-          userName = user.user_metadata.full_name;
-        } else if (user.email) {
+        } else {
+          console.log('users fetch not ok, using email prefix');
           userName = user.email.split('@')[0];
         }
+      } catch(e) {
+        console.log('users fetch error:', e);
+        userName = user.email.split('@')[0];
       }
       document.getElementById('userName').textContent = 'Hai, ' + userName;
       document.getElementById('heroGreeting').textContent = 'Assalamu\'alaikum, ' + userName;
