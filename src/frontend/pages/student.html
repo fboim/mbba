@@ -890,7 +890,7 @@
       // Get user name from users table or auth metadata
       var userName = 'Pelajar';
       try {
-        var profileRes = await fetch(SUPABASE_URL + '/rest/v1/users?id=eq.' + user.id + '?select=full_name', { headers });
+        var profileRes = await fetch(SUPABASE_URL + '/rest/v1/users?id=eq.' + user.id + '&select=full_name', { headers });
         if (profileRes.ok) {
           var profiles = await profileRes.json().catch(() => []);
           if (profiles && profiles.length > 0 && profiles[0].full_name) {
@@ -1296,7 +1296,7 @@
 
         var user = await getCurrentUser();
         if (!user) return;
-        var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&order=completed_at.desc&limit=1', { headers });
+        var res = await fetch(SUPABASE_URL + '/rest/v1/user_progress?user_id=eq.' + user.id + '&order=completed_at.desc&limit=1', { headers });
         if (!res.ok) return;
         var progress = await res.json().catch(() => []);
 
@@ -1324,7 +1324,7 @@
 
         var user = await getCurrentUser();
         if (!user) return;
-        var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&status=eq.completed', { headers });
+        var res = await fetch(SUPABASE_URL + '/rest/v1/user_progress?user_id=eq.' + user.id + '&status=eq.completed', { headers });
         if (!res.ok) return;
         var completed = await res.json().catch(() => []);
         if (!Array.isArray(completed)) completed = [];
@@ -1345,9 +1345,6 @@
     }
 
     async function updateFloatingContinue() {
-      // Progress table not created yet - skip to avoid 404 errors
-      // Uncomment when progress table is created
-      /*
       try {
         var token = getToken();
         var headers = { 'apikey': SUPABASE_ANON_KEY };
@@ -1355,7 +1352,7 @@
 
         var user = await getCurrentUser();
         if (!user) return;
-        var res = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id + '&order=updated_at.desc&limit=1', { headers });
+        var res = await fetch(SUPABASE_URL + '/rest/v1/user_progress?user_id=eq.' + user.id + '&order=updated_at.desc&limit=1', { headers });
         if (!res.ok) return;
         var progress = await res.json().catch(() => []);
         if (!Array.isArray(progress)) progress = [];
@@ -1374,7 +1371,6 @@
         if (floatingBtn) floatingBtn.classList.add('hidden');
         if (bottomNav) bottomNav.style.display = 'none';
       }
-      */
     }
 
     function openLastKitab() {
@@ -1450,8 +1446,20 @@
           var kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
           if (kitabRes.ok) kitabs = await kitabRes.json().catch(() => []);
         } catch(e) {}
-        // Progress table not created yet - skip progress fetch to avoid 404 errors
-        allProgress = [];
+        // Fetch progress from user_progress table
+        try {
+          var user = await getCurrentUser();
+          if (user) {
+            var progressRes = await fetch(SUPABASE_URL + '/rest/v1/user_progress?user_id=eq.' + user.id, { headers });
+            if (progressRes.ok) {
+              allProgress = await progressRes.json().catch(() => []);
+            } else {
+              allProgress = [];
+            }
+          }
+        } catch(e) {
+          allProgress = [];
+        }
 
         allJenjangs = jenjangs;
         allKitabs = kitabs;
