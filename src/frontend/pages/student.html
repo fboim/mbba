@@ -1587,22 +1587,22 @@
       var headers = { 'apikey': SUPABASE_ANON_KEY };
       if (token) headers['Authorization'] = 'Bearer ' + token;
 
-      var startScreen = document.getElementById('quizStartScreen');
-      var quizContent = document.getElementById('quizContent');
-      startScreen.style.display = 'none';
-      quizContent.style.display = 'block';
+      window.quizStartScreen = document.getElementById('quizStartScreen');
+      window.quizContent = document.getElementById('quizContent');
+      window.quizStartScreen.style.display = 'none';
+      window.quizContent.style.display = 'block';
 
-      quizContent.innerHTML = '<div style="text-align:center; padding:40px;"><div class="spinner" style="margin:0 auto;"></div><p>Memuat soal evaluasi...</p></div>';
+      window.quizContent.innerHTML = '<div style="text-align:center; padding:40px;"><div class="spinner" style="margin:0 auto;"></div><p>Memuat soal evaluasi...</p></div>';
 
       try {
         var res = await fetch(SUPABASE_URL + 'rest/v1/quiz?bab_id=eq.' + babId + '&select=*', { headers });
         var quizzes = await res.json().catch(() => []);
 
         if (quizzes.length === 0) {
-          quizContent.innerHTML = '<div style="text-align:center; padding:40px;">';
-          quizContent.innerHTML += '<i class="fa-solid fa-inbox" style="font-size:3rem; color:var(--text-muted); margin-bottom:12px;"></i>';
-          quizContent.innerHTML += '<p style="color:var(--text-muted);">Belum ada soal evaluasi untuk materi ini.</p>';
-          quizContent.innerHTML += '</div>';
+          window.quizContent.innerHTML = '<div style="text-align:center; padding:40px;">';
+          window.quizContent.innerHTML += '<i class="fa-solid fa-inbox" style="font-size:3rem; color:var(--text-muted); margin-bottom:12px;"></i>';
+          window.quizContent.innerHTML += '<p style="color:var(--text-muted);">Belum ada soal evaluasi untuk materi ini.</p>';
+          window.quizContent.innerHTML += '</div>';
           return;
         }
 
@@ -1612,11 +1612,12 @@
         window.quizCurrentIndex = 0;
         window.quizAnswers = {};
 
-        renderQuizQuestion();
+        window.renderQuizQuestion();
       } catch(e) {
-        quizContent.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><p>Gagal memuat soal evaluasi</p></div>';
+        window.quizContent.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><p>Gagal memuat soal evaluasi</p></div>';
       }
     }
+    window.startInlineQuiz = startInlineQuiz;
 
     function renderQuizQuestion() {
       var q = window.quizQuestions[window.quizCurrentIndex];
@@ -1632,36 +1633,40 @@
       html += '<div class="quiz-question-text">' + (window.quizCurrentIndex + 1) + '. ' + escHtml(q.question || '') + '</div>';
 
       if (q.quiz_type === 'mc' && q.options) {
+        var options;
+        try { options = typeof q.options === 'string' ? JSON.parse(q.options) : q.options; }
+        catch(e) { options = {}; }
         html += '<div class="quiz-options">';
-        var options = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
         for (var key in options) {
-          html += '<div class="quiz-option' + (window.quizAnswers[window.quizCurrentIndex] === key ? ' selected' : '') + '" onclick="selectQuizAnswer(\'' + key + '\')">';
+          html += '<div class="quiz-option' + (window.quizAnswers[window.quizCurrentIndex] === key ? ' selected' : '') + '" onclick="window.selectQuizAnswer(\'' + key + '\')">';
           html += '<div class="quiz-option-key">' + key + '</div>';
           html += '<div class="quiz-option-text">' + escHtml(options[key]) + '</div>';
           html += '</div>';
         }
         html += '</div>';
       } else if (q.quiz_type === 'fill-arab') {
-        html += '<input type="text" id="quizFillInput" class="form-input" placeholder="Ketik jawaban dalam Arab..." style="width:100%; padding:12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);" onkeyup="window.quizFillAnswer=this.value">';
+        html += '<input type="text" id="quizFillInput" class="form-input" placeholder="Ketik jawaban..." style="width:100%; padding:12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);" oninput="window.quizFillAnswer=this.value">';
       }
       html += '</div>';
 
       html += '<div class="quiz-nav">';
-      html += '<button class="btn btn-secondary" ' + (window.quizCurrentIndex === 0 ? 'disabled' : '') + ' onclick="prevQuizQuestion()"><i class="fa-solid fa-arrow-left"></i> Sebelumnya</button>';
+      html += '<button class="btn btn-secondary"' + (window.quizCurrentIndex === 0 ? ' disabled' : '') + ' onclick="window.prevQuizQuestion()"><i class="fa-solid fa-arrow-left"></i> Sebelumnya</button>';
       if (window.quizCurrentIndex < window.quizQuestions.length - 1) {
-        html += '<button class="btn btn-primary" onclick="nextQuizQuestion()">Selanjutnya <i class="fa-solid fa-arrow-right"></i></button>';
+        html += '<button class="btn btn-primary" onclick="window.nextQuizQuestion()">Selanjutnya <i class="fa-solid fa-arrow-right"></i></button>';
       } else {
-        html += '<button class="btn btn-primary" onclick="submitQuiz()">Kirim Jawaban <i class="fa-solid fa-check"></i></button>';
+        html += '<button class="btn btn-primary" onclick="window.submitQuiz()">Kirim Jawaban <i class="fa-solid fa-check"></i></button>';
       }
       html += '</div>';
 
       quizContent.innerHTML = html;
     }
+    window.renderQuizQuestion = renderQuizQuestion;
 
     function selectQuizAnswer(key) {
       window.quizAnswers[window.quizCurrentIndex] = key;
       renderQuizQuestion();
     }
+    window.selectQuizAnswer = selectQuizAnswer;
 
     function nextQuizQuestion() {
       if (window.quizCurrentIndex < window.quizQuestions.length - 1) {
@@ -1676,6 +1681,8 @@
         renderQuizQuestion();
       }
     }
+    window.nextQuizQuestion = nextQuizQuestion;
+    window.prevQuizQuestion = prevQuizQuestion;
 
     function submitQuiz() {
       var correct = 0;
@@ -1703,7 +1710,7 @@
       quizContent.innerHTML += '<p style="color:var(--text-muted); margin:0 0 24px 0;">' + correct + ' dari ' + window.quizQuestions.length + ' benar</p>';
 
       if (!passed) {
-        quizContent.innerHTML += '<button class="btn btn-primary" onclick="retryQuiz()"><i class="fa-solid fa-redo"></i> Coba Lagi</button>';
+        quizContent.innerHTML += '<button class="btn btn-primary" onclick="window.retryQuiz()"><i class="fa-solid fa-redo"></i> Coba Lagi</button>';
       } else {
         quizContent.innerHTML += '<p style="color:var(--accent); margin-bottom:20px;"><i class="fa-solid fa-check-circle"></i> Kamu bisa lanjut ke materi berikutnya</p>';
         quizContent.innerHTML += '<button class="btn btn-secondary" onclick="closeQuizModal()"><i class="fa-solid fa-home"></i> Kembali ke Beranda</button>';
@@ -1711,12 +1718,14 @@
 
       quizContent.innerHTML += '</div>';
     }
+    window.submitQuiz = submitQuiz;
 
     function retryQuiz() {
       window.quizCurrentIndex = 0;
       window.quizAnswers = {};
       renderQuizQuestion();
     }
+    window.retryQuiz = retryQuiz;
 
     function closeMateriModal() {
       document.getElementById('materiModal').classList.add('hidden');
