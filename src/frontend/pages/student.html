@@ -816,22 +816,14 @@
       document.getElementById('userName').textContent = 'Hai, ' + name;
       document.getElementById('heroGreeting').textContent = 'Assalamu\'alaikum, ' + name;
 
-      // Get user data including jenjang (optional - don't fail if table doesn't exist)
-      try {
-        currentUserData = await getUserData();
-      } catch(e) { currentUserData = null; }
+      // Skip getUserData, badges, streak, floating button - tables don't exist yet
+      currentUserData = null;
+      // await checkStreak();
+      // await loadBadges();
+      // await updateFloatingContinue();
 
       // Load kitab cards
       await loadKitabCards();
-
-      // Check streak and show reminder (optional)
-      try { await checkStreak(); } catch(e) {}
-
-      // Load badges (optional)
-      try { await loadBadges(); } catch(e) {}
-
-      // Update floating continue button (optional)
-      try { await updateFloatingContinue(); } catch(e) {}
 
       // Dark Mode with smooth transition
       const themeToggle = document.getElementById('theme-toggle');
@@ -1343,16 +1335,20 @@
         var headers = { 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
-        var [jenjangRes, kitabRes, progressRes] = await Promise.all([
-          fetch(SUPABASE_URL + 'rest/v1/jenjang?order=order_index', { headers }),
-          fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers }),
-          fetch(SUPABASE_URL + 'rest/v1/progress?select=*', { headers })
-        ]);
-
-        var jenjangs = await jenjangRes.json().catch(() => []);
-        var kitabs = await kitabRes.json().catch(() => []);
-        var allProgressRaw = await progressRes.json().catch(() => []);
-        var allProgress = Array.isArray(allProgressRaw) ? allProgressRaw : [];
+        var jenjangs = [], kitabs = [], allProgress = [];
+        try {
+          var jenjangRes = await fetch(SUPABASE_URL + 'rest/v1/jenjang?order=order_index', { headers });
+          if (jenjangRes.ok) jenjangs = await jenjangRes.json().catch(() => []);
+        } catch(e) {}
+        try {
+          var kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
+          if (kitabRes.ok) kitabs = await kitabRes.json().catch(() => []);
+        } catch(e) {}
+        try {
+          var progressRes = await fetch(SUPABASE_URL + 'rest/v1/progress?select=*', { headers });
+          if (progressRes.ok) allProgress = await progressRes.json().catch(() => []);
+          else allProgress = [];
+        } catch(e) { allProgress = []; }
 
         allJenjangs = jenjangs;
         allKitabs = kitabs;
