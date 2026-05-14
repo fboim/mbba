@@ -1345,6 +1345,9 @@
     }
 
     async function updateFloatingContinue() {
+      // Progress table not created yet - skip to avoid 404 errors
+      // Uncomment when progress table is created
+      /*
       try {
         var token = getToken();
         var headers = { 'apikey': SUPABASE_ANON_KEY };
@@ -1371,6 +1374,7 @@
         if (floatingBtn) floatingBtn.classList.add('hidden');
         if (bottomNav) bottomNav.style.display = 'none';
       }
+      */
     }
 
     function openLastKitab() {
@@ -1446,17 +1450,8 @@
           var kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?order=order_index', { headers });
           if (kitabRes.ok) kitabs = await kitabRes.json().catch(() => []);
         } catch(e) {}
-        // Fetch progress by user_id (table may not exist yet)
-        try {
-          var user = await getCurrentUser();
-          if (user) {
-            var progressRes = await fetch(SUPABASE_URL + 'rest/v1/progress?user_id=eq.' + user.id, { headers });
-            if (progressRes.ok) allProgress = await progressRes.json().catch(() => []);
-            else allProgress = []; // Table doesn't exist or other error
-          }
-        } catch(e) {
-          allProgress = [];
-        }
+        // Progress table not created yet - skip progress fetch to avoid 404 errors
+        allProgress = [];
 
         allJenjangs = jenjangs;
         allKitabs = kitabs;
