@@ -816,10 +816,18 @@
         document.getElementById('adminLink').style.display = 'flex';
       }
 
-      // Get user data from profiles table for full_name
+      // Get user data from profiles table for full_name (skip if table doesn't exist)
+      var token = getToken();
+      var headers = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
       try {
-        currentUserData = await getUserData();
-      } catch(e) { currentUserData = null; }
+        var profileRes = await fetch(SUPABASE_URL + 'rest/v1/profiles?id=eq.' + user.id, { headers });
+        if (profileRes.ok) {
+          var profiles = await profileRes.json().catch(() => []);
+          if (profiles.length > 0) currentUserData = profiles[0];
+        }
+      } catch(e) {}
+      currentUserData = currentUserData || {};
 
       var name = (currentUserData && currentUserData.full_name) || (user.user_metadata && user.user_metadata.full_name) || user.email || 'Pelajar';
       document.getElementById('userName').textContent = 'Hai, ' + name;
