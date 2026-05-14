@@ -1417,77 +1417,29 @@
         var headers = { 'apikey': SUPABASE_ANON_KEY };
         if (token) headers['Authorization'] = 'Bearer ' + token;
 
-        // Get user's progress for this kitab
-        var progressRes = await fetch(SUPABASE_URL + 'rest/v1/progress?kitab_id=eq.' + kitabId + '&order=updated_at.desc&limit=1', { headers });
-        var progressData = await progressRes.json().catch(() => []);
-        var lastProgress = progressData.length > 0 ? progressData[0] : null;
-
         // Get kitab info
         var kitabRes = await fetch(SUPABASE_URL + 'rest/v1/kitab?id=eq.' + kitabId, { headers });
         var kitabs = await kitabRes.json().catch(() => []);
         if (kitabs.length === 0) return;
         var kitab = kitabs[0];
 
-        // Get bagian and bab
-        var bagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order=order_index', { headers });
+        // Get bagian and bab (go to first bab directly)
+        var bagianRes = await fetch(SUPABASE_URL + 'rest/v1/bagian?kitab_id=eq.' + kitabId + '&order=order_index&limit=1', { headers });
         var bagians = await bagianRes.json().catch(() => []);
-
-        // Find the bab to show
-        var targetBab = null;
-
-        if (lastProgress && lastProgress.last_position) {
-          // Find next uncompleted bab after last position
-          for (var bagian of bagians) {
-            var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order=order_index', { headers });
-            var babs = await babRes.json().catch(() => []);
-            for (var bab of babs) {
-              if (bab.id === lastProgress.last_position) {
-                // Get next bab
-                var nextBabRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order_index=gt.' + bab.order_index + '&order=order_index&limit=1', { headers });
-                var nextBabs = await nextBabRes.json().catch(() => []);
-                if (nextBabs.length > 0) {
-                  targetBab = nextBabs[0];
-                } else {
-                  // Try next bagian
-                  var nextBagians = bagians.filter(b => b.order_index > bagian.order_index);
-                  if (nextBagians.length > 0) {
-                    var nextBabRes2 = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + nextBagians[0].id + '&order=order_index&limit=1', { headers });
-                    var nextBabs2 = await nextBabRes2.json().catch(() => []);
-                    if (nextBabs2.length > 0) targetBab = nextBabs2[0];
-                  }
-                }
-                break;
-              }
-            }
-            if (targetBab) break;
-          }
-        }
-
-        // If no target, get first muqoddimah or first bab
-        if (!targetBab) {
-          for (var bagian of bagians) {
-            var muqRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagian.id + '&order=order_index&limit=1', { headers });
-            var muqBabs = await muqRes.json().catch(() => []);
-            if (muqBabs.length > 0) {
-              targetBab = muqBabs[0];
-              break;
-            }
-          }
-        }
-
-        if (!targetBab) {
+        if (bagians.length === 0) {
           alert('Materi belum tersedia untuk kitab ini');
           return;
         }
 
-        // Get bab content
-        var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?id=eq.' + targetBab.id, { headers });
+        var babRes = await fetch(SUPABASE_URL + 'rest/v1/bab?bagian_id=eq.' + bagians[0].id + '&order=order_index&limit=1', { headers });
         var babs = await babRes.json().catch(() => []);
-        if (babs.length === 0) return;
-        var bab = babs[0];
+        if (babs.length === 0) {
+          alert('Materi belum tersedia');
+          return;
+        }
 
-        // Show popup
-        showMateriPopup(bab, kitab);
+        // Show popup with bab content
+        showMateriPopup(babs[0], kitab);
       } catch(e) {
         console.error('openKitab error:', e);
         alert('Gagal memuat materi');
