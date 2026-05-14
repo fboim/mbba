@@ -787,8 +787,8 @@
 
   </main>
 
-  <!-- Floating Continue Button -->
-  <div id="floatingContinue" class="floating-continue hidden">
+  <!-- Floating Continue Button - Hidden, using card buttons instead -->
+  <div id="floatingContinue" class="floating-continue hidden" style="display:none;">
     <button onclick="openLastKitab()" class="floating-continue-btn">
       <i class="fa-solid fa-play"></i>
       <span id="floatingContinueText">Lanjut</span>
@@ -1460,7 +1460,6 @@
 
           var btnClass = hasProgress ? 'kitab-card-btn-lanjut' : 'kitab-card-btn-mulai';
           var btnText = hasProgress ? 'Lanjut' : 'Mulai';
-
           var progressText = hasProgress ? progress.completed + '/' + progress.total + ' selesai' : 'Belum dimulai';
 
           html += '<div class="kitab-card" style="text-decoration:none; color:inherit; display:flex; flex-direction:column;">' +
@@ -1470,10 +1469,14 @@
               (k.penulis ? '<div class="kitab-card-author">' + escHtml(k.penulis) + '</div>' : '') +
               (jenjangLabel ? '<div class="kitab-card-jenjang">' + escHtml(jenjangLabel) + '</div>' : '') +
               '<div class="kitab-card-progress"><div class="kitab-card-progress-fill" style="width:' + percent + '%"></div></div>' +
-              '<div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">' + progressText + '</div>' +
-              '<button class="kitab-card-btn ' + btnClass + '" onclick="openKitab(\'' + k.id + '\')">' + btnText + '</button>' +
-            '</div>' +
-          '</div>';
+              '<div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">' + progressText + '</div>';
+
+          // Only show button if has progress
+          if (hasProgress) {
+            html += '<button class="kitab-card-btn ' + btnClass + '" onclick="openKitab(\'' + k.id + '\')">' + btnText + '</button>';
+          }
+
+          html += '</div></div>';
         }
         container.innerHTML = html;
       } catch (e) {
@@ -1515,11 +1518,6 @@
         // Store next bab id for navigation after quiz
         window.nextBabId = null;
         await loadNextBab(babs[0].id, kitab.id, bagians[0].order_index);
-
-        // Show floating button
-        var floatingBtn = document.getElementById('floatingContinue');
-        floatingBtn.dataset.kitabId = kitabId;
-        floatingBtn.classList.remove('hidden');
       } catch(e) {
         console.error('openKitab error:', e);
         alert('Gagal memuat materi');
