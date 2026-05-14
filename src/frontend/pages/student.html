@@ -1644,8 +1644,9 @@
           html += '</div>';
         }
         html += '</div>';
-      } else if (q.quiz_type === 'fill-arab') {
-        html += '<input type="text" id="quizFillInput" class="form-input" placeholder="Ketik jawaban..." style="width:100%; padding:12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);" oninput="window.quizFillAnswer=this.value">';
+      } else if (q.quiz_type === 'fill-arab' || q.quiz_type === 'fill') {
+        var savedValue = window.quizAnswers[window.quizCurrentIndex] || '';
+        html += '<input type="text" id="quizFillInput" class="form-input" placeholder="Ketik jawaban..." style="width:100%; padding:14px; border-radius:var(--radius-md); border:2px solid var(--border-subtle); font-size:1rem; text-align:' + (q.quiz_type === 'fill-arab' ? 'right' : 'left') + ';" value="' + escHtml(savedValue) + '" oninput="window.quizAnswers[' + window.quizCurrentIndex + ']=this.value">';
       }
       html += '</div>';
 
@@ -1669,18 +1670,35 @@
     window.selectQuizAnswer = selectQuizAnswer;
 
     function nextQuizQuestion() {
+      captureFillAnswer();
       if (window.quizCurrentIndex < window.quizQuestions.length - 1) {
         window.quizCurrentIndex++;
-        renderQuizQuestion();
+        window.renderQuizQuestion();
       }
     }
 
     function prevQuizQuestion() {
+      captureFillAnswer();
       if (window.quizCurrentIndex > 0) {
         window.quizCurrentIndex--;
-        renderQuizQuestion();
+        window.renderQuizQuestion();
       }
     }
+
+    function captureFillAnswer() {
+      var input = document.getElementById('quizFillInput');
+      if (input) {
+        window.quizAnswers[window.quizCurrentIndex] = input.value;
+      }
+    }
+
+    function saveFillAnswer() {
+      var input = document.getElementById('quizFillInput');
+      if (input) {
+        window.quizAnswers[window.quizCurrentIndex] = input.value;
+      }
+    }
+    window.saveFillAnswer = saveFillAnswer;
     window.nextQuizQuestion = nextQuizQuestion;
     window.prevQuizQuestion = prevQuizQuestion;
 
