@@ -889,8 +889,11 @@
 
       // Get user name from users table or auth metadata
       var userName = 'Pelajar';
+      var token = getToken();
+      var nameHeaders = { 'apikey': SUPABASE_ANON_KEY };
+      if (token) nameHeaders['Authorization'] = 'Bearer ' + token;
       try {
-        var profileRes = await fetch(SUPABASE_URL + '/rest/v1/users?id=eq.' + user.id + '&select=full_name', { headers });
+        var profileRes = await fetch(SUPABASE_URL + '/rest/v1/users?id=eq.' + user.id + '&select=full_name', { headers: nameHeaders });
         console.log('users fetch status:', profileRes.status);
         if (profileRes.ok) {
           var profiles = await profileRes.json().catch(() => []);
